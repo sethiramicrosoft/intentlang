@@ -702,6 +702,11 @@ route('GET', new RegExp('^/styles\\\\.css$'), async (_req, res) => {
   text(res, 200, 'text/css; charset=utf-8', STYLES_CSS);
 });
 
+route('GET', new RegExp('^/favicon\\\\.ico$'), async (_req, res) => {
+  res.writeHead(204, { 'Cache-Control': 'no-store' });
+  res.end();
+});
+
 route('POST', new RegExp('^/auth/login$'), async (req, res) => {
   if (!SECURITY_SCHEMA.authentication) {
     json(res, 404, { code: 'NOT_FOUND', error: 'Not found' });

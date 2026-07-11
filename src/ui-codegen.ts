@@ -218,6 +218,8 @@ const provisionPassword = byId('provision-password');
 const provisionRole = byId('provision-role');
 const provisionError = byId('provision-error');
 const provisionSubmit = byId('provision-submit');
+const themeToggle = byId('theme-toggle');
+const identityBar = byId('auth-identity-bar');
 const entityDialog = byId('entity-dialog');
 const entityDialogTitle = byId('entity-dialog-title');
 const entityForm = byId('entity-form');
@@ -236,6 +238,18 @@ const actionReload = byId('action-reload');
 const actionConfirm = byId('action-confirm');
 const roleNameById = new Map((schema.roles || []).map((role) => [role.id, role.name]));
 
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  const isDark = theme === 'dark';
+  themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+  themeToggle.textContent = isDark ? '☀️' : '🌙';
+}
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('theme', next);
+  applyTheme(next);
+}
 function setStatus(element, message, isError) {
   element.textContent = message || '';
   element.classList.toggle('error', Boolean(message && isError));
@@ -283,6 +297,9 @@ function showLogin() {
   loginCard.classList.toggle('hidden', !schema.authEnabled);
   identityLabel.textContent = '';
   roleLabel.textContent = '';
+  identityBar.classList.add('hidden');
+  logoutBtn.classList.add('hidden');
+  provisionCard.classList.add('hidden');
   if (entityDialog.open) entityDialog.close();
   if (actionDialog.open) actionDialog.close();
   loginEmail.focus();
@@ -290,6 +307,10 @@ function showLogin() {
 function showApp() {
   loginCard.classList.add('hidden');
   appRoot.classList.remove('hidden');
+  if (schema.authEnabled) {
+    logoutBtn.classList.remove('hidden');
+    identityBar.classList.remove('hidden');
+  }
 }
 function recordLabel(entity, row) {
   const labelField = entity.fields.find((field) => field.type === 'text');
@@ -613,6 +634,8 @@ provisionForm.addEventListener('submit', async (event) => {
   } catch (error) { setStatus(provisionError, error instanceof Error ? error.message : 'Unable to provision the account.', true); }
   finally { provisioning = false; provisionSubmit.disabled = false; provisionSubmit.textContent = 'Provision'; }
 });
+themeToggle.addEventListener('click', toggleTheme);
+applyTheme(document.documentElement.getAttribute('data-theme') || 'light');
 updateProvisionVisibility();
 void loadMe();
 `;
@@ -642,11 +665,12 @@ export function generateUi(ir: ProgramIr): GeneratedUi {
 <div class="page">
   <header class="card row app-header">
     <h1>${title}</h1>
-    <div class="identity">
+    <button id="theme-toggle" class="btn-secondary" type="button" aria-label="Switch to dark mode">🌙</button>
+    <div id="auth-identity-bar" class="identity hidden">
       <div id="auth-identity"></div>
       <div class="muted" id="auth-role"></div>
     </div>
-    <button id="auth-logout" class="btn-secondary" type="button">Log out</button>
+    <button id="auth-logout" class="btn-secondary hidden" type="button">Log out</button>
   </header>
   <section id="auth-login-card" class="card ${ir.authentication ? "" : "hidden"}">
     <h2>Sign in</h2>

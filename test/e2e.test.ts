@@ -757,6 +757,37 @@ test("auth runtime end-to-end", async (t) => {
       );
     });
 
+    // ── favicon 204 ──────────────────────────────────────────────────────────
+    await t.test("favicon 204 - GET /favicon.ico returns 204 No Content", async () => {
+      const res = await fetch(`${baseUrl}/favicon.ico`);
+      assert.equal(res.status, 204, "Expected 204 for /favicon.ico");
+    });
+
+    // ── logged-out HTML structure (browser E2E equivalent) ────────────────────
+    await t.test("logged-out HTML - theme toggle present, privileged controls start hidden", async () => {
+      const res = await fetch(`${baseUrl}/`);
+      assert.equal(res.status, 200);
+      const html = await res.text();
+      assert.ok(html.includes('id="theme-toggle"'), "Expected theme-toggle button in served HTML");
+      assert.ok(html.includes('aria-label='), "Expected aria-label on theme-toggle");
+      assert.ok(
+        /id="auth-logout"[^>]*class="[^"]*hidden/.test(html) ||
+        /class="[^"]*hidden[^"]*"[^>]*id="auth-logout"/.test(html),
+        "Logout button must start hidden in served HTML"
+      );
+      assert.ok(
+        /id="auth-identity-bar"[^>]*class="[^"]*hidden/.test(html) ||
+        /class="[^"]*hidden[^"]*"[^>]*id="auth-identity-bar"/.test(html),
+        "Identity bar must start hidden in served HTML"
+      );
+      assert.ok(
+        /id="provision-card"[^>]*class="[^"]*hidden/.test(html) ||
+        /class="[^"]*hidden[^"]*"[^>]*id="provision-card"/.test(html),
+        "Provision card must start hidden in served HTML"
+      );
+      assert.ok(html.includes('id="auth-login-card"'), "Login card must be present in served HTML");
+    });
+
     // ── unauth endpoint (404 when auth disabled path) ─────────────────────────
     await t.test("action 404 - non-existent entity returns 404", async () => {
       const res = await fetch(`${baseUrl}/nonexistent`);

@@ -1398,11 +1398,13 @@ test("UI permission-aware controls - hasPermission gates entity access", () => {
 test("UI no auth token storage - no localStorage token writes", () => {
   const ir = compileOk(authSource);
   const ui = generateUi(ir);
-  // Token must NOT be stored in localStorage
-  assert.ok(!ui.appJs.includes("localStorage.setItem") || !ui.appJs.includes("token"));
-  // Specifically must not write token to storage
+  // Theme preference may be stored; auth/session tokens must NOT be
   const localStorageTokenWrite = /localStorage\.setItem\s*\(\s*['"].*token/.test(ui.appJs);
   assert.equal(localStorageTokenWrite, false, "UI must not store auth tokens in localStorage");
+  const localStorageAuthWrite = /localStorage\.setItem\s*\(\s*['"].*(?:auth|session|csrf|login)/.test(ui.appJs);
+  assert.equal(localStorageAuthWrite, false, "UI must not store auth values in localStorage");
+  // Only theme key is permitted in localStorage writes
+  assert.ok(ui.appJs.includes("localStorage.setItem('theme'"), "Theme preference must be stored via localStorage");
 });
 
 test("UI session expiration - 401 triggers re-login", () => {
@@ -1495,4 +1497,101 @@ allow Member to read User where self
 `),
     "E046"
   );
+});
+
+// ── UI regression: theme toggle, logged-out shell, favicon ───────────────────
+
+test("UI theme toggle - button present in header with accessible aria-label", () => {
+  const ir = compileOk(authSource);
+  const ui = generateUi(ir);
+  assert.ok(ui.indexHtml.includes('id="theme-toggle"'), "Expected theme-toggle button in HTML");
+  assert.ok(ui.indexHtml.includes('aria-label='), "Expected aria-label on theme toggle");
+  assert.ok(ui.appJs.includes("theme-toggle"), "Expected theme-toggle referenced in app.js");
+});
+
+test("UI theme toggle - present for non-auth app too", () => {
+  const ui = generateUi(compileOk(minimalSource));
+  assert.ok(ui.indexHtml.includes('id="theme-toggle"'), "Expected theme-toggle in non-auth HTML");
+});
+
+test("UI theme toggle - switches data-theme attribute and stores only theme in localStorage", () => {
+  const ui = generateUi(compileOk(authSource));
+  assert.ok(ui.appJs.includes("localStorage.setItem('theme'"), "Expected localStorage theme write");
+  assert.ok(ui.appJs.includes("data-theme"), "Expected data-theme attribute toggle");
+  assert.ok(ui.appJs.includes("applyTheme"), "Expected applyTheme helper");
+  assert.ok(ui.appJs.includes("toggleTheme"), "Expected toggleTheme function");
+  const tokenWrite = /localStorage\.setItem\s*\(\s*['"].*token/.test(ui.appJs);
+  assert.equal(tokenWrite, false, "Must not store auth tokens in localStorage");
+  const authWrite = /localStorage\.setItem\s*\(\s*['"].*(?:auth|session|csrf|login)/.test(ui.appJs);
+  assert.equal(authWrite, false, "Must not store auth values in localStorage");
+});
+
+test("UI theme toggle - honors initial data-theme from inline scripts", () => {
+  const ui = generateUi(compileOk(authSource));
+  assert.ok(
+    ui.appJs.includes("applyTheme(document.documentElement.getAttribute('data-theme') || 'light')"),
+    "Expected theme init from DOM attribute"
+  );
+});
+
+test("UI logged-out state - identity bar starts hidden in HTML", () => {
+  const ir = compileOk(authSource);
+  const ui = generateUi(ir);
+  assert.ok(ui.indexHtml.includes('id="auth-identity-bar"'), "Expected auth-identity-bar element");
+  assert.ok(
+    /id="auth-identity-bar"\s+class="[^"]*hidden/.test(ui.indexHtml) ||
+    /class="[^"]*hidden[^"]*"\s+id="auth-identity-bar"/.test(ui.indexHtml),
+    "Expected auth-identity-bar to carry hidden class in initial HTML"
+  );
+});
+
+test("UI logged-out state - logout button starts hidden in HTML", () => {
+  const ir = compileOk(authSource);
+  const ui = generateUi(ir);
+  assert.ok(
+    /id="auth-logout"\s+class="[^"]*hidden/.test(ui.indexHtml) ||
+    /class="[^"]*hidden[^"]*"\s+id="auth-logout"/.test(ui.indexHtml),
+    "Expected auth-logout to carry hidden class in initial HTML"
+  );
+});
+
+test("UI logged-out showLogin - hides identity bar, logout, and provision", () => {
+  const ui = generateUi(compileOk(authSource));
+  assert.ok(ui.appJs.includes("identityBar.classList.add('hidden')"), "showLogin must hide identity bar");
+  assert.ok(ui.appJs.includes("logoutBtn.classList.add('hidden')"), "showLogin must hide logout button");
+  assert.ok(ui.appJs.includes("provisionCard.classList.add('hidden')"), "showLogin must hide provision card");
+});
+
+test("UI logged-in showApp - reveals identity bar and logout for auth app only", () => {
+  const ui = generateUi(compileOk(authSource));
+  assert.ok(ui.appJs.includes("logoutBtn.classList.remove('hidden')"), "showApp must unhide logout");
+  assert.ok(ui.appJs.includes("identityBar.classList.remove('hidden')"), "showApp must unhide identity bar");
+  assert.ok(ui.appJs.includes("if (schema.authEnabled)"), "showApp identity/logout reveal must be gated on schema.authEnabled");
+});
+
+test("UI provision card starts hidden in HTML", () => {
+  const ir = compileOk(authSource);
+  const ui = generateUi(ir);
+  assert.ok(
+    /id="provision-card"\s+class="[^"]*hidden/.test(ui.indexHtml) ||
+    /class="[^"]*hidden[^"]*"\s+id="provision-card"/.test(ui.indexHtml),
+    "Expected provision-card to carry hidden class in initial HTML"
+  );
+});
+
+test("runtime favicon 204 route present in generated code", () => {
+  const ir = compileOk(minimalSource);
+  const code = generateRuntime(ir, buildManifest(ir), generateUi(ir)).appMjs;
+  assert.ok(code.includes("/favicon"), "Expected /favicon.ico route in runtime");
+  assert.ok(code.includes("204"), "Expected 204 status code in favicon route");
+  assert.ok(code.includes("res.end()"), "Expected empty response body for favicon");
+});
+
+test("runtime /auth/me returns 401 for unauthenticated - expected behavior documented", () => {
+  // A 401 from /auth/me while logged out is intentionally correct.
+  // Browser console noise from the initial unauthenticated probe is accepted per spec.
+  const ir = compileOk(authSource);
+  const code = generateRuntime(ir, buildManifest(ir), generateUi(ir)).appMjs;
+  assert.ok(code.includes("UNAUTHORIZED"), "Expected UNAUTHORIZED on /auth/me for unauthenticated");
+  assert.ok(code.includes("json(res, 401"), "Expected 401 status on /auth/me");
 });
