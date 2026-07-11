@@ -82,14 +82,14 @@ looks like readable English rather than Python or SQL.
 
 | Path | Purpose |
 |---|---|
-| [`../issue-tracker.intent`](../issue-tracker.intent) | The single controlled-English source |
-| [`../issue-tracker-generated/`](../issue-tracker-generated/) | Committed snapshot of all generated artifacts |
-| [`../issue-tracker-generated/app.mjs`](../issue-tracker-generated/app.mjs) | Generated backend server |
-| [`../issue-tracker-generated/app.js`](../issue-tracker-generated/app.js) | Generated frontend behavior |
-| [`../issue-tracker-generated/styles.css`](../issue-tracker-generated/styles.css) | Generated frontend styles |
-| [`../issue-tracker-generated/index.html`](../issue-tracker-generated/index.html) | Generated HTML shell |
-| [`../issue-tracker-generated/migration.sql`](../issue-tracker-generated/migration.sql) | Generated database schema |
-| [`../issue-tracker-generated/intentlang.manifest.json`](../issue-tracker-generated/intentlang.manifest.json) | Generated typed IR + fingerprint |
+| [`../examples/issue-tracker.intent`](../examples/issue-tracker.intent) | The single controlled-English source |
+| [`../examples/issue-tracker-generated/`](../examples/issue-tracker-generated/) | Committed snapshot of all generated artifacts |
+| [`../examples/issue-tracker-generated/app.mjs`](../examples/issue-tracker-generated/app.mjs) | Generated backend server |
+| [`../examples/issue-tracker-generated/app.js`](../examples/issue-tracker-generated/app.js) | Generated frontend behavior |
+| [`../examples/issue-tracker-generated/styles.css`](../examples/issue-tracker-generated/styles.css) | Generated frontend styles |
+| [`../examples/issue-tracker-generated/index.html`](../examples/issue-tracker-generated/index.html) | Generated HTML shell |
+| [`../examples/issue-tracker-generated/migration.sql`](../examples/issue-tracker-generated/migration.sql) | Generated database schema |
+| [`../examples/issue-tracker-generated/intentlang.manifest.json`](../examples/issue-tracker-generated/intentlang.manifest.json) | Generated typed IR + fingerprint |
 
 ---
 
@@ -450,9 +450,9 @@ user data and runtime state. The `.gitignore` file excludes all
 
 ### Files
 
-- [`../issue-tracker-generated/index.html`](../issue-tracker-generated/index.html)
-- [`../issue-tracker-generated/app.js`](../issue-tracker-generated/app.js)
-- [`../issue-tracker-generated/styles.css`](../issue-tracker-generated/styles.css)
+- [`../examples/issue-tracker-generated/index.html`](../examples/issue-tracker-generated/index.html)
+- [`../examples/issue-tracker-generated/app.js`](../examples/issue-tracker-generated/app.js)
+- [`../examples/issue-tracker-generated/styles.css`](../examples/issue-tracker-generated/styles.css)
 
 ### Login-only shell when logged out
 
@@ -631,7 +631,7 @@ It was not handwritten for this application.
 
 ### File
 
-- [`../issue-tracker-generated/app.mjs`](../issue-tracker-generated/app.mjs)
+- [`../examples/issue-tracker-generated/app.mjs`](../examples/issue-tracker-generated/app.mjs)
 
 ### Server startup
 
@@ -885,7 +885,7 @@ typed IR — so you can tell which compiler version produced each record.
 
 ### File
 
-- [`../issue-tracker-generated/migration.sql`](../issue-tracker-generated/migration.sql)
+- [`../examples/issue-tracker-generated/migration.sql`](../examples/issue-tracker-generated/migration.sql)
 
 ### Complete migration.sql
 
@@ -987,7 +987,7 @@ CSRF tokens. All sensitive values are hashed before storage.
 
 ### File
 
-- [`../issue-tracker-generated/intentlang.manifest.json`](../issue-tracker-generated/intentlang.manifest.json)
+- [`../examples/issue-tracker-generated/intentlang.manifest.json`](../examples/issue-tracker-generated/intentlang.manifest.json)
 
 The manifest contains:
 - `compilerVersion` — the exact IntentLang version used.
