@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IssueTracker</title>
+<script>(() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();</script>
+<script>(function(){var t=localStorage.getItem('theme');if(t==='dark'&&!new URLSearchParams(window.location.search).get('scoutTheme')){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<link rel="stylesheet" href="/styles.css">
+<script nonce="__INTENTLANG_NONCE__">window.__INTENTLANG_SCRIPT_HASHES__={"scout":"sha256-WvI/8458JiRfrlEicAv3wbmp2Cxb2fpzogYsrs7NC1s=","theme":"sha256-bgEY38FTnlgFOaKK67Gezkcopsz2Glx6h7wrpBIAym8="};window.APP_SCHEMA={"name":"IssueTracker","authEnabled":true,"roles":[{"id":"administrator","name":"Administrator"},{"id":"member","name":"Member"}],"entities":[{"id":"user","name":"User","path":"/users","fields":[{"id":"user-name","name":"name","type":"text","required":true,"unique":false},{"id":"user-email","name":"email","type":"text","required":true,"unique":true,"length":{"min":1,"max":320}}],"relationships":[],"forceOwnerRoleIds":[],"actions":[]},{"id":"project","name":"Project","path":"/projects","fields":[{"id":"project-name","name":"name","type":"text","required":true,"unique":false}],"relationships":[],"forceOwnerRoleIds":[],"actions":[]},{"id":"ticket","name":"Ticket","path":"/tickets","fields":[{"id":"ticket-title","name":"title","type":"text","required":true,"unique":false,"length":{"min":1,"max":200}},{"id":"ticket-description","name":"description","type":"text","required":false,"unique":false},{"id":"ticket-status","name":"status","type":"text","required":false,"unique":false,"default":"open"}],"relationships":[{"id":"ticket-project","name":"project","column":"project_id","targetEntityId":"project","targetName":"Project","targetPath":"/projects"},{"id":"ticket-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":["member"],"actions":[{"id":"ticket-start","name":"start","effects":["status → in-progress"],"preconditionMessages":["Ticket is not open"]},{"id":"ticket-close","name":"close","effects":["status → closed"],"preconditionMessages":["Ticket is already closed"]}]}]};</script>
+</head>
+<body>
+<div class="page">
+  <header class="card row app-header">
+    <h1>IssueTracker</h1>
+    <button id="theme-toggle" class="btn-secondary" type="button" aria-label="Switch to dark mode">🌙</button>
+    <div id="auth-identity-bar" class="identity hidden">
+      <div id="auth-identity"></div>
+      <div class="muted" id="auth-role"></div>
+    </div>
+    <button id="auth-logout" class="btn-secondary hidden" type="button">Log out</button>
+  </header>
+  <section id="auth-login-card" class="card ">
+    <h2>Sign in</h2>
+    <form id="auth-login-form" class="auth-login-form">
+      <div class="field"><label for="auth-login-email">Email</label><input id="auth-login-email" type="email" autocomplete="username" required></div>
+      <div class="field"><label for="auth-login-password">Password</label><input id="auth-login-password" type="password" autocomplete="current-password" required></div>
+      <button id="auth-login-submit" class="btn" type="submit">Sign in</button>
+      <div id="auth-login-error" class="status" aria-live="assertive"></div>
+    </form>
+  </section>
+  <main id="app-root" class="hidden">
+    <section id="provision-card" class="card hidden" aria-labelledby="provision-heading">
+      <h2 id="provision-heading">Provision account</h2>
+      <form id="provision-form" class="provision-form">
+        <div class="field"><label for="provision-name">Name</label><input id="provision-name" autocomplete="off" required></div>
+        <div class="field"><label for="provision-email">Email</label><input id="provision-email" type="email" autocomplete="off" required></div>
+        <div class="field"><label for="provision-password">Temporary password</label><input id="provision-password" type="password" autocomplete="new-password" minlength="12" required></div>
+        <div class="field"><label for="provision-role">Role</label><select id="provision-role" required></select></div>
+        <div class="form-actions"><button id="provision-submit" class="btn" type="submit">Provision</button></div>
+      </form>
+      <div id="provision-error" class="status" aria-live="polite"></div>
+    </section>
+    <section class="card" aria-labelledby="entity-heading">
+      <nav id="entity-nav" class="row" aria-label="Entities"></nav>
+      <div class="row">
+        <h2 id="entity-heading">Records</h2>
+        <button id="entity-create" class="btn" type="button">New record</button>
+      </div>
+      <div id="page-status" class="status" aria-live="polite"></div>
+      <div id="entity-table"></div>
+    </section>
+  </main>
+</div>
+<dialog id="entity-dialog" aria-labelledby="entity-dialog-title">
+  <div class="dialog-body">
+    <h2 id="entity-dialog-title">Record</h2>
+    <form id="entity-form" class="dialog-form">
+      <div id="entity-fields"></div>
+      <div id="entity-error" class="status" aria-live="assertive"></div>
+      <div class="dialog-actions">
+        <button id="entity-reload" class="btn-secondary hidden" type="button">Reload</button>
+        <button id="entity-cancel" class="btn-secondary" type="button">Cancel</button>
+        <button id="entity-submit" class="btn" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+<dialog id="action-dialog" aria-labelledby="action-dialog-title" aria-describedby="action-target">
+  <div class="dialog-body">
+    <h2 id="action-dialog-title">Confirm action</h2>
+    <p id="action-target"></p>
+    <p>Declared effects:</p>
+    <ul id="action-effects" class="effects"></ul>
+    <div id="action-error" class="status" aria-live="assertive"></div>
+    <div class="dialog-actions">
+      <button id="action-reload" class="btn-secondary hidden" type="button">Reload</button>
+      <button id="action-cancel" class="btn-secondary" type="button">Cancel</button>
+      <button id="action-confirm" class="btn" type="button">Confirm</button>
+    </div>
+  </div>
+</dialog>
+<script src="/app.js"></script>
+</body>
+</html>

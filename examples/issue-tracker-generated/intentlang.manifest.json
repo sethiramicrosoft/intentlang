@@ -1,0 +1,295 @@
+{
+  "compilerVersion": "0.6.0-alpha.0",
+  "ir": {
+    "actions": [
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "in-progress"
+          }
+        ],
+        "entityId": "ticket",
+        "id": "ticket-start",
+        "name": "start",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Ticket is not open",
+            "operator": "is",
+            "value": "open"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "closed"
+          }
+        ],
+        "entityId": "ticket",
+        "id": "ticket-close",
+        "name": "close",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Ticket is already closed",
+            "operator": "is not",
+            "value": "closed"
+          }
+        ]
+      }
+    ],
+    "application": {
+      "id": "issuetracker",
+      "name": "IssueTracker"
+    },
+    "authentication": {
+      "identityEntityId": "user",
+      "identityFieldId": "user-email"
+    },
+    "entities": [
+      {
+        "fields": [
+          {
+            "id": "user-name",
+            "name": "name",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "user-email",
+            "length": {
+              "max": 320,
+              "min": 1
+            },
+            "name": "email",
+            "required": true,
+            "type": "text",
+            "unique": true
+          }
+        ],
+        "id": "user",
+        "name": "User"
+      },
+      {
+        "fields": [
+          {
+            "id": "project-name",
+            "name": "name",
+            "required": true,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "project",
+        "name": "Project"
+      },
+      {
+        "fields": [
+          {
+            "id": "ticket-title",
+            "length": {
+              "max": 200,
+              "min": 1
+            },
+            "name": "title",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "ticket-description",
+            "name": "description",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "open",
+            "id": "ticket-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "ticket",
+        "name": "Ticket"
+      }
+    ],
+    "permissions": [
+      {
+        "entityId": "",
+        "id": "perm-administrator-provision",
+        "operation": "provision",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-administrator-create-user",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-administrator-read-user",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-administrator-update-user",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "project",
+        "id": "perm-administrator-create-project",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "project",
+        "id": "perm-administrator-read-project",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "project",
+        "id": "perm-administrator-update-project",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "ticket",
+        "id": "perm-administrator-create-ticket",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "ticket",
+        "id": "perm-administrator-read-ticket",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "ticket",
+        "id": "perm-administrator-update-ticket",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "ticket-start",
+        "entityId": "ticket",
+        "id": "perm-administrator-run-ticket-start",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "ticket-close",
+        "entityId": "ticket",
+        "id": "perm-administrator-run-ticket-close",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-member-read-user",
+        "operation": "read",
+        "roleId": "member",
+        "scope": {
+          "kind": "self"
+        }
+      },
+      {
+        "entityId": "project",
+        "id": "perm-member-read-project",
+        "operation": "read",
+        "roleId": "member"
+      },
+      {
+        "entityId": "ticket",
+        "id": "perm-member-create-ticket",
+        "operation": "create",
+        "roleId": "member",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "ticket",
+        "id": "perm-member-read-ticket",
+        "operation": "read",
+        "roleId": "member",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "ticket-owner"
+        }
+      },
+      {
+        "entityId": "ticket",
+        "id": "perm-member-update-ticket",
+        "operation": "update",
+        "roleId": "member",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "ticket-owner"
+        }
+      },
+      {
+        "actionId": "ticket-start",
+        "entityId": "ticket",
+        "id": "perm-member-run-ticket-start",
+        "operation": "run",
+        "roleId": "member",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "ticket-owner"
+        }
+      },
+      {
+        "actionId": "ticket-close",
+        "entityId": "ticket",
+        "id": "perm-member-run-ticket-close",
+        "operation": "run",
+        "roleId": "member",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "ticket-owner"
+        }
+      }
+    ],
+    "relationships": [
+      {
+        "fromEntityId": "ticket",
+        "id": "ticket-project",
+        "name": "project",
+        "onDelete": "cascade",
+        "toEntityId": "project"
+      },
+      {
+        "fromEntityId": "ticket",
+        "id": "ticket-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      }
+    ],
+    "roles": [
+      {
+        "id": "administrator",
+        "name": "Administrator"
+      },
+      {
+        "id": "member",
+        "name": "Member"
+      }
+    ],
+    "schemaVersion": "0.5.0"
+  },
+  "irFingerprint": "sha256:5f79d95ef6d1fe5eee715aac1070034e272a1cad7d0ba350ebdf9b9e948dd6f6",
+  "schemaVersion": "0.5.0"
+}

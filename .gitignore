@@ -53,3 +53,11 @@ test-results/
 
 # Local generated app outputs (if regenerated)
 examples/*-app/
+
+# Curated read-only snapshot is tracked; exclude only its runtime data
+!examples/issue-tracker-generated/
+examples/issue-tracker-generated/app.sqlite
+examples/issue-tracker-generated/app.sqlite-*
+examples/issue-tracker-generated/.env
+examples/issue-tracker-generated/.env.*
+examples/issue-tracker-generated/node_modules/

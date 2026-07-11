@@ -15,27 +15,28 @@
 2. [Why this exists](#why-this-exists)
 3. [How it works (pipeline)](#how-it-works-pipeline)
 4. [IntentLang Studio alpha](#intentlang-studio-alpha)
-5. [What v0.6.0-alpha can do](#what-v060-alpha-can-do)
-6. [Current limitations](#current-limitations)
-7. [Prerequisites (beginner-friendly)](#prerequisites-beginner-friendly)
-8. [Install from GitHub](#install-from-github)
-9. [Five-minute quick start](#five-minute-quick-start)
-10. [Safe bootstrap and run (no credential literals)](#safe-bootstrap-and-run-no-credential-literals)
-11. [Browser walkthrough](#browser-walkthrough)
-12. [Language tutorial](#language-tutorial)
-13. [Additional example: issue tracker](#additional-example-issue-tracker)
-14. [CLI reference](#cli-reference)
-15. [Generated artifacts reference](#generated-artifacts-reference)
-16. [Safety model deep dive](#safety-model-deep-dive)
-17. [Data and migration guidance](#data-and-migration-guidance)
-18. [Project structure](#project-structure)
-19. [Development guide](#development-guide)
-20. [Troubleshooting](#troubleshooting)
-21. [Security and privacy](#security-and-privacy)
-22. [Roadmap (non-binding)](#roadmap-non-binding)
-23. [FAQ](#faq)
-24. [Contributing and governance](#contributing-and-governance)
-25. [Repository topics](#repository-topics)
+5. [**Proof: a complete full-stack app generated without AI**](#proof-a-complete-full-stack-app-generated-without-ai)
+6. [What v0.6.0-alpha can do](#what-v060-alpha-can-do)
+7. [Current limitations](#current-limitations)
+8. [Prerequisites (beginner-friendly)](#prerequisites-beginner-friendly)
+9. [Install from GitHub](#install-from-github)
+10. [Five-minute quick start](#five-minute-quick-start)
+11. [Safe bootstrap and run (no credential literals)](#safe-bootstrap-and-run-no-credential-literals)
+12. [Browser walkthrough](#browser-walkthrough)
+13. [Language tutorial](#language-tutorial)
+14. [Additional example: issue tracker](#additional-example-issue-tracker)
+15. [CLI reference](#cli-reference)
+16. [Generated artifacts reference](#generated-artifacts-reference)
+17. [Safety model deep dive](#safety-model-deep-dive)
+18. [Data and migration guidance](#data-and-migration-guidance)
+19. [Project structure](#project-structure)
+20. [Development guide](#development-guide)
+21. [Troubleshooting](#troubleshooting)
+22. [Security and privacy](#security-and-privacy)
+23. [Roadmap (non-binding)](#roadmap-non-binding)
+24. [FAQ](#faq)
+25. [Contributing and governance](#contributing-and-governance)
+26. [Repository topics](#repository-topics)
 
 ## What this project is
 
@@ -227,6 +228,73 @@ Or run without installing globally:
 ```bash
 node /path/to/intentlang/dist/src/cli.js studio myapp.intent
 ```
+
+## Proof: a complete full-stack app generated without AI
+
+> **One `.intent` file. No model inference. No API calls. No tokens.
+> A complete running web application.**
+
+The `examples/issue-tracker.intent` source file (44 lines of controlled
+English) was fed to the IntentLang compiler. The compiler produced
+seven artifacts — backend, frontend, and database — with no AI
+involvement at any stage. No generated file was hand-edited to make
+the proof pass.
+
+### What was generated
+
+| Layer | File | What it does |
+|---|---|---|
+| **Backend** | [`examples/issue-tracker-generated/app.mjs`](examples/issue-tracker-generated/app.mjs) | Node.js HTTP server: auth, CRUD, actions, sessions, CSRF, idempotency, audit |
+| **Frontend** | [`examples/issue-tracker-generated/app.js`](examples/issue-tracker-generated/app.js) | Browser behavior: login, entity nav, tables, forms, dialogs, CSRF, idempotency |
+| **Frontend** | [`examples/issue-tracker-generated/index.html`](examples/issue-tracker-generated/index.html) | HTML shell with embedded app schema |
+| **Frontend** | [`examples/issue-tracker-generated/styles.css`](examples/issue-tracker-generated/styles.css) | Clawpilot light/dark CSS theme |
+| **Database** | [`examples/issue-tracker-generated/migration.sql`](examples/issue-tracker-generated/migration.sql) | SQLite DDL: tables, constraints, foreign keys, unique index |
+| **IR** | [`examples/issue-tracker-generated/intentlang.manifest.json`](examples/issue-tracker-generated/intentlang.manifest.json) | Full typed IR + SHA-256 fingerprint |
+| **Backend** | [`examples/issue-tracker-generated/package.json`](examples/issue-tracker-generated/package.json) | Minimal runtime descriptor |
+
+### What was proved
+
+- **No AI.** Zero model inference, API calls, subscriptions, or tokens
+  at any stage: checking, generation, or runtime.
+- **No hand-editing.** The snapshot in `examples/issue-tracker-generated/`
+  is raw compiler output. No file was manually modified after generation.
+- **Deterministic.** The same source + compiler version produce the same
+  artifacts. Run the generate command yourself to verify.
+- **Runnable.** The generated app passed an end-to-end walkthrough:
+  admin bootstrap, member provisioning, ticket create/edit/start/close,
+  ownership enforcement, isolation between members, idempotency replay,
+  version-conflict detection, and audit log verification.
+
+### Open the Issue Tracker in Studio
+
+```bash
+npm run build
+node dist/src/cli.js studio examples/issue-tracker.intent
+```
+
+Studio opens at `http://127.0.0.1:3211`. Click **Generate App** to
+reproduce the snapshot.
+
+### Generate and run (command line)
+
+```bash
+node dist/src/cli.js generate examples/issue-tracker.intent \
+  --output examples/issue-tracker-app --write --force
+cd examples/issue-tracker-app && npm install
+# Set bootstrap env vars (see Safe bootstrap section), then:
+node app.mjs
+```
+
+### Full case study
+
+→ **[`docs/issue-tracker-full-stack.md`](docs/issue-tracker-full-stack.md)**
+
+Beginner-friendly, line-by-line explanation of the source, the exact
+pipeline, every generated file, safe bootstrap instructions for Windows
+and macOS/Linux, backend/frontend/database excerpts, a complete runtime
+walkthrough, a Mermaid diagram, and a reproduction checklist.
+
+---
 
 ## What v0.6.0-alpha can do
 
