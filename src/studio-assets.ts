@@ -1448,7 +1448,9 @@ export const STUDIO_JS = `
       badge.textContent = 'AI assistance: Off';
       badge.classList.remove('ai-active');
     } else {
-      var label = aiState.provider + (aiState.model ? ' / ' + aiState.model : '');
+      var providerNames = { 'ollama': 'Ollama', 'openai-compatible': 'OpenAI-compat', 'gemini': 'Gemini' };
+      var displayName = providerNames[aiState.provider] || aiState.provider;
+      var label = displayName + (aiState.model ? ' / ' + aiState.model : '');
       badge.textContent = 'AI: ' + label;
       badge.classList.add('ai-active');
     }
@@ -1466,11 +1468,18 @@ export const STUDIO_JS = `
       el('btn-ai-propose').disabled = true;
     } else {
       el('ai-notice').className = 'ai-notice';
-      var notice = aiState.isLocal
-        ? 'Your description and current source are sent to the configured provider. ' +
-          'Data stays on this machine (subject to local server behaviour). Compiler and generated app remain AI-free.'
-        : 'Your description and current source are sent to the configured remote provider (' + escText(aiState.endpointOrigin) + '). ' +
+      var notice;
+      if (aiState.provider === 'gemini') {
+        notice = 'Your description and current source are sent to Google Gemini endpoint (' + escText(aiState.endpointOrigin) + '). ' +
+          'Free-tier availability, quotas, billing, and terms are controlled by your Google account and may change. ' +
+          'Compiler and generated app remain AI-free.';
+      } else if (aiState.isLocal) {
+        notice = 'Your description and current source are sent to the configured provider. ' +
+          'Data stays on this machine (subject to local server behaviour). Compiler and generated app remain AI-free.';
+      } else {
+        notice = 'Your description and current source are sent to the configured remote provider (' + escText(aiState.endpointOrigin) + '). ' +
           'Costs and privacy depend on that provider. Compiler and generated app remain AI-free.';
+      }
       el('ai-notice').textContent = notice;
       el('btn-ai-propose').disabled = false;
     }
@@ -1970,6 +1979,13 @@ export function buildStudioHtml(filename: string, port: number): string {
     --ai-provider openai-compatible \\
     --ai-model &lt;model-name&gt; \\
     --ai-endpoint https://&lt;your-gateway&gt; \\
+    --allow-remote-ai
+
+  # Google Gemini (direct REST API, requires --allow-remote-ai):
+  # Set env INTENTLANG_AI_API_KEY before starting Studio.
+  intentlang studio app.intent \\
+    --ai-provider gemini \\
+    --ai-model &lt;your-gemini-model&gt; \\
     --allow-remote-ai</pre>
     <p class="dialog-body" style="font-size:11px;color:var(--cp-text-muted);">AI output is untrusted text and cannot write files, execute commands, or override compiler errors. The compiler and generated app remain AI-free.</p>
     <div class="dialog-actions">

@@ -7,9 +7,10 @@ export const MIN_TIMEOUT_MS = 5_000;
 export const MAX_TIMEOUT_MS = 120_000;
 export const OLLAMA_DEFAULT_ENDPOINT = "http://127.0.0.1:11434";
 export const OPENAI_COMPAT_DEFAULT_ENDPOINT = "http://127.0.0.1:1234";
+export const GEMINI_DEFAULT_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta";
 export const AI_API_KEY_ENV = "INTENTLANG_AI_API_KEY";
 
-export type AiProviderKind = "none" | "ollama" | "openai-compatible";
+export type AiProviderKind = "none" | "ollama" | "openai-compatible" | "gemini";
 
 export interface AiDiagnostic {
   line: number;
@@ -163,6 +164,7 @@ export function effectiveAiConfig(partial: Partial<AiConfig>): AiConfig {
   if (!endpoint) {
     if (provider === "ollama") endpoint = OLLAMA_DEFAULT_ENDPOINT;
     else if (provider === "openai-compatible") endpoint = OPENAI_COMPAT_DEFAULT_ENDPOINT;
+    else if (provider === "gemini") endpoint = GEMINI_DEFAULT_ENDPOINT;
   }
 
   let timeoutMs = partial.timeoutMs ?? DEFAULT_TIMEOUT_MS;

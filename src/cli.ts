@@ -305,7 +305,7 @@ function printUsage(): void {
   console.error("  intentlang format <source> [--write] [--output <path> --write [--force]]");
   console.error("  intentlang generate <source> --output <directory> [--write] [--force] [--allow-data-loss] [--allow-security-downgrade]");
   console.error("  intentlang studio <source> [--port <number>] [--no-open]");
-  console.error("    [--ai-provider none|ollama|openai-compatible]");
+  console.error("    [--ai-provider none|ollama|openai-compatible|gemini]");
   console.error("    [--ai-model <model>] [--ai-endpoint <url>] [--ai-timeout <ms>]");
   console.error("    [--allow-remote-ai]");
   console.error("  API key (if needed): set env INTENTLANG_AI_API_KEY before starting Studio.");
@@ -342,7 +342,7 @@ async function runStudio(
 
   // AI flags (all optional; provider defaults to "none")
   const aiProviderRaw = findOptionValue(options, "--ai-provider") ?? "none";
-  const validProviders = ["none", "ollama", "openai-compatible"];
+  const validProviders = ["none", "ollama", "openai-compatible", "gemini"];
   if (!validProviders.includes(aiProviderRaw)) {
     console.error(`--ai-provider must be one of: ${validProviders.join(", ")}`);
     process.exitCode = 2;

@@ -22,7 +22,7 @@ Flow: user description + current source → provider → proposed IntentLang →
 
 ## Supported providers
 
-Any model exposed through **Ollama** or an **OpenAI-compatible chat API** is supported. This includes many free/open models you can run locally. It does not cover every provider without a gateway.
+Any model exposed through **Ollama**, an **OpenAI-compatible chat API**, or **Google Gemini** is supported.
 
 ### Provider 1: Ollama (local, recommended)
 
@@ -67,22 +67,43 @@ intentlang studio my-app.intent \
 
 > **Note:** Many open/local models can be run without per-token API fees, subject to their license terms and your hardware and electricity costs. Cloud gateways may charge per token — check your provider's pricing.
 
+### Provider 3: Google Gemini (direct REST API)
+
+IntentLang connects directly to the Google Gemini `generateContent` REST API (no SDK dependency). This is a **remote** provider — it always requires `--allow-remote-ai`.
+
+```bash
+# Set API key before starting Studio (never pass as flag):
+export INTENTLANG_AI_API_KEY=<your-key>
+
+intentlang studio my-app.intent \
+  --ai-provider gemini \
+  --ai-model <your-gemini-model> \
+  --allow-remote-ai
+```
+
+Default endpoint: `https://generativelanguage.googleapis.com/v1beta` (canonical Google Gemini API base).
+
+> **Privacy notice:** When the Gemini provider is selected, your description and the current source are sent to Google Gemini's endpoint. Free-tier availability, quotas, billing, and terms of service are **controlled by your Google account** and can change. Check [Google AI Studio](https://aistudio.google.com/) for current quota and billing details.
+
+> **API key:** Set `INTENTLANG_AI_API_KEY` in your environment before starting Studio. The key is attached to requests using the `x-goog-api-key` header (not URL query parameters). It is never logged, never returned to the browser, and never included in error messages.
+
 ## CLI flags
 
 | Flag | Default | Description |
 |---|---|---|
-| `--ai-provider` | `none` | `none`, `ollama`, or `openai-compatible` |
+| `--ai-provider` | `none` | `none`, `ollama`, `openai-compatible`, or `gemini` |
 | `--ai-model` | (provider default) | Model name to request |
 | `--ai-endpoint` | loopback default | Base URL for the provider API |
 | `--ai-timeout` | `60000` | Request timeout in milliseconds (5000–120000) |
-| `--allow-remote-ai` | false | Required for non-loopback endpoints (must use HTTPS) |
+| `--allow-remote-ai` | false | Required for non-loopback endpoints (must use HTTPS). Required for `gemini`. |
 
-**API key:** set the `INTENTLANG_AI_API_KEY` environment variable before starting Studio. It is never passed as a CLI flag (avoids shell history), never logged, never returned to the browser, and never included in error messages.
+**API key:** set the `INTENTLANG_AI_API_KEY` environment variable before starting Studio. It is never passed as a CLI flag (avoids shell history), never logged, never returned to the browser, and never included in error messages. For `openai-compatible`, it is sent as `Authorization: Bearer`. For `gemini`, it is sent as `x-goog-api-key` header (not URL query parameter).
 
 ## Privacy and security boundary
 
 - **Local providers** (loopback endpoint): your description and current source are sent to the local server process. Data does not leave your machine, subject to the local server's own behavior.
 - **Remote providers** (`--allow-remote-ai` + HTTPS): your description and current source are sent to the configured remote endpoint. Costs, privacy, and data retention depend on that provider's policies.
+- **Google Gemini** (`--ai-provider gemini`): description and current source are sent to Google Gemini. Free-tier availability, quotas, billing, and terms are controlled by your Google account and can change. See [Google AI Studio](https://aistudio.google.com/) for current limits.
 - **Compiler and generated apps are always AI-free.** Compilation, error diagnostics, formatting, and app generation never contact any AI provider.
 - **Configuration is process memory only.** No AI config, prompts, or responses are written to disk or logs automatically.
 - **API key is server-side only.** The browser JS never sees the API key. The key is attached to provider requests server-side only via `Authorization: Bearer`.
@@ -102,7 +123,8 @@ intentlang studio my-app.intent \
 CLI flags → effectiveAiConfig() → AiAssistant
                                       ├── AiProvider interface
                                       │     ├── OllamaProvider (POST /api/chat)
-                                      │     └── OpenAiCompatibleProvider (POST /v1/chat/completions)
+                                      │     ├── OpenAiCompatibleProvider (POST /v1/chat/completions)
+                                      │     └── GeminiProvider (POST /models/{model}:generateContent)
                                       ├── buildSystemPrompt() — grammar + examples
                                       ├── buildUserMessage() — grounded context with delimiters
                                       ├── parseAndValidate() — strict JSON parsing
@@ -116,11 +138,11 @@ The browser only sends: description, currentSource, clarificationAnswers. It nev
 - **Prompt injection:** user source content is strictly delimited with `<<CURRENT_SOURCE_START>>` / `<<CURRENT_SOURCE_END>>`. The system prompt instructs the model to treat delimited content as data. As with all LLM systems, prompt injection is a known risk; proposals always go through deterministic compiler validation before any action is possible.
 - **SSRF:** by default only loopback endpoints are permitted. Remote endpoints require `--allow-remote-ai` and HTTPS. Credentials in URLs are rejected. Redirects use `redirect: 'error'`.
 - **Response safety:** responses are size-capped at 32 KB. All model text is rendered via `textContent` (no `innerHTML` on AI output). Proposals that fail compilation are rejected with diagnostics.
-- **API key handling:** read from `INTENTLANG_AI_API_KEY` environment variable only. Never logged, serialized, returned to browser, or included in error messages.
+- **API key handling:** read from `INTENTLANG_AI_API_KEY` environment variable only. Never logged, serialized, returned to browser, or included in error messages. For `openai-compatible`, sent as `Authorization: Bearer`. For `gemini`, sent as `x-goog-api-key` header.
 
 ## Troubleshooting
 
-**"AI assistance is off"** — Start Studio with `--ai-provider ollama` or `--ai-provider openai-compatible`.
+**"AI assistance is off"** — Start Studio with `--ai-provider ollama`, `--ai-provider openai-compatible`, or `--ai-provider gemini`.
 
 **"Provider error: HTTP 404"** — Check your `--ai-endpoint` URL and that the server is running. For Ollama, default is `http://127.0.0.1:11434`.
 

@@ -53,9 +53,13 @@ The provider endpoint is configured at server startup via CLI flags only — the
 
 ### API key exposure
 The `INTENTLANG_AI_API_KEY` environment variable is the only way to supply an API key. Mitigations:
-- Key is attached to provider requests server-side only (`Authorization: Bearer`).
+- For `openai-compatible`, key is attached via `Authorization: Bearer` header server-side only.
+- For `gemini`, key is attached via `x-goog-api-key` header (not URL query parameter) server-side only.
 - Key is never logged, written to disk, returned to the browser, or included in error messages.
 - Provider error responses that might echo headers are not forwarded to the browser.
+
+### Direct remote provider (Gemini)
+`--ai-provider gemini` connects directly to `https://generativelanguage.googleapis.com/v1beta` (or a custom endpoint). This is a remote provider: it always requires `--allow-remote-ai` and HTTPS. The same SSRF and API key mitigations listed above apply. Free-tier availability, quotas, billing, and terms are controlled by Google and can change.
 
 ### Model output injection in UI
 AI-generated text is rendered via `textContent` only — no `innerHTML` on any AI output. The diff pane uses DOM element creation. No HTML is rendered from model responses.

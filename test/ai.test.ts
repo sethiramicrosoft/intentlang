@@ -4,7 +4,7 @@ import { createServer, type IncomingMessage, type ServerResponse } from "node:ht
 import { randomBytes } from "node:crypto";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { validateProviderUrl, effectiveAiConfig, OLLAMA_DEFAULT_ENDPOINT, OPENAI_COMPAT_DEFAULT_ENDPOINT, AI_API_KEY_ENV } from "../src/ai-provider.js";
+import { validateProviderUrl, effectiveAiConfig, OLLAMA_DEFAULT_ENDPOINT, OPENAI_COMPAT_DEFAULT_ENDPOINT, GEMINI_DEFAULT_ENDPOINT, AI_API_KEY_ENV } from "../src/ai-provider.js";
 import { buildSystemPrompt, buildUserMessage } from "../src/ai-prompt.js";
 import { createAiAssistant } from "../src/ai-assistant.js";
 import { STUDIO_JS, STUDIO_CSS, buildStudioHtml } from "../src/studio-assets.js";
@@ -1306,4 +1306,474 @@ test("AI test file contains no saved credential literals", async () => {
   const content = await readFileFs(filePath, "utf8");
   const re = /(?:password|passwd|secret|credential)\s*[:=]\s*["'][^"']+["']/gi;
   assert.ok(!re.test(content), "no saved credential literals in AI test file");
+});
+
+// ── J. Gemini provider tests ───────────────────────────────────────────────────
+
+test("effectiveAiConfig: gemini gets default endpoint", () => {
+  const cfg = effectiveAiConfig({ provider: "gemini" });
+  assert.equal(cfg.endpoint, GEMINI_DEFAULT_ENDPOINT);
+});
+
+test("effectiveAiConfig: gemini custom endpoint respected", () => {
+  const cfg = effectiveAiConfig({ provider: "gemini", endpoint: "http://127.0.0.1:9999" });
+  assert.equal(cfg.endpoint, "http://127.0.0.1:9999");
+});
+
+test("Gemini default endpoint requires --allow-remote-ai", () => {
+  const result = validateProviderUrl(GEMINI_DEFAULT_ENDPOINT, false);
+  assert.ok(!result.ok, "Gemini default endpoint is remote — must require allow-remote-ai");
+  assert.match(result.error!, /--allow-remote-ai/);
+});
+
+test("Gemini default endpoint accepted with --allow-remote-ai", () => {
+  const result = validateProviderUrl(GEMINI_DEFAULT_ENDPOINT, true);
+  assert.ok(result.ok, "Gemini default endpoint accepted with allow-remote-ai");
+});
+
+test("Gemini loopback endpoint accepted without --allow-remote-ai (for mock tests)", () => {
+  const result = validateProviderUrl("http://127.0.0.1:9999", false);
+  assert.ok(result.ok, "loopback endpoint works without remote flag");
+});
+
+test("Gemini provider: request path, x-goog-api-key header, and body shape", async () => {
+  const generatedKey = randomBytes(16).toString("hex");
+  const originalEnv = process.env[AI_API_KEY_ENV];
+  process.env[AI_API_KEY_ENV] = generatedKey;
+
+  let capturedPath: string | undefined;
+  let capturedApiKeyHeader: string | undefined;
+  let capturedBody: unknown = null;
+
+  const { port, close } = await createMockHttpServer((req, res) => {
+    capturedPath = req.url;
+    capturedApiKeyHeader = req.headers["x-goog-api-key"] as string;
+    let raw = "";
+    req.on("data", (c: Buffer) => { raw += c.toString(); });
+    req.on("end", () => {
+      try { capturedBody = JSON.parse(raw); } catch { capturedBody = null; }
+      const geminiResp = JSON.stringify({
+        candidates: [{
+          content: { role: "model", parts: [{ text: VALID_PROPOSAL }] },
+          finishReason: "STOP"
+        }]
+      });
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(geminiResp);
+    });
+  });
+
+  try {
+    const { assistant } = await createAiAssistant({
+      provider: "gemini",
+      model: "gemini-test",
+      endpoint: `http://127.0.0.1:${port}`,
+      timeoutMs: 10_000,
+      allowRemote: false
+    });
+
+    const result = await assistant.propose({
+      description: "inventory app",
+      currentSource: "",
+      currentDiagnostics: [],
+      currentModelSummary: ""
+    });
+
+    // Request path must be /models/{encodedModel}:generateContent
+    assert.ok(capturedPath?.includes("/models/gemini-test:generateContent"), "correct request path");
+
+    // x-goog-api-key header set with runtime-generated token
+    assert.equal(capturedApiKeyHeader, generatedKey, "x-goog-api-key header set from env");
+
+    // Request body has systemInstruction, contents, generationConfig
+    assert.ok(capturedBody !== null, "request body captured");
+    const body = capturedBody as Record<string, unknown>;
+    assert.ok("systemInstruction" in body, "systemInstruction present");
+    assert.ok("contents" in body, "contents present");
+    assert.ok("generationConfig" in body, "generationConfig present");
+
+    const si = body["systemInstruction"] as Record<string, unknown>;
+    assert.ok(Array.isArray(si["parts"]), "systemInstruction.parts is array");
+
+    const contents = body["contents"] as Array<Record<string, unknown>>;
+    assert.equal(contents.length, 1);
+    assert.equal(contents[0]!["role"], "user");
+    assert.ok(Array.isArray(contents[0]!["parts"]), "contents[0].parts is array");
+
+    const gc = body["generationConfig"] as Record<string, unknown>;
+    assert.equal(gc["responseMimeType"], "application/json", "responseMimeType set to application/json");
+
+    // Key not in returned result
+    const resultStr = JSON.stringify(result);
+    assert.ok(!resultStr.includes(generatedKey), "API key not returned in result");
+
+    assert.equal(result.kind, "proposal");
+  } finally {
+    if (originalEnv === undefined) {
+      delete process.env[AI_API_KEY_ENV];
+    } else {
+      process.env[AI_API_KEY_ENV] = originalEnv;
+    }
+    await close();
+  }
+});
+
+test("Gemini provider: multipart text parts joined deterministically", async () => {
+  const part1 = '{"kind":"proposal","source":"application Multi\\n","summary":"Multi part test","assumptions":[]}';
+  const part2 = "";  // empty second part — should be ignored in joining but not break
+  // Build a response where the proposal is split across two text parts
+  const chunk1 = part1.slice(0, 30);
+  const chunk2 = part1.slice(30);
+
+  const { port, close } = await createMockHttpServer((req, res) => {
+    let raw = "";
+    req.on("data", (c: Buffer) => { raw += c.toString(); });
+    req.on("end", () => {
+      const geminiResp = JSON.stringify({
+        candidates: [{
+          content: {
+            role: "model",
+            parts: [{ text: chunk1 }, { text: chunk2 }]
+          },
+          finishReason: "STOP"
+        }]
+      });
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(geminiResp);
+    });
+  });
+
+  try {
+    const { assistant } = await createAiAssistant({
+      provider: "gemini",
+      model: "gemini-test",
+      endpoint: `http://127.0.0.1:${port}`,
+      timeoutMs: 10_000,
+      allowRemote: false
+    });
+
+    const result = await assistant.propose({
+      description: "test multipart",
+      currentSource: "",
+      currentDiagnostics: [],
+      currentModelSummary: ""
+    });
+
+    assert.equal(result.kind, "proposal", "multipart text parts joined into valid proposal");
+  } finally {
+    await close();
+  }
+});
+
+test("Gemini provider: missing candidates returns AI_PROVIDER_UNAVAILABLE", async () => {
+  const { port, close } = await createMockHttpServer((req, res) => {
+    let raw = "";
+    req.on("data", (c: Buffer) => { raw += c.toString(); });
+    req.on("end", () => {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ candidates: [] }));
+    });
+  });
+
+  try {
+    const { assistant } = await createAiAssistant({
+      provider: "gemini",
+      model: "gemini-test",
+      endpoint: `http://127.0.0.1:${port}`,
+      timeoutMs: 10_000,
+      allowRemote: false
+    });
+
+    const result = await assistant.propose({
+      description: "test",
+      currentSource: "",
+      currentDiagnostics: [],
+      currentModelSummary: ""
+    });
+
+    assert.equal(result.kind, "error");
+    assert.equal((result as { code: string }).code, "AI_PROVIDER_UNAVAILABLE");
+    // Error message must not contain URL or leaked info
+    const errMsg = (result as { error: string }).error;
+    assert.ok(!errMsg.includes("127.0.0.1"), "error does not echo loopback URL");
+  } finally {
+    await close();
+  }
+});
+
+test("Gemini provider: prompt blocked by safety filter returns AI_PROVIDER_UNAVAILABLE", async () => {
+  const { port, close } = await createMockHttpServer((req, res) => {
+    let raw = "";
+    req.on("data", (c: Buffer) => { raw += c.toString(); });
+    req.on("end", () => {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({
+        promptFeedback: { blockReason: "SAFETY" },
+        candidates: []
+      }));
+    });
+  });
+
+  try {
+    const { assistant } = await createAiAssistant({
+      provider: "gemini",
+      model: "gemini-test",
+      endpoint: `http://127.0.0.1:${port}`,
+      timeoutMs: 10_000,
+      allowRemote: false
+    });
+
+    const result = await assistant.propose({
+      description: "test",
+      currentSource: "",
+      currentDiagnostics: [],
+      currentModelSummary: ""
+    });
+
+    assert.equal(result.kind, "error");
+    assert.equal((result as { code: string }).code, "AI_PROVIDER_UNAVAILABLE");
+    const errMsg = (result as { error: string }).error;
+    assert.ok(errMsg.toLowerCase().includes("blocked") || errMsg.toLowerCase().includes("safety"),
+      "error mentions blocked/safety");
+  } finally {
+    await close();
+  }
+});
+
+test("Gemini provider: non-2xx HTTP response sanitized (no body echoed)", async () => {
+  const generatedKey = randomBytes(16).toString("hex");
+  const originalEnv = process.env[AI_API_KEY_ENV];
+  process.env[AI_API_KEY_ENV] = generatedKey;
+
+  const { port, close } = await createMockHttpServer((req, res) => {
+    let raw = "";
+    req.on("data", (c: Buffer) => { raw += c.toString(); });
+    req.on("end", () => {
+      // Simulate error body that might echo headers — must not reach caller
+      const errorBody = JSON.stringify({ error: { message: `key=${generatedKey}` } });
+      res.writeHead(429, { "Content-Type": "application/json" });
+      res.end(errorBody);
+    });
+  });
+
+  try {
+    const { assistant } = await createAiAssistant({
+      provider: "gemini",
+      model: "gemini-test",
+      endpoint: `http://127.0.0.1:${port}`,
+      timeoutMs: 10_000,
+      allowRemote: false
+    });
+
+    const result = await assistant.propose({
+      description: "test",
+      currentSource: "",
+      currentDiagnostics: [],
+      currentModelSummary: ""
+    });
+
+    assert.equal(result.kind, "error");
+    // Key must not appear in error result
+    const resultStr = JSON.stringify(result);
+    assert.ok(!resultStr.includes(generatedKey), "API key not in error result from non-2xx");
+  } finally {
+    if (originalEnv === undefined) {
+      delete process.env[AI_API_KEY_ENV];
+    } else {
+      process.env[AI_API_KEY_ENV] = originalEnv;
+    }
+    await close();
+  }
+});
+
+test("Gemini provider: redirect rejected", async () => {
+  const { port: targetPort, close: closeTarget } = await createMockHttpServer((req, res) => {
+    res.writeHead(200, { "Content-Type": "application/json" });
+    res.end(JSON.stringify({
+      candidates: [{ content: { parts: [{ text: VALID_PROPOSAL }] } }]
+    }));
+  });
+
+  const { port, close } = await createMockHttpServer((req, res) => {
+    let raw = "";
+    req.on("data", (c: Buffer) => { raw += c.toString(); });
+    req.on("end", () => {
+      res.writeHead(302, { Location: `http://127.0.0.1:${targetPort}/models/gemini-test:generateContent` });
+      res.end();
+    });
+  });
+
+  try {
+    const { assistant } = await createAiAssistant({
+      provider: "gemini",
+      model: "gemini-test",
+      endpoint: `http://127.0.0.1:${port}`,
+      timeoutMs: 10_000,
+      allowRemote: false
+    });
+
+    const result = await assistant.propose({
+      description: "test",
+      currentSource: "",
+      currentDiagnostics: [],
+      currentModelSummary: ""
+    });
+
+    assert.equal(result.kind, "error", "redirect should result in error");
+  } finally {
+    await close();
+    await closeTarget();
+  }
+});
+
+test("Gemini provider: timeout returns AI_TIMEOUT", async () => {
+  const { port, close } = await createMockHttpServer((req, res) => {
+    // Never respond — let timeout fire
+    void req;
+    void res;
+  });
+
+  try {
+    const { assistant } = await createAiAssistant({
+      provider: "gemini",
+      model: "gemini-test",
+      endpoint: `http://127.0.0.1:${port}`,
+      timeoutMs: 5_000,
+      allowRemote: false
+    });
+
+    const result = await assistant.propose({
+      description: "test",
+      currentSource: "",
+      currentDiagnostics: [],
+      currentModelSummary: ""
+    });
+
+    assert.equal(result.kind, "error");
+    assert.equal((result as { code: string }).code, "AI_TIMEOUT");
+  } finally {
+    await close();
+  }
+});
+
+test("Gemini provider: malformed JSON response returns AI_PROVIDER_UNAVAILABLE", async () => {
+  const { port, close } = await createMockHttpServer((req, res) => {
+    let raw = "";
+    req.on("data", (c: Buffer) => { raw += c.toString(); });
+    req.on("end", () => {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end("not-json{{{");
+    });
+  });
+
+  try {
+    const { assistant } = await createAiAssistant({
+      provider: "gemini",
+      model: "gemini-test",
+      endpoint: `http://127.0.0.1:${port}`,
+      timeoutMs: 10_000,
+      allowRemote: false
+    });
+
+    const result = await assistant.propose({
+      description: "test",
+      currentSource: "",
+      currentDiagnostics: [],
+      currentModelSummary: ""
+    });
+
+    assert.equal(result.kind, "error");
+  } finally {
+    await close();
+  }
+});
+
+test("Gemini provider: API key never appears in returned errors or state", async () => {
+  const generatedKey = randomBytes(16).toString("hex");
+  const originalEnv = process.env[AI_API_KEY_ENV];
+  process.env[AI_API_KEY_ENV] = generatedKey;
+
+  const tempDir = await createTempDir("gemini-dlp-test");
+  const intentFile = join(tempDir, "test.intent");
+  await writeFile(intentFile, "", "utf8");
+
+  const { port: mockPort, close: closeMock } = await createMockHttpServer((req, res) => {
+    let raw = "";
+    req.on("data", (c: Buffer) => { raw += c.toString(); });
+    req.on("end", () => {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ error: { message: "Internal error" } }));
+    });
+  });
+
+  const studio = await startStudio({
+    sourcePath: intentFile,
+    noOpen: true,
+    ai: {
+      provider: "gemini",
+      model: "gemini-test",
+      endpoint: `http://127.0.0.1:${mockPort}`,
+      timeoutMs: 10_000,
+      allowRemote: false
+    }
+  });
+
+  try {
+    const stateResp = await fetch(`http://127.0.0.1:${studio.port}/api/state`);
+    const stateJson = await stateResp.text();
+    assert.ok(!stateJson.includes(generatedKey), "API key not in /api/state response");
+
+    const stateData = JSON.parse(stateJson) as { csrfToken: string; ai?: Record<string, unknown> };
+    const csrf = stateData.csrfToken;
+
+    // Check that state.ai exposes provider/model but not key
+    assert.equal(stateData.ai?.["provider"], "gemini");
+    assert.equal(stateData.ai?.["model"], "gemini-test");
+    assert.ok(!("apiKey" in (stateData.ai ?? {})), "ai state does not expose apiKey");
+
+    const propResp = await fetch(`http://127.0.0.1:${studio.port}/api/ai/propose`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Studio-CSRF-Token": csrf,
+        "Origin": `http://127.0.0.1:${studio.port}`,
+        "Host": `127.0.0.1:${studio.port}`
+      },
+      body: JSON.stringify({ description: "test", currentSource: "" })
+    });
+    const propJson = await propResp.text();
+    assert.ok(!propJson.includes(generatedKey), "API key not in propose error response");
+  } finally {
+    await studio.close();
+    await closeMock();
+    await rm(tempDir, { recursive: true, force: true });
+    if (originalEnv === undefined) {
+      delete process.env[AI_API_KEY_ENV];
+    } else {
+      process.env[AI_API_KEY_ENV] = originalEnv;
+    }
+  }
+});
+
+test("Studio HTML: Gemini setup instructions present in setup dialog", () => {
+  const html = buildStudioHtml("test.intent", 3211);
+  assert.ok(html.includes("gemini"), "Gemini mentioned in setup dialog");
+  assert.ok(html.includes("--ai-provider gemini"), "Gemini provider flag in setup dialog");
+  assert.ok(html.includes("--ai-model"), "model placeholder in Gemini instructions");
+  assert.ok(html.includes("INTENTLANG_AI_API_KEY"), "API key env name in Gemini instructions");
+});
+
+test("Studio JS: Gemini badge label shows Gemini not gemini", () => {
+  assert.ok(STUDIO_JS.includes("'gemini': 'Gemini'"), "Gemini display name mapped in JS badge");
+});
+
+test("Studio JS: Gemini privacy notice mentions Google Gemini endpoint", () => {
+  assert.ok(STUDIO_JS.includes("Google Gemini endpoint"), "Gemini-specific privacy notice in JS");
+});
+
+test("Studio JS: Gemini privacy notice mentions quota/billing caveat", () => {
+  assert.ok(
+    STUDIO_JS.includes("quotas") && STUDIO_JS.includes("Google"),
+    "Gemini notice includes quota/billing caveat"
+  );
 });

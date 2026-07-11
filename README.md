@@ -326,6 +326,7 @@ v0.7.0-alpha adds an optional **Describe with AI** panel to Studio. It translate
 Any model accessible via:
 - **Ollama** (local, many open models)
 - **OpenAI-compatible chat API** (LM Studio, LocalAI, llama.cpp, and OpenAI-compatible cloud gateways)
+- **Google Gemini** (direct REST API — remote, requires `--allow-remote-ai`)
 
 ### Quick start
 
@@ -346,12 +347,20 @@ intentlang studio my-app.intent \
   --ai-model <model> \
   --ai-endpoint https://your-gateway.example.com \
   --allow-remote-ai
+
+# Google Gemini direct (set INTENTLANG_AI_API_KEY env before starting):
+export INTENTLANG_AI_API_KEY=<key>
+intentlang studio my-app.intent \
+  --ai-provider gemini \
+  --ai-model <your-gemini-model> \
+  --allow-remote-ai
 ```
 
 ### Privacy boundary
 
 - **Loopback endpoints** (default): data stays on your machine, subject to the local server's behaviour.
 - **Remote endpoints** (opt-in with `--allow-remote-ai` + HTTPS): your description and source are sent to that provider. Costs, privacy, and retention are governed by the provider.
+- **Google Gemini** (`--ai-provider gemini`): description and source sent to Google Gemini. Free-tier availability, quotas, billing, and terms controlled by your Google account and can change.
 - **Compiler and generated app remain completely AI-free** in all cases.
 
 ### Security

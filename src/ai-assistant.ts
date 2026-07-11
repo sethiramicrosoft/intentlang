@@ -87,6 +87,9 @@ export async function createAiAssistant(partialConfig: Partial<AiConfig>): Promi
   if (config.provider === "ollama") {
     const { createOllamaProvider } = await import("./ai-providers/ollama.js");
     provider = createOllamaProvider(config.endpoint, config.model);
+  } else if (config.provider === "gemini") {
+    const { createGeminiProvider } = await import("./ai-providers/gemini.js");
+    provider = createGeminiProvider(config.endpoint, config.model);
   } else {
     const { createOpenAiCompatibleProvider } = await import("./ai-providers/openai-compatible.js");
     provider = createOpenAiCompatibleProvider(config.endpoint, config.model);
