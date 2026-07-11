@@ -62,7 +62,13 @@ Open `http://127.0.0.1:3210` in your browser.
 
 ## Further reading
 
-Full beginner-friendly case study with line-by-line explanation,
-pipeline diagram, runtime walkthrough, and FAQ:
+**5-minute visual case study** — layperson-friendly; source, diagram,
+screenshots, tested steps, and a try-it guide:
 
 → [`../../docs/issue-tracker-full-stack.md`](../../docs/issue-tracker-full-stack.md)
+
+**Technical appendix and generated-code explanation** — for
+developers/auditors; every pipeline step, code excerpt, security
+architecture note, and a full reproduction checklist:
+
+→ [`../../docs/issue-tracker-technical-reference.md`](../../docs/issue-tracker-technical-reference.md)

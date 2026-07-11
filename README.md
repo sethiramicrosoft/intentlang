@@ -285,14 +285,14 @@ cd examples/issue-tracker-app && npm install
 node app.mjs
 ```
 
-### Full case study
+### Read the case study
 
-→ **[`docs/issue-tracker-full-stack.md`](docs/issue-tracker-full-stack.md)**
+→ **[Read the 5-minute visual case study](docs/issue-tracker-full-stack.md)**
+— layperson-friendly: source, diagram, screenshots, tested steps, try-it guide.
 
-Beginner-friendly, line-by-line explanation of the source, the exact
-pipeline, every generated file, safe bootstrap instructions for Windows
-and macOS/Linux, backend/frontend/database excerpts, a complete runtime
-walkthrough, a Mermaid diagram, and a reproduction checklist.
+→ **[Technical appendix and generated-code explanation](docs/issue-tracker-technical-reference.md)**
+— for developers/auditors: pipeline internals, every generated-code excerpt,
+security architecture, and a full reproduction checklist.
 
 ---
 
