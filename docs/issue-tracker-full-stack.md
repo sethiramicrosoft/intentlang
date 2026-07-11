@@ -34,7 +34,21 @@ version = identical output every time.
 
 ---
 
-## What we wrote — the complete 44-line source
+## Step 1: create one file and paste this code
+
+Create a new plain-text file named:
+
+```text
+issue-tracker.intent
+```
+
+Paste the following 44 lines into that file exactly as shown.
+
+> **This is all the application code you write.**
+>
+> You do **not** write the HTML, CSS, JavaScript, Node.js server, SQL
+> schema, authentication system, or database code shown later. IntentLang
+> generates those files from this source.
 
 ```intent
 application IssueTracker
@@ -82,7 +96,12 @@ allow Member to run start on Ticket where owner is self
 allow Member to run close on Ticket where owner is self
 ```
 
-**Reading it:** the source is grouped into four logical blocks:
+Save the file. Your application source is now complete.
+
+The remaining steps check this file and ask IntentLang to generate the
+full stack.
+
+**What these 44 lines say:** the source is grouped into four logical blocks:
 
 | Lines | Block | What it says |
 |---|---|---|
@@ -113,11 +132,14 @@ sends your source to any external service.
 ### The generated Issue Tracker app
 
 After clicking **Generate App** in Studio (or running the CLI), the
-browser app appeared at `http://127.0.0.1:3210`. A logged-in
-Administrator can create projects, provision member accounts, and manage
-tickets. A Member can only see their own tickets.
+browser app appeared at `http://127.0.0.1:3210`. The screenshot below
+shows the generated logged-in application shell before demo records were
+added: account provisioning, entity navigation, and the generated
+**New Ticket** control are already present. A logged-in Administrator can
+create projects, provision member accounts, and manage tickets. A Member
+can only see their own tickets.
 
-![Generated Issue Tracker app showing project and ticket list with action controls](images/issue-tracker-app.png)
+![Generated Issue Tracker app showing the logged-in application shell, account provisioning, entity navigation, and New Ticket control](images/issue-tracker-app.png)
 
 ---
 

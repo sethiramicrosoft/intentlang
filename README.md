@@ -240,6 +240,14 @@ seven artifacts — backend, frontend, and database — with no AI
 involvement at any stage. No generated file was hand-edited to make
 the proof pass.
 
+> **What does the user type?**
+>
+> Only the 44 lines in
+> [`examples/issue-tracker.intent`](examples/issue-tracker.intent).
+> IntentLang generates the HTML, CSS, browser JavaScript, Node.js
+> backend, SQL schema, authentication, permissions, and database wiring.
+> The user does not type or edit the generated code.
+
 ### What was generated
 
 | Layer | File | What it does |
