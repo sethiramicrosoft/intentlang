@@ -1,0 +1,29 @@
+application Todo
+authentication uses User identified by email
+
+role Administrator
+role Member
+
+a User has a required name as text
+a User has a required unique email as text length between 1 and 320
+a Task has a required title as text length between 1 and 200
+a Task has a done as boolean default false
+each Task belongs to a User as owner on delete restrict
+
+action complete a Task
+  require done is false otherwise "Task is already complete"
+  set done to true
+
+allow Administrator to create User
+allow Administrator to read User
+allow Administrator to update User
+allow Administrator to provision accounts
+allow Administrator to read Task where owner is self
+allow Administrator to create Task with owner as self
+allow Administrator to update Task where owner is self
+allow Administrator to run complete on Task where owner is self
+allow Member to read User where self
+allow Member to read Task where owner is self
+allow Member to create Task with owner as self
+allow Member to update Task where owner is self
+allow Member to run complete on Task where owner is self

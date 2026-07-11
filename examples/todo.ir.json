@@ -1,0 +1,217 @@
+{
+  "actions": [
+    {
+      "assignments": [
+        {
+          "fieldName": "done",
+          "value": true
+        }
+      ],
+      "entityId": "task",
+      "id": "task-complete",
+      "name": "complete",
+      "preconditions": [
+        {
+          "fieldName": "done",
+          "message": "Task is already complete",
+          "operator": "is",
+          "value": false
+        }
+      ]
+    }
+  ],
+  "application": {
+    "id": "todo",
+    "name": "Todo"
+  },
+  "authentication": {
+    "identityEntityId": "user",
+    "identityFieldId": "user-email"
+  },
+  "entities": [
+    {
+      "fields": [
+        {
+          "id": "user-name",
+          "name": "name",
+          "required": true,
+          "type": "text",
+          "unique": false
+        },
+        {
+          "id": "user-email",
+          "length": {
+            "max": 320,
+            "min": 1
+          },
+          "name": "email",
+          "required": true,
+          "type": "text",
+          "unique": true
+        }
+      ],
+      "id": "user",
+      "name": "User"
+    },
+    {
+      "fields": [
+        {
+          "id": "task-title",
+          "length": {
+            "max": 200,
+            "min": 1
+          },
+          "name": "title",
+          "required": true,
+          "type": "text",
+          "unique": false
+        },
+        {
+          "default": false,
+          "id": "task-done",
+          "name": "done",
+          "required": false,
+          "type": "boolean",
+          "unique": false
+        }
+      ],
+      "id": "task",
+      "name": "Task"
+    }
+  ],
+  "permissions": [
+    {
+      "entityId": "user",
+      "id": "perm-administrator-create-user",
+      "operation": "create",
+      "roleId": "administrator"
+    },
+    {
+      "entityId": "user",
+      "id": "perm-administrator-read-user",
+      "operation": "read",
+      "roleId": "administrator"
+    },
+    {
+      "entityId": "user",
+      "id": "perm-administrator-update-user",
+      "operation": "update",
+      "roleId": "administrator"
+    },
+    {
+      "entityId": "",
+      "id": "perm-administrator-provision",
+      "operation": "provision",
+      "roleId": "administrator"
+    },
+    {
+      "entityId": "task",
+      "id": "perm-administrator-read-task",
+      "operation": "read",
+      "roleId": "administrator",
+      "scope": {
+        "kind": "owner",
+        "relationshipId": "task-owner"
+      }
+    },
+    {
+      "entityId": "task",
+      "id": "perm-administrator-create-task",
+      "operation": "create",
+      "roleId": "administrator",
+      "scope": {
+        "kind": "force-owner"
+      }
+    },
+    {
+      "entityId": "task",
+      "id": "perm-administrator-update-task",
+      "operation": "update",
+      "roleId": "administrator",
+      "scope": {
+        "kind": "owner",
+        "relationshipId": "task-owner"
+      }
+    },
+    {
+      "actionId": "task-complete",
+      "entityId": "task",
+      "id": "perm-administrator-run-task-complete",
+      "operation": "run",
+      "roleId": "administrator",
+      "scope": {
+        "kind": "owner",
+        "relationshipId": "task-owner"
+      }
+    },
+    {
+      "entityId": "user",
+      "id": "perm-member-read-user",
+      "operation": "read",
+      "roleId": "member",
+      "scope": {
+        "kind": "self"
+      }
+    },
+    {
+      "entityId": "task",
+      "id": "perm-member-read-task",
+      "operation": "read",
+      "roleId": "member",
+      "scope": {
+        "kind": "owner",
+        "relationshipId": "task-owner"
+      }
+    },
+    {
+      "entityId": "task",
+      "id": "perm-member-create-task",
+      "operation": "create",
+      "roleId": "member",
+      "scope": {
+        "kind": "force-owner"
+      }
+    },
+    {
+      "entityId": "task",
+      "id": "perm-member-update-task",
+      "operation": "update",
+      "roleId": "member",
+      "scope": {
+        "kind": "owner",
+        "relationshipId": "task-owner"
+      }
+    },
+    {
+      "actionId": "task-complete",
+      "entityId": "task",
+      "id": "perm-member-run-task-complete",
+      "operation": "run",
+      "roleId": "member",
+      "scope": {
+        "kind": "owner",
+        "relationshipId": "task-owner"
+      }
+    }
+  ],
+  "relationships": [
+    {
+      "fromEntityId": "task",
+      "id": "task-owner",
+      "name": "owner",
+      "onDelete": "restrict",
+      "toEntityId": "user"
+    }
+  ],
+  "roles": [
+    {
+      "id": "administrator",
+      "name": "Administrator"
+    },
+    {
+      "id": "member",
+      "name": "Member"
+    }
+  ],
+  "schemaVersion": "0.5.0"
+}

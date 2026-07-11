@@ -1,0 +1,24 @@
+{
+  "name": "intentlang",
+  "version": "0.5.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "intentlang": "./dist/src/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "check": "tsc --noEmit",
+    "test": "tsx --test test/**/*.test.ts",
+    "sample:check": "tsx src/cli.ts check examples/todo.intent",
+    "sample:format": "tsx src/cli.ts format examples/todo.intent",
+    "sample:compile": "tsx src/cli.ts compile examples/todo.intent --output examples/todo.ir.json --write --force",
+    "sample:generate": "tsx src/cli.ts generate examples/todo.intent --output examples/todo-app --write --force --allow-security-downgrade",
+    "sample:serve": "node examples/todo-app/app.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "24.13.2",
+    "tsx": "4.23.0",
+    "typescript": "5.9.3"
+  }
+}
