@@ -1,6 +1,6 @@
 {
   "name": "intentlang",
-  "version": "0.6.0-alpha.0",
+  "version": "0.7.0-alpha.0",
   "private": true,
   "type": "module",
   "bin": {

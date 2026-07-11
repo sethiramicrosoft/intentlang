@@ -10,6 +10,8 @@ import type { BuildManifest } from "./model.js";
 import { planMigration } from "./planner.js";
 import { generateRuntime } from "./runtime-codegen.js";
 import { generateUi } from "./ui-codegen.js";
+import { effectiveAiConfig } from "./ai-provider.js";
+import type { AiProviderKind } from "./ai-provider.js";
 
 const [command, sourceArgument, ...options] = process.argv.slice(2);
 
@@ -303,6 +305,10 @@ function printUsage(): void {
   console.error("  intentlang format <source> [--write] [--output <path> --write [--force]]");
   console.error("  intentlang generate <source> --output <directory> [--write] [--force] [--allow-data-loss] [--allow-security-downgrade]");
   console.error("  intentlang studio <source> [--port <number>] [--no-open]");
+  console.error("    [--ai-provider none|ollama|openai-compatible]");
+  console.error("    [--ai-model <model>] [--ai-endpoint <url>] [--ai-timeout <ms>]");
+  console.error("    [--allow-remote-ai]");
+  console.error("  API key (if needed): set env INTENTLANG_AI_API_KEY before starting Studio.");
 }
 
 async function runStudio(
@@ -334,8 +340,37 @@ async function runStudio(
     }
   }
 
+  // AI flags (all optional; provider defaults to "none")
+  const aiProviderRaw = findOptionValue(options, "--ai-provider") ?? "none";
+  const validProviders = ["none", "ollama", "openai-compatible"];
+  if (!validProviders.includes(aiProviderRaw)) {
+    console.error(`--ai-provider must be one of: ${validProviders.join(", ")}`);
+    process.exitCode = 2;
+    return;
+  }
+
+  const aiTimeoutRaw = findOptionValue(options, "--ai-timeout");
+  let aiTimeout: number | undefined;
+  if (aiTimeoutRaw !== undefined) {
+    const t = parseInt(aiTimeoutRaw, 10);
+    if (isNaN(t) || t < 1) {
+      console.error("--ai-timeout must be a positive integer (milliseconds).");
+      process.exitCode = 2;
+      return;
+    }
+    aiTimeout = t;
+  }
+
+  const aiConfig = effectiveAiConfig({
+    provider: aiProviderRaw as AiProviderKind,
+    model: findOptionValue(options, "--ai-model") ?? "",
+    endpoint: findOptionValue(options, "--ai-endpoint") ?? "",
+    timeoutMs: aiTimeout,
+    allowRemote: options.includes("--allow-remote-ai")
+  });
+
   try {
-    await startStudio({ sourcePath, port, noOpen });
+    await startStudio({ sourcePath, port, noOpen, ai: aiConfig });
 
     if (!noOpen) {
       // Keep process alive until Ctrl+C

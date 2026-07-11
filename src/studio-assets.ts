@@ -440,10 +440,144 @@ dialog::backdrop { background: rgba(0,0,0,.4); }
 .template-item:hover { border-color: var(--cp-accent); background: var(--cp-highlight); }
 .template-name { font-weight: 600; font-size: 13px; }
 .template-desc { font-size: 12px; color: var(--cp-text-muted); margin-top: 2px; }
+
+/* AI Assist panel */
+#ai-panel {
+  border-top: 1px solid var(--cp-border);
+  background: var(--cp-bg-elevated);
+  padding: 10px 12px;
+  flex-shrink: 0;
+  max-height: 50%;
+  overflow-y: auto;
+}
+#ai-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.ai-provider-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--cp-surface-soft);
+  border: 1px solid var(--cp-border);
+  color: var(--cp-text-muted);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ai-provider-badge.ai-active {
+  background: var(--cp-accent-soft);
+  border-color: var(--cp-accent);
+  color: var(--cp-accent);
+}
+.ai-notice {
+  background: var(--cp-accent-soft);
+  border: 1px solid var(--cp-accent);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--cp-text);
+  line-height: 1.6;
+  margin-bottom: 8px;
+}
+.ai-notice-off {
+  background: var(--cp-surface-soft);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--cp-text-muted);
+  margin-bottom: 8px;
+}
+#ai-description-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cp-text-muted);
+  margin-bottom: 4px;
+}
+#ai-description {
+  width: 100%;
+  resize: vertical;
+  min-height: 60px;
+  max-height: 160px;
+  padding: 7px 10px;
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  background: var(--cp-surface);
+  color: var(--cp-text);
+  font-size: 13px;
+  line-height: 1.5;
+  outline: none;
+  font-family: inherit;
+}
+#ai-description:focus-visible { border-color: var(--cp-accent); }
+.ai-buttons { display: flex; gap: 6px; margin-top: 8px; align-items: center; }
+#ai-spinner {
+  display: none;
+  width: 14px; height: 14px;
+  border: 2px solid var(--cp-border);
+  border-top-color: var(--cp-accent);
+  border-radius: 50%;
+  animation: ai-spin .7s linear infinite;
+}
+#ai-spinner.visible { display: inline-block; }
+@keyframes ai-spin { to { transform: rotate(360deg); } }
+#ai-result {
+  margin-top: 10px;
+  border-top: 1px solid var(--cp-border);
+  padding-top: 10px;
+}
+.ai-error-box {
+  background: rgba(220,38,38,.07);
+  border: 1px solid var(--cp-danger);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  color: var(--cp-danger);
+  line-height: 1.6;
+}
+.ai-error-diags { margin-top: 6px; font-family: monospace; font-size: 11px; }
+.ai-questions-title { font-weight: 600; font-size: 13px; margin-bottom: 8px; color: var(--cp-text); }
+.ai-question-item {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 8px;
+}
+.ai-question-text { font-size: 12px; font-weight: 600; margin-bottom: 6px; color: var(--cp-text); }
+.ai-option-btn {
+  background: var(--cp-surface-soft);
+  border: 1px solid var(--cp-border);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  color: var(--cp-text);
+  cursor: pointer;
+}
+.ai-option-btn:hover { border-color: var(--cp-accent); color: var(--cp-accent); background: var(--cp-highlight); }
+.ai-option-btn.ai-selected { background: var(--cp-accent-soft); border-color: var(--cp-accent); color: var(--cp-accent); }
+.ai-proposal-ok {
+  font-size: 12px;
+  color: var(--cp-success);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.ai-proposal-summary { font-size: 13px; color: var(--cp-text); margin-bottom: 6px; }
+.ai-guided-link {
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--cp-text-muted);
+}
+.ai-guided-link a { color: var(--cp-link); }
 `.trim();
 
 export const STUDIO_JS = `
-/* IntentLang Studio v0.6 client */
+/* IntentLang Studio v0.7 client */
 (function () {
   'use strict';
 
@@ -460,6 +594,18 @@ export const STUDIO_JS = `
     planToken: null,
     planItems: [],
     planError: null
+  };
+
+  var aiState = {
+    provider: 'none',
+    model: '',
+    endpointOrigin: '',
+    isLocal: true,
+    configError: null,
+    active: false,
+    pendingProposal: null,
+    questionAnswers: {},
+    priorAnswers: []
   };
 
   var TEMPLATES = [
@@ -505,6 +651,7 @@ export const STUDIO_JS = `
       updateLineNumbers();
       renderFromState();
       bindEvents();
+      initAiFromState(data.ai || { provider: 'none', model: '', endpointOrigin: '', isLocal: true, configError: null });
       announce('Studio loaded. Source: ' + data.filename);
     } catch (err) {
       showFatal('Failed to initialise Studio: ' + String(err));
@@ -556,7 +703,8 @@ export const STUDIO_JS = `
     });
 
     // Dialogs — close on backdrop click
-    ['dlg-format', 'dlg-save', 'dlg-plan', 'dlg-generate-done', 'dlg-templates', 'dlg-unsaved-template'].forEach(function (id) {
+    ['dlg-format', 'dlg-save', 'dlg-plan', 'dlg-generate-done', 'dlg-templates', 'dlg-unsaved-template',
+     'dlg-ai-apply', 'dlg-ai-guided', 'dlg-ai-setup'].forEach(function (id) {
       var dlg = el(id);
       if (!dlg) return;
       dlg.addEventListener('click', function (e) {
@@ -575,6 +723,21 @@ export const STUDIO_JS = `
     el('btn-templates-cancel').addEventListener('click', function () { el('dlg-templates').close(); });
     el('btn-unsaved-cancel').addEventListener('click', function () { el('dlg-unsaved-template').close(); });
     el('btn-unsaved-proceed').addEventListener('click', doLoadTemplate);
+
+    // AI panel
+    el('btn-ai-open').addEventListener('click', openAiPanel);
+    el('btn-ai-close').addEventListener('click', closeAiPanel);
+    el('btn-ai-propose').addEventListener('click', onAiProposeClick);
+    el('btn-ai-cancel').addEventListener('click', onAiCancelClick);
+    el('btn-ai-guided-mode').addEventListener('click', function (e) {
+      e.preventDefault();
+      el('dlg-ai-guided').showModal();
+      el('btn-ai-guided-close').focus();
+    });
+    el('btn-ai-apply-cancel').addEventListener('click', function () { el('dlg-ai-apply').close(); });
+    el('btn-ai-apply-confirm').addEventListener('click', applyAiProposal);
+    el('btn-ai-guided-close').addEventListener('click', function () { el('dlg-ai-guided').close(); });
+    el('btn-ai-setup-close').addEventListener('click', function () { el('dlg-ai-setup').close(); });
   }
 
   // ── Editor ────────────────────────────────────────────────────────────────────
@@ -1271,6 +1434,323 @@ export const STUDIO_JS = `
     setTimeout(function () { lr.textContent = msg; }, 50);
   }
 
+  // ── AI Assist panel ───────────────────────────────────────────────────────────
+
+  function initAiFromState(ai) {
+    aiState.provider = ai.provider || 'none';
+    aiState.model = ai.model || '';
+    aiState.endpointOrigin = ai.endpointOrigin || '';
+    aiState.isLocal = ai.isLocal !== false;
+    aiState.configError = ai.configError || null;
+    var badge = el('ai-provider-badge');
+    if (!badge) return;
+    if (aiState.provider === 'none') {
+      badge.textContent = 'AI assistance: Off';
+      badge.classList.remove('ai-active');
+    } else {
+      var label = aiState.provider + (aiState.model ? ' / ' + aiState.model : '');
+      badge.textContent = 'AI: ' + label;
+      badge.classList.add('ai-active');
+    }
+  }
+
+  function openAiPanel() {
+    var panel = el('ai-panel');
+    panel.removeAttribute('hidden');
+    el('ai-notice').textContent = '';
+    el('ai-notice').className = '';
+    el('ai-notice').removeAttribute('hidden');
+    if (aiState.provider === 'none') {
+      el('ai-notice').className = 'ai-notice-off';
+      el('ai-notice').textContent = 'AI assistance is off. Start Studio with --ai-provider to enable it. The compiler and guided mode work without AI.';
+      el('btn-ai-propose').disabled = true;
+    } else {
+      el('ai-notice').className = 'ai-notice';
+      var notice = aiState.isLocal
+        ? 'Your description and current source are sent to the configured provider. ' +
+          'Data stays on this machine (subject to local server behaviour). Compiler and generated app remain AI-free.'
+        : 'Your description and current source are sent to the configured remote provider (' + escText(aiState.endpointOrigin) + '). ' +
+          'Costs and privacy depend on that provider. Compiler and generated app remain AI-free.';
+      el('ai-notice').textContent = notice;
+      el('btn-ai-propose').disabled = false;
+    }
+    if (aiState.configError) {
+      var errDiv = document.createElement('div');
+      errDiv.className = 'ai-error-box';
+      errDiv.style.marginTop = '6px';
+      errDiv.textContent = 'Configuration error: ' + aiState.configError;
+      el('ai-notice').parentNode.insertBefore(errDiv, el('ai-notice').nextSibling);
+      el('btn-ai-propose').disabled = true;
+    }
+    el('ai-description').focus();
+    announce('AI Assist panel opened.');
+  }
+
+  function closeAiPanel() {
+    el('ai-panel').setAttribute('hidden', '');
+    aiState.pendingProposal = null;
+    aiState.questionAnswers = {};
+    aiState.priorAnswers = [];
+    var resultEl = el('ai-result');
+    resultEl.textContent = '';
+    resultEl.setAttribute('hidden', '');
+    announce('AI Assist panel closed.');
+  }
+
+  async function onAiProposeClick() {
+    var desc = el('ai-description').value.trim();
+    if (!desc) {
+      announce('Please enter a description before generating a proposal.');
+      el('ai-description').focus();
+      return;
+    }
+    if (aiState.active) return;
+
+    var answers = buildAnswers();
+    await doAiPropose(desc, answers);
+  }
+
+  function buildAnswers() {
+    var result = [];
+    Object.keys(aiState.questionAnswers).forEach(function (qid) {
+      result.push({ questionId: qid, selectedOption: aiState.questionAnswers[qid] });
+    });
+    return result.concat(aiState.priorAnswers);
+  }
+
+  async function doAiPropose(description, answers) {
+    aiState.active = true;
+    setAiWorking(true);
+    clearAiResult();
+
+    try {
+      var body = { description: description, currentSource: el('editor').value };
+      if (answers && answers.length > 0) body.clarificationAnswers = answers;
+
+      var resp = await postJson('/api/ai/propose', body);
+      var data = await resp.json();
+
+      if (!resp.ok || data.kind === 'error') {
+        renderAiError(data.error || 'Request failed.', data.diagnostics || []);
+        return;
+      }
+
+      if (data.kind === 'questions') {
+        renderAiQuestions(data.questions || []);
+      } else if (data.kind === 'proposal') {
+        aiState.pendingProposal = data;
+        aiState.questionAnswers = {};
+        renderAiProposalSummary(data);
+      } else {
+        renderAiError('Unexpected response from AI provider.', []);
+      }
+    } catch (err) {
+      renderAiError('Request error: ' + String(err), []);
+    } finally {
+      aiState.active = false;
+      setAiWorking(false);
+    }
+  }
+
+  function onAiCancelClick() {
+    postJson('/api/ai/propose', { description: '__cancel__', currentSource: '' }).catch(function () {});
+    aiState.active = false;
+    setAiWorking(false);
+    clearAiResult();
+    announce('AI request cancelled.');
+  }
+
+  function setAiWorking(working) {
+    el('btn-ai-propose').disabled = working || aiState.provider === 'none';
+    var cancelBtn = el('btn-ai-cancel');
+    if (working) {
+      cancelBtn.removeAttribute('hidden');
+    } else {
+      cancelBtn.setAttribute('hidden', '');
+    }
+    var spinner = el('ai-spinner');
+    if (spinner) {
+      if (working) spinner.classList.add('visible');
+      else spinner.classList.remove('visible');
+    }
+  }
+
+  function clearAiResult() {
+    var r = el('ai-result');
+    r.textContent = '';
+    r.setAttribute('hidden', '');
+  }
+
+  function renderAiError(msg, diags) {
+    var r = el('ai-result');
+    r.textContent = '';
+    r.removeAttribute('hidden');
+
+    var box = document.createElement('div');
+    box.className = 'ai-error-box';
+    var msgEl = document.createElement('div');
+    msgEl.textContent = msg;
+    box.appendChild(msgEl);
+
+    if (diags && diags.length > 0) {
+      var diagsEl = document.createElement('div');
+      diagsEl.className = 'ai-error-diags';
+      diags.forEach(function (d) {
+        var dd = document.createElement('div');
+        dd.textContent = 'Line ' + d.line + ':' + d.column + ' [' + d.code + '] ' + d.message;
+        diagsEl.appendChild(dd);
+      });
+      box.appendChild(diagsEl);
+    }
+    r.appendChild(box);
+    announce('AI proposal error: ' + msg);
+  }
+
+  function renderAiQuestions(questions) {
+    var r = el('ai-result');
+    r.textContent = '';
+    r.removeAttribute('hidden');
+
+    aiState.questionAnswers = {};
+
+    var title = document.createElement('div');
+    title.className = 'ai-questions-title';
+    title.textContent = 'AI needs clarification:';
+    r.appendChild(title);
+
+    questions.forEach(function (q) {
+      var item = document.createElement('div');
+      item.className = 'ai-question-item';
+
+      var qText = document.createElement('div');
+      qText.className = 'ai-question-text';
+      qText.textContent = q.question;
+      item.appendChild(qText);
+
+      (q.options || []).forEach(function (opt) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'ai-option-btn';
+        btn.textContent = opt;
+        btn.setAttribute('data-qid', q.id);
+        btn.setAttribute('data-opt', opt);
+        btn.addEventListener('click', function () {
+          item.querySelectorAll('.ai-option-btn').forEach(function (b) {
+            b.classList.remove('ai-selected');
+          });
+          btn.classList.add('ai-selected');
+          aiState.questionAnswers[q.id] = opt;
+        });
+        item.appendChild(btn);
+      });
+
+      r.appendChild(item);
+    });
+
+    var sendBtn = document.createElement('button');
+    sendBtn.type = 'button';
+    sendBtn.className = 'toolbar-btn primary';
+    sendBtn.textContent = 'Send Answers';
+    sendBtn.style.marginTop = '8px';
+    sendBtn.addEventListener('click', function () {
+      var answers = buildAnswers();
+      var desc = el('ai-description').value.trim();
+      doAiPropose(desc, answers);
+    });
+    r.appendChild(sendBtn);
+
+    announce('AI has clarification questions. Please select answers.');
+  }
+
+  function renderAiProposalSummary(proposal) {
+    var r = el('ai-result');
+    r.textContent = '';
+    r.removeAttribute('hidden');
+
+    var okLabel = document.createElement('div');
+    okLabel.className = 'ai-proposal-ok';
+    okLabel.textContent = '\\u2705 Valid proposal — compiler accepted';
+    r.appendChild(okLabel);
+
+    var summaryEl = document.createElement('div');
+    summaryEl.className = 'ai-proposal-summary';
+    summaryEl.textContent = proposal.summary || '';
+    r.appendChild(summaryEl);
+
+    if (proposal.assumptions && proposal.assumptions.length > 0) {
+      var aLabel = document.createElement('div');
+      aLabel.style.cssText = 'font-size:11px;color:var(--cp-text-muted);margin-bottom:4px;';
+      aLabel.textContent = 'Assumptions:';
+      r.appendChild(aLabel);
+      var aList = document.createElement('ul');
+      aList.style.cssText = 'font-size:11px;color:var(--cp-text-muted);margin:0 0 8px 16px;padding:0;';
+      (proposal.assumptions || []).forEach(function (a) {
+        var li = document.createElement('li');
+        li.textContent = a;
+        aList.appendChild(li);
+      });
+      r.appendChild(aList);
+    }
+
+    var reviewBtn = document.createElement('button');
+    reviewBtn.type = 'button';
+    reviewBtn.className = 'toolbar-btn primary';
+    reviewBtn.textContent = 'Review & Apply Proposal';
+    reviewBtn.addEventListener('click', function () { showAiApplyDialog(proposal); });
+    r.appendChild(reviewBtn);
+
+    announce('AI proposal ready. Click Review & Apply to see the diff.');
+  }
+
+  function showAiApplyDialog(proposal) {
+    var summaryEl = el('ai-proposal-summary-dlg');
+    summaryEl.textContent = proposal.summary || '';
+
+    var asmEl = el('ai-assumptions-dlg');
+    if (proposal.assumptions && proposal.assumptions.length > 0) {
+      asmEl.textContent = 'Assumptions: ' + proposal.assumptions.join('; ');
+      asmEl.removeAttribute('hidden');
+    } else {
+      asmEl.setAttribute('hidden', '');
+    }
+
+    var diffPane = el('ai-diff-pane');
+    diffPane.textContent = '';
+    (proposal.diff || []).forEach(function (item) {
+      var span = document.createElement('span');
+      if (item.op === 'add') {
+        span.className = 'diff-add';
+        span.textContent = '+ ' + item.line + '\\n';
+      } else if (item.op === 'remove') {
+        span.className = 'diff-remove';
+        span.textContent = '- ' + item.line + '\\n';
+      } else {
+        span.className = 'diff-same';
+        span.textContent = '  ' + item.line + '\\n';
+      }
+      diffPane.appendChild(span);
+    });
+
+    el('dlg-ai-apply').showModal();
+    el('btn-ai-apply-cancel').focus();
+  }
+
+  function applyAiProposal() {
+    el('dlg-ai-apply').close();
+    if (!aiState.pendingProposal) return;
+    var src = aiState.pendingProposal.source;
+    el('editor').value = src;
+    updateLineNumbers();
+    markUnsaved();
+    runCheck(src);
+    aiState.pendingProposal = null;
+    aiState.priorAnswers = [];
+    aiState.questionAnswers = {};
+    clearAiResult();
+    announce('AI proposal applied to editor. Source file unchanged until you Save.');
+    // Does NOT call save or generate — user must confirm separately
+  }
+
   // ── Boot ──────────────────────────────────────────────────────────────────────
 
   if (document.readyState === 'loading') {
@@ -1314,6 +1794,7 @@ export function buildStudioHtml(filename: string, port: number): string {
         <button id="btn-save" class="toolbar-btn" type="button" title="Save source (Ctrl+S)">Save</button>
         <button id="btn-generate" class="toolbar-btn primary" type="button" title="Generate App">Generate App</button>
         <button id="btn-templates" type="button" title="Load a template">Templates ▾</button>
+        <button id="btn-ai-open" class="toolbar-btn" type="button" title="Describe with AI (optional — off by default)">AI Assist ✦</button>
       </div>
       <div id="editor-wrap">
         <div id="line-numbers" aria-hidden="true">1</div>
@@ -1334,6 +1815,31 @@ export function buildStudioHtml(filename: string, port: number): string {
         <span class="spacer"></span>
         <span style="color:var(--cp-text-muted);font-size:10px;">Port ${port} · localhost only</span>
       </div>
+
+      <section id="ai-panel" aria-label="Describe with AI" hidden>
+        <div id="ai-panel-header">
+          <span id="ai-provider-badge" class="ai-provider-badge">AI assistance: Off</span>
+          <span class="spacer"></span>
+          <button id="btn-ai-close" class="toolbar-btn" type="button" aria-label="Close AI panel" style="padding:2px 8px;">✕</button>
+        </div>
+        <div id="ai-panel-body">
+          <div id="ai-notice" class="ai-notice-off">AI assistance is off. Start Studio with --ai-provider to enable it.</div>
+          <label id="ai-description-label" for="ai-description">Describe the app or change you want:</label>
+          <textarea
+            id="ai-description"
+            rows="3"
+            placeholder="e.g. I want to create an inventory app with products, suppliers, and stock levels."
+            aria-label="Describe the app or change you want"
+          ></textarea>
+          <div class="ai-buttons" role="toolbar" aria-label="AI request actions">
+            <button id="btn-ai-propose" class="toolbar-btn primary" type="button" disabled>Generate Proposal</button>
+            <button id="btn-ai-cancel" class="toolbar-btn" type="button" hidden>Cancel</button>
+            <span id="ai-spinner" aria-hidden="true" title="Requesting…"></span>
+          </div>
+          <div id="ai-result" hidden aria-live="polite" aria-atomic="false"></div>
+          <p class="ai-guided-link"><a href="#" id="btn-ai-guided-mode">Use deterministic guided mode instead ↗</a></p>
+        </div>
+      </section>
     </section>
 
     <section id="panels" aria-label="Output panels">
@@ -1415,7 +1921,59 @@ export function buildStudioHtml(filename: string, port: number): string {
     <p class="dialog-body">You have unsaved changes. Loading a template will replace the current content. Continue?</p>
     <div class="dialog-actions">
       <button id="btn-unsaved-cancel" class="toolbar-btn" type="button">Keep editing</button>
-      <button id="btn-unsaved-proceed" class="toolbar-btn primary" type="button">Discard & load template</button>
+      <button id="btn-unsaved-proceed" class="toolbar-btn primary" type="button">Discard &amp; load template</button>
+    </div>
+  </dialog>
+
+  <!-- AI Proposal review dialog -->
+  <dialog id="dlg-ai-apply" aria-labelledby="dlg-ai-apply-title" aria-modal="true" style="max-width:640px;">
+    <h2 class="dialog-title" id="dlg-ai-apply-title">Review AI Proposal</h2>
+    <p class="dialog-body">Applying updates the editor only — the source file remains unchanged until you Save separately. Generate App is a separate step.</p>
+    <div id="ai-proposal-summary-dlg" class="ai-proposal-summary" style="margin-bottom:8px;"></div>
+    <div id="ai-assumptions-dlg" style="font-size:11px;color:var(--cp-text-muted);margin-bottom:8px;" hidden></div>
+    <div class="diff-pane" id="ai-diff-pane" aria-label="Proposal diff" aria-readonly="true" role="region" aria-live="off"></div>
+    <div class="dialog-actions">
+      <button id="btn-ai-apply-cancel" class="toolbar-btn" type="button">Cancel</button>
+      <button id="btn-ai-apply-confirm" class="toolbar-btn primary" type="button">Apply to Editor</button>
+    </div>
+  </dialog>
+
+  <!-- AI Guided mode explanation dialog -->
+  <dialog id="dlg-ai-guided" aria-labelledby="dlg-ai-guided-title" aria-modal="true">
+    <h2 class="dialog-title" id="dlg-ai-guided-title">Deterministic Guided Mode</h2>
+    <p class="dialog-body">IntentLang is fully usable without AI. The compiler provides instant, precise error messages and hints for every supported statement.</p>
+    <p class="dialog-body">Use the built-in templates to explore what the language supports. All compiler, Studio, and generation features work without any AI provider configured.</p>
+    <p class="dialog-body" style="font-size:11px;color:var(--cp-text-muted);">AI assistance is always optional and consumes zero tokens for compilation, checking, formatting, and app generation.</p>
+    <div class="dialog-actions">
+      <button id="btn-ai-guided-close" class="toolbar-btn primary" type="button">Got it</button>
+    </div>
+  </dialog>
+
+  <!-- AI Setup instructions dialog (shown when provider is none) -->
+  <dialog id="dlg-ai-setup" aria-labelledby="dlg-ai-setup-title" aria-modal="true" style="max-width:580px;">
+    <h2 class="dialog-title" id="dlg-ai-setup-title">Configure AI Assistance</h2>
+    <p class="dialog-body">AI assistance is off by default. To enable, start Studio with provider flags:</p>
+    <pre class="generation-result" style="font-size:11px;white-space:pre-wrap;">  # Ollama (local, free to run):
+  intentlang studio app.intent \\
+    --ai-provider ollama \\
+    --ai-model llama3.2
+
+  # LM Studio / OpenAI-compatible (local):
+  intentlang studio app.intent \\
+    --ai-provider openai-compatible \\
+    --ai-model &lt;model-name&gt; \\
+    --ai-endpoint http://127.0.0.1:1234
+
+  # OpenAI-compatible cloud (requires HTTPS + --allow-remote-ai):
+  # Set env INTENTLANG_AI_API_KEY before starting Studio.
+  intentlang studio app.intent \\
+    --ai-provider openai-compatible \\
+    --ai-model &lt;model-name&gt; \\
+    --ai-endpoint https://&lt;your-gateway&gt; \\
+    --allow-remote-ai</pre>
+    <p class="dialog-body" style="font-size:11px;color:var(--cp-text-muted);">AI output is untrusted text and cannot write files, execute commands, or override compiler errors. The compiler and generated app remain AI-free.</p>
+    <div class="dialog-actions">
+      <button id="btn-ai-setup-close" class="toolbar-btn primary" type="button">Close</button>
     </div>
   </dialog>
 

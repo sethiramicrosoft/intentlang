@@ -2,11 +2,11 @@
 
 ## Scope and current status
 
-IntentLang is currently experimental (v0.5.x line). Security controls exist, but there are no guarantees of production readiness.
+IntentLang is currently experimental (v0.7.x line). Security controls exist, but there are no guarantees of production readiness.
 
 Supported branch/version for security fixes in this repo:
 
-- `v0.5.x` (current)
+- `v0.7.x` (current)
 
 ## Reporting a vulnerability safely
 
@@ -31,6 +31,34 @@ Because no private contact channel is published in this repository:
 - Never commit passwords, tokens, API keys, or secret-bearing test values.
 - Tests should generate ephemeral auth inputs at runtime.
 - Issues/PRs must not contain private user data or credential material.
+- The `INTENTLANG_AI_API_KEY` environment variable is never logged, serialized, returned to the browser, or included in error messages.
+
+## AI assistance threat model (v0.7+)
+
+AI assistance is optional and off by default. The following threat areas apply when AI is enabled:
+
+### Prompt injection
+User-supplied source content is delimited with `<<CURRENT_SOURCE_START>>` / `<<CURRENT_SOURCE_END>>` markers and the system prompt instructs the model to treat delimited content as data, not instructions. However, prompt injection is an inherent risk in all LLM systems. Mitigations:
+- Proposals always go through deterministic compiler validation before any user action is possible.
+- Invalid proposals are rejected with diagnostics and cannot be applied.
+- AI output is untrusted text: it cannot write files, execute commands, access databases, read arbitrary files, or override compiler errors.
+
+### SSRF (Server-Side Request Forgery) via provider endpoint
+The provider endpoint is configured at server startup via CLI flags only — the browser cannot override it. Mitigations:
+- Only loopback endpoints (`127.0.0.1`, `localhost`, `::1`) are permitted by default.
+- Remote endpoints require explicit `--allow-remote-ai` and must use HTTPS.
+- Credentials in URLs are rejected at startup.
+- `redirect: 'error'` is used on all provider fetch calls.
+- The browser receives only the provider id, model name, and endpoint origin — never the API key.
+
+### API key exposure
+The `INTENTLANG_AI_API_KEY` environment variable is the only way to supply an API key. Mitigations:
+- Key is attached to provider requests server-side only (`Authorization: Bearer`).
+- Key is never logged, written to disk, returned to the browser, or included in error messages.
+- Provider error responses that might echo headers are not forwarded to the browser.
+
+### Model output injection in UI
+AI-generated text is rendered via `textContent` only — no `innerHTML` on any AI output. The diff pane uses DOM element creation. No HTML is rendered from model responses.
 
 ## Disclosure expectations
 

@@ -13,6 +13,8 @@ import { generateUi } from "./ui-codegen.js";
 import { buildStudioViewModel } from "./studio-viewmodel.js";
 import { buildStudioHtml, STUDIO_CSS, STUDIO_JS } from "./studio-assets.js";
 import type { BuildManifest } from "./model.js";
+import { createAiAssistant } from "./ai-assistant.js";
+import type { AiConfig } from "./ai-provider.js";
 
 const BODY_LIMIT_BYTES = 1_048_576; // 1 MB
 const PLAN_TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -342,6 +344,7 @@ export interface StudioOptions {
   sourcePath: string;
   port?: number;
   noOpen?: boolean;
+  ai?: AiConfig;
 }
 
 export async function startStudio(options: StudioOptions): Promise<{
@@ -375,6 +378,21 @@ export async function startStudio(options: StudioOptions): Promise<{
   // Pre-render the HTML once (with correct port)
   const studioHtml = buildStudioHtml(filename, port);
 
+  // Initialize AI assistant at startup; configuration is process memory only
+  const { assistant: aiAssistant, configError: aiConfigError } =
+    await createAiAssistant(options.ai ?? { provider: "none", model: "", endpoint: "", timeoutMs: 60_000, allowRemote: false });
+
+  if (aiConfigError) {
+    console.warn(`[Studio] AI configuration warning: ${aiConfigError}`);
+  }
+
+  if (aiAssistant.info.provider !== "none") {
+    console.log(
+      `[Studio] AI assistance: ${aiAssistant.info.provider} / ${aiAssistant.info.model || "(default model)"} at ${aiAssistant.info.endpointOrigin}`
+    );
+    console.log(`[Studio] AI is optional — compiler and Studio guided mode remain AI-free.`);
+  }
+
   const server = createServer(async (req, res) => {
     const method = req.method ?? "GET";
     const rawUrl = req.url ?? "/";
@@ -391,7 +409,8 @@ export async function startStudio(options: StudioOptions): Promise<{
       ["POST", "/api/format"],
       ["POST", "/api/save"],
       ["POST", "/api/plan"],
-      ["POST", "/api/generate"]
+      ["POST", "/api/generate"],
+      ["POST", "/api/ai/propose"]
     ];
 
     const routeAllowed = allowedRoutes.some(
@@ -444,6 +463,14 @@ export async function startStudio(options: StudioOptions): Promise<{
         templates: {
           todo: TEMPLATE_TODO,
           "issue-tracker": TEMPLATE_ISSUE_TRACKER
+        },
+        // AI info: provider/model/origin only — never the API key
+        ai: {
+          provider: aiAssistant.info.provider,
+          model: aiAssistant.info.model,
+          endpointOrigin: aiAssistant.info.endpointOrigin,
+          isLocal: aiAssistant.info.isLocal,
+          configError: aiConfigError ?? null
         }
       });
       return;
@@ -702,6 +729,87 @@ export async function startStudio(options: StudioOptions): Promise<{
         artifacts,
         authEnabled: result.ir.authentication !== undefined
       });
+      return;
+    }
+
+    // ── POST /api/ai/propose ────────────────────────────────────────────────
+
+    if (pathname === "/api/ai/propose") {
+      // Accept only description, currentSource, and clarificationAnswers from browser.
+      // Provider, endpoint, and API key are resolved at startup — never from browser.
+      const description = typeof body["description"] === "string" ? body["description"].trim() : "";
+      const currentSource = typeof body["currentSource"] === "string" ? body["currentSource"] : "";
+      const rawAnswers = Array.isArray(body["clarificationAnswers"]) ? body["clarificationAnswers"] : [];
+
+      if (!description) {
+        sendJson(res, 400, {
+          code: "AI_CONFIG_INVALID",
+          error: "description is required and must be a non-empty string."
+        });
+        return;
+      }
+
+      // Validate clarificationAnswers shape
+      const clarificationAnswers: Array<{ questionId: string; selectedOption: string }> = [];
+      for (const ans of rawAnswers) {
+        if (
+          ans !== null &&
+          typeof ans === "object" &&
+          typeof ans["questionId"] === "string" &&
+          typeof ans["selectedOption"] === "string"
+        ) {
+          clarificationAnswers.push({
+            questionId: String(ans["questionId"]).slice(0, 64),
+            selectedOption: String(ans["selectedOption"]).slice(0, 512)
+          });
+        }
+      }
+
+      // Build current diagnostics and model summary from current source
+      const compiled = compileAndBuildState(currentSource);
+      const currentDiagnostics = (compiled.diagnostics as Array<{
+        line: number; column: number; code: string; message: string; hint: string;
+      }>).map((d) => ({ line: d.line, column: d.column, code: d.code, message: d.message }));
+
+      let modelSummary = "";
+      if (compiled.ok && compiled.model) {
+        const m = compiled.model as {
+          applicationName?: string;
+          entities?: Array<{ name: string }>;
+          roles?: Array<{ name: string }>;
+        };
+        const parts: string[] = [];
+        if (m.applicationName) parts.push(`Application: ${m.applicationName}`);
+        if (m.entities?.length) parts.push(`Entities: ${m.entities.map((e) => e.name).join(", ")}`);
+        if (m.roles?.length) parts.push(`Roles: ${m.roles.map((r) => r.name).join(", ")}`);
+        modelSummary = parts.join("; ");
+      }
+
+      // Call AI assistant — no description/source/response written to logs
+      const result = await aiAssistant.propose({
+        description,
+        currentSource,
+        currentDiagnostics,
+        currentModelSummary: modelSummary,
+        clarificationAnswers: clarificationAnswers.length > 0 ? clarificationAnswers : undefined
+      });
+
+      if (result.kind === "error") {
+        const status = result.code === "AI_DISABLED" ? 200 :
+                       result.code === "AI_RATE_LIMITED" ? 429 :
+                       result.code === "AI_TIMEOUT" ? 504 :
+                       result.code === "AI_PROVIDER_UNAVAILABLE" ? 502 : 422;
+
+        sendJson(res, status, {
+          code: result.code,
+          error: result.error,
+          diagnostics: result.diagnostics ?? []
+        });
+        return;
+      }
+
+      // Return sanitized result — never includes API key or raw upstream errors
+      sendJson(res, 200, result);
       return;
     }
 

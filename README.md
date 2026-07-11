@@ -2,12 +2,12 @@
 
 ![status](https://img.shields.io/badge/status-experimental-orange)
 ![node](https://img.shields.io/badge/node-%3E%3D24-339933)
-![version](https://img.shields.io/badge/version-v0.6.0--alpha-blue)
+![version](https://img.shields.io/badge/version-v0.7.0--alpha-blue)
 
-**Tagline:** An experimental offline, no-AI compiler designed to help non-software developers build applications using controlled natural English.
+**Tagline:** An experimental offline compiler designed to help non-software developers build applications using controlled natural English. AI assistance is optional and off by default.
 
 > [!WARNING]
-> IntentLang v0.6.0-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
+> IntentLang v0.7.0-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
 
 ## Table of Contents
 
@@ -16,7 +16,8 @@
 3. [How it works (pipeline)](#how-it-works-pipeline)
 4. [IntentLang Studio alpha](#intentlang-studio-alpha)
 5. [**Proof: a complete full-stack app generated without AI**](#proof-a-complete-full-stack-app-generated-without-ai)
-6. [What v0.6.0-alpha can do](#what-v060-alpha-can-do)
+6. [Optional AI assistance](#optional-ai-assistance)
+7. [What v0.7.0-alpha can do](#what-v070-alpha-can-do)
 7. [Current limitations](#current-limitations)
 8. [Prerequisites (beginner-friendly)](#prerequisites-beginner-friendly)
 9. [Install from GitHub](#install-from-github)
@@ -45,7 +46,7 @@ IntentLang is a **controlled natural language** (CNL) for defining secure local 
 - **Controlled natural language** = fixed phrases with strict grammar.
 - **Not unrestricted natural language** = you cannot write arbitrary English and expect it to “figure it out.”
 - **Offline compiler/runtime** = no AI model calls are required for compile or runtime behavior.
-- **No AI tokens** = compiling, checking, formatting, generating, and running applications does not consume model tokens or require an AI subscription.
+- **No AI tokens** = compiling, checking, formatting, generating, and running applications does not consume model tokens or require an AI subscription. Optional AI assistance for description-to-source translation is available but off by default.
 - **Designed for non-software developers** = the long-term goal is to let domain experts describe supported applications without learning a conventional general-purpose programming language.
 - **Current domain focus** = local-first line-of-business apps backed by SQLite, Node.js, and a generated browser UI.
 
@@ -240,6 +241,8 @@ seven artifacts — backend, frontend, and database — with no AI
 involvement at any stage. No generated file was hand-edited to make
 the proof pass.
 
+> **Note (v0.7+):** Optional AI assistance is available for translating descriptions into IntentLang source, but it was not used in this case study and is not required. Compilation, generation, and runtime remain AI-free in all cases.
+
 > **What does the user type?**
 >
 > Only the 44 lines in
@@ -304,7 +307,63 @@ security architecture, and a full reproduction checklist.
 
 ---
 
-## What v0.6.0-alpha can do
+## Optional AI assistance
+
+> **Core principle:** IntentLang remains fully usable with AI disabled. Compiling, checking, formatting, generating, and running applications consumes **zero AI tokens** and requires no AI provider.
+
+v0.7.0-alpha adds an optional **Describe with AI** panel to Studio. It translates free-form descriptions into proposed IntentLang source for your review.
+
+### What it does
+
+- Accepts a natural language description from you
+- Sends description + current source to a configured AI provider
+- Validates the proposed source deterministically with the IntentLang compiler
+- Shows you the diff and compiler result
+- **You must explicitly Apply, then Save separately** — AI has no automatic write access
+
+### Supported protocols
+
+Any model accessible via:
+- **Ollama** (local, many open models)
+- **OpenAI-compatible chat API** (LM Studio, LocalAI, llama.cpp, and OpenAI-compatible cloud gateways)
+
+### Quick start
+
+```bash
+# Ollama (local — recommended for privacy):
+intentlang studio my-app.intent --ai-provider ollama --ai-model llama3.2
+
+# LM Studio or LocalAI:
+intentlang studio my-app.intent \
+  --ai-provider openai-compatible \
+  --ai-model <model> \
+  --ai-endpoint http://127.0.0.1:1234
+
+# Cloud gateway with API key (set env before starting — never use flag):
+export INTENTLANG_AI_API_KEY=<key>
+intentlang studio my-app.intent \
+  --ai-provider openai-compatible \
+  --ai-model <model> \
+  --ai-endpoint https://your-gateway.example.com \
+  --allow-remote-ai
+```
+
+### Privacy boundary
+
+- **Loopback endpoints** (default): data stays on your machine, subject to the local server's behaviour.
+- **Remote endpoints** (opt-in with `--allow-remote-ai` + HTTPS): your description and source are sent to that provider. Costs, privacy, and retention are governed by the provider.
+- **Compiler and generated app remain completely AI-free** in all cases.
+
+### Security
+
+- API key from environment variable `INTENTLANG_AI_API_KEY` only — never a CLI flag, never logged, never sent to the browser.
+- Remote endpoints require `--allow-remote-ai` and HTTPS. HTTP to remote hosts is rejected.
+- AI output is untrusted text — validated by the deterministic compiler before any user action is possible.
+- See [`docs/ai-assistance.md`](docs/ai-assistance.md) for full architecture and threat model.
+
+---
+
+## What v0.7.0-alpha can do
 
 ### Language/compiler
 
