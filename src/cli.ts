@@ -13,7 +13,9 @@ import { generateUi } from "./ui-codegen.js";
 
 const [command, sourceArgument, ...options] = process.argv.slice(2);
 
-if (
+if (command === "studio" && sourceArgument !== undefined) {
+  await runStudio(sourceArgument, options);
+} else if (
   (command !== "check" &&
     command !== "compile" &&
     command !== "generate" &&
@@ -300,4 +302,47 @@ function printUsage(): void {
   console.error("  intentlang compile <source> [--output <path> --write [--force]]");
   console.error("  intentlang format <source> [--write] [--output <path> --write [--force]]");
   console.error("  intentlang generate <source> --output <directory> [--write] [--force] [--allow-data-loss] [--allow-security-downgrade]");
+  console.error("  intentlang studio <source> [--port <number>] [--no-open]");
+}
+
+async function runStudio(
+  sourceArgument: string,
+  options: string[]
+): Promise<void> {
+  const { startStudio } = await import("./studio-server.js");
+
+  const sourcePath = resolve(sourceArgument);
+  const portOption = findOptionValue(options, "--port");
+  const noOpen = options.includes("--no-open");
+
+  let port: number | undefined;
+  if (portOption !== undefined) {
+    const parsed = parseInt(portOption, 10);
+    if (isNaN(parsed) || parsed < 1 || parsed > 65535) {
+      console.error("--port must be a number between 1 and 65535.");
+      process.exitCode = 2;
+      return;
+    }
+    port = parsed;
+  }
+
+  const envPort = process.env["PORT"];
+  if (port === undefined && envPort !== undefined) {
+    const parsed = parseInt(envPort, 10);
+    if (!isNaN(parsed) && parsed >= 1 && parsed <= 65535) {
+      port = parsed;
+    }
+  }
+
+  try {
+    await startStudio({ sourcePath, port, noOpen });
+
+    if (!noOpen) {
+      // Keep process alive until Ctrl+C
+      await new Promise<never>(() => {});
+    }
+  } catch (err) {
+    console.error(`Studio failed to start: ${String(err)}`);
+    process.exitCode = 1;
+  }
 }

@@ -1,6 +1,6 @@
 {
   "name": "intentlang",
-  "version": "0.5.0",
+  "version": "0.6.0-alpha.0",
   "private": true,
   "type": "module",
   "bin": {
@@ -14,7 +14,9 @@
     "sample:format": "tsx src/cli.ts format examples/todo.intent",
     "sample:compile": "tsx src/cli.ts compile examples/todo.intent --output examples/todo.ir.json --write --force",
     "sample:generate": "tsx src/cli.ts generate examples/todo.intent --output examples/todo-app --write --force --allow-security-downgrade",
-    "sample:serve": "node examples/todo-app/app.mjs"
+    "sample:serve": "node examples/todo-app/app.mjs",
+    "sample:studio": "tsx src/cli.ts studio examples/todo.intent --no-open",
+    "example:issue-tracker:check": "tsx src/cli.ts check examples/issue-tracker.intent"
   },
   "devDependencies": {
     "@types/node": "24.13.2",

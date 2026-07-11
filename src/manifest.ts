@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { canonicalJson } from "./compiler.js";
 import type { BuildManifest, ProgramIr } from "./model.js";
 
-export const COMPILER_VERSION = "0.5.0";
+export const COMPILER_VERSION = "0.6.0-alpha.0";
 
 export function buildManifest(ir: ProgramIr): BuildManifest {
   const irJson = canonicalJson(ir);

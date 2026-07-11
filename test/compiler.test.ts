@@ -936,16 +936,18 @@ test("schema version is 0.5.0", () => {
   assert.equal(ir.schemaVersion, "0.5.0");
 });
 
-test("compiler version is 0.5.0", () => {
+test("compiler version is 0.6.0-alpha.0", () => {
   const manifest = buildManifest(compileOk(minimalSource));
-  assert.equal(manifest.compilerVersion, "0.5.0");
+  assert.equal(manifest.compilerVersion, "0.6.0-alpha.0");
 });
 
-test("compiler version matches schema version", () => {
+test("compiler version is independent from schema version", () => {
   const ir = compileOk(minimalSource);
   const manifest = buildManifest(ir);
   assert.equal(manifest.schemaVersion, ir.schemaVersion);
-  assert.equal(manifest.compilerVersion, manifest.schemaVersion);
+  assert.equal(manifest.schemaVersion, "0.5.0");
+  // Compiler version may differ from schema version
+  assert.ok(manifest.compilerVersion.length > 0, "compilerVersion is set");
 });
 
 // ── CLI write flags ────────────────────────────────────────────────────────────

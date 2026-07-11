@@ -2,39 +2,40 @@
 
 ![status](https://img.shields.io/badge/status-experimental-orange)
 ![node](https://img.shields.io/badge/node-%3E%3D24-339933)
-![version](https://img.shields.io/badge/version-v0.5.0-blue)
+![version](https://img.shields.io/badge/version-v0.6.0--alpha-blue)
 
 **Tagline:** An experimental offline, no-AI compiler designed to help non-software developers build applications using controlled natural English.
 
 > [!WARNING]
-> IntentLang v0.5.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
+> IntentLang v0.6.0-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
 
 ## Table of Contents
 
 1. [What this project is](#what-this-project-is)
 2. [Why this exists](#why-this-exists)
 3. [How it works (pipeline)](#how-it-works-pipeline)
-4. [What v0.5.0 can do](#what-v050-can-do)
-5. [Current limitations](#current-limitations)
-6. [Prerequisites (beginner-friendly)](#prerequisites-beginner-friendly)
-7. [Install from GitHub](#install-from-github)
-8. [Five-minute quick start](#five-minute-quick-start)
-9. [Safe bootstrap and run (no credential literals)](#safe-bootstrap-and-run-no-credential-literals)
-10. [Browser walkthrough](#browser-walkthrough)
-11. [Language tutorial](#language-tutorial)
-12. [Additional example: ticket tracker](#additional-example-ticket-tracker)
-13. [CLI reference](#cli-reference)
-14. [Generated artifacts reference](#generated-artifacts-reference)
-15. [Safety model deep dive](#safety-model-deep-dive)
-16. [Data and migration guidance](#data-and-migration-guidance)
-17. [Project structure](#project-structure)
-18. [Development guide](#development-guide)
-19. [Troubleshooting](#troubleshooting)
-20. [Security and privacy](#security-and-privacy)
-21. [Roadmap (non-binding)](#roadmap-non-binding)
-22. [FAQ](#faq)
-23. [Contributing and governance](#contributing-and-governance)
-24. [Repository topics](#repository-topics)
+4. [IntentLang Studio alpha](#intentlang-studio-alpha)
+5. [What v0.6.0-alpha can do](#what-v060-alpha-can-do)
+6. [Current limitations](#current-limitations)
+7. [Prerequisites (beginner-friendly)](#prerequisites-beginner-friendly)
+8. [Install from GitHub](#install-from-github)
+9. [Five-minute quick start](#five-minute-quick-start)
+10. [Safe bootstrap and run (no credential literals)](#safe-bootstrap-and-run-no-credential-literals)
+11. [Browser walkthrough](#browser-walkthrough)
+12. [Language tutorial](#language-tutorial)
+13. [Additional example: issue tracker](#additional-example-issue-tracker)
+14. [CLI reference](#cli-reference)
+15. [Generated artifacts reference](#generated-artifacts-reference)
+16. [Safety model deep dive](#safety-model-deep-dive)
+17. [Data and migration guidance](#data-and-migration-guidance)
+18. [Project structure](#project-structure)
+19. [Development guide](#development-guide)
+20. [Troubleshooting](#troubleshooting)
+21. [Security and privacy](#security-and-privacy)
+22. [Roadmap (non-binding)](#roadmap-non-binding)
+23. [FAQ](#faq)
+24. [Contributing and governance](#contributing-and-governance)
+25. [Repository topics](#repository-topics)
 
 ## What this project is
 
@@ -115,7 +116,119 @@ Text fallback:
 4. Generate SQL migration + runtime server + UI assets.
 5. Run locally with Node + SQLite + browser.
 
-## What v0.5.0 can do
+## IntentLang Studio alpha
+
+**IntentLang Studio** is a local, dependency-free browser-based authoring environment for `.intent` source files. It is the signature feature of v0.6.0-alpha.
+
+- **100% offline** — the Studio server runs on your machine and binds to `127.0.0.1` only. No traffic leaves your computer.
+- **No AI tokens** — Studio is a deterministic compiler front-end. Checking, formatting, and generating never contacts an AI model.
+- **No credentials required to run Studio** — Studio is an authoring tool and does not handle application login credentials.
+
+### Starting Studio
+
+```bash
+# Against the built-in Todo example:
+npm run sample:studio
+
+# Or, after npm link or npm install -g:
+intentlang studio examples/todo.intent
+
+# Against the Issue Tracker example:
+intentlang studio examples/issue-tracker.intent
+
+# Custom port (or set PORT= environment variable):
+intentlang studio myapp.intent --port 4000
+
+# Headless / CI (no browser auto-open):
+intentlang studio myapp.intent --no-open
+```
+
+Studio opens at `http://127.0.0.1:3211` (default port) in your default browser.
+
+### Studio walkthrough
+
+**Editor panel (left)**
+
+- Type or paste IntentLang source into the editor.
+- After a short pause, the source is automatically checked and diagnostics appear in the Problems panel.
+- **Check** — manual compile run.
+- **Format** — shows a diff preview before replacing your text.
+- **Save** — confirms before writing to the original source file (atomic rename).
+- **Generate App** — shows a plan (with warnings for destructive or security-breaking changes), then confirms before writing artifacts to the sibling `<basename>-app/` directory.
+- **Keyboard shortcuts:** `Ctrl+S` / `Cmd+S` = Save, `Ctrl+Shift+F` / `Cmd+Shift+F` = Format.
+
+**Output panels (right)**
+
+| Panel | What you see |
+|---|---|
+| **Problems** | Diagnostics with error code, line/column, message, fix hint. Click a diagnostic to jump to the source line. |
+| **Application Model** | Human-friendly summary: auth, entities/fields, relationships, actions, permission matrix, safety summary. |
+| **Canonical Source** | Formatted canonical syntax with all stable IDs visible (read-only). |
+| **Raw IR** | The typed intermediate representation as JSON (collapsible). |
+
+**Templates**
+
+Click **Templates ▾** to load a built-in example (Todo or Issue Tracker). Studio warns you about unsaved changes before replacing the editor.
+
+**Theme**
+
+Click the 🌙 / ☀️ button in the header to toggle dark/light mode. The choice is saved in `localStorage`.
+
+**Generate App next steps**
+
+After a successful generation, Studio shows:
+
+```
+Generated in: /path/to/myapp-app/
+
+Artifacts:
+  app.mjs
+  migration.sql
+  intentlang.manifest.json
+  package.json
+  index.html
+  app.js
+  styles.css
+
+Next steps:
+  cd myapp-app
+  npm install
+  node app.mjs
+```
+
+If authentication is enabled, Studio lists the **environment variable names** you must set — never the values.
+
+### Studio security model
+
+- Binds to `127.0.0.1` only (loopback). Not accessible from other machines.
+- Same-origin protection: validates `Origin` and `Host` headers on every state-changing endpoint.
+- Ephemeral in-memory CSRF token: generated at startup, delivered in the initial `/api/state` response, validated on every POST. Never written to disk or logs.
+- Anti-TOCTOU plan token: generating an app requires a short-lived token tied to the exact source fingerprint from the plan step. Changed source invalidates the token.
+- Destructive and security-downgrade migrations are refused in the browser UI. Use the CLI flags if you need them.
+- No arbitrary filesystem access from browser requests. The source file path is resolved once at startup.
+- Request body capped at 1 MB.
+- All responses carry `Cache-Control: no-store`, `X-Content-Type-Options: nosniff`, and other security headers.
+
+### npx / npm link beginner guide
+
+If you cloned the repo and want to use `intentlang` as a global command:
+
+```bash
+# Inside the repo:
+npm run build
+npm link
+
+# Then from anywhere:
+intentlang studio myapp.intent
+```
+
+Or run without installing globally:
+
+```bash
+node /path/to/intentlang/dist/src/cli.js studio myapp.intent
+```
+
+## What v0.6.0-alpha can do
 
 ### Language/compiler
 
@@ -376,10 +489,44 @@ Key declarations accepted in v0.5:
 
 Compiler diagnostics are intentional and precise; invalid or ambiguous inputs are rejected.
 
-## Additional example: ticket tracker
+## Additional example: issue tracker
+
+The `examples/issue-tracker.intent` file is a reference application that exercises:
+
+- `authentication` with User identity.
+- `Administrator` and `Member` roles.
+- Three entities: `User`, `Project`, `Ticket`.
+- `Ticket` with title, description, status text field (default `"open"`).
+- `Ticket` belongs to both `Project` (cascade delete) and `User` owner (restrict).
+- Two actions: `start` (open → in-progress) and `close` (not-closed → closed).
+- Admin: unscoped access to all entities and actions.
+- Member: self-read on User, unscoped read on Project, owner-scoped read/create/update/actions on Ticket.
+
+Check and inspect the issue tracker:
+
+```bash
+intentlang check examples/issue-tracker.intent
+```
+
+Open it in Studio:
+
+```bash
+intentlang studio examples/issue-tracker.intent
+```
+
+Generate the app:
+
+```bash
+intentlang generate examples/issue-tracker.intent --output issue-tracker-app --write
+cd issue-tracker-app && npm install
+# Set bootstrap env vars, then:
+node app.mjs
+```
+
+Source preview:
 
 ```intent
-application WorkTracker
+application IssueTracker
 authentication uses User identified by email
 
 role Administrator
@@ -387,42 +534,41 @@ role Member
 
 a User has a required name as text
 a User has a required unique email as text length between 1 and 320
-a Project has a required title as text length between 1 and 120
-a Ticket has a required summary as text length between 1 and 240
+a Project has a required name as text
+a Ticket has a required title as text length between 1 and 200
+a Ticket has a description as text
 a Ticket has a status as text default "open"
-a Ticket has a priority as integer default 1
-a Ticket has a closed as boolean default false
 
+each Ticket belongs to a Project as project on delete cascade
 each Ticket belongs to a User as owner on delete restrict
-each Ticket belongs to a Project as project on delete restrict
+
+action start a Ticket
+  require status is "open" otherwise "Ticket is not open"
+  set status to "in-progress"
 
 action close a Ticket
-  require closed is false otherwise "Ticket is already closed"
-  set closed to true
+  require status is not "closed" otherwise "Ticket is already closed"
+  set status to "closed"
 
-action raisepriority a Ticket
-  require priority is less than 5 otherwise "Priority is already at maximum"
-  set priority to 5
-
+allow Administrator to provision accounts
 allow Administrator to create User
 allow Administrator to read User
 allow Administrator to update User
 allow Administrator to create Project
 allow Administrator to read Project
 allow Administrator to update Project
-allow Administrator to create Ticket with owner as self
-allow Administrator to read Ticket where owner is self
-allow Administrator to update Ticket where owner is self
-allow Administrator to run close on Ticket where owner is self
-allow Administrator to run raisepriority on Ticket where owner is self
-allow Administrator to provision accounts
-
+allow Administrator to create Ticket
+allow Administrator to read Ticket
+allow Administrator to update Ticket
+allow Administrator to run start on Ticket
+allow Administrator to run close on Ticket
 allow Member to read User where self
+allow Member to read Project
 allow Member to create Ticket with owner as self
 allow Member to read Ticket where owner is self
 allow Member to update Ticket where owner is self
+allow Member to run start on Ticket where owner is self
 allow Member to run close on Ticket where owner is self
-allow Member to run raisepriority on Ticket where owner is self
 ```
 
 ## CLI reference
@@ -433,6 +579,7 @@ allow Member to run raisepriority on Ticket where owner is self
 | `intentlang format <source>` | Canonical formatter | `--write` overwrites source; `--output ... --write` writes elsewhere |
 | `intentlang compile <source>` | Emit canonical IR JSON | `--output ... --write` required for file write; `--force` required for overwrite |
 | `intentlang generate <source>` | Plan/generate app artifacts | Requires `--output`; use `--write` to materialize |
+| `intentlang studio <source>` | Open local authoring Studio | Default port 3211; `--port N` or `PORT=N`; `--no-open` to suppress browser |
 
 Generation safety flags:
 
@@ -445,6 +592,8 @@ NPM scripts in this repo:
 - `npm test`
 - `npm run build`
 - `npm run sample:check`
+- `npm run sample:studio` (Studio against todo.intent, headless)
+- `npm run example:issue-tracker:check`
 - `npm run sample:format`
 - `npm run sample:compile`
 - `npm run sample:generate`

@@ -1,0 +1,43 @@
+application IssueTracker
+authentication uses User identified by email
+
+role Administrator
+role Member
+
+a User has a required name as text
+a User has a required unique email as text length between 1 and 320
+a Project has a required name as text
+a Ticket has a required title as text length between 1 and 200
+a Ticket has a description as text
+a Ticket has a status as text default "open"
+
+each Ticket belongs to a Project as project on delete cascade
+each Ticket belongs to a User as owner on delete restrict
+
+action start a Ticket
+  require status is "open" otherwise "Ticket is not open"
+  set status to "in-progress"
+
+action close a Ticket
+  require status is not "closed" otherwise "Ticket is already closed"
+  set status to "closed"
+
+allow Administrator to provision accounts
+allow Administrator to create User
+allow Administrator to read User
+allow Administrator to update User
+allow Administrator to create Project
+allow Administrator to read Project
+allow Administrator to update Project
+allow Administrator to create Ticket
+allow Administrator to read Ticket
+allow Administrator to update Ticket
+allow Administrator to run start on Ticket
+allow Administrator to run close on Ticket
+allow Member to read User where self
+allow Member to read Project
+allow Member to create Ticket with owner as self
+allow Member to read Ticket where owner is self
+allow Member to update Ticket where owner is self
+allow Member to run start on Ticket where owner is self
+allow Member to run close on Ticket where owner is self
