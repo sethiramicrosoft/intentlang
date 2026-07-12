@@ -235,12 +235,317 @@ textarea:focus-visible,
 }
 #unsaved-dot.visible { display: inline-block; }
 
-/* Right panels */
+/* Diagnostics summary bar — visible first-error summary above editor */
+#diag-summary {
+  display: none;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 7px 12px;
+  background: rgba(220, 38, 38, 0.06);
+  border-bottom: 1px solid var(--cp-danger);
+  flex-shrink: 0;
+}
+#diag-summary.visible { display: flex; }
+.diag-summary-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: var(--cp-danger);
+  color: var(--cp-accent-fg);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: monospace;
+}
+.diag-summary-loc {
+  font-size: 11px;
+  color: var(--cp-danger);
+  font-family: monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.diag-summary-msg {
+  font-size: 11px;
+  color: var(--cp-text);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.diag-summary-hint {
+  font-size: 10px;
+  color: var(--cp-text-soft);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+#btn-show-all-problems {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-danger);
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--cp-danger);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+#btn-show-all-problems:hover { background: rgba(220, 38, 38, 0.08); }
+
+/* Mode tabs above editor toolbar */
+#editor-mode-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--cp-border);
+  background: var(--cp-bg-elevated);
+  padding: 0 10px;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.mode-tab {
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 4px 4px 0 0;
+  color: var(--cp-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.mode-tab:hover { color: var(--cp-text); }
+.mode-tab[aria-selected="true"] {
+  color: var(--cp-accent);
+  border-bottom-color: var(--cp-accent);
+}
+
+/* Prose warning banner inside editor area */
+#prose-banner {
+  display: none;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--cp-accent-soft);
+  border-bottom: 2px solid var(--cp-accent);
+  flex-shrink: 0;
+}
+#prose-banner.visible { display: flex; }
+.prose-banner-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+  line-height: 1.3;
+}
+.prose-banner-text {
+  flex: 1;
+  font-size: 12px;
+  color: var(--cp-text);
+  font-weight: 600;
+}
+.prose-banner-sub {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--cp-text-soft);
+  margin-top: 1px;
+}
+.prose-banner-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  align-items: flex-start;
+}
+.prose-banner-btn {
+  background: var(--cp-accent);
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  color: var(--cp-accent-fg);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.prose-banner-btn:hover { background: var(--cp-accent-hover); }
+.prose-banner-btn.secondary {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-accent);
+  color: var(--cp-accent);
+}
+.prose-banner-btn.secondary:hover { background: var(--cp-highlight); }
+
+/* Describe App pane */
+#describe-pane {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+#describe-pane.visible { display: flex; }
+#describe-pane-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 14px 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.describe-mode-note {
+  background: var(--cp-surface-soft);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 12px;
+  color: var(--cp-text-muted);
+  line-height: 1.6;
+}
+.describe-mode-note strong { color: var(--cp-text); }
+#describe-textarea {
+  width: 100%;
+  resize: none;
+  min-height: 80px;
+  max-height: 160px;
+  padding: 8px 10px;
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  background: var(--cp-surface);
+  color: var(--cp-text);
+  font-size: 13px;
+  line-height: 1.5;
+  outline: none;
+  font-family: inherit;
+}
+#describe-textarea:focus-visible { border-color: var(--cp-accent); }
+.describe-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.describe-path-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  color: var(--cp-text-muted);
+  margin-bottom: 2px;
+}
+#describe-result {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+#describe-result.visible { display: flex; }
+.describe-interpretation-card {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-left: 3px solid var(--cp-accent);
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.describe-interpretation-card h4 {
+  margin: 0 0 4px 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cp-text);
+}
+.describe-assumptions { color: var(--cp-text-muted); }
+.describe-unsupported {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid var(--cp-warning);
+  border-radius: 6px;
+  padding: 9px 12px;
+  font-size: 12px;
+  color: var(--cp-text);
+  line-height: 1.6;
+}
+.describe-unsupported h4 {
+  margin: 0 0 4px 0;
+  font-weight: 700;
+  color: var(--cp-warning);
+}
+.describe-warning-list {
+  margin: 4px 0 0 0;
+  padding: 0 0 0 16px;
+  font-size: 11px;
+  color: var(--cp-text-soft);
+}
+.describe-proposal-source {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-family: "Cascadia Code", "Fira Mono", "Consolas", monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre;
+  overflow-x: auto;
+  color: var(--cp-text);
+  max-height: 200px;
+  overflow-y: auto;
+}
+.describe-apply-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+#unsupported-ack-row {
+  display: none;
+  align-items: flex-start;
+  gap: 8px;
+  background: rgba(245, 158, 11, 0.07);
+  border: 1px solid var(--cp-warning);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--cp-text);
+}
+#unsupported-ack-row.visible { display: flex; }
+#unsupported-ack-checkbox { flex-shrink: 0; margin-top: 2px; }
+.describe-questions-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--cp-text);
+}
+.describe-question-item {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+}
+.describe-question-text { font-size: 12px; font-weight: 600; color: var(--cp-text); margin-bottom: 6px; }
+.describe-option-btn {
+  background: var(--cp-surface-soft);
+  border: 1px solid var(--cp-border);
+  border-radius: 4px;
+  padding: 3px 10px;
+  font-size: 12px;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  color: var(--cp-text);
+  cursor: pointer;
+}
+.describe-option-btn:hover { border-color: var(--cp-accent); color: var(--cp-accent); background: var(--cp-highlight); }
+.describe-option-btn.selected { background: var(--cp-accent-soft); border-color: var(--cp-accent); color: var(--cp-accent); }
+.describe-unrecognized {
+  background: var(--cp-surface-soft);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--cp-text-muted);
+  line-height: 1.6;
+}
+
+/* Right panels — responsive fix */
 #panels {
   flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-width: 0;
 }
 [role="tablist"] {
   display: flex;
@@ -271,6 +576,8 @@ textarea:focus-visible,
   overflow: auto;
   padding: 12px;
   display: none;
+  min-height: 0;
+  max-height: 100%;
 }
 [role="tabpanel"].active { display: flex; flex-direction: column; gap: 8px; }
 
@@ -577,7 +884,7 @@ dialog::backdrop { background: rgba(0,0,0,.4); }
 `.trim();
 
 export const STUDIO_JS = `
-/* IntentLang Studio v0.7 client */
+/* IntentLang Studio v0.7.1 client */
 (function () {
   'use strict';
 
@@ -593,7 +900,15 @@ export const STUDIO_JS = `
     activeTab: 'problems',
     planToken: null,
     planItems: [],
-    planError: null
+    planError: null,
+    editorMode: 'code',        // 'code' | 'describe'
+    userSelectedTab: false     // true once user intentionally clicks a tab
+  };
+
+  var describeState = {
+    pending: null,            // last interpretation result
+    questionAnswers: {},
+    unsupportedAcknowledged: false
   };
 
   var aiState = {
@@ -652,6 +967,10 @@ export const STUDIO_JS = `
       renderFromState();
       bindEvents();
       initAiFromState(data.ai || { provider: 'none', model: '', endpointOrigin: '', isLocal: true, configError: null });
+      // Default to Write IntentLang if there is existing source; Describe App if file is empty
+      if (!state.source || state.source.trim().length === 0) {
+        setEditorMode('describe');
+      }
       announce('Studio loaded. Source: ' + data.filename);
     } catch (err) {
       showFatal('Failed to initialise Studio: ' + String(err));
@@ -689,14 +1008,56 @@ export const STUDIO_JS = `
     el('btn-generate').addEventListener('click', onGenerateClick);
     el('btn-templates').addEventListener('click', openTemplates);
 
+    // Mode tabs
+    el('tab-mode-code').addEventListener('click', function () { setEditorMode('code'); });
+    el('tab-mode-describe').addEventListener('click', function () { setEditorMode('describe'); });
+
+    // Diagnostics summary — Show all problems button
+    el('btn-show-all-problems').addEventListener('click', function () {
+      activateTab('problems');
+      state.userSelectedTab = true;
+      var panel = el('panel-problems');
+      if (panel) { panel.scrollTop = 0; }
+    });
+
+    // Prose banner buttons
+    el('btn-prose-move').addEventListener('click', function () {
+      var txt = el('editor').value;
+      setEditorMode('describe');
+      el('describe-textarea').value = txt;
+    });
+    el('btn-prose-examples').addEventListener('click', function () {
+      openTemplates();
+    });
+
+    // Describe mode
+    el('btn-interpret-offline').addEventListener('click', onInterpretOffline);
+    el('btn-interpret-ai').addEventListener('click', function () {
+      // Delegate to existing AI panel with description pre-filled
+      var desc = el('describe-textarea').value.trim();
+      setEditorMode('code');
+      el('ai-panel').removeAttribute('hidden');
+      openAiPanel();
+      if (desc) el('ai-description').value = desc;
+    });
+    el('btn-describe-send-answers').addEventListener('click', function () {
+      onInterpretOfflineWithAnswers();
+    });
+
+    // Describe Apply
+    el('btn-describe-apply').addEventListener('click', applyDescribeProposal);
+
     // Theme
     el('btn-theme').addEventListener('click', toggleTheme);
 
-    // Tabs
+    // Tabs — mark user intent
     document.querySelectorAll('[role="tab"]').forEach(function (tab) {
-      tab.addEventListener('click', function () { activateTab(tab.getAttribute('data-tab')); });
+      tab.addEventListener('click', function () {
+        state.userSelectedTab = true;
+        activateTab(tab.getAttribute('data-tab'));
+      });
       tab.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activateTab(tab.getAttribute('data-tab')); }
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); state.userSelectedTab = true; activateTab(tab.getAttribute('data-tab')); }
         if (e.key === 'ArrowRight') { focusNextTab(tab, 1); }
         if (e.key === 'ArrowLeft') { focusNextTab(tab, -1); }
       });
@@ -745,6 +1106,7 @@ export const STUDIO_JS = `
   function onEditorInput() {
     updateLineNumbers();
     markUnsaved();
+    checkProseBanner();
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(function () { runCheck(el('editor').value); }, DEBOUNCE_MS);
   }
@@ -762,6 +1124,80 @@ export const STUDIO_JS = `
 
   function syncLineNumberScroll() {
     el('line-numbers').scrollTop = el('editor').scrollTop;
+  }
+
+  // ── Prose detection ──────────────────────────────────────────────────────────
+
+  var TOP_LEVEL_KW = ['application ', 'authentication ', 'role ', 'a ', 'an ', 'each ', 'action ', 'allow ', 'entity ', '--', '#'];
+
+  function isProseInput(source) {
+    var lines = source.split('\\n');
+    var firstNonBlank = null;
+    for (var i = 0; i < lines.length; i++) {
+      if (lines[i].trim().length > 0) { firstNonBlank = lines[i].trim(); break; }
+    }
+    if (!firstNonBlank) return false;
+    var lower = firstNonBlank.toLowerCase();
+    for (var k = 0; k < TOP_LEVEL_KW.length; k++) {
+      if (lower.startsWith(TOP_LEVEL_KW[k].toLowerCase())) return false;
+    }
+    var wordCount = firstNonBlank.split(/\\s+/).length;
+    return wordCount >= 4 || /[,?!;]/.test(firstNonBlank);
+  }
+
+  function checkProseBanner() {
+    if (state.editorMode !== 'code') return;
+    var src = el('editor').value;
+    var banner = el('prose-banner');
+    if (isProseInput(src)) {
+      banner.classList.add('visible');
+    } else {
+      banner.classList.remove('visible');
+    }
+  }
+
+  // ── Editor mode ───────────────────────────────────────────────────────────────
+
+  function setEditorMode(mode) {
+    state.editorMode = mode;
+    var codeTab = el('tab-mode-code');
+    var descTab = el('tab-mode-describe');
+    var editorWrap = el('editor-wrap');
+    var editorToolbar = el('editor-toolbar');
+    var describePaneEl = el('describe-pane');
+    var statusBar = el('status-bar');
+    var aiPanel = el('ai-panel');
+
+    if (mode === 'describe') {
+      codeTab.setAttribute('aria-selected', 'false');
+      descTab.setAttribute('aria-selected', 'true');
+      editorWrap.setAttribute('hidden', '');
+      editorToolbar.setAttribute('hidden', '');
+      statusBar.setAttribute('hidden', '');
+      el('prose-banner').classList.remove('visible');
+      el('diag-summary').classList.remove('visible');
+      describePaneEl.classList.add('visible');
+      if (aiPanel && !aiPanel.hasAttribute('hidden')) aiPanel.setAttribute('hidden', '');
+      // Update AI button availability in describe pane
+      var aiBtn = el('btn-interpret-ai');
+      if (aiBtn) {
+        aiBtn.disabled = (aiState.provider === 'none');
+        aiBtn.title = aiState.provider === 'none'
+          ? 'AI provider is not configured. Start Studio with --ai-provider to enable.'
+          : 'Ask the configured AI provider (' + aiState.provider + ')';
+      }
+      announce('Describe App mode active. Enter a description below.');
+    } else {
+      codeTab.setAttribute('aria-selected', 'true');
+      descTab.setAttribute('aria-selected', 'false');
+      editorWrap.removeAttribute('hidden');
+      editorToolbar.removeAttribute('hidden');
+      statusBar.removeAttribute('hidden');
+      describePaneEl.classList.remove('visible');
+      checkProseBanner();
+      renderDiagSummary();
+      announce('Write IntentLang mode active.');
+    }
   }
 
   function updateLineNumbers() {
@@ -1069,6 +1505,11 @@ export const STUDIO_JS = `
     renderCanonical();
     renderIr();
     updateStatusBar();
+    renderDiagSummary();
+    // Auto-switch to Problems tab on errors, unless user explicitly chose another tab
+    if (state.diagnostics && state.diagnostics.length > 0 && !state.userSelectedTab && state.editorMode === 'code') {
+      activateTab('problems');
+    }
   }
 
   function renderProblems() {
@@ -1111,6 +1552,28 @@ export const STUDIO_JS = `
         void idx;
       });
     }
+  }
+
+  function renderDiagSummary() {
+    var bar = el('diag-summary');
+    var diags = state.diagnostics || [];
+    if (diags.length === 0 || state.editorMode === 'describe') {
+      bar.classList.remove('visible');
+      return;
+    }
+    var d = diags[0];
+    bar.classList.add('visible');
+    // Update content using textContent (no innerHTML)
+    var badge = bar.querySelector('.diag-summary-badge');
+    var loc = bar.querySelector('.diag-summary-loc');
+    var msg = bar.querySelector('.diag-summary-msg');
+    var hint = bar.querySelector('.diag-summary-hint');
+    var showAll = el('btn-show-all-problems');
+    if (badge) badge.textContent = d.code;
+    if (loc) loc.textContent = 'line ' + d.line + ':' + d.column;
+    if (msg) msg.textContent = d.message;
+    if (hint) hint.textContent = d.hint ? ('Fix: ' + d.hint) : '';
+    if (showAll) showAll.textContent = 'Show all ' + diags.length + ' problem' + (diags.length > 1 ? 's' : '');
   }
 
   function focusEditorLine(line) {
@@ -1760,6 +2223,272 @@ export const STUDIO_JS = `
     // Does NOT call save or generate — user must confirm separately
   }
 
+  // ── Offline Description Interpreter ──────────────────────────────────────────
+
+  async function onInterpretOffline() {
+    var desc = el('describe-textarea').value.trim();
+    if (!desc) {
+      announce('Please enter a description first.');
+      el('describe-textarea').focus();
+      return;
+    }
+    describeState.questionAnswers = {};
+    describeState.unsupportedAcknowledged = false;
+    await doInterpret(desc, undefined);
+  }
+
+  async function onInterpretOfflineWithAnswers() {
+    var desc = el('describe-textarea').value.trim();
+    if (!desc) return;
+    var usersAnswer = describeState.questionAnswers['entity-type'];
+    var optionAnswer = usersAnswer === 'Person records (no login required)' ? 'person'
+                     : usersAnswer === 'Authenticated user accounts (login required)' ? 'auth-user'
+                     : undefined;
+    await doInterpret(desc, optionAnswer);
+  }
+
+  async function doInterpret(description, usersAnswer) {
+    var resultEl = el('describe-result');
+    resultEl.textContent = '';
+    resultEl.classList.remove('visible');
+
+    var btnOffline = el('btn-interpret-offline');
+    if (btnOffline) btnOffline.disabled = true;
+
+    try {
+      var reqBody = { description: description };
+      if (usersAnswer) reqBody.usersAnswer = usersAnswer;
+      var resp = await postJson('/api/interpret', reqBody);
+      var data = await resp.json();
+
+      resultEl.classList.add('visible');
+      resultEl.textContent = '';
+
+      if (!resp.ok) {
+        renderDescribeError(resultEl, data.error || 'Interpretation failed.');
+        return;
+      }
+
+      if (data.kind === 'unrecognized') {
+        renderDescribeUnrecognized(resultEl, data.reason || 'Could not interpret description.');
+        return;
+      }
+
+      if (data.kind === 'clarification') {
+        renderDescribeClarification(resultEl, data.questions || [], data.partialAssumptions || []);
+        return;
+      }
+
+      if (data.kind === 'proposal') {
+        describeState.pending = data;
+        renderDescribeProposal(resultEl, data);
+        return;
+      }
+
+      renderDescribeError(resultEl, 'Unexpected response from interpreter.');
+    } catch (err) {
+      resultEl.classList.add('visible');
+      renderDescribeError(resultEl, 'Request error: ' + String(err));
+    } finally {
+      if (btnOffline) btnOffline.disabled = false;
+    }
+  }
+
+  function renderDescribeError(container, msg) {
+    var box = document.createElement('div');
+    box.className = 'describe-unrecognized';
+    var p = document.createElement('p');
+    p.style.margin = '0';
+    p.textContent = 'Error: ' + msg;
+    box.appendChild(p);
+    container.appendChild(box);
+    announce('Interpretation error: ' + msg);
+  }
+
+  function renderDescribeUnrecognized(container, reason) {
+    var box = document.createElement('div');
+    box.className = 'describe-unrecognized';
+    var h4 = document.createElement('h4');
+    h4.style.cssText = 'margin:0 0 4px 0;font-size:12px;font-weight:700;color:var(--cp-text-muted);';
+    h4.textContent = 'Could not interpret description';
+    var p = document.createElement('p');
+    p.style.margin = '0';
+    p.style.fontSize = '12px';
+    p.textContent = reason;
+    box.appendChild(h4);
+    box.appendChild(p);
+    container.appendChild(box);
+    announce('Description not recognised. ' + reason);
+  }
+
+  function renderDescribeClarification(container, questions, partialAssumptions) {
+    var title = document.createElement('div');
+    title.className = 'describe-questions-title';
+    title.textContent = 'A few questions to clarify:';
+    container.appendChild(title);
+
+    if (partialAssumptions && partialAssumptions.length > 0) {
+      var noteEl = document.createElement('div');
+      noteEl.className = 'describe-mode-note';
+      partialAssumptions.forEach(function (a) {
+        var p = document.createElement('p');
+        p.style.margin = '0';
+        p.textContent = a;
+        noteEl.appendChild(p);
+      });
+      container.appendChild(noteEl);
+    }
+
+    describeState.questionAnswers = {};
+
+    questions.forEach(function (q) {
+      var item = document.createElement('div');
+      item.className = 'describe-question-item';
+      var qText = document.createElement('div');
+      qText.className = 'describe-question-text';
+      qText.textContent = q.question;
+      item.appendChild(qText);
+      (q.options || []).forEach(function (opt) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'describe-option-btn';
+        btn.textContent = opt;
+        btn.addEventListener('click', function () {
+          item.querySelectorAll('.describe-option-btn').forEach(function (b) { b.classList.remove('selected'); });
+          btn.classList.add('selected');
+          describeState.questionAnswers[q.id] = opt;
+        });
+        item.appendChild(btn);
+      });
+      container.appendChild(item);
+    });
+
+    var sendBtn = el('btn-describe-send-answers');
+    if (sendBtn) sendBtn.style.display = 'inline-block';
+    announce('Clarification needed. Please answer the questions.');
+  }
+
+  function renderDescribeProposal(container, data) {
+    // Interpretation card
+    var card = document.createElement('div');
+    card.className = 'describe-interpretation-card';
+    var cardTitle = document.createElement('h4');
+    cardTitle.textContent = 'Interpretation: ' + data.appName + ' (' + data.entityName + ' records)';
+    card.appendChild(cardTitle);
+
+    if (data.assumptions && data.assumptions.length > 0) {
+      data.assumptions.forEach(function (a) {
+        var p = document.createElement('p');
+        p.className = 'describe-assumptions';
+        p.style.margin = '2px 0';
+        p.style.fontSize = '12px';
+        p.textContent = a;
+        card.appendChild(p);
+      });
+    }
+    container.appendChild(card);
+
+    // Unsupported capabilities warning
+    if (data.unsupportedCapabilities && data.unsupportedCapabilities.length > 0) {
+      var unsupCard = document.createElement('div');
+      unsupCard.className = 'describe-unsupported';
+      var unsupTitle = document.createElement('h4');
+      unsupTitle.textContent = 'Not generated yet — unsupported capabilities:';
+      unsupCard.appendChild(unsupTitle);
+      var ul = document.createElement('ul');
+      ul.className = 'describe-warning-list';
+      data.unsupportedCapabilities.forEach(function (u) {
+        var li = document.createElement('li');
+        li.textContent = u.capability + ': ' + u.message;
+        ul.appendChild(li);
+      });
+      unsupCard.appendChild(ul);
+      container.appendChild(unsupCard);
+    }
+
+    // Field warnings
+    if (data.warnings && data.warnings.length > 0) {
+      var warnCard = document.createElement('div');
+      warnCard.className = 'describe-unsupported';
+      warnCard.style.borderColor = 'var(--cp-text-muted)';
+      warnCard.style.background = 'var(--cp-surface-soft)';
+      var warnTitle = document.createElement('h4');
+      warnTitle.style.color = 'var(--cp-text-muted)';
+      warnTitle.textContent = 'Type notes:';
+      warnCard.appendChild(warnTitle);
+      var warnUl = document.createElement('ul');
+      warnUl.className = 'describe-warning-list';
+      data.warnings.forEach(function (w) {
+        var li = document.createElement('li');
+        li.textContent = w;
+        warnUl.appendChild(li);
+      });
+      warnCard.appendChild(warnUl);
+      container.appendChild(warnCard);
+    }
+
+    // Proposed source preview
+    var srcLabel = document.createElement('div');
+    srcLabel.className = 'describe-path-label';
+    srcLabel.textContent = 'Proposed IntentLang source:';
+    container.appendChild(srcLabel);
+
+    var srcPre = document.createElement('pre');
+    srcPre.className = 'describe-proposal-source';
+    srcPre.setAttribute('aria-label', 'Proposed IntentLang source');
+    srcPre.textContent = data.source || '';
+    container.appendChild(srcPre);
+
+    // Acknowledgement row (if there are unsupported capabilities)
+    var ackRow = el('unsupported-ack-row');
+    var applyBtn = el('btn-describe-apply');
+    if (data.unsupportedCapabilities && data.unsupportedCapabilities.length > 0) {
+      ackRow.classList.add('visible');
+      ackRow.querySelector('label').textContent =
+        'I understand that ' +
+        data.unsupportedCapabilities.map(function (u) { return u.capability; }).join(', ') +
+        ' were not generated and will need to be added manually or are not supported.';
+      var ackBox = el('unsupported-ack-checkbox');
+      ackBox.checked = false;
+      describeState.unsupportedAcknowledged = false;
+      if (applyBtn) applyBtn.disabled = true;
+      ackBox.addEventListener('change', function () {
+        describeState.unsupportedAcknowledged = ackBox.checked;
+        if (applyBtn) applyBtn.disabled = !ackBox.checked;
+      });
+    } else {
+      ackRow.classList.remove('visible');
+      if (applyBtn) applyBtn.disabled = false;
+    }
+
+    // Apply row
+    var applyRow = el('describe-apply-row');
+    if (applyRow) applyRow.style.display = 'flex';
+
+    announce('Proposal ready: ' + data.appName + ' with ' + data.supportedFieldCount + ' field(s). ' +
+      (data.unsupportedCapabilities && data.unsupportedCapabilities.length > 0
+        ? 'Acknowledge unsupported items to enable Apply.' : 'Click Apply to Editor.'));
+  }
+
+  function applyDescribeProposal() {
+    if (!describeState.pending) return;
+    var data = describeState.pending;
+    if (data.unsupportedCapabilities && data.unsupportedCapabilities.length > 0 && !describeState.unsupportedAcknowledged) {
+      announce('Please acknowledge the unsupported capabilities before applying.');
+      return;
+    }
+    var src = data.source;
+    // Switch to Write IntentLang mode
+    setEditorMode('code');
+    el('editor').value = src;
+    updateLineNumbers();
+    markUnsaved();
+    runCheck(src);
+    describeState.pending = null;
+    describeState.unsupportedAcknowledged = false;
+    announce('Proposal applied to editor. Source file unchanged until you Save. Generate App is a separate step.');
+  }
+
   // ── Boot ──────────────────────────────────────────────────────────────────────
 
   if (document.readyState === 'loading') {
@@ -1797,6 +2526,10 @@ export function buildStudioHtml(filename: string, port: number): string {
 
   <main id="studio-main" role="main">
     <section id="editor-pane" aria-label="Source editor">
+      <div id="editor-mode-tabs" role="tablist" aria-label="Editor mode">
+        <button role="tab" id="tab-mode-code" class="mode-tab" aria-selected="true" aria-controls="editor-wrap" tabindex="0" title="Write IntentLang controlled grammar">Write IntentLang</button>
+        <button role="tab" id="tab-mode-describe" class="mode-tab" aria-selected="false" aria-controls="describe-pane" tabindex="-1" title="Describe your app in plain English (offline interpreter + optional AI)">Describe App</button>
+      </div>
       <div id="editor-toolbar" role="toolbar" aria-label="Editor actions">
         <button id="btn-check" class="toolbar-btn" type="button" title="Check source (Ctrl+Enter)">Check</button>
         <button id="btn-format" class="toolbar-btn" type="button" title="Format source (Ctrl+Shift+F)">Format</button>
@@ -1804,6 +2537,24 @@ export function buildStudioHtml(filename: string, port: number): string {
         <button id="btn-generate" class="toolbar-btn primary" type="button" title="Generate App">Generate App</button>
         <button id="btn-templates" type="button" title="Load a template">Templates ▾</button>
         <button id="btn-ai-open" class="toolbar-btn" type="button" title="Describe with AI (optional — off by default)">AI Assist ✦</button>
+      </div>
+      <div id="diag-summary" aria-live="assertive" aria-atomic="true" aria-label="First diagnostic">
+        <span class="diag-summary-badge" aria-hidden="true"></span>
+        <span class="diag-summary-loc"></span>
+        <span class="diag-summary-msg"></span>
+        <span class="diag-summary-hint"></span>
+        <button id="btn-show-all-problems" type="button" aria-label="Show all problems in Problems panel">Show all problems</button>
+      </div>
+      <div id="prose-banner" role="alert" aria-live="polite" aria-atomic="true">
+        <span class="prose-banner-icon" aria-hidden="true">💬</span>
+        <div>
+          <div class="prose-banner-text">This looks like a description, not IntentLang code.</div>
+          <div class="prose-banner-sub">Use <strong>Describe App</strong> mode for plain-English input, or <strong>Write IntentLang</strong> for the controlled grammar.</div>
+        </div>
+        <div class="prose-banner-actions">
+          <button id="btn-prose-move" class="prose-banner-btn" type="button">Move to Describe App</button>
+          <button id="btn-prose-examples" class="prose-banner-btn secondary" type="button">Show valid examples</button>
+        </div>
       </div>
       <div id="editor-wrap">
         <div id="line-numbers" aria-hidden="true">1</div>
@@ -1817,6 +2568,43 @@ export function buildStudioHtml(filename: string, port: number): string {
           data-gramm="false"
           placeholder="Write your IntentLang source here…"
         ></textarea>
+      </div>
+      <div id="describe-pane" aria-label="Describe App mode" aria-live="off">
+        <div id="describe-pane-body">
+          <div class="describe-mode-note">
+            <strong>Describe App</strong> accepts supported plain-English descriptions.
+            The <em>offline interpreter</em> works without AI for simple CRUD apps using a finite vocabulary.
+            Optional AI handles broader descriptions if a provider is configured.
+            <br>This is <strong>not</strong> unrestricted natural language — unsupported features will be listed, not silently omitted.
+          </div>
+          <label for="describe-textarea" style="font-size:12px;font-weight:600;color:var(--cp-text-muted);">Describe the app you want to build:</label>
+          <textarea
+            id="describe-textarea"
+            rows="4"
+            placeholder="e.g. I want to build an app that allows users to add their name, age, address, DOB"
+            aria-label="App description"
+          ></textarea>
+          <div class="describe-actions">
+            <div>
+              <div class="describe-path-label">Path 1 — always available</div>
+              <button id="btn-interpret-offline" class="toolbar-btn primary" type="button">Use offline guided interpretation</button>
+            </div>
+            <div>
+              <div class="describe-path-label">Path 2 — requires AI provider</div>
+              <button id="btn-interpret-ai" class="toolbar-btn" type="button" disabled title="AI provider is not configured. Start Studio with --ai-provider to enable.">Ask configured AI ✦</button>
+            </div>
+          </div>
+          <div id="describe-result"></div>
+          <div id="unsupported-ack-row" aria-live="polite">
+            <input type="checkbox" id="unsupported-ack-checkbox" aria-label="Acknowledge unsupported capabilities">
+            <label for="unsupported-ack-checkbox"></label>
+          </div>
+          <div id="describe-apply-row" class="describe-apply-row" style="display:none;">
+            <button id="btn-describe-apply" class="toolbar-btn primary" type="button" disabled>Apply supported source to Editor</button>
+            <button id="btn-describe-send-answers" class="toolbar-btn" type="button" style="display:none;">Send Answers</button>
+            <span style="font-size:11px;color:var(--cp-text-muted);">Apply updates the editor only — no auto-save, no auto-generate.</span>
+          </div>
+        </div>
       </div>
       <div id="status-bar" role="status" aria-live="polite">
         <span id="unsaved-dot" aria-hidden="true" title="Unsaved changes"></span>

@@ -2,6 +2,21 @@
 
 IntentLang v0.7.0-alpha adds **optional** AI assistance to Studio. The core compiler, guided mode, and all generated applications remain completely AI-free and consume zero tokens.
 
+## Offline interpreter vs AI assistant
+
+Studio v0.7.1 introduces a second path in **Describe App** mode that does not require AI:
+
+| | Offline interpreter | AI assistant |
+|---|---|---|
+| Requires AI provider | No | Yes |
+| Internet/tokens | No | Depends on provider |
+| Supported vocabulary | Finite (see [description-mode.md](description-mode.md)) | Broader |
+| Deterministic output | Yes — same input → same output | No |
+| Unsupported features | Listed explicitly | May be listed or silently omitted |
+| Auth/security rules | Never silently added | Depends on model |
+
+**Recommended default:** use the offline interpreter for simple CRUD apps (entity + fields). Fall back to AI only for descriptions the offline interpreter does not recognise.
+
 ## What AI assistance does (and does not do)
 
 | Feature | AI-free | With AI |
@@ -10,7 +25,8 @@ IntentLang v0.7.0-alpha adds **optional** AI assistance to Studio. The core comp
 | Instant error diagnostics | ✅ | ✅ |
 | Format, check, save | ✅ | ✅ |
 | Generate full-stack app | ✅ | ✅ |
-| Translate description → proposed source | ❌ | ✅ (optional) |
+| Describe App — offline interpreter | ✅ | ✅ |
+| Describe App — broader descriptions | ❌ | ✅ (optional) |
 
 AI output is **untrusted text**. It cannot:
 - Write files or execute commands

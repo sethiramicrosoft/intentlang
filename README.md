@@ -2,12 +2,12 @@
 
 ![status](https://img.shields.io/badge/status-experimental-orange)
 ![node](https://img.shields.io/badge/node-%3E%3D24-339933)
-![version](https://img.shields.io/badge/version-v0.7.0--alpha-blue)
+![version](https://img.shields.io/badge/version-v0.7.1--alpha-blue)
 
 **Tagline:** An experimental offline compiler designed to help non-software developers build applications using controlled natural English. AI assistance is optional and off by default.
 
 > [!WARNING]
-> IntentLang v0.7.0-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
+> IntentLang v0.7.1-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
 
 ## Table of Contents
 
@@ -149,7 +149,51 @@ Studio opens at `http://127.0.0.1:3211` (default port) in your default browser.
 
 ### Studio walkthrough
 
-**Editor panel (left)**
+#### Two editor modes
+
+Studio v0.7.1 adds two clearly-labelled modes at the top of the editor pane:
+
+| Mode | When to use |
+|---|---|
+| **Write IntentLang** | Default for existing source files. Accepts controlled grammar only. Errors are shown inline above the editor and in the Problems panel. |
+| **Describe App** | For new apps or plain-English input. The offline interpreter converts supported descriptions into IntentLang source without AI tokens. Optional AI handles broader descriptions if a provider is configured. |
+
+> **Not unrestricted English.** Describe App mode supports a finite vocabulary for simple CRUD apps. Unsupported features (sorting, search, delete, file upload) are listed explicitly — never silently omitted.
+
+#### Describe App mode — quick example
+
+Input:
+```
+I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting
+```
+
+Offline interpreter output:
+```intent
+application People
+
+a Person has a required name as text
+a Person has an age as integer
+a Person has an address as text
+a Person has a dateOfBirth as text
+```
+
+Assumptions shown:
+- *"Interpreted 'users' as Person records, not login accounts."*
+
+Warnings shown:
+- *"DOB/date of birth is mapped to a text field — native date type is not yet supported in IntentLang."*
+- *"Sorting is not supported by IntentLang yet, so it was not added. The data-entry portion can be generated now."*
+
+To apply the supported portion, acknowledge the unsupported items and click **Apply supported source to Editor**. The editor content is updated but the file is not saved and no app is generated until you do those steps explicitly.
+
+#### Visible diagnostics
+
+When the source has errors in Write IntentLang mode:
+- A sticky error bar **above the editor** shows the first error code, line:column, message, and fix hint.
+- Click **Show all N problems** to focus the Problems panel.
+- Problems tab is automatically selected when errors appear (unless you have manually chosen a different panel).
+
+#### Editor panel (left)
 
 - Type or paste IntentLang source into the editor.
 - After a short pause, the source is automatically checked and diagnostics appear in the Problems panel.

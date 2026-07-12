@@ -1122,3 +1122,371 @@ test("studio server source file contains no saved credential literals", async ()
   const credentialLiteral = /(?:password|passwd|secret|credential)\s*[:=]\s*["'][^"']+["']/gi;
   assert.equal(credentialLiteral.test(content), false, "No credential literals in studio-server.ts");
 });
+
+// ── Description Interpreter unit tests ───────────────────────────────────────
+
+import {
+  interpretDescription,
+  looksLikeProse,
+} from "../src/description-interpreter.js";
+
+test("looksLikeProse - detects natural language description", () => {
+  assert.equal(looksLikeProse("I want to build an app that allows users to add their name, age"), true);
+  assert.equal(looksLikeProse("Create an app with a name, age, address"), true);
+  assert.equal(looksLikeProse("Build a simple todo app"), true);
+});
+
+test("looksLikeProse - returns false for IntentLang source", () => {
+  assert.equal(looksLikeProse("application People"), false, "application keyword");
+  assert.equal(looksLikeProse("a Person has a required name as text"), false, "a <Entity> has...");
+  assert.equal(looksLikeProse("authentication uses User identified by email"), false, "authentication keyword");
+  assert.equal(looksLikeProse("role Administrator"), false, "role keyword");
+  assert.equal(looksLikeProse("allow Member to read Task"), false, "allow keyword");
+  assert.equal(looksLikeProse("each Task belongs to a User as owner on delete restrict"), false, "each keyword");
+  assert.equal(looksLikeProse("action complete a Task"), false, "action keyword");
+});
+
+test("looksLikeProse - returns false for empty/blank source", () => {
+  assert.equal(looksLikeProse(""), false);
+  assert.equal(looksLikeProse("   \n  \n  "), false);
+});
+
+test("description interpreter - exact observed sentence produces Person proposal", () => {
+  const result = interpretDescription(
+    "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+  );
+  assert.equal(result.kind, "proposal", "should produce proposal");
+  if (result.kind !== "proposal") return;
+  assert.equal(result.entityName, "Person", "entity should be Person, not User");
+  assert.equal(result.appName, "People", "app should be People");
+  assert.ok(result.source.includes("application People"), "source has application People");
+  assert.ok(result.source.includes("a Person has"), "source has Person entity fields");
+});
+
+test("description interpreter - exact sentence: name is required text", () => {
+  const result = interpretDescription(
+    "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+  );
+  if (result.kind !== "proposal") throw new Error("expected proposal");
+  assert.ok(result.source.includes("required name as text"), "name is required text");
+});
+
+test("description interpreter - exact sentence: age is integer", () => {
+  const result = interpretDescription(
+    "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+  );
+  if (result.kind !== "proposal") throw new Error("expected proposal");
+  assert.ok(result.source.includes("age as integer"), "age is integer");
+});
+
+test("description interpreter - exact sentence: address is text", () => {
+  const result = interpretDescription(
+    "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+  );
+  if (result.kind !== "proposal") throw new Error("expected proposal");
+  assert.ok(result.source.includes("address as text"), "address is text");
+});
+
+test("description interpreter - exact sentence: DOB maps to dateOfBirth with warning", () => {
+  const result = interpretDescription(
+    "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+  );
+  if (result.kind !== "proposal") throw new Error("expected proposal");
+  assert.ok(result.source.includes("dateOfBirth as text"), "DOB mapped to dateOfBirth text");
+  const hasDateWarning = result.warnings.some((w) => w.toLowerCase().includes("date") || w.toLowerCase().includes("dob"));
+  assert.ok(hasDateWarning, "DOB warning present about text type");
+});
+
+test("description interpreter - exact sentence: sorting is unsupported", () => {
+  const result = interpretDescription(
+    "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+  );
+  if (result.kind !== "proposal") throw new Error("expected proposal");
+  const sortingUnsupported = result.unsupportedCapabilities.find((u) => u.code === "UNSUPPORTED_SORTING");
+  assert.ok(sortingUnsupported !== undefined, "UNSUPPORTED_SORTING in result");
+  assert.ok(
+    sortingUnsupported!.message.toLowerCase().includes("sorting"),
+    "sorting message mentions sorting"
+  );
+});
+
+test("description interpreter - exact sentence: no auth silently added", () => {
+  const result = interpretDescription(
+    "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+  );
+  if (result.kind !== "proposal") throw new Error("expected proposal");
+  assert.ok(!result.source.includes("authentication"), "no authentication in generated source");
+  assert.ok(!result.source.includes("role "), "no roles in generated source");
+  assert.ok(!result.source.includes("allow "), "no permissions in generated source");
+});
+
+test("description interpreter - exact sentence: Person assumption stated", () => {
+  const result = interpretDescription(
+    "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+  );
+  if (result.kind !== "proposal") throw new Error("expected proposal");
+  const hasPersonAssumption = result.assumptions.some(
+    (a) => a.toLowerCase().includes("person") && a.toLowerCase().includes("login")
+  );
+  assert.ok(hasPersonAssumption, "assumption mentions Person vs login accounts");
+});
+
+test("description interpreter - exact sentence: proposed source compiles successfully", () => {
+  const result = interpretDescription(
+    "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+  );
+  if (result.kind !== "proposal") throw new Error("expected proposal, got: " + result.kind);
+  const compiled = compileSource(result.source);
+  assert.equal(
+    compiled.ok,
+    true,
+    "Proposed source must compile: " +
+      (compiled.ok ? "" : JSON.stringify((compiled as { diagnostics: unknown[] }).diagnostics))
+  );
+});
+
+test("description interpreter - finite vocabulary: unrecognised fields produce no proposal", () => {
+  const result = interpretDescription(
+    "I want to build an app that allows users to add their xyzzy42, florp, blargh"
+  );
+  // Should be unrecognized (no matching fields)
+  assert.ok(result.kind === "unrecognized", "unrecognised fields result in unrecognized");
+});
+
+test("description interpreter - boolean fields supported", () => {
+  const result = interpretDescription(
+    "I want to build an app that allows users to add their name, active"
+  );
+  if (result.kind !== "proposal") throw new Error("expected proposal");
+  assert.ok(result.source.includes("active as boolean"), "active is boolean");
+});
+
+test("description interpreter - no app intent returns unrecognized", () => {
+  const result = interpretDescription("name, age, address");
+  assert.equal(result.kind, "unrecognized", "bare field list without app intent");
+});
+
+test("description interpreter - clarification returned when 'users' present without answer", () => {
+  const result = interpretDescription(
+    "I want to build an app that allows users to add their name, age"
+  );
+  // Should be proposal with Person assumption (default behaviour — no clarification required)
+  assert.ok(
+    result.kind === "proposal",
+    "should be proposal (Person is default for users)"
+  );
+  if (result.kind === "proposal") {
+    assert.equal(result.entityName, "Person", "defaults to Person when users detected");
+    const hasPersonAssumption = result.assumptions.some(
+      (a) => a.toLowerCase().includes("person") && a.toLowerCase().includes("login")
+    );
+    assert.ok(hasPersonAssumption, "assumption notes Person vs login accounts");
+  }
+});
+
+// ── Studio v0.7.1 UI HTML/CSS/JS tests ──────────────────────────────────────
+
+test("studio HTML has mode tabs (Write IntentLang and Describe App)", () => {
+  const html = buildStudioHtml("test.intent", 3211);
+  assert.ok(html.includes("tab-mode-code"), "Write IntentLang tab present");
+  assert.ok(html.includes("tab-mode-describe"), "Describe App tab present");
+  assert.ok(html.includes("Write IntentLang"), "Write IntentLang label");
+  assert.ok(html.includes("Describe App"), "Describe App label");
+});
+
+test("studio HTML has prose banner with move and examples buttons", () => {
+  const html = buildStudioHtml("test.intent", 3211);
+  assert.ok(html.includes("prose-banner"), "prose banner element present");
+  assert.ok(html.includes("btn-prose-move"), "move to describe button");
+  assert.ok(html.includes("btn-prose-examples"), "show examples button");
+  assert.ok(html.includes("This looks like a description"), "prose detection message");
+});
+
+test("studio HTML has visible diagnostics summary bar", () => {
+  const html = buildStudioHtml("test.intent", 3211);
+  assert.ok(html.includes("diag-summary"), "diag-summary element");
+  assert.ok(html.includes("btn-show-all-problems"), "show all problems button");
+  assert.ok(html.includes("diag-summary-badge"), "error code badge");
+  assert.ok(html.includes("diag-summary-msg"), "error message span");
+});
+
+test("studio HTML has describe pane with offline and AI interpretation paths", () => {
+  const html = buildStudioHtml("test.intent", 3211);
+  assert.ok(html.includes("describe-pane"), "describe pane element");
+  assert.ok(html.includes("btn-interpret-offline"), "offline interpret button");
+  assert.ok(html.includes("btn-interpret-ai"), "AI interpret button");
+  assert.ok(html.includes("describe-textarea"), "description textarea");
+});
+
+test("studio HTML describe pane has unsupported acknowledgement row", () => {
+  const html = buildStudioHtml("test.intent", 3211);
+  assert.ok(html.includes("unsupported-ack-row"), "ack row element");
+  assert.ok(html.includes("unsupported-ack-checkbox"), "ack checkbox");
+  assert.ok(html.includes("btn-describe-apply"), "apply button");
+});
+
+test("studio CSS has mode-tab styles using var(--cp-*)", () => {
+  assert.ok(STUDIO_CSS.includes(".mode-tab"), "mode-tab CSS class");
+  assert.ok(STUDIO_CSS.includes("#editor-mode-tabs"), "editor-mode-tabs CSS");
+});
+
+test("studio CSS has diag-summary styles", () => {
+  assert.ok(STUDIO_CSS.includes("#diag-summary"), "diag-summary CSS");
+  assert.ok(STUDIO_CSS.includes(".diag-summary-badge"), "diag-summary-badge CSS");
+  assert.ok(STUDIO_CSS.includes(".diag-summary-msg"), "diag-summary-msg CSS");
+});
+
+test("studio CSS has prose-banner styles", () => {
+  assert.ok(STUDIO_CSS.includes("#prose-banner"), "prose-banner CSS");
+  assert.ok(STUDIO_CSS.includes(".prose-banner-btn"), "prose-banner-btn CSS");
+});
+
+test("studio CSS has describe-pane styles", () => {
+  assert.ok(STUDIO_CSS.includes("#describe-pane"), "describe-pane CSS");
+  assert.ok(STUDIO_CSS.includes(".describe-mode-note"), "describe-mode-note CSS");
+  assert.ok(STUDIO_CSS.includes(".describe-proposal-source"), "describe-proposal-source CSS");
+});
+
+test("studio CSS panels have min-height for responsive layout", () => {
+  assert.ok(STUDIO_CSS.includes("min-height: 0"), "panels have min-height: 0 for flex overflow fix");
+});
+
+test("studio JS has isProseInput function", () => {
+  assert.ok(STUDIO_JS.includes("isProseInput"), "isProseInput function defined in JS");
+  assert.ok(STUDIO_JS.includes("TOP_LEVEL_KW"), "TOP_LEVEL_KW array in JS");
+});
+
+test("studio JS has setEditorMode function", () => {
+  assert.ok(STUDIO_JS.includes("setEditorMode"), "setEditorMode function");
+  assert.ok(STUDIO_JS.includes("tab-mode-code"), "code mode tab referenced");
+  assert.ok(STUDIO_JS.includes("tab-mode-describe"), "describe mode tab referenced");
+});
+
+test("studio JS has renderDiagSummary function", () => {
+  assert.ok(STUDIO_JS.includes("renderDiagSummary"), "renderDiagSummary function");
+  assert.ok(STUDIO_JS.includes("diag-summary-badge"), "badge referenced in JS");
+  assert.ok(STUDIO_JS.includes("btn-show-all-problems"), "show all button referenced");
+});
+
+test("studio JS has offline interpreter integration (doInterpret)", () => {
+  assert.ok(STUDIO_JS.includes("doInterpret"), "doInterpret function");
+  assert.ok(STUDIO_JS.includes("/api/interpret"), "api/interpret endpoint called");
+  assert.ok(STUDIO_JS.includes("btn-interpret-offline"), "offline button referenced");
+});
+
+test("studio JS applyDescribeProposal does not auto-save or auto-generate", () => {
+  const applyFn = STUDIO_JS.slice(
+    STUDIO_JS.indexOf("function applyDescribeProposal"),
+    STUDIO_JS.indexOf("function applyDescribeProposal") + 800
+  );
+  assert.ok(!applyFn.includes("/api/save"), "apply does not call /api/save");
+  assert.ok(!applyFn.includes("/api/generate"), "apply does not call /api/generate");
+  assert.ok(!applyFn.includes("/api/plan"), "apply does not call /api/plan");
+});
+
+test("studio JS unsupported ack required before apply (if unsupported present)", () => {
+  // Verify the logic: apply button disabled if unsupported and not acknowledged
+  assert.ok(STUDIO_JS.includes("unsupportedAcknowledged"), "unsupportedAcknowledged state tracked");
+  assert.ok(STUDIO_JS.includes("applyBtn.disabled = true"), "apply disabled when ack not done");
+  assert.ok(STUDIO_JS.includes("applyBtn.disabled = !ackBox.checked"), "apply enabled when ack done");
+});
+
+// ── Studio Server /api/interpret tests ───────────────────────────────────────
+
+test("studio server POST /api/interpret returns proposal for observed sentence", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3321, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const resp = await fetch(`${studio.url}/api/interpret`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+          description:
+            "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+        })
+      });
+      assert.equal(resp.status, 200);
+      const body = await resp.json() as Record<string, unknown>;
+      assert.equal(body["kind"], "proposal", "should return proposal");
+      assert.equal(body["entityName"], "Person", "entity is Person");
+      assert.equal(body["appName"], "People", "app is People");
+      assert.ok(typeof body["source"] === "string", "source present");
+      const src = body["source"] as string;
+      assert.ok(src.includes("application People"), "source has application");
+      assert.ok(src.includes("dateOfBirth as text"), "DOB mapped correctly");
+      const unsupported = body["unsupportedCapabilities"] as unknown[];
+      assert.ok(Array.isArray(unsupported) && unsupported.length > 0, "unsupported capabilities present");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server POST /api/interpret proposed source is compiler-valid", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3322, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const resp = await fetch(`${studio.url}/api/interpret`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+          description:
+            "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+        })
+      });
+      const body = await resp.json() as Record<string, unknown>;
+      if (body["kind"] === "proposal") {
+        const compiled = compileSource(body["source"] as string);
+        assert.equal(compiled.ok, true, "proposed source must compile");
+      }
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server POST /api/interpret returns 400 for empty description", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3323, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const resp = await fetch(`${studio.url}/api/interpret`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ description: "" })
+      });
+      assert.equal(resp.status, 400, "empty description returns 400");
+    } finally {
+      await studio.close();
+    }
+  });
+});

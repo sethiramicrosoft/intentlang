@@ -15,6 +15,7 @@ import { buildStudioHtml, STUDIO_CSS, STUDIO_JS } from "./studio-assets.js";
 import type { BuildManifest } from "./model.js";
 import { createAiAssistant } from "./ai-assistant.js";
 import type { AiConfig } from "./ai-provider.js";
+import { interpretDescription } from "./description-interpreter.js";
 
 const BODY_LIMIT_BYTES = 1_048_576; // 1 MB
 const PLAN_TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -410,7 +411,8 @@ export async function startStudio(options: StudioOptions): Promise<{
       ["POST", "/api/save"],
       ["POST", "/api/plan"],
       ["POST", "/api/generate"],
-      ["POST", "/api/ai/propose"]
+      ["POST", "/api/ai/propose"],
+      ["POST", "/api/interpret"]
     ];
 
     const routeAllowed = allowedRoutes.some(
@@ -728,6 +730,74 @@ export async function startStudio(options: StudioOptions): Promise<{
         outputDir,
         artifacts,
         authEnabled: result.ir.authentication !== undefined
+      });
+      return;
+    }
+
+    // ── POST /api/interpret ─────────────────────────────────────────────────
+
+    if (pathname === "/api/interpret") {
+      const description =
+        typeof body["description"] === "string" ? body["description"].trim() : "";
+      const rawUsersAnswer =
+        typeof body["usersAnswer"] === "string" ? body["usersAnswer"] : undefined;
+
+      if (!description) {
+        sendJson(res, 400, {
+          code: "INTERPRET_EMPTY",
+          error: "description is required and must be a non-empty string."
+        });
+        return;
+      }
+
+      const usersAnswer =
+        rawUsersAnswer === "person" || rawUsersAnswer === "auth-user"
+          ? rawUsersAnswer
+          : undefined;
+
+      const result = interpretDescription(description, usersAnswer ? { usersAnswer } : undefined);
+
+      if (result.kind === "unrecognized") {
+        sendJson(res, 200, { kind: "unrecognized", reason: result.reason });
+        return;
+      }
+
+      if (result.kind === "clarification") {
+        sendJson(res, 200, {
+          kind: "clarification",
+          questions: result.questions,
+          partialAssumptions: result.partialAssumptions
+        });
+        return;
+      }
+
+      // Compile proposed source to validate — invalid output is a bug
+      const compiled = compileSource(result.source);
+      if (!compiled.ok) {
+        sendJson(res, 500, {
+          code: "INTERPRET_BUG",
+          error:
+            "Description interpreter produced source that does not compile. Please report this as a bug.",
+          diagnostics: compiled.diagnostics,
+          proposedSource: result.source
+        });
+        return;
+      }
+
+      // Build diff lines (proposed source vs empty)
+      const proposedLines = result.source.split("\n");
+      const diff = proposedLines.map((line) => ({ op: "add", line }));
+
+      sendJson(res, 200, {
+        kind: "proposal",
+        appName: result.appName,
+        entityName: result.entityName,
+        source: result.source,
+        assumptions: result.assumptions,
+        warnings: result.warnings,
+        unsupportedCapabilities: result.unsupportedCapabilities,
+        supportedFieldCount: result.supportedFieldCount,
+        diff
       });
       return;
     }
