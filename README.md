@@ -18,14 +18,14 @@ The default Studio experience in **v0.8.0-alpha.0** is the beginner-first **Inte
 Paste this sentence into the wizard:
 
 ```text
-I want to build an app that allows users to add their name, age, address, and date of birth
+I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting
 ```
 
 What happens:
 
-1. **Describe** — the offline interpreter turns the sentence into supported IntentLang source.
-2. **Review** — you confirm the proposed source and acknowledge any unsupported items.
-3. **Build** — Studio compiles, refuses destructive/security-downgrade migrations, and swaps generated artifacts safely.
+1. **Describe** — the offline interpreter asks whether “users” means stored people or login accounts.
+2. **Review** — Studio proposes Name, Age, Address, and Date of birth fields. It clearly warns that sorting is not supported yet and Date of birth is stored as text.
+3. **Build** — after you acknowledge the limitation, click **Build app without sorting**. Studio compiles and generates the app without separate Apply, Save, or Generate steps.
 4. **Open app** — Studio auto-starts preview only for unauthenticated apps. Authenticated apps show bootstrap guidance instead.
 
 ### Known limitations up front
@@ -54,25 +54,25 @@ The wizard is always shown first. The full Studio editor now lives under the col
 5. [**Proof: a complete full-stack app generated without AI**](#proof-a-complete-full-stack-app-generated-without-ai)
 6. [Optional AI assistance](#optional-ai-assistance)
 7. [What v0.8.0-alpha can do](#what-v080-alpha-can-do)
-7. [Current limitations](#current-limitations)
-8. [Prerequisites (beginner-friendly)](#prerequisites-beginner-friendly)
-9. [Install from GitHub](#install-from-github)
-10. [Five-minute quick start](#five-minute-quick-start)
-11. [Safe bootstrap and run (no credential literals)](#safe-bootstrap-and-run-no-credential-literals)
-12. [Browser walkthrough](#browser-walkthrough)
-13. [Language tutorial](#language-tutorial)
-14. [Additional example: issue tracker](#additional-example-issue-tracker)
-15. [CLI reference](#cli-reference)
-16. [Generated artifacts reference](#generated-artifacts-reference)
-17. [Safety model deep dive](#safety-model-deep-dive)
-18. [Data and migration guidance](#data-and-migration-guidance)
-19. [Project structure](#project-structure)
-20. [Development guide](#development-guide)
-21. [Troubleshooting](#troubleshooting)
-22. [Security and privacy](#security-and-privacy)
-23. [Roadmap (non-binding)](#roadmap-non-binding)
-24. [FAQ](#faq)
-25. [Contributing and governance](#contributing-and-governance)
+8. [Current limitations](#current-limitations)
+9. [Prerequisites (beginner-friendly)](#prerequisites-beginner-friendly)
+10. [Install from GitHub](#install-from-github)
+11. [Five-minute quick start](#five-minute-quick-start)
+12. [Safe bootstrap and run (no credential literals)](#safe-bootstrap-and-run-no-credential-literals)
+13. [Browser walkthrough](#browser-walkthrough)
+14. [Language tutorial](#language-tutorial)
+15. [Additional example: issue tracker](#additional-example-issue-tracker)
+16. [CLI reference](#cli-reference)
+17. [Generated artifacts reference](#generated-artifacts-reference)
+18. [Safety model deep dive](#safety-model-deep-dive)
+19. [Data and migration guidance](#data-and-migration-guidance)
+20. [Project structure](#project-structure)
+21. [Development guide](#development-guide)
+22. [Troubleshooting](#troubleshooting)
+23. [Security and privacy](#security-and-privacy)
+24. [Roadmap (non-binding)](#roadmap-non-binding)
+25. [FAQ](#faq)
+26. [Contributing and governance](#contributing-and-governance)
 26. [Repository topics](#repository-topics)
 
 ## What this project is
