@@ -1,9 +1,10 @@
 import { createServer } from "node:http";
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
-import { readFile, rename, writeFile, mkdir } from "node:fs/promises";
+import { readFile, rename, writeFile, mkdir, unlink, rm } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { resolve, basename, dirname, join } from "node:path";
 import { spawn } from "node:child_process";
+import { createServer as createNetServer, Socket } from "node:net";
 import { compileSource, formatSource, canonicalJson } from "./compiler.js";
 import { buildManifest } from "./manifest.js";
 import { planMigration } from "./planner.js";
@@ -20,6 +21,9 @@ import { interpretDescription } from "./description-interpreter.js";
 const BODY_LIMIT_BYTES = 1_048_576; // 1 MB
 const PLAN_TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
 const DEFAULT_PORT = 3211;
+const PREVIEW_PORT_MIN = 3220;
+const PREVIEW_PORT_MAX = 3299;
+const PREVIEW_READY_TIMEOUT_MS = 4_000;
 
 // ── Template sources (loaded at startup) ──────────────────────────────────────
 
@@ -309,6 +313,211 @@ async function atomicWrite(filePath: string, content: string): Promise<void> {
   await rename(tmpPath, filePath);
 }
 
+// ── Wizard build transaction helpers ──────────────────────────────────────────
+
+interface GeneratedArtifacts {
+  "app.mjs": string;
+  "migration.sql": string;
+  "intentlang.manifest.json": string;
+  "package.json": string;
+  "index.html": string;
+  "app.js": string;
+  "styles.css": string;
+}
+
+async function writeGeneratedArtifacts(
+  directory: string,
+  artifacts: GeneratedArtifacts
+): Promise<void> {
+  await mkdir(directory, { recursive: true });
+  for (const [name, content] of Object.entries(artifacts)) {
+    await writeFile(join(directory, name), content, "utf8");
+  }
+}
+
+async function restoreExistingOutputDir(
+  outputDir: string,
+  backupDir: string | null
+): Promise<void> {
+  try {
+    if (existsSync(outputDir)) {
+      await rm(outputDir, { recursive: true, force: true });
+    }
+  } catch {
+    // Best effort only
+  }
+  if (backupDir !== null && existsSync(backupDir)) {
+    await rename(backupDir, outputDir);
+  }
+}
+
+async function restoreSourceFile(
+  sourcePath: string,
+  sourceBackupPath: string | null,
+  hadExistingSource: boolean
+): Promise<void> {
+  try {
+    if (existsSync(sourcePath)) {
+      await unlink(sourcePath);
+    }
+  } catch {
+    // Best effort only
+  }
+
+  if (sourceBackupPath !== null && existsSync(sourceBackupPath)) {
+    await rename(sourceBackupPath, sourcePath);
+  } else if (!hadExistingSource) {
+    try {
+      await unlink(sourcePath);
+    } catch {
+      // Best effort only
+    }
+  }
+}
+
+async function commitWizardBuildTransaction(options: {
+  sourcePath: string;
+  sourceContent: string;
+  outputDir: string;
+  artifacts: GeneratedArtifacts;
+}): Promise<void> {
+  const parentDir = dirname(options.outputDir);
+  const tempDir = join(parentDir, `.intentlang-wizard-next-${randomBytes(8).toString("hex")}`);
+  const backupDir = join(parentDir, `.intentlang-wizard-backup-${randomBytes(8).toString("hex")}`);
+  const sourceTempPath = join(dirname(options.sourcePath), `.intentlang-source-next-${randomBytes(8).toString("hex")}.tmp`);
+  const sourceBackupPath = join(dirname(options.sourcePath), `.intentlang-source-backup-${randomBytes(8).toString("hex")}.bak`);
+  const preservedSqliteBackupPath = join(backupDir, "app.sqlite");
+  const preservedSqliteTargetPath = join(options.outputDir, "app.sqlite");
+  const hadExistingOutput = existsSync(options.outputDir);
+  const hadExistingSource = existsSync(options.sourcePath);
+  let outputBackedUp = false;
+  let sourceBackedUp = false;
+  let outputSwapped = false;
+  let sourceCommitted = false;
+
+  try {
+    await writeGeneratedArtifacts(tempDir, options.artifacts);
+    await writeFile(sourceTempPath, options.sourceContent, "utf8");
+
+    if (hadExistingOutput) {
+      await rename(options.outputDir, backupDir);
+      outputBackedUp = true;
+    }
+
+    await rename(tempDir, options.outputDir);
+    outputSwapped = true;
+
+    if (hadExistingSource) {
+      await rename(options.sourcePath, sourceBackupPath);
+      sourceBackedUp = true;
+    }
+
+    await rename(sourceTempPath, options.sourcePath);
+    sourceCommitted = true;
+
+    if (!existsSync(preservedSqliteTargetPath) && existsSync(preservedSqliteBackupPath)) {
+      await rename(preservedSqliteBackupPath, preservedSqliteTargetPath);
+    }
+  } catch (err) {
+    if (sourceCommitted || sourceBackedUp) {
+      await restoreSourceFile(options.sourcePath, sourceBackedUp ? sourceBackupPath : null, hadExistingSource);
+    } else {
+      try {
+        await unlink(sourceTempPath);
+      } catch {
+        // Best effort only
+      }
+    }
+
+    if (outputSwapped || outputBackedUp) {
+      await restoreExistingOutputDir(options.outputDir, outputBackedUp ? backupDir : null);
+    } else {
+      try {
+        await rm(tempDir, { recursive: true, force: true });
+      } catch {
+        // Best effort only
+      }
+    }
+
+    throw err;
+  } finally {
+    await rm(tempDir, { recursive: true, force: true }).catch(() => undefined);
+    await rm(backupDir, { recursive: true, force: true }).catch(() => undefined);
+    if (!sourceCommitted) {
+      await rm(sourceTempPath, { force: true }).catch(() => undefined);
+    }
+    if (!sourceBackedUp) {
+      await rm(sourceBackupPath, { force: true }).catch(() => undefined);
+    }
+    if (sourceCommitted && sourceBackedUp) {
+      await rm(sourceBackupPath, { force: true }).catch(() => undefined);
+    }
+  }
+}
+
+// ── Preview helpers ────────────────────────────────────────────────────────────
+
+function previewUrlForPort(port: number): string {
+  return `http://127.0.0.1:${port}`;
+}
+
+async function findAvailablePreviewPort(): Promise<number | null> {
+  for (let port = PREVIEW_PORT_MIN; port <= PREVIEW_PORT_MAX; port += 1) {
+    const available = await new Promise<boolean>((resolvePort) => {
+      const probe = createNetServer();
+      probe.once("error", () => resolvePort(false));
+      probe.listen(port, "127.0.0.1", () => {
+        probe.close(() => resolvePort(true));
+      });
+    });
+    if (available) {
+      return port;
+    }
+  }
+  return null;
+}
+
+async function waitForPreviewReady(port: number, child: import("node:child_process").ChildProcess): Promise<boolean> {
+  const startedAt = Date.now();
+  while (Date.now() - startedAt < PREVIEW_READY_TIMEOUT_MS) {
+    if (child.exitCode !== null || child.killed) {
+      return false;
+    }
+
+    const ready = await new Promise<boolean>((resolveReady) => {
+      const socket = new Socket();
+      let settled = false;
+      const finish = (value: boolean) => {
+        if (settled) return;
+        settled = true;
+        socket.destroy();
+        resolveReady(value);
+      };
+
+      socket.setTimeout(250);
+      socket.once("connect", () => finish(true));
+      socket.once("timeout", () => finish(false));
+      socket.once("error", () => finish(false));
+      socket.connect(port, "127.0.0.1");
+    });
+
+    if (ready) {
+      return true;
+    }
+
+    await new Promise((resolveDelay) => setTimeout(resolveDelay, 100));
+  }
+
+  return false;
+}
+
+function authEnabledFromManifest(manifest: BuildManifest | null): boolean | null {
+  if (!manifest || typeof manifest !== "object") {
+    return null;
+  }
+  return manifest.ir?.authentication !== undefined;
+}
+
 // ── Open browser (platform-safe) ──────────────────────────────────────────────
 
 function openBrowser(url: string): void {
@@ -373,6 +582,34 @@ export async function startStudio(options: StudioOptions): Promise<{
   const host = `127.0.0.1:${port}`;
   const url = `http://${host}`;
 
+  // Preview process management (loopback only, lifecycle-bound to studio server)
+  let previewProc: import("node:child_process").ChildProcess | null = null;
+  let previewPort: number | null = null;
+
+  function previewStatusBody(): { running: boolean; port?: number; url?: string } {
+    if (previewProc !== null && previewPort !== null) {
+      return {
+        running: true,
+        port: previewPort,
+        url: previewUrlForPort(previewPort)
+      };
+    }
+    return { running: false };
+  }
+
+  async function stopPreviewProcess(): Promise<void> {
+    const current = previewProc;
+    previewProc = null;
+    previewPort = null;
+    if (current !== null) {
+      try {
+        current.kill();
+      } catch {
+        // Non-fatal
+      }
+    }
+  }
+
   // Ephemeral CSRF token — never written to disk or logs
   const csrfToken = randomBytes(32).toString("hex");
 
@@ -406,13 +643,18 @@ export async function startStudio(options: StudioOptions): Promise<{
       ["GET", "/studio.js"],
       ["GET", "/studio.css"],
       ["GET", "/api/state"],
+      ["GET", "/api/preview/status"],
       ["POST", "/api/check"],
       ["POST", "/api/format"],
       ["POST", "/api/save"],
       ["POST", "/api/plan"],
       ["POST", "/api/generate"],
       ["POST", "/api/ai/propose"],
-      ["POST", "/api/interpret"]
+      ["POST", "/api/interpret"],
+      ["POST", "/api/wizard/interpret"],
+      ["POST", "/api/wizard/build"],
+      ["POST", "/api/preview/start"],
+      ["POST", "/api/preview/stop"]
     ];
 
     const routeAllowed = allowedRoutes.some(
@@ -475,6 +717,13 @@ export async function startStudio(options: StudioOptions): Promise<{
           configError: aiConfigError ?? null
         }
       });
+      return;
+    }
+
+    // ── GET /api/preview/status ─────────────────────────────────────────────
+
+    if (method === "GET" && pathname === "/api/preview/status") {
+      sendJson(res, 200, previewStatusBody());
       return;
     }
 
@@ -883,6 +1132,295 @@ export async function startStudio(options: StudioOptions): Promise<{
       return;
     }
 
+    // ── POST /api/wizard/interpret ──────────────────────────────────────────
+
+    if (pathname === "/api/wizard/interpret") {
+      const description =
+        typeof body["description"] === "string" ? body["description"].trim() : "";
+      const rawUsersAnswer =
+        typeof body["usersAnswer"] === "string" ? body["usersAnswer"] : undefined;
+
+      if (!description) {
+        sendJson(res, 400, {
+          code: "INTERPRET_EMPTY",
+          error: "description is required and must be a non-empty string."
+        });
+        return;
+      }
+
+      const usersAnswer =
+        rawUsersAnswer === "person" || rawUsersAnswer === "auth-user"
+          ? rawUsersAnswer
+          : undefined;
+
+      const wizResult = interpretDescription(
+        description,
+        usersAnswer ? { usersAnswer } : undefined
+      );
+
+      if (wizResult.kind === "unrecognized") {
+        sendJson(res, 200, { kind: "unrecognized", reason: wizResult.reason });
+        return;
+      }
+
+      if (wizResult.kind === "clarification") {
+        sendJson(res, 200, {
+          kind: "clarification",
+          questions: wizResult.questions,
+          partialAssumptions: wizResult.partialAssumptions
+        });
+        return;
+      }
+
+      // Validate interpreted source
+      const wizCompiled = compileSource(wizResult.source);
+      if (!wizCompiled.ok) {
+        sendJson(res, 500, {
+          code: "INTERPRET_BUG",
+          error: "Description interpreter produced source that does not compile. Please report this as a bug.",
+          diagnostics: wizCompiled.diagnostics,
+          proposedSource: wizResult.source
+        });
+        return;
+      }
+
+      // Issue a wizard build token tied to the proposed source fingerprint
+      const wizFp = sourceFingerprint(wizResult.source);
+      const proposalToken = createPlanToken(wizFp);
+
+      const proposedLines = wizResult.source.split("\n");
+      const diff = proposedLines.map((line) => ({ op: "add", line }));
+
+      sendJson(res, 200, {
+        kind: "proposal",
+        appName: wizResult.appName,
+        entityName: wizResult.entityName,
+        source: wizResult.source,
+        assumptions: wizResult.assumptions,
+        warnings: wizResult.warnings,
+        unsupportedCapabilities: wizResult.unsupportedCapabilities,
+        supportedFieldCount: wizResult.supportedFieldCount,
+        diff,
+        proposalToken
+      });
+      return;
+    }
+
+    // ── POST /api/wizard/build ──────────────────────────────────────────────
+
+    if (pathname === "/api/wizard/build") {
+      const proposedSource =
+        typeof body["proposedSource"] === "string" ? body["proposedSource"] : "";
+      const proposalToken =
+        typeof body["proposalToken"] === "string" ? body["proposalToken"] : "";
+
+      if (!proposedSource) {
+        sendJson(res, 400, {
+          code: "BAD_REQUEST",
+          error: "proposedSource is required and must be a non-empty string."
+        });
+        return;
+      }
+
+      // Validate wizard build token (anti-TOCTOU, consumes on first use)
+      const wizBuildFp = sourceFingerprint(proposedSource);
+      if (!consumePlanToken(proposalToken, wizBuildFp)) {
+        sendJson(res, 409, {
+          code: "PLAN_TOKEN_INVALID",
+          error:
+            "Proposal token is invalid, expired, or the proposed source has changed since interpretation. " +
+            "Return to Step 1 and interpret your description again."
+        });
+        return;
+      }
+
+      const buildResult = compileSource(proposedSource);
+      if (!buildResult.ok) {
+        sendJson(res, 422, {
+          code: "COMPILE_ERROR",
+          error: "Source has errors.",
+          diagnostics: buildResult.diagnostics
+        });
+        return;
+      }
+
+      // Refuse destructive/security-downgrade migrations
+      const buildManifestObj = buildManifest(buildResult.ir);
+      const buildManifestPath = join(outputDir, "intentlang.manifest.json");
+      let buildPrevManifest: BuildManifest | undefined;
+      if (existsSync(buildManifestPath)) {
+        try {
+          const raw = await readFile(buildManifestPath, "utf8");
+          buildPrevManifest = JSON.parse(raw) as BuildManifest;
+        } catch { /* ignore */ }
+      }
+      if (buildPrevManifest && buildPrevManifest.irFingerprint !== buildManifestObj.irFingerprint) {
+        const migPlan = planMigration(buildPrevManifest, buildResult.ir);
+        if (migPlan.isDestructive) {
+          sendJson(res, 409, {
+            code: "DESTRUCTIVE_CHANGES",
+            error:
+              "Destructive schema changes detected. Wizard cannot perform unsafe migrations. " +
+              "Use the CLI: intentlang generate <source> --output <dir> --write --force --allow-data-loss"
+          });
+          return;
+        }
+        if (migPlan.isSecurityDestructive) {
+          sendJson(res, 409, {
+            code: "SECURITY_DOWNGRADE",
+            error:
+              "Security-destructive changes detected. " +
+              "Use the CLI: intentlang generate <source> --output <dir> --write --force --allow-security-downgrade"
+          });
+          return;
+        }
+      }
+
+      const buildSchema = generateSchema(buildResult.ir);
+      const buildUi = generateUi(buildResult.ir);
+      const buildRuntime = generateRuntime(buildResult.ir, buildManifestObj, buildUi);
+
+      try {
+        await stopPreviewProcess();
+        await commitWizardBuildTransaction({
+          sourcePath,
+          sourceContent: proposedSource,
+          outputDir,
+          artifacts: {
+            "app.mjs": buildRuntime.appMjs,
+            "migration.sql": buildSchema.migrationSql,
+            "intentlang.manifest.json": canonicalJson(buildManifestObj) + "\n",
+            "package.json": buildRuntime.packageJson,
+            "index.html": buildUi.indexHtml,
+            "app.js": buildUi.appJs,
+            "styles.css": buildUi.stylesCss
+          }
+        });
+      } catch (err) {
+        sendJson(res, 500, {
+          code: "WRITE_ERROR",
+          error: `Could not write artifacts: ${String(err)}`
+        });
+        return;
+      }
+
+      const artifacts = [
+        "app.mjs",
+        "migration.sql",
+        "intentlang.manifest.json",
+        "package.json",
+        "index.html",
+        "app.js",
+        "styles.css"
+      ];
+      artifacts.push("(app.sqlite preserved if it exists)");
+
+      sendJson(res, 200, {
+        ok: true,
+        outputDir,
+        artifacts,
+        authEnabled: buildResult.ir.authentication !== undefined
+      });
+      return;
+    }
+
+    // ── POST /api/preview/start ─────────────────────────────────────────────
+
+    if (pathname === "/api/preview/start") {
+      const appMjsPath = join(outputDir, "app.mjs");
+      if (!existsSync(appMjsPath)) {
+        sendJson(res, 200, {
+          ok: false,
+          reason: "No generated app found. Build the app first using the wizard."
+        });
+        return;
+      }
+
+      if (previewProc !== null && previewPort !== null) {
+        sendJson(res, 200, {
+          ok: true,
+          port: previewPort,
+          url: previewUrlForPort(previewPort)
+        });
+        return;
+      }
+
+      let manifest: BuildManifest | null = null;
+      try {
+        manifest = JSON.parse(await readFile(join(outputDir, "intentlang.manifest.json"), "utf8")) as BuildManifest;
+      } catch {
+        manifest = null;
+      }
+
+      const authEnabled = authEnabledFromManifest(manifest);
+      if (authEnabled === null) {
+        sendJson(res, 200, {
+          ok: false,
+          reason: "Could not verify whether the generated app requires authentication."
+        });
+        return;
+      }
+
+      if (authEnabled) {
+        sendJson(res, 200, {
+          ok: false,
+          reason: "Authenticated apps cannot be previewed from the wizard. Use the bootstrap guidance and run the generated app manually."
+        });
+        return;
+      }
+
+      const pPort = await findAvailablePreviewPort();
+      if (pPort === null) {
+        sendJson(res, 200, {
+          ok: false,
+          reason: `No preview port was available in the ${PREVIEW_PORT_MIN}-${PREVIEW_PORT_MAX} range.`
+        });
+        return;
+      }
+
+      const child = spawn(process.execPath, [appMjsPath], {
+        cwd: outputDir,
+        env: { ...process.env, HOST: "127.0.0.1", PORT: String(pPort) },
+        stdio: "ignore",
+        shell: false,
+        detached: false
+      });
+      previewProc = child;
+      previewPort = pPort;
+
+      child.on("exit", () => {
+        if (previewProc === child) { previewProc = null; previewPort = null; }
+      });
+      child.on("error", () => {
+        if (previewProc === child) { previewProc = null; previewPort = null; }
+      });
+
+      const ready = await waitForPreviewReady(pPort, child);
+      if (!ready) {
+        await stopPreviewProcess();
+        sendJson(res, 200, {
+          ok: false,
+          reason: "Preview server failed to start."
+        });
+        return;
+      }
+
+      sendJson(res, 200, {
+        ok: true,
+        port: pPort,
+        url: previewUrlForPort(pPort)
+      });
+      return;
+    }
+
+    // ── POST /api/preview/stop ──────────────────────────────────────────────
+
+    if (pathname === "/api/preview/stop") {
+      await stopPreviewProcess();
+      sendJson(res, 200, { ok: true });
+      return;
+    }
+
     // Should not reach here
     sendJson(res, 404, { code: "NOT_FOUND", error: "Not found." });
   });
@@ -903,7 +1441,11 @@ export async function startStudio(options: StudioOptions): Promise<{
   }
 
   return {
-    close: () => new Promise<void>((resolveC) => server.close(() => resolveC())),
+    close: () => new Promise<void>((resolveC) => {
+      void stopPreviewProcess().finally(() => {
+        server.close(() => resolveC());
+      });
+    }),
     port,
     url
   };

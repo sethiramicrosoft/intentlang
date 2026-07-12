@@ -471,12 +471,18 @@ test("studio server binds to 127.0.0.1 and default port 3211", async () => {
   const { startStudio } = await import("../src/studio-server.js");
 
   await withTempSourceFile(todoSource, async (sourcePath) => {
-    const studio = await startStudio({ sourcePath, noOpen: true });
+    let studio: Awaited<ReturnType<typeof startStudio>> | null = null;
     try {
+      studio = await startStudio({ sourcePath, noOpen: true });
       assert.equal(studio.port, 3211);
       assert.equal(studio.url, "http://127.0.0.1:3211");
+    } catch (err) {
+      if (err && typeof err === "object" && "code" in err && err.code === "EADDRINUSE") {
+        return; // Environment-only: some other local process already owns 3211.
+      }
+      throw err;
     } finally {
-      await studio.close();
+      await studio?.close();
     }
   });
 });
@@ -1485,6 +1491,595 @@ test("studio server POST /api/interpret returns 400 for empty description", asyn
         body: JSON.stringify({ description: "" })
       });
       assert.equal(resp.status, 400, "empty description returns 400");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+// ── Studio v0.8.0 wizard routes ───────────────────────────────────────────────
+
+test("studio server GET /api/preview/status returns not running initially", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3324, noOpen: true });
+    try {
+      const resp = await fetch(`${studio.url}/api/preview/status`);
+      assert.equal(resp.status, 200);
+      const body = await resp.json() as Record<string, unknown>;
+      assert.equal(body["running"], false, "preview not running initially");
+      assert.equal("port" in body, false, "preview port omitted initially");
+      assert.equal("url" in body, false, "preview url omitted initially");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server POST /api/wizard/interpret returns proposal with proposalToken", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3325, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const resp = await fetch(`${studio.url}/api/wizard/interpret`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+          description: "I want to build an app that allows users to add their name, age, address"
+        })
+      });
+      assert.equal(resp.status, 200);
+      const body = await resp.json() as Record<string, unknown>;
+      assert.equal(body["kind"], "proposal", "wizard interpret returns proposal");
+      assert.ok(typeof body["source"] === "string" && (body["source"] as string).length > 0, "source present");
+      assert.ok(typeof body["proposalToken"] === "string" && (body["proposalToken"] as string).length > 0, "proposalToken present");
+      assert.ok(body["appName"] !== undefined, "appName present");
+      assert.ok(body["entityName"] !== undefined, "entityName present");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server POST /api/wizard/interpret returns 400 for empty description", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3326, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const resp = await fetch(`${studio.url}/api/wizard/interpret`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ description: "" })
+      });
+      assert.equal(resp.status, 400, "empty description returns 400");
+      const body = await resp.json() as Record<string, unknown>;
+      assert.equal(body["code"], "INTERPRET_EMPTY");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server POST /api/wizard/build with invalid token returns 409", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3327, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const resp = await fetch(`${studio.url}/api/wizard/build`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ proposedSource: todoSource, proposalToken: "invalid-token" })
+      });
+      assert.equal(resp.status, 409, "invalid wizard token returns 409");
+      const body = await resp.json() as Record<string, unknown>;
+      assert.equal(body["code"], "PLAN_TOKEN_INVALID");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server POST /api/wizard/build returns 400 for missing proposedSource", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3328, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const resp = await fetch(`${studio.url}/api/wizard/build`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ proposalToken: "missing-source" })
+      });
+      assert.equal(resp.status, 400);
+      const body = await resp.json() as Record<string, unknown>;
+      assert.equal(body["code"], "BAD_REQUEST");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server POST /api/wizard/build with mismatched proposedSource returns 409", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+  const badSource = "application BAD invalid syntax here\n";
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3338, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      // Get a valid wizard build token by interpreting first
+      const wizResp = await fetch(`${studio.url}/api/wizard/interpret`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+          description: "I want to build an app that allows users to add their name, age"
+        })
+      });
+      const wizBody = await wizResp.json() as Record<string, unknown>;
+      const resp = await fetch(`${studio.url}/api/wizard/build`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ proposedSource: badSource, proposalToken: wizBody["proposalToken"] })
+      });
+      assert.equal(resp.status, 409, "source fingerprint mismatch returns 409");
+      const body = await resp.json() as Record<string, unknown>;
+      assert.equal(body["code"], "PLAN_TOKEN_INVALID");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server POST /api/wizard/build with valid token builds successfully", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  const tmpDir = join(TEST_OUTPUT_DIR, `wizard-build-${randomBytes(8).toString("hex")}`);
+  await mkdir(tmpDir, { recursive: true });
+  try {
+    const sourcePath = join(tmpDir, "wizard.intent");
+    await writeFile(sourcePath, "", "utf8");
+    const studio = await startStudio({ sourcePath, port: 3329, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      // Step 1: interpret
+      const wizResp = await fetch(`${studio.url}/api/wizard/interpret`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+          description: "I want to build an app that allows users to add their name, age, address"
+        })
+      });
+      assert.equal(wizResp.status, 200);
+      const wizBody = await wizResp.json() as Record<string, unknown>;
+      assert.equal(wizBody["kind"], "proposal");
+      const proposalToken = String(wizBody["proposalToken"] ?? "");
+      const proposedSource = String(wizBody["source"] ?? "");
+
+      // Step 2: build
+      const buildResp = await fetch(`${studio.url}/api/wizard/build`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ proposedSource, proposalToken })
+      });
+      assert.equal(buildResp.status, 200, "wizard build succeeds");
+      const buildBody = await buildResp.json() as Record<string, unknown>;
+      assert.equal(buildBody["ok"], true);
+      assert.ok(buildBody["outputDir"] !== undefined, "outputDir present");
+      assert.ok(Array.isArray(buildBody["artifacts"]), "artifacts present");
+      assert.equal(buildBody["authEnabled"], false, "authEnabled returned");
+      const outputDir = String(buildBody["outputDir"]);
+      assert.ok(existsSync(join(outputDir, "app.mjs")), "app.mjs generated");
+      assert.ok(existsSync(join(outputDir, "migration.sql")), "migration.sql generated");
+      assert.equal(await readFile(sourcePath, "utf8"), proposedSource, "source file updated after successful build");
+    } finally {
+      await studio.close();
+    }
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("studio server wizard build token can only be used once (anti-replay)", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  const tmpDir = join(TEST_OUTPUT_DIR, `wizard-replay-${randomBytes(8).toString("hex")}`);
+  await mkdir(tmpDir, { recursive: true });
+  try {
+    const sourcePath = join(tmpDir, "wizard.intent");
+    await writeFile(sourcePath, "", "utf8");
+    const studio = await startStudio({ sourcePath, port: 3330, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const wizResp = await fetch(`${studio.url}/api/wizard/interpret`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+          description: "I want to build an app that allows users to add their name, age"
+        })
+      });
+      const wizBody = await wizResp.json() as Record<string, unknown>;
+      const proposalToken = String(wizBody["proposalToken"] ?? "");
+      const proposedSource = String(wizBody["source"] ?? "");
+
+      // First build — should succeed
+      await fetch(`${studio.url}/api/wizard/build`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ proposedSource, proposalToken })
+      });
+
+      // Second build with same token — should fail
+      const resp2 = await fetch(`${studio.url}/api/wizard/build`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ proposedSource, proposalToken })
+      });
+      assert.equal(resp2.status, 409, "wizard token replay rejected");
+    } finally {
+      await studio.close();
+    }
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
+  }
+});
+
+test("studio server POST /api/preview/start without artifacts returns ok=false", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3335, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const resp = await fetch(`${studio.url}/api/preview/start`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({})
+      });
+      assert.equal(resp.status, 200, "preview start returns structured response");
+      const body = await resp.json() as Record<string, unknown>;
+      assert.equal(body["ok"], false);
+      assert.ok(String(body["reason"] ?? "").includes("Build the app first"), "reason explains missing build");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server POST /api/preview/start rejects authenticated generated apps", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3331, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const planResp = await fetch(`${studio.url}/api/plan`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ source: todoSource })
+      });
+      const planBody = await planResp.json() as Record<string, unknown>;
+
+      const generateResp = await fetch(`${studio.url}/api/generate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({ source: todoSource, planToken: planBody["planToken"] })
+      });
+      assert.equal(generateResp.status, 200);
+
+      const previewResp = await fetch(`${studio.url}/api/preview/start`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({})
+      });
+      const previewBody = await previewResp.json() as Record<string, unknown>;
+      assert.equal(previewResp.status, 200);
+      assert.equal(previewBody["ok"], false);
+      assert.ok(String(previewBody["reason"] ?? "").includes("Authenticated apps"), "reason explains auth preview block");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server POST /api/preview/stop when not running returns ok=true", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3332, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const resp = await fetch(`${studio.url}/api/preview/stop`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({})
+      });
+      assert.equal(resp.status, 200);
+      const body = await resp.json() as Record<string, unknown>;
+      assert.equal(body["ok"], true, "stop always returns ok");
+    } finally {
+      await studio.close();
+    }
+  });
+});
+
+test("studio server preview start succeeds for wizard-built unauthenticated app", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  const tmpDir = join(TEST_OUTPUT_DIR, `wizard-preview-${randomBytes(8).toString("hex")}`);
+  await mkdir(tmpDir, { recursive: true });
+  try {
+    const sourcePath = join(tmpDir, "wizard.intent");
+    await writeFile(sourcePath, "", "utf8");
+    const studio = await startStudio({ sourcePath, port: 3334, noOpen: true });
+    try {
+      const stateResp = await fetch(`${studio.url}/api/state`);
+      const state = await stateResp.json() as Record<string, unknown>;
+      const csrfToken = String(state["csrfToken"] ?? "");
+
+      const wizResp = await fetch(`${studio.url}/api/wizard/interpret`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+          description: "I want to build an app that allows users to add their name, age, address"
+        })
+      });
+      const wizBody = await wizResp.json() as Record<string, unknown>;
+
+      const buildResp = await fetch(`${studio.url}/api/wizard/build`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({
+          proposalToken: wizBody["proposalToken"],
+          proposedSource: wizBody["source"]
+        })
+      });
+      assert.equal(buildResp.status, 200);
+
+      const previewResp = await fetch(`${studio.url}/api/preview/start`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({})
+      });
+      const previewBody = await previewResp.json() as Record<string, unknown>;
+      assert.equal(previewResp.status, 200);
+      assert.equal(previewBody["ok"], true);
+      assert.ok(typeof previewBody["port"] === "number");
+      assert.ok(String(previewBody["url"] ?? "").startsWith("http://127.0.0.1:"), "preview url returned");
+    } finally {
+      await studio.close();
+    }
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
+  }
+});
+
+// ── Studio v0.8.0 wizard HTML/CSS/JS tests ────────────────────────────────────
+
+test("studio HTML v0.8.0 has beginner-first wizard structure", () => {
+  const html = buildStudioHtml("test.intent", 3211);
+  assert.ok(html.includes("IntentLang App Builder"), "heading present");
+  assert.ok(html.includes(">Studio<"), "studio badge present");
+  assert.ok(html.includes('id="app-body"'), "app-body present");
+  assert.ok(html.includes('id="wiz-step-1"'), "wizard step 1 present");
+  assert.ok(html.includes('id="wiz-step-2"'), "wizard step 2 present");
+  assert.ok(html.includes('id="wiz-step-3"'), "wizard step 3 present");
+  assert.ok(html.includes('id="wiz-step-4"'), "wizard step 4 present");
+  assert.ok(html.includes('id="step-indicator-1"'), "step indicator 1 present");
+  assert.ok(html.includes('id="step-indicator-4"'), "step indicator 4 present");
+  assert.ok(html.includes("Describe"), "Describe label present");
+  assert.ok(html.includes("Review"), "Review label present");
+  assert.ok(html.includes("Build"), "Build label present");
+  assert.ok(html.includes("Open app"), "Open app label present");
+  assert.ok(html.includes('id="wiz-description"'), "description textarea present");
+  assert.ok(html.includes("name, age, address, and date of birth"), "example text present");
+  assert.ok(html.includes('id="wiz-ack-checkbox"'), "unsupported acknowledgement checkbox present");
+  assert.ok(html.includes('id="advanced-tools-section"'), "advanced tools details present");
+  assert.ok(html.includes('id="studio-main"'), "studio-main preserved in advanced tools");
+});
+
+test("studio HTML v0.8.0 keeps advanced Studio below the wizard", () => {
+  const html = buildStudioHtml("test.intent", 3211);
+  assert.ok(html.includes("btn-wizard-build"), "build button present");
+  assert.ok(html.includes("btn-wizard-start-preview"), "start preview button present");
+  assert.ok(html.includes("btn-wizard-stop-preview"), "stop preview button present");
+  assert.ok(html.includes("<details id=\"advanced-tools-section\">"), "advanced tools uses details");
+  assert.ok(html.includes('aria-label="Source editor"'), "source editor preserved");
+  assert.ok(html.includes('aria-label="Editor actions"'), "toolbar preserved");
+  assert.ok(html.includes('aria-label="Output panels"'), "panels preserved");
+});
+
+test("studio CSS v0.8.0 has wizard styles", () => {
+  assert.ok(STUDIO_CSS.includes(".wizard-step-panel"), "wizard-step-panel CSS");
+  assert.ok(STUDIO_CSS.includes(".wizard-textarea"), "wizard-textarea CSS");
+  assert.ok(STUDIO_CSS.includes(".wizard-source-preview"), "wizard-source-preview CSS");
+  assert.ok(STUDIO_CSS.includes(".wizard-preview-badge"), "wizard-preview-badge CSS");
+  assert.ok(STUDIO_CSS.includes("#wizard-view"), "wizard-view CSS");
+  assert.ok(STUDIO_CSS.includes("#app-body"), "app-body CSS");
+  assert.ok(STUDIO_CSS.includes("#advanced-tools-section"), "advanced tools CSS");
+  assert.ok(STUDIO_CSS.includes(".wizard-build-stages"), "build stages CSS");
+});
+
+test("studio JS v0.8.0 has wizard state and functions", () => {
+  assert.ok(STUDIO_JS.includes("wizardState"), "wizardState present");
+  assert.ok(STUDIO_JS.includes("initWizard"), "initWizard function");
+  assert.ok(STUDIO_JS.includes("showWizStep"), "showWizStep function");
+  assert.ok(STUDIO_JS.includes("onWizContinue"), "onWizContinue function");
+  assert.ok(STUDIO_JS.includes("showReview"), "showReview function");
+  assert.ok(STUDIO_JS.includes("onWizBuild"), "onWizBuild function");
+  assert.ok(STUDIO_JS.includes("startPreview"), "startPreview function");
+  assert.ok(STUDIO_JS.includes("stopPreview"), "stopPreview function");
+  assert.ok(STUDIO_JS.includes("bindWizardEvents"), "bindWizardEvents function");
+  assert.ok(STUDIO_JS.includes("proposalToken"), "proposalToken present");
+  assert.ok(STUDIO_JS.includes("proposedSource"), "proposedSource present");
+  assert.ok(STUDIO_JS.includes("clarification"), "clarification handling present");
+  assert.ok(STUDIO_JS.includes("/api/wizard/interpret"), "wizard interpret endpoint called");
+  assert.ok(STUDIO_JS.includes("/api/wizard/build"), "wizard build endpoint called");
+  assert.ok(STUDIO_JS.includes("/api/preview/start"), "preview start endpoint called");
+  assert.ok(STUDIO_JS.includes("/api/preview/stop"), "preview stop endpoint called");
+  assert.ok(STUDIO_JS.includes("/api/preview/status"), "preview status endpoint called");
+});
+
+test("studio JS v0.8.0 wizard opens advanced tools without switching away", () => {
+  assert.ok(STUDIO_JS.includes("advanced-tools-section"), "advanced tools referenced");
+  assert.ok(STUDIO_JS.includes("openAdvancedTools"), "openAdvancedTools function present");
+  assert.ok(STUDIO_JS.includes("syncAdvancedEditorWithProposal"), "advanced editor sync present");
+});
+
+test("studio JS v0.8.0 wizard does not use innerHTML for untrusted content", () => {
+  // Wizard functions start after initWizard definition
+  const wizardSection = STUDIO_JS.slice(
+    STUDIO_JS.indexOf("function initWizard")
+  );
+  assert.ok(!wizardSection.includes("eval("), "no eval in wizard section");
+  const innerHtmlCount = (wizardSection.match(/\.innerHTML\s*=/g) ?? []).length;
+  assert.equal(innerHtmlCount, 0, "no innerHTML in wizard functions");
+});
+
+test("studio server new wizard routes are in allowlist", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+
+  await withTempSourceFile(todoSource, async (sourcePath) => {
+    const studio = await startStudio({ sourcePath, port: 3333, noOpen: true });
+    try {
+      // All new routes should exist (not 404)
+      const previewStatusResp = await fetch(`${studio.url}/api/preview/status`);
+      assert.equal(previewStatusResp.status, 200, "preview/status in allowlist");
+
+      // POST wizard routes should return 403 (no CSRF) not 404
+      const wizInterpResp = await fetch(`${studio.url}/api/wizard/interpret`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Origin": studio.url },
+        body: JSON.stringify({ description: "test" })
+      });
+      assert.notEqual(wizInterpResp.status, 404, "wizard/interpret not 404");
+
+      const wizBuildResp = await fetch(`${studio.url}/api/wizard/build`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Origin": studio.url },
+        body: JSON.stringify({})
+      });
+      assert.notEqual(wizBuildResp.status, 404, "wizard/build not 404");
+
+      const previewStartResp = await fetch(`${studio.url}/api/preview/start`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Origin": studio.url },
+        body: JSON.stringify({})
+      });
+      assert.notEqual(previewStartResp.status, 404, "preview/start not 404");
     } finally {
       await studio.close();
     }

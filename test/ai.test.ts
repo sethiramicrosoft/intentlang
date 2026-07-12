@@ -13,6 +13,12 @@ import { startStudio } from "../src/studio-server.js";
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 const workRoot = join(process.cwd(), "test-output");
+let nextStudioPort = 3400 + Math.floor(Math.random() * 200);
+
+function reserveStudioPort(): number {
+  nextStudioPort += 1;
+  return nextStudioPort;
+}
 
 async function createTempDir(prefix: string): Promise<string> {
   await mkdir(workRoot, { recursive: true });
@@ -747,6 +753,7 @@ async function startTestStudio(mockAiPort: number): Promise<{
 
   const studio = await startStudio({
     sourcePath: intentFile,
+    port: reserveStudioPort(),
     noOpen: true,
     ai: {
       provider: "openai-compatible",
@@ -796,7 +803,7 @@ test("AI route: provider none returns AI_DISABLED (not network call)", async () 
   const intentFile = join(tempDir, "test.intent");
   await writeFile(intentFile, "", "utf8");
 
-  const studio = await startStudio({ sourcePath: intentFile, noOpen: true });
+  const studio = await startStudio({ sourcePath: intentFile, port: reserveStudioPort(), noOpen: true });
   const stateResp = await fetch(`http://127.0.0.1:${studio.port}/api/state`);
   const stateData = await stateResp.json() as { csrfToken: string };
   const csrf = stateData.csrfToken;
@@ -933,6 +940,7 @@ test("E2E: provider/model badge in AI state response", async () => {
 
   const studio = await startStudio({
     sourcePath: intentFile,
+    port: reserveStudioPort(),
     noOpen: true,
     ai: {
       provider: "openai-compatible",
@@ -979,6 +987,7 @@ test("E2E: questions flow — mock returns questions, then valid proposal", asyn
 
   const studio = await startStudio({
     sourcePath: intentFile,
+    port: reserveStudioPort(),
     noOpen: true,
     ai: {
       provider: "openai-compatible",
@@ -1071,6 +1080,7 @@ test("E2E: malformed proposal rejected, cannot apply", async () => {
 
   const studio = await startStudio({
     sourcePath: intentFile,
+    port: reserveStudioPort(),
     noOpen: true,
     ai: {
       provider: "openai-compatible",
@@ -1134,6 +1144,7 @@ test("E2E: Save is separate from AI — disk changes only after explicit save", 
 
   const studio = await startStudio({
     sourcePath: intentFile,
+    port: reserveStudioPort(),
     noOpen: true,
     ai: {
       provider: "openai-compatible",
@@ -1207,6 +1218,7 @@ test("E2E: Generate App requires separate /api/plan + /api/generate (AI route do
 
   const studio = await startStudio({
     sourcePath: intentFile,
+    port: reserveStudioPort(),
     noOpen: true,
     ai: {
       provider: "openai-compatible",
@@ -1708,6 +1720,7 @@ test("Gemini provider: API key never appears in returned errors or state", async
 
   const studio = await startStudio({
     sourcePath: intentFile,
+    port: reserveStudioPort(),
     noOpen: true,
     ai: {
       provider: "gemini",

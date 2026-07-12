@@ -2,12 +2,48 @@
 
 ![status](https://img.shields.io/badge/status-experimental-orange)
 ![node](https://img.shields.io/badge/node-%3E%3D24-339933)
-![version](https://img.shields.io/badge/version-v0.7.1--alpha-blue)
+![version](https://img.shields.io/badge/version-v0.8.0--alpha-blue)
 
 **Tagline:** An experimental offline compiler designed to help non-software developers build applications using controlled natural English. AI assistance is optional and off by default.
 
 > [!WARNING]
-> IntentLang v0.7.1-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
+> IntentLang v0.8.0-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
+
+## App Builder wizard quick start
+
+The default Studio experience in **v0.8.0-alpha.0** is the beginner-first **IntentLang App Builder** wizard.
+
+### Exact walkthrough sentence
+
+Paste this sentence into the wizard:
+
+```text
+I want to build an app that allows users to add their name, age, address, and date of birth
+```
+
+What happens:
+
+1. **Describe** — the offline interpreter turns the sentence into supported IntentLang source.
+2. **Review** — you confirm the proposed source and acknowledge any unsupported items.
+3. **Build** — Studio compiles, refuses destructive/security-downgrade migrations, and swaps generated artifacts safely.
+4. **Open app** — Studio auto-starts preview only for unauthenticated apps. Authenticated apps show bootstrap guidance instead.
+
+### Known limitations up front
+
+- The wizard uses a finite offline vocabulary. It does **not** accept arbitrary English.
+- Unsupported items such as sorting, search, and file upload are listed explicitly and are not silently generated.
+- Authenticated apps are **not** previewed from the wizard.
+- Destructive migrations and security-downgrade changes are refused from the wizard.
+
+### Advanced Studio
+
+The wizard is always shown first. The full Studio editor now lives under the collapsed **Advanced tools** section directly below the wizard, preserving:
+
+- Write IntentLang mode
+- Describe App mode
+- AI assist
+- Problems / Application Model / Canonical Source / Raw IR panels
+- Templates, Save, Format, Generate App, and dialogs
 
 ## Table of Contents
 
@@ -17,7 +53,7 @@
 4. [IntentLang Studio alpha](#intentlang-studio-alpha)
 5. [**Proof: a complete full-stack app generated without AI**](#proof-a-complete-full-stack-app-generated-without-ai)
 6. [Optional AI assistance](#optional-ai-assistance)
-7. [What v0.7.0-alpha can do](#what-v070-alpha-can-do)
+7. [What v0.8.0-alpha can do](#what-v080-alpha-can-do)
 7. [Current limitations](#current-limitations)
 8. [Prerequisites (beginner-friendly)](#prerequisites-beginner-friendly)
 9. [Install from GitHub](#install-from-github)
@@ -61,7 +97,7 @@ IntentLang is intended to make application building:
 - **Deterministic:** the same valid source and compiler version produce the same typed representation and generated artifacts.
 - **Auditable:** the compiler follows published grammar and rules rather than making probabilistic interpretations.
 
-This is the project’s direction, not a claim that v0.5.0 has already made software development effortless for every non-developer. The current release still requires installing Node.js, using a terminal, and learning IntentLang’s restricted grammar. Improving that experience is a central part of the roadmap.
+This is the project’s direction, not a claim that v0.8.0-alpha.0 has already made software development effortless for every non-developer. The current release still requires installing Node.js, using a terminal, and learning IntentLang’s restricted grammar. Improving that experience is a central part of the roadmap.
 
 ## Why this exists
 
@@ -120,11 +156,30 @@ Text fallback:
 
 ## IntentLang Studio alpha
 
-**IntentLang Studio** is a local, dependency-free browser-based authoring environment for `.intent` source files. It is the signature feature of v0.6.0-alpha.
+**IntentLang Studio** is a local, dependency-free browser-based authoring environment for `.intent` source files.
 
 - **100% offline** — the Studio server runs on your machine and binds to `127.0.0.1` only. No traffic leaves your computer.
 - **No AI tokens** — Studio is a deterministic compiler front-end. Checking, formatting, and generating never contacts an AI model.
 - **No credentials required to run Studio** — Studio is an authoring tool and does not handle application login credentials.
+
+### App Builder Wizard (v0.8.0 — default view)
+
+Studio v0.8.0 adds a **beginner-first App Builder Wizard** as the default view. When you open Studio with an empty file, the wizard walks you through four steps:
+
+| Step | What happens |
+|------|---|
+| **1 — Describe** | Enter a plain-English description. The offline interpreter converts supported descriptions to IntentLang without AI tokens. |
+| **2 — Review** | See the proposed IntentLang source, warnings, and unsupported items. Acknowledge partial generation before building. |
+| **3 — Build** | One-click build: compiles, checks for destructive migrations, generates to a sibling temp directory, then swaps output safely. |
+| **4 — Open app** | Studio auto-starts preview only for unauthenticated apps. Authenticated apps show bootstrap guidance instead of previewing. |
+
+> **Wizard limits:** The wizard uses the same offline interpreter as Describe App mode — it supports a finite vocabulary. Unsupported capabilities (sorting, search, file upload) are listed explicitly and never silently omitted. Destructive migrations and security-downgrade migrations are refused; use the CLI for those.
+
+To edit IntentLang directly, expand the **Advanced tools** section below the wizard.
+
+### Advanced IDE (preserved)
+
+All existing IDE features are unchanged and accessible via **Advanced tools** below the wizard:
 
 ### Starting Studio
 
@@ -149,14 +204,23 @@ Studio opens at `http://127.0.0.1:3211` (default port) in your default browser.
 
 ### Studio walkthrough
 
-#### Two editor modes
+#### Default wizard + Advanced tools
 
-Studio v0.7.1 adds two clearly-labelled modes at the top of the editor pane:
+Studio v0.8.0 keeps the **App Builder wizard** visible by default, even when the source file already has content. The full IDE is available in the collapsed **Advanced tools** section directly underneath it:
+
+| Section | When to use |
+|---|---|
+| **App Builder wizard** | Beginner-first flow: describe → review → build → open app. |
+| **Advanced tools** | Full editor with Write IntentLang + Describe App modes, AI panel, Problems, Model, Canonical, IR panels. |
+
+#### Advanced IDE — Two editor modes
+
+When in Advanced IDE, two modes are available at the top of the editor pane:
 
 | Mode | When to use |
 |---|---|
 | **Write IntentLang** | Default for existing source files. Accepts controlled grammar only. Errors are shown inline above the editor and in the Problems panel. |
-| **Describe App** | For new apps or plain-English input. The offline interpreter converts supported descriptions into IntentLang source without AI tokens. Optional AI handles broader descriptions if a provider is configured. |
+| **Describe App** | For plain-English input. The offline interpreter converts supported descriptions into IntentLang source without AI tokens. Optional AI handles broader descriptions if a provider is configured. |
 
 > **Not unrestricted English.** Describe App mode supports a finite vocabulary for simple CRUD apps. Unsupported features (sorting, search, delete, file upload) are listed explicitly — never silently omitted.
 
@@ -250,7 +314,9 @@ If authentication is enabled, Studio lists the **environment variable names** yo
 - Same-origin protection: validates `Origin` and `Host` headers on every state-changing endpoint.
 - Ephemeral in-memory CSRF token: generated at startup, delivered in the initial `/api/state` response, validated on every POST. Never written to disk or logs.
 - Anti-TOCTOU plan token: generating an app requires a short-lived token tied to the exact source fingerprint from the plan step. Changed source invalidates the token.
-- Destructive and security-downgrade migrations are refused in the browser UI. Use the CLI flags if you need them.
+- Wizard build token: `POST /api/wizard/build` requires a wizard build token issued by `POST /api/wizard/interpret`, tied to the exact proposed source fingerprint. Single-use and expires in 5 minutes.
+- Destructive and security-downgrade migrations are refused in both the wizard and the browser UI. Use the CLI flags if you need them.
+- Preview server (`POST /api/preview/start`) only spawns `node app.mjs` in the known output directory on a loopback port. Stopped on studio close.
 - No arbitrary filesystem access from browser requests. The source file path is resolved once at startup.
 - Request body capped at 1 MB.
 - All responses carry `Cache-Control: no-store`, `X-Content-Type-Options: nosniff`, and other security headers.
@@ -285,7 +351,7 @@ seven artifacts — backend, frontend, and database — with no AI
 involvement at any stage. No generated file was hand-edited to make
 the proof pass.
 
-> **Note (v0.7+):** Optional AI assistance is available for translating descriptions into IntentLang source, but it was not used in this case study and is not required. Compilation, generation, and runtime remain AI-free in all cases.
+> **Note (v0.8+):** Optional AI assistance is available for translating descriptions into IntentLang source, but it was not used in this case study and is not required. Compilation, generation, and runtime remain AI-free in all cases.
 
 > **What does the user type?**
 >
@@ -355,7 +421,7 @@ security architecture, and a full reproduction checklist.
 
 > **Core principle:** IntentLang remains fully usable with AI disabled. Compiling, checking, formatting, generating, and running applications consumes **zero AI tokens** and requires no AI provider.
 
-v0.7.0-alpha adds an optional **Describe with AI** panel to Studio. It translates free-form descriptions into proposed IntentLang source for your review.
+v0.8.0-alpha.0 includes an optional **Describe with AI** panel in Advanced tools. It translates free-form descriptions into proposed IntentLang source for your review.
 
 ### What it does
 
@@ -416,7 +482,7 @@ intentlang studio my-app.intent \
 
 ---
 
-## What v0.7.0-alpha can do
+## What v0.8.0-alpha can do
 
 ### Language/compiler
 
@@ -453,10 +519,18 @@ intentlang studio my-app.intent \
 - Migration/security plan checks (`--allow-data-loss`, `--allow-security-downgrade`).
 - Generated Clawpilot-style light/dark UI assets.
 
+### Studio App Builder Wizard (v0.8.0)
+
+- Step-by-step wizard: describe → review → build → preview.
+- `POST /api/wizard/interpret`: offline interpreter → proposed source + wizard build token.
+- `POST /api/wizard/build`: token-validated, compile-checked, migration-refusing, atomic write with rollback.
+- `GET /api/preview/status` / `POST /api/preview/start` / `POST /api/preview/stop`: loopback preview server lifecycle.
+- All wizard routes share the same allowlist, same-origin, and CSRF security model as the IDE routes.
+
 ### Generated CRUD shape
 
 - List/read/create/update endpoints are generated.
-- Safe delete endpoint is **not** generated in v0.5.0.
+- Safe delete endpoint is **not** generated in v0.8.0-alpha.0.
 
 ## Current limitations
 
@@ -603,7 +677,7 @@ Server is stopped by default; start it with `npm run sample:serve`.
 
 ## Language tutorial
 
-### Complete Todo source (v0.5.0-compatible)
+### Complete Todo source
 
 ```intent
 application Todo
@@ -651,7 +725,7 @@ allow Member to run complete on Task where owner is self
 
 ### Grammar notes (exact phrases)
 
-Key declarations accepted in v0.5:
+Key declarations accepted in v0.8.0-alpha.0:
 
 - `application Name with id stable-id` or natural `application Name`
 - `entity Name with id stable-id`
@@ -940,7 +1014,7 @@ Yes—that is the primary long-term purpose. Domain experts should eventually be
 No. You must use IntentLang’s fixed grammar.
 
 **Is generated app production-ready?**  
-Not yet. v0.5.0 is experimental.
+Not yet. v0.8.0-alpha.0 is experimental.
 
 **Should I edit generated files directly?**  
 Generally no. Regenerate from `.intent` source.
@@ -949,7 +1023,7 @@ Generally no. Regenerate from `.intent` source.
 In local SQLite (`app.sqlite`) in the generated app directory.
 
 **Why no delete yet?**  
-Safe deletion semantics are not finalized in v0.5.0.
+Safe deletion semantics are not finalized in v0.8.0-alpha.0.
 
 **Why explicit IDs?**  
 For stability and deterministic migration/permission mapping.
@@ -964,7 +1038,7 @@ No. It targets a narrow app-generation problem.
 
 - Contribution process: see [CONTRIBUTING.md](./CONTRIBUTING.md).
 - Security process: see [SECURITY.md](./SECURITY.md).
-- Current version/status: **v0.5.0 experimental**.
+- Current version/status: **v0.8.0-alpha.0 experimental**.
 - **License note:** No software license has been selected yet. Reuse rights are therefore not granted beyond GitHub’s viewing/forking terms. Repository owner can add a license later.
 
 ## Repository topics

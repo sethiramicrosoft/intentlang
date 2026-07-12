@@ -121,12 +121,285 @@ textarea:focus-visible,
 }
 #btn-theme:hover { background: var(--cp-highlight); color: var(--cp-text); }
 
-/* Main layout */
-#studio-main {
+/* App layout */
+#app-body {
   flex: 1;
   display: flex;
+  flex-direction: column;
+  overflow: auto;
+  gap: 16px;
+  padding: 20px;
+}
+
+#advanced-tools-section {
+  border: 1px solid var(--cp-border);
+  border-radius: 10px;
+  background: var(--cp-surface);
   overflow: hidden;
 }
+#advanced-tools-section > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 14px 16px;
+  font-weight: 600;
+}
+#advanced-tools-section > summary::-webkit-details-marker { display: none; }
+#advanced-tools-section > summary::after {
+  content: "Show the full Studio editor, Describe App mode, AI assist, diagnostics, and generated outputs.";
+  display: block;
+  margin-top: 4px;
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--cp-text-muted);
+}
+
+#studio-main {
+  display: flex;
+  min-height: 720px;
+  border-top: 1px solid var(--cp-border);
+}
+
+/* Wizard view panel */
+#wizard-view {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+/* Wizard step indicator */
+.wizard-steps-indicator {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 24px;
+}
+#wizard-stepper { width: 100%; }
+#wizard-stepper ol {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.wizard-step-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.4;
+}
+.wizard-step-indicator.active { opacity: 1; }
+.wizard-step-indicator.done { opacity: 0.75; }
+.wizard-step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--cp-border);
+  color: var(--cp-text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.wizard-step-indicator.active .wizard-step-num { background: var(--cp-accent); color: var(--cp-accent-fg); }
+.wizard-step-indicator.done .wizard-step-num { background: var(--cp-success); color: var(--cp-accent-fg); }
+.wizard-step-label { font-size: 12px; font-weight: 600; color: var(--cp-text-muted); }
+.wizard-step-indicator.active .wizard-step-label { color: var(--cp-text); }
+.wizard-step-divider { color: var(--cp-border-strong); font-size: 12px; margin: 0 4px; }
+.wizard-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.wizard-hero-copy h2 { margin: 0 0 6px 0; font-size: 28px; }
+.wizard-hero-copy p { margin: 0; color: var(--cp-text-muted); max-width: 760px; }
+.wizard-hero-badge { align-self: flex-start; }
+.wizard-existing-card {
+  border: 1px solid var(--cp-border);
+  border-left: 4px solid var(--cp-accent);
+  border-radius: 8px;
+  padding: 14px 16px;
+  background: var(--cp-surface-soft);
+}
+.wizard-existing-card[hidden] { display: none; }
+.wizard-clarification-question {
+  border: 1px solid var(--cp-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 12px 0 0 0;
+}
+.wizard-clarification-question legend {
+  padding: 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.wizard-radio-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Wizard step panels */
+.wizard-step-panel { max-width: 640px; width: 100%; }
+.wizard-step-panel[hidden] { display: none; }
+.wiz-step { display: block; }
+.wiz-step[hidden] { display: none; }
+.wizard-step-title { font-size: 18px; font-weight: 700; color: var(--cp-text); margin: 0 0 6px 0; }
+.wizard-step-desc { font-size: 13px; color: var(--cp-text-muted); margin: 0 0 16px 0; line-height: 1.6; }
+.wizard-label { display: block; font-size: 12px; font-weight: 600; color: var(--cp-text-muted); margin-bottom: 6px; }
+.wizard-textarea {
+  width: 100%;
+  resize: vertical;
+  min-height: 100px;
+  padding: 10px 12px;
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  background: var(--cp-surface);
+  color: var(--cp-text);
+  font-size: 13px;
+  line-height: 1.5;
+  outline: none;
+  font-family: inherit;
+  margin-bottom: 14px;
+}
+.wizard-textarea:focus-visible { border-color: var(--cp-accent); }
+.wizard-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+.btn-primary {
+  background: var(--cp-accent);
+  color: var(--cp-accent-fg);
+  border-color: var(--cp-accent);
+}
+.btn-cta {
+  background: var(--cp-success);
+  color: var(--cp-accent-fg);
+  border-color: var(--cp-success);
+  font-weight: 700;
+}
+.wizard-build-stages {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px 0;
+  display: grid;
+  gap: 8px;
+}
+.wizard-build-stages li {
+  border: 1px solid var(--cp-border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--cp-text-muted);
+  background: var(--cp-surface-soft);
+}
+.wizard-build-stages li.active {
+  border-color: var(--cp-accent);
+  color: var(--cp-text);
+}
+.wizard-build-stages li.done {
+  border-color: var(--cp-success);
+  color: var(--cp-success);
+}
+.wizard-error-box {
+  background: var(--cp-accent-soft);
+  border: 1px solid var(--cp-danger);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--cp-danger);
+  line-height: 1.6;
+  margin-top: 10px;
+}
+.wizard-error-box[hidden] { display: none; }
+.wizard-unsupported-box {
+  background: var(--cp-accent-soft);
+  border: 1px solid var(--cp-warning);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: var(--cp-text);
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+.wizard-unsupported-box ul { margin: 4px 0 0 16px; padding: 0; font-size: 12px; }
+.wizard-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--cp-border);
+  border-top-color: var(--cp-accent);
+  border-radius: 50%;
+  animation: wiz-spin .7s linear infinite;
+  display: inline-block;
+}
+.wizard-spinner[hidden] { display: none; }
+@keyframes wiz-spin { to { transform: rotate(360deg); } }
+.wizard-review-card {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-left: 3px solid var(--cp-accent);
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+.wizard-review-title { font-size: 14px; font-weight: 700; color: var(--cp-text); margin: 0 0 6px 0; }
+.wizard-assumption { font-size: 12px; color: var(--cp-text-muted); padding: 2px 0; margin: 0; }
+.wizard-source-preview {
+  background: var(--cp-surface-soft);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 10px 12px;
+  font-family: "Cascadia Code", "Fira Mono", "Consolas", monospace;
+  font-size: 12px;
+  line-height: 1.6;
+  white-space: pre;
+  overflow-x: auto;
+  color: var(--cp-text);
+  max-height: 240px;
+  overflow-y: auto;
+  margin-bottom: 12px;
+}
+.wizard-build-status { display: flex; align-items: center; gap: 10px; padding: 12px 0; font-size: 13px; color: var(--cp-text-muted); }
+.wizard-build-result {
+  background: var(--cp-surface-soft);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  font-family: "Cascadia Code", "Fira Mono", "Consolas", monospace;
+  white-space: pre;
+  overflow: auto;
+  max-height: 160px;
+  color: var(--cp-text);
+  margin-bottom: 12px;
+}
+.wizard-build-result[hidden] { display: none; }
+.wizard-preview-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: var(--cp-surface-soft);
+  border: 1px solid var(--cp-border);
+  color: var(--cp-text-muted);
+  margin-bottom: 12px;
+}
+.wizard-preview-badge.running {
+  background: var(--cp-accent-soft);
+  border-color: var(--cp-success);
+  color: var(--cp-success);
+}
+.wizard-preview-url-box {
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  border-radius: 6px;
+  padding: 12px 14px;
+  margin-top: 10px;
+  font-size: 13px;
+}
+.wizard-preview-url-box a { color: var(--cp-link); font-weight: 600; }
+.wizard-preview-url-box[hidden] { display: none; }
+.wizard-preview-note { font-size: 11px; color: var(--cp-text-muted); margin-top: 8px; line-height: 1.5; }
 
 /* Editor pane */
 #editor-pane {
@@ -884,7 +1157,7 @@ dialog::backdrop { background: rgba(0,0,0,.4); }
 `.trim();
 
 export const STUDIO_JS = `
-/* IntentLang Studio v0.7.1 client */
+/* IntentLang Studio v0.8.0 client */
 (function () {
   'use strict';
 
@@ -921,6 +1194,19 @@ export const STUDIO_JS = `
     pendingProposal: null,
     questionAnswers: {},
     priorAnswers: []
+  };
+
+  var wizardState = {
+    step: 1,
+    description: '',
+    proposalToken: null,
+    proposedSource: '',
+    proposalData: null,
+    buildResult: null,
+    clarificationQuestions: [],
+    clarificationAnswers: {},
+    unsupportedAcknowledged: false,
+    previewUrl: null
   };
 
   var TEMPLATES = [
@@ -967,6 +1253,7 @@ export const STUDIO_JS = `
       renderFromState();
       bindEvents();
       initAiFromState(data.ai || { provider: 'none', model: '', endpointOrigin: '', isLocal: true, configError: null });
+      initWizard(data);
       // Default to Write IntentLang if there is existing source; Describe App if file is empty
       if (!state.source || state.source.trim().length === 0) {
         setEditorMode('describe');
@@ -1099,6 +1386,8 @@ export const STUDIO_JS = `
     el('btn-ai-apply-confirm').addEventListener('click', applyAiProposal);
     el('btn-ai-guided-close').addEventListener('click', function () { el('dlg-ai-guided').close(); });
     el('btn-ai-setup-close').addEventListener('click', function () { el('dlg-ai-setup').close(); });
+
+    bindWizardEvents();
   }
 
   // ── Editor ────────────────────────────────────────────────────────────────────
@@ -2489,6 +2778,479 @@ export const STUDIO_JS = `
     announce('Proposal applied to editor. Source file unchanged until you Save. Generate App is a separate step.');
   }
 
+  // ── Wizard ────────────────────────────────────────────────────────────────────
+
+  function openAdvancedTools() {
+    var details = el('advanced-tools-section');
+    if (!details) return;
+    details.open = true;
+    announce('Advanced tools opened.');
+  }
+
+  function syncAdvancedEditorWithProposal() {
+    if (!wizardState.proposedSource) return;
+    el('editor').value = wizardState.proposedSource;
+    updateLineNumbers();
+    markUnsaved();
+    runCheck(wizardState.proposedSource);
+    setEditorMode('code');
+  }
+
+  function initWizard(data) {
+    var existingCard = el('existing-app-card');
+    var existingText = el('existing-app-card-text');
+    var hasSource = !!(data.source && data.source.trim().length > 0);
+    if (hasSource) {
+      existingCard.removeAttribute('hidden');
+      existingText.textContent = 'This file already has IntentLang source. The wizard stays visible and will only replace the source if you build a new proposal.';
+    } else {
+      existingCard.setAttribute('hidden', '');
+      existingText.textContent = '';
+    }
+    el('advanced-tools-section').open = false;
+    el('wiz-description').value = wizardState.description;
+    el('btn-wizard-continue').disabled = wizardState.description.trim().length === 0;
+    showWizStep(1);
+    refreshPreviewStatus();
+  }
+
+  function bindWizardEvents() {
+    el('wiz-description').addEventListener('input', function () {
+      el('btn-wizard-continue').disabled = el('wiz-description').value.trim().length === 0;
+    });
+    el('btn-wizard-continue').addEventListener('click', onWizContinue);
+    el('btn-wizard-use-template').addEventListener('click', function () {
+      openAdvancedTools();
+      openTemplates();
+    });
+    el('btn-existing-open-advanced').addEventListener('click', openAdvancedTools);
+    el('btn-wizard-back-to-describe').addEventListener('click', function () { showWizStep(1); });
+    el('btn-wizard-build').addEventListener('click', onWizBuild);
+    el('btn-wizard-edit-advanced').addEventListener('click', function () {
+      syncAdvancedEditorWithProposal();
+      openAdvancedTools();
+    });
+    el('btn-wizard-back-to-review').addEventListener('click', function () { showWizStep(2); });
+    el('btn-wizard-start-preview').addEventListener('click', startPreview);
+    el('btn-wizard-stop-preview').addEventListener('click', stopPreview);
+    el('btn-wizard-open-app').addEventListener('click', function () {
+      if (wizardState.previewUrl) {
+        window.open(wizardState.previewUrl, '_blank', 'noopener,noreferrer');
+      }
+    });
+    document.querySelectorAll('[data-open-advanced="true"]').forEach(function (button) {
+      button.addEventListener('click', openAdvancedTools);
+    });
+    el('wiz-ack-checkbox').addEventListener('change', function () {
+      wizardState.unsupportedAcknowledged = !!el('wiz-ack-checkbox').checked;
+      updateWizardBuildButton();
+    });
+  }
+
+  function showWizStep(step) {
+    wizardState.step = step;
+    [1, 2, 3, 4].forEach(function (s) {
+      var panel = el('wiz-step-' + s);
+      if (!panel) return;
+      if (s === step) panel.removeAttribute('hidden');
+      else panel.setAttribute('hidden', '');
+    });
+    [1, 2, 3, 4].forEach(function (s) {
+      var indicator = el('step-indicator-' + s);
+      if (!indicator) return;
+      indicator.classList.remove('active', 'done', 'completed');
+      indicator.removeAttribute('aria-current');
+      if (s === step) {
+        indicator.classList.add('active');
+        indicator.setAttribute('aria-current', 'step');
+      } else if (s < step) {
+        indicator.classList.add('done', 'completed');
+      }
+    });
+  }
+
+  function updateWizardBuildButton() {
+    var buildBtn = el('btn-wizard-build');
+    var needsAck = !!(
+      wizardState.proposalData &&
+      wizardState.proposalData.unsupportedCapabilities &&
+      wizardState.proposalData.unsupportedCapabilities.length > 0
+    );
+    buildBtn.disabled = needsAck && !wizardState.unsupportedAcknowledged;
+  }
+
+  function resetClarificationUi() {
+    var clarificationBox = el('wizard-clarification-box');
+    clarificationBox.textContent = '';
+    clarificationBox.setAttribute('hidden', '');
+    wizardState.clarificationQuestions = [];
+    wizardState.clarificationAnswers = {};
+  }
+
+  function renderClarification(data) {
+    var clarificationBox = el('wizard-clarification-box');
+    clarificationBox.textContent = '';
+    clarificationBox.removeAttribute('hidden');
+    wizardState.clarificationQuestions = data.questions || [];
+    wizardState.clarificationAnswers = {};
+
+    var title = document.createElement('strong');
+    title.textContent = 'One quick clarification';
+    clarificationBox.appendChild(title);
+
+    if (data.partialAssumptions && data.partialAssumptions.length > 0) {
+      data.partialAssumptions.forEach(function (item) {
+        var p = document.createElement('p');
+        p.className = 'wizard-assumption';
+        p.textContent = item;
+        clarificationBox.appendChild(p);
+      });
+    }
+
+    (data.questions || []).forEach(function (question) {
+      var fieldset = document.createElement('fieldset');
+      fieldset.className = 'wizard-clarification-question';
+      var legend = document.createElement('legend');
+      legend.textContent = question.question;
+      fieldset.appendChild(legend);
+      (question.options || []).forEach(function (option) {
+        var label = document.createElement('label');
+        label.className = 'wizard-radio-option';
+        var input = document.createElement('input');
+        input.type = 'radio';
+        input.name = question.id;
+        input.value = option;
+        input.addEventListener('change', function () {
+          wizardState.clarificationAnswers[question.id] = option;
+        });
+        label.appendChild(input);
+        var span = document.createElement('span');
+        span.textContent = option;
+        label.appendChild(span);
+        fieldset.appendChild(label);
+      });
+      clarificationBox.appendChild(fieldset);
+    });
+  }
+
+  async function onWizContinue() {
+    var desc = el('wiz-description').value.trim();
+    if (!desc) {
+      showWizardError('wizard-describe-error', 'Please enter a description first.');
+      el('wiz-description').focus();
+      return;
+    }
+
+    wizardState.description = desc;
+    hideWizardError('wizard-describe-error');
+    var btn = el('btn-wizard-continue');
+    btn.disabled = true;
+    el('wizard-interpret-spinner').removeAttribute('hidden');
+
+    var payload = { description: desc };
+    if (wizardState.clarificationQuestions.length > 0) {
+      var question = wizardState.clarificationQuestions[0];
+      var selected = wizardState.clarificationAnswers[question.id];
+      if (!selected) {
+        showWizardError('wizard-describe-error', 'Choose one of the clarification options to continue.');
+        btn.disabled = false;
+        el('wizard-interpret-spinner').setAttribute('hidden', '');
+        return;
+      }
+      payload.usersAnswer = selected === 'auth-user' ? 'auth-user' : 'person';
+    }
+
+    try {
+      var resp = await postJson('/api/wizard/interpret', payload);
+      var data = await resp.json();
+      if (!resp.ok) {
+        showWizardError('wizard-describe-error', data.error || 'Interpretation failed.');
+        return;
+      }
+      if (data.kind === 'unrecognized') {
+        resetClarificationUi();
+        showWizardError('wizard-describe-error', data.reason || 'Could not interpret that description.');
+        return;
+      }
+      if (data.kind === 'clarification') {
+        renderClarification(data);
+        announce('Clarification needed before the proposal can be built.');
+        return;
+      }
+      resetClarificationUi();
+      wizardState.proposalToken = data.proposalToken || null;
+      wizardState.proposedSource = data.source || '';
+      wizardState.proposalData = data;
+      wizardState.unsupportedAcknowledged = false;
+      el('wiz-ack-checkbox').checked = false;
+      showReview(data);
+      showWizStep(2);
+      announce('Proposal ready for review.');
+    } catch (err) {
+      showWizardError('wizard-describe-error', 'Request error: ' + String(err));
+    } finally {
+      btn.disabled = false;
+      el('wizard-interpret-spinner').setAttribute('hidden', '');
+    }
+  }
+
+  function showReview(data) {
+    var container = el('wizard-review-content');
+    var ackRow = el('wizard-ack-row');
+    var ackText = el('wiz-ack-text');
+    container.textContent = '';
+
+    var card = document.createElement('div');
+    card.className = 'wizard-review-card';
+    var title = document.createElement('h3');
+    title.className = 'wizard-review-title';
+    title.textContent = 'Ready to build ' + data.appName;
+    card.appendChild(title);
+
+    var sub = document.createElement('p');
+    sub.className = 'wizard-step-desc';
+    sub.textContent = 'Entity: ' + data.entityName + '. Review the proposed source and any assumptions below.';
+    card.appendChild(sub);
+
+    (data.assumptions || []).forEach(function (item) {
+      var assumption = document.createElement('p');
+      assumption.className = 'wizard-assumption';
+      assumption.textContent = item;
+      card.appendChild(assumption);
+    });
+
+    (data.warnings || []).forEach(function (item) {
+      var warning = document.createElement('p');
+      warning.className = 'wizard-assumption';
+      warning.textContent = item;
+      card.appendChild(warning);
+    });
+
+    container.appendChild(card);
+
+    if (data.unsupportedCapabilities && data.unsupportedCapabilities.length > 0) {
+      var unsupported = document.createElement('div');
+      unsupported.className = 'wizard-unsupported-box';
+      var unsupportedTitle = document.createElement('strong');
+      unsupportedTitle.textContent = 'Unsupported items were left out of the generated source:';
+      unsupported.appendChild(unsupportedTitle);
+      var list = document.createElement('ul');
+      data.unsupportedCapabilities.forEach(function (item) {
+        var li = document.createElement('li');
+        li.textContent = item.capability + ': ' + item.message;
+        list.appendChild(li);
+      });
+      unsupported.appendChild(list);
+      container.appendChild(unsupported);
+      ackRow.removeAttribute('hidden');
+      ackText.textContent = 'I understand unsupported items were not generated and I still want to build the supported app.';
+    } else {
+      ackRow.setAttribute('hidden', '');
+      ackText.textContent = '';
+    }
+
+    var sourceLabel = document.createElement('label');
+    sourceLabel.className = 'wizard-label';
+    sourceLabel.textContent = 'Proposed IntentLang source';
+    container.appendChild(sourceLabel);
+
+    var sourcePreview = document.createElement('pre');
+    sourcePreview.className = 'wizard-source-preview';
+    sourcePreview.textContent = data.source || '';
+    container.appendChild(sourcePreview);
+
+    updateWizardBuildButton();
+  }
+
+  function setBuildStage(stageId) {
+    ['review', 'compile', 'generate', 'preview'].forEach(function (id) {
+      var item = el('wizard-build-stage-' + id);
+      if (!item) return;
+      item.classList.remove('active', 'done');
+      if (id === stageId) item.classList.add('active');
+    });
+  }
+
+  function markBuildStageDone(stageId) {
+    var item = el('wizard-build-stage-' + stageId);
+    if (item) {
+      item.classList.remove('active');
+      item.classList.add('done');
+    }
+  }
+
+  async function onWizBuild() {
+    if (!wizardState.proposalToken || !wizardState.proposedSource) {
+      showWizardError('wizard-review-error', 'Interpret the description again before building.');
+      showWizStep(2);
+      return;
+    }
+    if (el('wiz-ack-checkbox').offsetParent !== null && !el('wiz-ack-checkbox').checked) {
+      showWizardError('wizard-review-error', 'Acknowledge the unsupported items before building.');
+      return;
+    }
+
+    hideWizardError('wizard-review-error');
+    hideWizardError('wizard-build-error');
+    showWizStep(3);
+    el('wizard-build-spinner').removeAttribute('hidden');
+    el('wizard-build-result').setAttribute('hidden', '');
+    el('wizard-build-actions').setAttribute('hidden', '');
+    setBuildStage('compile');
+
+    try {
+      var resp = await postJson('/api/wizard/build', {
+        proposalToken: wizardState.proposalToken,
+        proposedSource: wizardState.proposedSource
+      });
+      var data = await resp.json();
+      wizardState.proposalToken = null;
+
+      if (!resp.ok) {
+        el('wizard-build-spinner').setAttribute('hidden', '');
+        showWizardError('wizard-build-error', data.error || 'Build failed.');
+        el('wizard-build-actions').removeAttribute('hidden');
+        return;
+      }
+
+      wizardState.buildResult = data;
+      markBuildStageDone('compile');
+      setBuildStage('generate');
+      markBuildStageDone('generate');
+      el('wizard-build-spinner').setAttribute('hidden', '');
+
+      var resultBox = el('wizard-build-result');
+      var lines = ['Generated in: ' + (data.outputDir || ''), '', 'Artifacts:'];
+      (data.artifacts || []).forEach(function (item) { lines.push('  ' + item); });
+      if (data.authEnabled) {
+        lines.push('');
+        lines.push('Authentication is enabled, so wizard preview stays off.');
+        lines.push('Run the generated app manually after setting:');
+        lines.push('  INTENTLANG_BOOTSTRAP_NAME');
+        lines.push('  INTENTLANG_BOOTSTRAP_EMAIL');
+        lines.push('  INTENTLANG_BOOTSTRAP_PASSWORD');
+      }
+      resultBox.textContent = lines.join('\n');
+      resultBox.removeAttribute('hidden');
+      el('wizard-build-actions').removeAttribute('hidden');
+
+      if (data.authEnabled) {
+        showWizStep(4);
+        el('wiz-auth-guidance').removeAttribute('hidden');
+        el('wiz-run-command').textContent = 'node ' + (data.outputDir || 'app-output') + '\\app.mjs';
+        updateWizardPreviewBadge(false, null, 'Preview blocked for authenticated apps.');
+        announce('Build complete. Authentication guidance is shown instead of auto-preview.');
+        return;
+      }
+
+      markBuildStageDone('preview');
+      showWizStep(4);
+      el('wiz-auth-guidance').setAttribute('hidden', '');
+      await startPreview();
+    } catch (err) {
+      el('wizard-build-spinner').setAttribute('hidden', '');
+      showWizardError('wizard-build-error', 'Request error: ' + String(err));
+      el('wizard-build-actions').removeAttribute('hidden');
+    }
+  }
+
+  async function refreshPreviewStatus() {
+    try {
+      var resp = await fetch('/api/preview/status');
+      if (!resp.ok) return;
+      var data = await resp.json();
+      updateWizardPreviewBadge(!!data.running, data.url || null, data.running ? null : null);
+    } catch {
+      // Non-fatal
+    }
+  }
+
+  async function startPreview() {
+    var btn = el('btn-wizard-start-preview');
+    btn.disabled = true;
+    hideWizardError('wizard-preview-error');
+    try {
+      var resp = await postJson('/api/preview/start', {});
+      var data = await resp.json();
+      if (!data.ok) {
+        updateWizardPreviewBadge(false, null, data.reason || 'Preview could not start.');
+        showWizardError('wizard-preview-error', data.reason || 'Preview could not start.');
+        return;
+      }
+      markBuildStageDone('preview');
+      wizardState.previewUrl = data.url || null;
+      updateWizardPreviewBadge(true, data.url || null, null);
+      announce('Preview started at ' + data.url);
+    } catch (err) {
+      showWizardError('wizard-preview-error', 'Request error: ' + String(err));
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  async function stopPreview() {
+    var btn = el('btn-wizard-stop-preview');
+    btn.disabled = true;
+    try {
+      await postJson('/api/preview/stop', {});
+      wizardState.previewUrl = null;
+      updateWizardPreviewBadge(false, null, null);
+      announce('Preview stopped.');
+    } catch (err) {
+      showWizardError('wizard-preview-error', 'Request error: ' + String(err));
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function updateWizardPreviewBadge(running, url, reason) {
+    var badge = el('wizard-preview-badge');
+    var urlBox = el('wizard-preview-url');
+    var startBtn = el('btn-wizard-start-preview');
+    var stopBtn = el('btn-wizard-stop-preview');
+    var openBtn = el('btn-wizard-open-app');
+
+    urlBox.textContent = '';
+    if (running && url) {
+      wizardState.previewUrl = url;
+      badge.textContent = '● Running';
+      badge.className = 'wizard-preview-badge running';
+      var link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = url;
+      urlBox.appendChild(link);
+      urlBox.removeAttribute('hidden');
+      startBtn.setAttribute('hidden', '');
+      stopBtn.removeAttribute('hidden');
+      openBtn.removeAttribute('hidden');
+    } else {
+      wizardState.previewUrl = null;
+      badge.textContent = reason || 'Not running';
+      badge.className = 'wizard-preview-badge';
+      urlBox.setAttribute('hidden', '');
+      startBtn.removeAttribute('hidden');
+      stopBtn.setAttribute('hidden', '');
+      openBtn.setAttribute('hidden', '');
+    }
+  }
+
+  function showWizardError(id, msg) {
+    var box = el(id);
+    if (!box) return;
+    box.textContent = msg;
+    box.removeAttribute('hidden');
+    announce('Error: ' + msg);
+  }
+
+  function hideWizardError(id) {
+    var box = el(id);
+    if (!box) return;
+    box.setAttribute('hidden', '');
+    box.textContent = '';
+  }
+
   // ── Boot ──────────────────────────────────────────────────────────────────────
 
   if (document.readyState === 'loading') {
@@ -2513,151 +3275,281 @@ export function buildStudioHtml(filename: string, port: number): string {
   <link rel="stylesheet" href="/studio.css">
   <script>${scoutScript}</script>
 </head>
-<body>
+  <body>
   <div id="live-region" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <header id="studio-header" role="banner">
-    <h1>IntentLang Studio</h1>
+    <h1>IntentLang App Builder</h1>
+    <span class="badge">Studio</span>
     <span class="filename" title="${escapeHtml(filename)}">${escapeHtml(filename)}</span>
     <span class="badge" title="Experimental offline authoring tool — no AI tokens required">experimental · offline · no-AI</span>
     <div class="spacer"></div>
     <button id="btn-theme" type="button" aria-label="Toggle dark/light theme">🌙 Dark</button>
   </header>
 
-  <main id="studio-main" role="main">
-    <section id="editor-pane" aria-label="Source editor">
-      <div id="editor-mode-tabs" role="tablist" aria-label="Editor mode">
-        <button role="tab" id="tab-mode-code" class="mode-tab" aria-selected="true" aria-controls="editor-wrap" tabindex="0" title="Write IntentLang controlled grammar">Write IntentLang</button>
-        <button role="tab" id="tab-mode-describe" class="mode-tab" aria-selected="false" aria-controls="describe-pane" tabindex="-1" title="Describe your app in plain English (offline interpreter + optional AI)">Describe App</button>
-      </div>
-      <div id="editor-toolbar" role="toolbar" aria-label="Editor actions">
-        <button id="btn-check" class="toolbar-btn" type="button" title="Check source (Ctrl+Enter)">Check</button>
-        <button id="btn-format" class="toolbar-btn" type="button" title="Format source (Ctrl+Shift+F)">Format</button>
-        <button id="btn-save" class="toolbar-btn" type="button" title="Save source (Ctrl+S)">Save</button>
-        <button id="btn-generate" class="toolbar-btn primary" type="button" title="Generate App">Generate App</button>
-        <button id="btn-templates" type="button" title="Load a template">Templates ▾</button>
-        <button id="btn-ai-open" class="toolbar-btn" type="button" title="Describe with AI (optional — off by default)">AI Assist ✦</button>
-      </div>
-      <div id="diag-summary" aria-live="assertive" aria-atomic="true" aria-label="First diagnostic">
-        <span class="diag-summary-badge" aria-hidden="true"></span>
-        <span class="diag-summary-loc"></span>
-        <span class="diag-summary-msg"></span>
-        <span class="diag-summary-hint"></span>
-        <button id="btn-show-all-problems" type="button" aria-label="Show all problems in Problems panel">Show all problems</button>
-      </div>
-      <div id="prose-banner" role="alert" aria-live="polite" aria-atomic="true">
-        <span class="prose-banner-icon" aria-hidden="true">💬</span>
-        <div>
-          <div class="prose-banner-text">This looks like a description, not IntentLang code.</div>
-          <div class="prose-banner-sub">Use <strong>Describe App</strong> mode for plain-English input, or <strong>Write IntentLang</strong> for the controlled grammar.</div>
+  <main id="app-body" role="main">
+    <section id="wizard-view" aria-label="App Builder wizard">
+      <div class="wizard-hero">
+        <div class="wizard-hero-copy">
+          <h2>IntentLang App Builder</h2>
+          <p>Describe the app you want in one sentence, review the generated IntentLang, build safely, then open the preview if authentication is not required.</p>
         </div>
-        <div class="prose-banner-actions">
-          <button id="btn-prose-move" class="prose-banner-btn" type="button">Move to Describe App</button>
-          <button id="btn-prose-examples" class="prose-banner-btn secondary" type="button">Show valid examples</button>
-        </div>
-      </div>
-      <div id="editor-wrap">
-        <div id="line-numbers" aria-hidden="true">1</div>
-        <textarea
-          id="editor"
-          aria-label="Source editor"
-          aria-multiline="true"
-          spellcheck="false"
-          autocorrect="off"
-          autocapitalize="off"
-          data-gramm="false"
-          placeholder="Write your IntentLang source here…"
-        ></textarea>
-      </div>
-      <div id="describe-pane" aria-label="Describe App mode" aria-live="off">
-        <div id="describe-pane-body">
-          <div class="describe-mode-note">
-            <strong>Describe App</strong> accepts supported plain-English descriptions.
-            The <em>offline interpreter</em> works without AI for simple CRUD apps using a finite vocabulary.
-            Optional AI handles broader descriptions if a provider is configured.
-            <br>This is <strong>not</strong> unrestricted natural language — unsupported features will be listed, not silently omitted.
-          </div>
-          <label for="describe-textarea" style="font-size:12px;font-weight:600;color:var(--cp-text-muted);">Describe the app you want to build:</label>
-          <textarea
-            id="describe-textarea"
-            rows="4"
-            placeholder="e.g. I want to build an app that allows users to add their name, age, address, DOB"
-            aria-label="App description"
-          ></textarea>
-          <div class="describe-actions">
-            <div>
-              <div class="describe-path-label">Path 1 — always available</div>
-              <button id="btn-interpret-offline" class="toolbar-btn primary" type="button">Use offline guided interpretation</button>
-            </div>
-            <div>
-              <div class="describe-path-label">Path 2 — requires AI provider</div>
-              <button id="btn-interpret-ai" class="toolbar-btn" type="button" disabled title="AI provider is not configured. Start Studio with --ai-provider to enable.">Ask configured AI ✦</button>
-            </div>
-          </div>
-          <div id="describe-result"></div>
-          <div id="unsupported-ack-row" aria-live="polite">
-            <input type="checkbox" id="unsupported-ack-checkbox" aria-label="Acknowledge unsupported capabilities">
-            <label for="unsupported-ack-checkbox"></label>
-          </div>
-          <div id="describe-apply-row" class="describe-apply-row" style="display:none;">
-            <button id="btn-describe-apply" class="toolbar-btn primary" type="button" disabled>Apply supported source to Editor</button>
-            <button id="btn-describe-send-answers" class="toolbar-btn" type="button" style="display:none;">Send Answers</button>
-            <span style="font-size:11px;color:var(--cp-text-muted);">Apply updates the editor only — no auto-save, no auto-generate.</span>
-          </div>
-        </div>
-      </div>
-      <div id="status-bar" role="status" aria-live="polite">
-        <span id="unsaved-dot" aria-hidden="true" title="Unsaved changes"></span>
-        <span id="status-text" class="status-checking">Loading…</span>
-        <span class="spacer"></span>
-        <span style="color:var(--cp-text-muted);font-size:10px;">Port ${port} · localhost only</span>
+        <span class="badge wizard-hero-badge">Studio</span>
       </div>
 
-      <section id="ai-panel" aria-label="Describe with AI" hidden>
-        <div id="ai-panel-header">
-          <span id="ai-provider-badge" class="ai-provider-badge">AI assistance: Off</span>
-          <span class="spacer"></span>
-          <button id="btn-ai-close" class="toolbar-btn" type="button" aria-label="Close AI panel" style="padding:2px 8px;">✕</button>
+      <div class="wizard-existing-card" id="existing-app-card" hidden>
+        <strong>Existing app source found</strong>
+        <p id="existing-app-card-text"></p>
+        <div class="wizard-actions">
+          <button id="btn-existing-open-advanced" class="toolbar-btn" type="button">Open advanced tools</button>
         </div>
-        <div id="ai-panel-body">
-          <div id="ai-notice" class="ai-notice-off">AI assistance is off. Start Studio with --ai-provider to enable it.</div>
-          <label id="ai-description-label" for="ai-description">Describe the app or change you want:</label>
-          <textarea
-            id="ai-description"
-            rows="3"
-            placeholder="e.g. I want to create an inventory app with products, suppliers, and stock levels."
-            aria-label="Describe the app or change you want"
-          ></textarea>
-          <div class="ai-buttons" role="toolbar" aria-label="AI request actions">
-            <button id="btn-ai-propose" class="toolbar-btn primary" type="button" disabled>Generate Proposal</button>
-            <button id="btn-ai-cancel" class="toolbar-btn" type="button" hidden>Cancel</button>
-            <span id="ai-spinner" aria-hidden="true" title="Requesting…"></span>
+      </div>
+
+      <nav id="wizard-stepper" aria-label="App Builder steps">
+      <ol class="wizard-steps-indicator">
+        <li class="wizard-step-indicator step active" id="step-indicator-1" aria-current="step">
+          <span class="wizard-step-num">1</span>
+          <span class="wizard-step-label">Describe</span>
+        </li>
+        <li class="wizard-step-divider" aria-hidden="true">›</li>
+        <li class="wizard-step-indicator step" id="step-indicator-2">
+          <span class="wizard-step-num">2</span>
+          <span class="wizard-step-label">Review</span>
+        </li>
+        <li class="wizard-step-divider" aria-hidden="true">›</li>
+        <li class="wizard-step-indicator step" id="step-indicator-3">
+          <span class="wizard-step-num">3</span>
+          <span class="wizard-step-label">Build</span>
+        </li>
+        <li class="wizard-step-divider" aria-hidden="true">›</li>
+        <li class="wizard-step-indicator step" id="step-indicator-4">
+          <span class="wizard-step-num">4</span>
+          <span class="wizard-step-label">Open app</span>
+        </li>
+      </ol>
+      </nav>
+
+      <!-- Step 1: Describe -->
+      <div class="wizard-step-panel wiz-step" id="wiz-step-1">
+        <h2 class="wizard-step-title">Describe your app</h2>
+        <p class="wizard-step-desc">Describe the app in plain English. Example: I want to build an app that lets people add their name, age, address, and date of birth.</p>
+        <label class="wizard-label" for="wiz-description">Describe the app you want to build</label>
+        <textarea id="wiz-description" class="wizard-textarea" rows="5"
+          placeholder="Example: I want to build an app that lets people add their name, age, address, and date of birth."
+          aria-label="App description"></textarea>
+        <div class="wizard-unsupported-box" id="wizard-clarification-box" hidden></div>
+        <div class="wizard-actions">
+          <button id="btn-wizard-continue" class="toolbar-btn primary btn-primary" type="button" disabled>Continue →</button>
+          <button id="btn-wizard-use-template" class="toolbar-btn" type="button">Use a template in advanced tools</button>
+        </div>
+        <div class="wizard-spinner" id="wizard-interpret-spinner" aria-hidden="true" hidden></div>
+        <div class="wizard-error-box" id="wizard-describe-error" role="alert" hidden></div>
+      </div>
+
+      <!-- Step 2: Review -->
+      <div class="wizard-step-panel wiz-step" id="wiz-step-2" hidden>
+        <h2 class="wizard-step-title">Review your app</h2>
+        <p class="wizard-step-desc">Review the supported source, confirm any unsupported items, then build the app.</p>
+        <div id="wizard-review-content" aria-live="polite"></div>
+        <div class="wizard-actions" id="wizard-ack-row" hidden>
+          <label class="wizard-radio-option" for="wiz-ack-checkbox">
+            <input id="wiz-ack-checkbox" type="checkbox">
+            <span id="wiz-ack-text"></span>
+          </label>
+        </div>
+        <div class="wizard-error-box" id="wizard-review-error" role="alert" hidden></div>
+        <div class="wizard-actions">
+          <button id="btn-wizard-back-to-describe" class="toolbar-btn" type="button">← Back</button>
+          <button id="btn-wizard-build" class="toolbar-btn primary btn-primary" type="button">Build App →</button>
+          <button id="btn-wizard-edit-advanced" class="toolbar-btn" type="button">Edit in advanced tools ↗</button>
+        </div>
+      </div>
+
+      <!-- Step 3: Build -->
+      <div class="wizard-step-panel wiz-step" id="wiz-step-3" hidden>
+        <h2 class="wizard-step-title">Building your app…</h2>
+        <ol class="wizard-build-stages" aria-label="Build progress stages">
+          <li id="wizard-build-stage-review">Review confirmed</li>
+          <li id="wizard-build-stage-compile">Compile and validate</li>
+          <li id="wizard-build-stage-generate">Generate artifacts safely</li>
+          <li id="wizard-build-stage-preview">Auto-preview when allowed</li>
+        </ol>
+        <div class="wizard-build-status">
+          <div class="wizard-spinner" id="wizard-build-spinner" aria-hidden="true"></div>
+          <span id="wizard-build-msg">Compiling and generating…</span>
+        </div>
+        <pre class="wizard-build-result" id="wizard-build-result" aria-live="polite" hidden></pre>
+        <div class="wizard-error-box" id="wizard-build-error" role="alert" hidden></div>
+        <div class="wizard-actions" id="wizard-build-actions" hidden>
+          <button id="btn-wizard-back-to-review" class="toolbar-btn" type="button">← Back</button>
+          <button id="btn-wizard-open-advanced" class="toolbar-btn" type="button" data-open-advanced="true">Open advanced tools</button>
+        </div>
+      </div>
+
+      <!-- Step 4: Preview -->
+      <div class="wizard-step-panel wiz-step" id="wiz-step-4" hidden>
+        <h2 class="wizard-step-title">Open your app</h2>
+        <p class="wizard-step-desc">The wizard auto-starts preview for unauthenticated apps. Authenticated apps show guidance instead.</p>
+        <div id="wizard-preview-badge" class="wizard-preview-badge" aria-live="polite">Not running</div>
+        <div id="wizard-preview-url" class="wizard-preview-url-box" hidden></div>
+        <div id="wiz-auth-guidance" class="wizard-existing-card" hidden>
+          <h3>Authentication setup required</h3>
+          <p>Set these environment variables before running the generated app:</p>
+          <ul>
+            <li><code>INTENTLANG_BOOTSTRAP_NAME</code></li>
+            <li><code>INTENTLANG_BOOTSTRAP_EMAIL</code></li>
+            <li><code>INTENTLANG_BOOTSTRAP_PASSWORD</code></li>
+          </ul>
+          <p>Then run: <code id="wiz-run-command"></code></p>
+        </div>
+        <div class="wizard-actions">
+          <button id="btn-wizard-start-preview" class="toolbar-btn primary" type="button">Start preview</button>
+          <button id="btn-wizard-stop-preview" class="toolbar-btn" type="button" hidden>Stop Preview</button>
+          <button id="btn-wizard-open-app" class="toolbar-btn primary btn-cta" type="button" hidden>Open app</button>
+          <button id="btn-wizard-open-advanced-2" class="toolbar-btn" type="button" data-open-advanced="true">Open advanced tools</button>
+        </div>
+        <div class="wizard-error-box" id="wizard-preview-error" role="alert" hidden></div>
+      </div>
+    </section>
+
+    <details id="advanced-tools-section">
+      <summary>Advanced tools</summary>
+      <div id="studio-main">
+      <section id="editor-pane" aria-label="Source editor">
+        <div id="editor-mode-tabs" role="tablist" aria-label="Editor mode">
+          <button role="tab" id="tab-mode-code" class="mode-tab" aria-selected="true" aria-controls="editor-wrap" tabindex="0" title="Write IntentLang controlled grammar">Write IntentLang</button>
+          <button role="tab" id="tab-mode-describe" class="mode-tab" aria-selected="false" aria-controls="describe-pane" tabindex="-1" title="Describe your app in plain English (offline interpreter + optional AI)">Describe App</button>
+        </div>
+        <div id="editor-toolbar" role="toolbar" aria-label="Editor actions">
+          <button id="btn-check" class="toolbar-btn" type="button" title="Check source (Ctrl+Enter)">Check</button>
+          <button id="btn-format" class="toolbar-btn" type="button" title="Format source (Ctrl+Shift+F)">Format</button>
+          <button id="btn-save" class="toolbar-btn" type="button" title="Save source (Ctrl+S)">Save</button>
+          <button id="btn-generate" class="toolbar-btn primary" type="button" title="Generate App">Generate App</button>
+          <button id="btn-templates" type="button" title="Load a template">Templates ▾</button>
+          <button id="btn-ai-open" class="toolbar-btn" type="button" title="Describe with AI (optional — off by default)">AI Assist ✦</button>
+        </div>
+        <div id="diag-summary" aria-live="assertive" aria-atomic="true" aria-label="First diagnostic">
+          <span class="diag-summary-badge" aria-hidden="true"></span>
+          <span class="diag-summary-loc"></span>
+          <span class="diag-summary-msg"></span>
+          <span class="diag-summary-hint"></span>
+          <button id="btn-show-all-problems" type="button" aria-label="Show all problems in Problems panel">Show all problems</button>
+        </div>
+        <div id="prose-banner" role="alert" aria-live="polite" aria-atomic="true">
+          <span class="prose-banner-icon" aria-hidden="true">💬</span>
+          <div>
+            <div class="prose-banner-text">This looks like a description, not IntentLang code.</div>
+            <div class="prose-banner-sub">Use <strong>Describe App</strong> mode for plain-English input, or <strong>Write IntentLang</strong> for the controlled grammar.</div>
           </div>
-          <div id="ai-result" hidden aria-live="polite" aria-atomic="false"></div>
-          <p class="ai-guided-link"><a href="#" id="btn-ai-guided-mode">Use deterministic guided mode instead ↗</a></p>
+          <div class="prose-banner-actions">
+            <button id="btn-prose-move" class="prose-banner-btn" type="button">Move to Describe App</button>
+            <button id="btn-prose-examples" class="prose-banner-btn secondary" type="button">Show valid examples</button>
+          </div>
+        </div>
+        <div id="editor-wrap">
+          <div id="line-numbers" aria-hidden="true">1</div>
+          <textarea
+            id="editor"
+            aria-label="Source editor"
+            aria-multiline="true"
+            spellcheck="false"
+            autocorrect="off"
+            autocapitalize="off"
+            data-gramm="false"
+            placeholder="Write your IntentLang source here…"
+          ></textarea>
+        </div>
+        <div id="describe-pane" aria-label="Describe App mode" aria-live="off">
+          <div id="describe-pane-body">
+            <div class="describe-mode-note">
+              <strong>Describe App</strong> accepts supported plain-English descriptions.
+              The <em>offline interpreter</em> works without AI for simple CRUD apps using a finite vocabulary.
+              Optional AI handles broader descriptions if a provider is configured.
+              <br>This is <strong>not</strong> unrestricted natural language — unsupported features will be listed, not silently omitted.
+            </div>
+            <label for="describe-textarea" style="font-size:12px;font-weight:600;color:var(--cp-text-muted);">Describe the app you want to build:</label>
+            <textarea
+              id="describe-textarea"
+              rows="4"
+              placeholder="e.g. I want to build an app that allows users to add their name, age, address, DOB"
+              aria-label="App description"
+            ></textarea>
+            <div class="describe-actions">
+              <div>
+                <div class="describe-path-label">Path 1 — always available</div>
+                <button id="btn-interpret-offline" class="toolbar-btn primary" type="button">Use offline guided interpretation</button>
+              </div>
+              <div>
+                <div class="describe-path-label">Path 2 — requires AI provider</div>
+                <button id="btn-interpret-ai" class="toolbar-btn" type="button" disabled title="AI provider is not configured. Start Studio with --ai-provider to enable.">Ask configured AI ✦</button>
+              </div>
+            </div>
+            <div id="describe-result"></div>
+            <div id="unsupported-ack-row" aria-live="polite">
+              <input type="checkbox" id="unsupported-ack-checkbox" aria-label="Acknowledge unsupported capabilities">
+              <label for="unsupported-ack-checkbox"></label>
+            </div>
+            <div id="describe-apply-row" class="describe-apply-row" style="display:none;">
+              <button id="btn-describe-apply" class="toolbar-btn primary" type="button" disabled>Apply supported source to Editor</button>
+              <button id="btn-describe-send-answers" class="toolbar-btn" type="button" style="display:none;">Send Answers</button>
+              <span style="font-size:11px;color:var(--cp-text-muted);">Apply updates the editor only — no auto-save, no auto-generate.</span>
+            </div>
+          </div>
+        </div>
+        <div id="status-bar" role="status" aria-live="polite">
+          <span id="unsaved-dot" aria-hidden="true" title="Unsaved changes"></span>
+          <span id="status-text" class="status-checking">Loading…</span>
+          <span class="spacer"></span>
+          <span style="color:var(--cp-text-muted);font-size:10px;">Port ${port} · localhost only</span>
+        </div>
+
+        <section id="ai-panel" aria-label="Describe with AI" hidden>
+          <div id="ai-panel-header">
+            <span id="ai-provider-badge" class="ai-provider-badge">AI assistance: Off</span>
+            <span class="spacer"></span>
+            <button id="btn-ai-close" class="toolbar-btn" type="button" aria-label="Close AI panel" style="padding:2px 8px;">✕</button>
+          </div>
+          <div id="ai-panel-body">
+            <div id="ai-notice" class="ai-notice-off">AI assistance is off. Start Studio with --ai-provider to enable it.</div>
+            <label id="ai-description-label" for="ai-description">Describe the app or change you want:</label>
+            <textarea
+              id="ai-description"
+              rows="3"
+              placeholder="e.g. I want to create an inventory app with products, suppliers, and stock levels."
+              aria-label="Describe the app or change you want"
+            ></textarea>
+            <div class="ai-buttons" role="toolbar" aria-label="AI request actions">
+              <button id="btn-ai-propose" class="toolbar-btn primary" type="button" disabled>Generate Proposal</button>
+              <button id="btn-ai-cancel" class="toolbar-btn" type="button" hidden>Cancel</button>
+              <span id="ai-spinner" aria-hidden="true" title="Requesting…"></span>
+            </div>
+            <div id="ai-result" hidden aria-live="polite" aria-atomic="false"></div>
+            <p class="ai-guided-link"><a href="#" id="btn-ai-guided-mode">Use deterministic guided mode instead ↗</a></p>
+          </div>
+        </section>
+      </section>
+
+      <section id="panels" aria-label="Output panels">
+        <div role="tablist" aria-label="Output panels">
+          <button role="tab" data-tab="problems" id="tab-problems" aria-selected="true" aria-controls="panel-problems" tabindex="0">Problems</button>
+          <button role="tab" data-tab="model" id="tab-model" aria-selected="false" aria-controls="panel-model" tabindex="-1">Application Model</button>
+          <button role="tab" data-tab="canonical" id="tab-canonical" aria-selected="false" aria-controls="panel-canonical" tabindex="-1">Canonical Source</button>
+          <button role="tab" data-tab="ir" id="tab-ir" aria-selected="false" aria-controls="panel-ir" tabindex="-1">Raw IR</button>
+        </div>
+        <div role="tabpanel" id="panel-problems" aria-labelledby="tab-problems" class="active"></div>
+        <div role="tabpanel" id="panel-model" aria-labelledby="tab-model" hidden></div>
+        <div role="tabpanel" id="panel-canonical" aria-labelledby="tab-canonical" hidden>
+          <pre class="code-pane" id="canonical-pane" aria-label="Canonical source" aria-readonly="true"></pre>
+        </div>
+        <div role="tabpanel" id="panel-ir" aria-labelledby="tab-ir" hidden>
+          <details class="ir-collapsible" open>
+            <summary>Typed IR JSON</summary>
+            <pre class="code-pane" id="ir-pane" aria-label="Raw IR JSON" aria-readonly="true"></pre>
+          </details>
         </div>
       </section>
-    </section>
-
-    <section id="panels" aria-label="Output panels">
-      <div role="tablist" aria-label="Output panels">
-        <button role="tab" data-tab="problems" id="tab-problems" aria-selected="true" aria-controls="panel-problems" tabindex="0">Problems</button>
-        <button role="tab" data-tab="model" id="tab-model" aria-selected="false" aria-controls="panel-model" tabindex="-1">Application Model</button>
-        <button role="tab" data-tab="canonical" id="tab-canonical" aria-selected="false" aria-controls="panel-canonical" tabindex="-1">Canonical Source</button>
-        <button role="tab" data-tab="ir" id="tab-ir" aria-selected="false" aria-controls="panel-ir" tabindex="-1">Raw IR</button>
       </div>
-      <div role="tabpanel" id="panel-problems" aria-labelledby="tab-problems" class="active"></div>
-      <div role="tabpanel" id="panel-model" aria-labelledby="tab-model" hidden></div>
-      <div role="tabpanel" id="panel-canonical" aria-labelledby="tab-canonical" hidden>
-        <pre class="code-pane" id="canonical-pane" aria-label="Canonical source" aria-readonly="true"></pre>
-      </div>
-      <div role="tabpanel" id="panel-ir" aria-labelledby="tab-ir" hidden>
-        <details class="ir-collapsible" open>
-          <summary>Typed IR JSON</summary>
-          <pre class="code-pane" id="ir-pane" aria-label="Raw IR JSON" aria-readonly="true"></pre>
-        </details>
-      </div>
-    </section>
+    </details>
   </main>
 
   <!-- Format dialog -->
