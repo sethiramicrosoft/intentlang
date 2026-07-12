@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { Script } from "node:vm";
 import {
   readFile,
   writeFile,
@@ -92,6 +93,10 @@ allow Member to update Ticket where owner is self
 allow Member to run start on Ticket where owner is self
 allow Member to run close on Ticket where owner is self
 `;
+
+test("generated Studio JavaScript is syntactically valid", () => {
+  assert.doesNotThrow(() => new Script(STUDIO_JS));
+});
 
 function compileOk(source: string): ProgramIr {
   const result = compileSource(source);

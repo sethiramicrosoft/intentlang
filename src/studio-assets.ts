@@ -3130,7 +3130,7 @@ export const STUDIO_JS = `
         lines.push('  INTENTLANG_BOOTSTRAP_EMAIL');
         lines.push('  INTENTLANG_BOOTSTRAP_PASSWORD');
       }
-      resultBox.textContent = lines.join('\n');
+      resultBox.textContent = lines.join('\\n');
       resultBox.removeAttribute('hidden');
       el('wizard-build-actions').removeAttribute('hidden');
 

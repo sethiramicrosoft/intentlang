@@ -936,9 +936,9 @@ test("schema version is 0.5.0", () => {
   assert.equal(ir.schemaVersion, "0.5.0");
 });
 
-test("compiler version is 0.6.0-alpha.0", () => {
+test("compiler version is 0.8.0-alpha.0", () => {
   const manifest = buildManifest(compileOk(minimalSource));
-  assert.equal(manifest.compilerVersion, "0.6.0-alpha.0");
+  assert.equal(manifest.compilerVersion, "0.8.0-alpha.0");
 });
 
 test("compiler version is independent from schema version", () => {
