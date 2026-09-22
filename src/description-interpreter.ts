@@ -213,7 +213,7 @@ const APP_INTENT_PATTERN =
 
 // Patterns for "allow(s) users to add/create/enter their fields"
 const USERS_ADD_FIELDS_PATTERN =
-  /\ballow[s]?\s+(user[s]?|people|person[s]?|member[s]?|customer[s]?|client[s]?)\s+to\s+(?:add|create|enter|input|submit|record|store|manage)\s+(?:their\s+)?(?:own\s+)?(.+)/i;
+  /\ballow[s]?\s+(user[s]?|people|person[s]?|member[s]?|customer[s]?|client[s]?)\s+to\s+(?:add|create|enter|input|submit|record|store|manage)\s+(?:their\s+)?(?:own\s+)?(.+)/is;
 
 // ── Field token extraction ─────────────────────────────────────────────────────
 
@@ -243,29 +243,9 @@ interface ParsedField {
 
 function resolveField(raw: string): ParsedField | null {
   const norm = normaliseToken(raw);
-
-  // Check multi-word synonyms first (longest match)
-  for (const key of Object.keys(FIELD_SYNONYMS).sort(
-    (a, b) => b.length - a.length
-  )) {
-    if (norm === key || norm.startsWith(key + " ") || norm.endsWith(" " + key)) {
-      const syn = FIELD_SYNONYMS[key]!;
-      const fieldName = syn.camelName ?? toCamelCase(key);
-      return {
-        fieldName,
-        type: syn.type,
-        required: syn.required ?? false,
-        unique: syn.unique ?? false,
-        warnings: syn.warning ? [syn.warning] : [],
-      };
-    }
-  }
-
-  // Exact match on first word
-  const firstWord = norm.split(/\s+/)[0] ?? norm;
-  if (FIELD_SYNONYMS[firstWord]) {
-    const syn = FIELD_SYNONYMS[firstWord]!;
-    const fieldName = syn.camelName ?? toCamelCase(firstWord);
+  if (Object.hasOwn(FIELD_SYNONYMS, norm)) {
+    const syn = FIELD_SYNONYMS[norm]!;
+    const fieldName = syn.camelName ?? toCamelCase(norm);
     return {
       fieldName,
       type: syn.type,
@@ -275,18 +255,17 @@ function resolveField(raw: string): ParsedField | null {
     };
   }
 
-  // Unknown field: skip (don't guess types)
   return null;
 }
 
 /** Split a comma-separated field list, tolerating "then" and "and" connectors. */
 function splitFieldList(raw: string): string[] {
   // Remove leading "their", "the", "a", "an"
-  let clean = raw.replace(/^(?:their|the|a|an)\s+/i, "");
-  // Split on commas, "and", "or" at start of segment
-  const tokens = clean.split(/,|\bthen\b|\band\b/i);
+  const clean = raw.replace(/^(?:their|the|a|an)\s+/i, "");
+  const tokens = clean.split(/[,;\r\n]|\bthen\b|\band\b/i);
   return tokens
-    .map((t) => t.replace(/^\s*(?:their|the|a|an)\s+/i, "").trim())
+    .map((t) => t.trim().replace(/[.!?]+$/, "").trim()
+      .replace(/^(?:their|the|a|an)\s+/i, ""))
     .filter((t) => t.length > 0);
 }
 
@@ -347,7 +326,7 @@ export function interpretDescription(
   } else {
     // Fallback: look for "with [fields]" or "including [fields]" or "fields: ..."
     const withMatch =
-      /\bwith\s+(?:fields?:?\s+)?(.+?)(?:\s+and\s+(?:allow|sort|search|filter|delete|upload)|$)/i.exec(
+      /\bwith\s+(?:fields?:?\s+)?(.+)/is.exec(
         desc
       );
     if (withMatch) {
@@ -355,7 +334,7 @@ export function interpretDescription(
     } else {
       // Last resort: everything after "add" or "enter" or "create"
       const afterVerb =
-        /\b(?:add|enter|create|input|submit|record|store)\b\s+(?:their\s+|the\s+|a\s+)?(.+)/i.exec(
+        /\b(?:add|enter|create|input|submit|record|store)\b\s+(?:their\s+|the\s+|a\s+)?(.+)/is.exec(
           desc
         );
       if (afterVerb) {
@@ -423,7 +402,18 @@ export function interpretDescription(
         fieldWarnings.push(...field.warnings);
       }
     }
-    // Unknown fields are silently skipped (finite vocabulary)
+    else if (!unsupportedCapabilities.some(
+      (item) => item.code === "UNRECOGNIZED_FIELD" &&
+        normaliseToken(item.capability) === normaliseToken(token)
+    )) {
+      unsupportedCapabilities.push({
+        capability: token,
+        code: "UNRECOGNIZED_FIELD",
+        message:
+          `Could not interpret "${token}" as a supported field. It was not generated. ` +
+          "Use a supported field name or define the field and its type in Advanced tools.",
+      });
+    }
   }
 
   warnings.push(...fieldWarnings);
@@ -432,7 +422,10 @@ export function interpretDescription(
     return {
       kind: "unrecognized",
       reason:
-        "No recognisable fields found. The offline interpreter supports a finite vocabulary: name, age, address, DOB, email, title, status, quantity, description, done, active, completed, and a few others.",
+        "No recognisable fields found. The offline interpreter supports a finite vocabulary: name, age, address, DOB, email, title, status, quantity, description, done, active, completed, and a few others." +
+        (unsupportedCapabilities.length > 0
+          ? ` Not generated: ${unsupportedCapabilities.map((item) => item.capability).join(", ")}.`
+          : ""),
     };
   }
 

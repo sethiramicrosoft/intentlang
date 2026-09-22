@@ -51,7 +51,18 @@ If you want authenticated user accounts (login required), use the **Todo** templ
 | `active`, `done`, `completed`, `enabled` | as-is | `boolean` | |
 | `price`, `cost`, `salary` | as-is | `text` | ⚠ Native money type not yet supported |
 
-Fields not in this table are silently skipped. The interpreter will never guess an unknown field's type.
+Unrecognized field-list items are returned with code `UNRECOGNIZED_FIELD` and
+shown in the review screen. The interpreter never guesses an unknown field's
+type. For example, `Build an app with name, age, occupation` proposes name and
+age, but explicitly lists `occupation` as not generated.
+
+Field names must match a supported synonym in full, ignoring case and surrounding
+whitespace or trailing sentence punctuation. Lists accept commas, semicolons,
+line breaks, `and`, and `then`. A phrase such as `unique email`, `company name`,
+or `age over 18` is reported as unrecognized rather than silently losing its
+qualifier or constraint. Define those fields explicitly in Advanced tools.
+When no fields are recognized, no proposal is offered and the response names
+the items that were not generated.
 
 ## Unsupported capabilities (listed, never silently omitted)
 
@@ -65,7 +76,16 @@ The following capabilities are recognised but not generated:
 | `upload`, `attachment` | `UNSUPPORTED_UPLOAD` | File upload is not supported. |
 | `email notification`, `notify` | `UNSUPPORTED_EMAIL_NOTIFICATION` | Notifications are not supported. |
 
-When unsupported capabilities are detected, you must explicitly acknowledge them before the **Apply supported source to Editor** button is enabled. This prevents accidentally treating a partial result as a complete one.
+When unsupported capabilities or unrecognized field-list items are detected,
+you must explicitly acknowledge them before **Apply supported source to Editor**
+or the wizard's **Build app** button is enabled. This prevents accidentally
+treating a partial result as a complete one.
+
+The wizard build endpoint also enforces this acknowledgement. For a partial
+proposal, `POST /api/wizard/build` requires `unsupportedAcknowledged: true`
+alongside `proposalToken` and `proposedSource`. Otherwise it returns HTTP 409
+with `ACKNOWLEDGEMENT_REQUIRED`, without writing files or consuming the token.
+Acknowledging the proposal does not generate its unsupported items.
 
 ## Worked example
 
@@ -101,6 +121,8 @@ a Person has a dateOfBirth as text
 ## Honest limitations
 
 - The interpreter does NOT support: relationships between entities, authentication, roles, permissions, actions, or multi-entity descriptions.
+- Item reporting applies to the extracted field list and recognized capability
+  patterns. It is not a guarantee that every clause of arbitrary English is understood.
 - All proposals compile successfully before being offered to the user. An invalid proposal is a bug.
 - The interpreter never adds authentication, roles, or permissions silently. Auth apps require manual IntentLang authoring or the AI path.
 - Ambiguous cases (where interpretation changes semantics) show an assumption card explaining the choice. The offline interpreter always makes a deterministic choice — it does not ask clarifying questions before returning a proposal.

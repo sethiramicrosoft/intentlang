@@ -1,0 +1,226 @@
+import assert from "node:assert/strict";
+import test from "node:test";
+import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { Script } from "node:vm";
+import { compileEnglishSource } from "../src/english.js";
+import { compileVisualSource } from "../src/visual.js";
+import { compilePageSource } from "../src/web.js";
+import { attributesFor, elementExample, getWebCatalogue, webElements, webStyles } from "../src/web-catalogue.js";
+import { PAGE_EXAMPLES } from "../src/web-examples.js";
+import { VISUAL_JS } from "../src/visual-assets.js";
+
+function page(source: string) {
+  const result = compileEnglishSource(source);
+  if (!result.ok) assert.fail(JSON.stringify(result.diagnostics, null, 2));
+  if (result.ir.kind !== "page") assert.fail("Expected a page document");
+  return { ...result, ir: result.ir };
+}
+function invalid(source: string, pattern?: RegExp) {
+  const result = compileEnglishSource(source);
+  if (result.ok) assert.fail("Expected no HTML for: " + source);
+  assert.equal("html" in result, false);
+  if (pattern) assert.match(JSON.stringify(result.diagnostics), pattern);
+  return result.diagnostics;
+}
+
+test("document grammar composes named elements, text, styles, attributes and nesting", () => {
+  const source = `Add a section called welcome
+Add a heading called main greeting inside welcome
+Set the text of main greeting to Hello, world! "C:\\notes" & <b>English</b>.
+Make main greeting large and bold and underlined
+Set the background color of welcome to rebeccapurple
+Set the padding of welcome to 24 pixels
+Add an email input called email
+Set the required of email to yes
+Put email inside welcome`;
+  const result = page(source);
+  assert.deepEqual(result, page(source));
+  assert.equal(result.ir.elements[2]!.text, 'Hello, world! "C:\\notes" & <b>English</b>.');
+  assert.equal(result.ir.elements[2]!.styles["text-decoration-line"], "underline");
+  assert.equal(result.ir.elements[1]!.styles.padding, "24px");
+  assert.equal(result.ir.elements[3]!.parent, result.ir.elements[1]!.id);
+  assert.equal(result.ir.elements[3]!.attributes.required, "");
+  assert.match(result.html, /&lt;b&gt;English&lt;\/b&gt;/);
+  assert.doesNotMatch(result.html, /<script| style=/);
+  const css = /<style>([\s\S]*?)<\/style>/.exec(result.html)![1]!;
+  assert.ok(result.html.includes(`sha256-${createHash("sha256").update(css).digest("base64")}`));
+  assert.doesNotThrow(() => new Script(VISUAL_JS));
+});
+
+test("every available catalogue element compiles through the same document grammar", () => {
+  assert.equal(webElements.length, 116, "Review coverage when updating the pinned HTML dataset");
+  assert.equal(webElements.filter((entry) => entry.status === "available").length, 96);
+  for (const element of webElements) {
+    if (element.status === "available") {
+      const result = page(elementExample(element));
+      assert.equal(result.ir.elements.at(-1)?.tag, element.name, element.name);
+      for (const alias of element.words) {
+        const source = elementExample(element).replace(`Add a ${element.words[0]} called`, `Add a ${alias} called`);
+        assert.equal(page(source).ir.elements.at(-1)?.tag, element.name, alias);
+      }
+    } else {
+      assert.ok(element.reason);
+      invalid(`Add a ${element.words[0]} called restricted`, /restricted|managed/);
+    }
+  }
+});
+
+test("every available standard CSS property shares property lookup, validation and rendering", () => {
+  assert.equal(webStyles.filter((entry) => entry.status === "available").length, 512);
+  for (const style of webStyles) {
+    if (style.status === "available") {
+      const result = page(`Add a paragraph called example\nSet the style ${style.words[0]} of example to initial`);
+      assert.equal(result.ir.elements[1]!.styles[style.name], "initial", style.name);
+      assert.ok(result.html.includes(`${style.name}:initial`), style.name);
+    } else {
+      assert.ok(style.reason, style.name);
+    }
+  }
+});
+
+test("all built-in page examples compile and share the CLI and IDE compiler", async () => {
+  for (const example of Object.values(PAGE_EXAMPLES)) page(example);
+  const dir = await mkdtemp(join(tmpdir(), "intentlang-page-cli-"));
+  try {
+    const path = join(dir, "page.intent");
+    const output = join(dir, "page.html");
+    await writeFile(path, PAGE_EXAMPLES.webpage);
+    execFileSync(process.execPath, ["--import", "tsx", "src/cli.ts", "visual", path, "--output", output, "--write"]);
+    assert.equal(await readFile(output, "utf8"), page(PAGE_EXAMPLES.webpage).html);
+  } finally { await rm(dir, { recursive: true, force: true }); }
+});
+
+test("legacy scenes remain byte-for-byte unchanged and ordinary text is not mistaken for page syntax", () => {
+  for (const source of [
+    "Show Hello world\nMake the text large and underlined",
+    "Show Add a section called welcome\nMove the text from left to right over 3 seconds",
+    "Show Set the text of greeting to Hello",
+    "Show THINK BUILD MOVE\nPut each word on a new line"
+  ]) assert.deepEqual(compileEnglishSource(source), compileVisualSource(source));
+  const mixed = page("Show Hello world\nAdd a section called welcome\nPut the text inside welcome");
+  assert.equal(mixed.ir.elements[1]!.text, "Hello world");
+  assert.equal(mixed.ir.elements[1]!.parent, mixed.ir.elements[2]!.id);
+});
+
+test("ambiguous properties and pronouns offer explicit replacements without applying guesses", () => {
+  const source = "Add an image called portrait\nSet the width of portrait to 120";
+  const [diagnostic] = invalid(source, /attribute or a CSS style/);
+  assert.equal(diagnostic?.category, "ambiguity");
+  assert.equal(diagnostic?.suggestions?.length, 2);
+  const attribute = diagnostic!.suggestions!.find((item) => item.label.includes("attribute"))!;
+  assert.equal(page(source.split("\n")[0] + "\n" + attribute.replacement).ir.elements[1]!.attributes.width, "120");
+  invalid("Add a paragraph called first\nAdd a paragraph called second\nMake it bold", /more than one element/);
+  assert.equal(page("Add a paragraph called greeting\nUnderline it").ir.elements[1]!.styles["text-decoration-line"], "underline");
+  const meanings = invalid("Add a paragraph called greeting\nMake greeting normal");
+  assert.equal(meanings[0]!.category, "ambiguity");
+  for (const suggestion of meanings[0]!.suggestions!) {
+    page("Add a paragraph called greeting\n" + suggestion.replacement);
+  }
+});
+
+test("element, property and modifier spelling suggestions preserve user text", () => {
+  for (const source of [
+    "Add a paragrap called greeting",
+    "Add a paragraph called greeting\nSet the font sze of greeting to 24 pixels",
+    "Add a paragraph called greeting\nMake greeting larg and bold"
+  ]) {
+    const diagnostics = invalid(source);
+    const diagnostic = diagnostics.find((entry) => entry.category === "typo")!;
+    assert.ok(diagnostic?.suggestions?.length, source);
+    const lines = source.split("\n");
+    lines[diagnostic.line - 1] = diagnostic.suggestions![0]!.replacement;
+    page(lines.join("\n"));
+  }
+  assert.equal(page("Add a paragraph called greeting\nSet the text of greeting to larg and paragrap.").ir.elements[1]!.text, "larg and paragrap.");
+});
+
+test("invalid structures, cycles, duplicates and malformed sentences never return HTML", () => {
+  for (const [source, reason] of [
+    ["Add a paragraph called greeting\nAdd a paragraph called greeting", /already exists/],
+    ["Add a section called welcome\nPut welcome inside welcome", /cannot contain itself/],
+    ["Add a section called outer\nAdd a section called inner inside outer\nPut outer inside inner", /ancestors/],
+    ["Add a section called outer\nPut page inside outer", /cannot contain/],
+    ["Add an image called portrait\nAdd a paragraph called caption inside portrait", /cannot be inside/],
+    ["Add a paragraph called outer\nAdd a section called inner inside outer", /rearrange/],
+    ["Add a table row called row", /cannot be inside/],
+    ["Add a bullet list called list\nSet the text of list to Hello", /child elements/],
+    ["Add a section called outer\nAdd a form called first inside outer\nAdd a form called second inside first", /discard/],
+    ["Add a paragraph called greeting\nMake greeting bold\nSet the font weight of greeting to 400", /More than one/],
+    ["Add a paragraph called greeting\nMake greeting large and huge", /More than one/],
+    ["Add a section called outer\nDance outer", /not part of/],
+    ["Add a paragraph called greeting\nSet the color of missing to blue", /no earlier element/],
+    ["Add a paragraph called greeting\nSet the color of greeting to banana", /Invalid value/],
+    ["Add a checkbox called consent\nSet the checked of consent to maybe", /yes or no/],
+    ["Add an input called email\nSet the type of email to dragon", /Invalid value/],
+    ["Add a label called name label\nSet the linked control of name label to missing", /does not identify/],
+    ["Add a paragraph called greeting\nAdd a label called name label\nSet the linked control of name label to greeting", /Invalid target/]
+  ] as const) invalid(source, reason);
+});
+
+test("attributes remain element-scoped, booleans are not string false and name references become IDs", () => {
+  const result = page(`Add a checkbox called consent
+Set the checked of consent to no
+Set the disabled of consent to no
+Set the hidden of consent to no
+Add a label called consent label
+Set the text of consent label to Agree
+Set the linked control of consent label to consent
+Set the accessible name of consent to Consent
+Add a paragraph called explanation
+Set the described by of consent to explanation`);
+  assert.equal("checked" in result.ir.elements[1]!.attributes, false);
+  assert.equal("disabled" in result.ir.elements[1]!.attributes, false);
+  assert.equal("hidden" in result.ir.elements[1]!.attributes, false);
+  assert.equal(result.ir.elements[2]!.attributes.for, result.ir.elements[1]!.id);
+  assert.equal(result.ir.elements[1]!.attributes["aria-describedby"], result.ir.elements[3]!.id);
+  invalid("Add a paragraph called text\nSet the checked of text to yes", /Unknown property/);
+  const all = getWebCatalogue();
+  assert.ok(all.elements.find((entry) => entry.name === "input")!.attributes.some((entry) => entry.name === "checked"));
+  assert.ok(!attributesFor("p").some((entry) => entry.name === "checked"));
+});
+
+test("executable content, declaration injection and unsupported active capabilities are refused", () => {
+  for (const line of [
+    "Set the onclick of greeting to alert",
+    "Set the attribute style of greeting to color:red",
+    "Set the id of greeting to malicious",
+    "Set the color of greeting to red;display:none",
+    "Set the background image of greeting to url(javascript:alert)",
+    "Set the background image of greeting to url(data:text/html,script)"
+  ]) invalid("Add a paragraph called greeting\n" + line);
+  for (const url of ["javascript:alert(1)", "data:text/html,Hello", "//example.com/image.png", "http://example.com/image.png"]) {
+    invalid("Add an image called portrait\nSet the source of portrait to " + url, /Invalid source URL/);
+  }
+  invalid("Add a form called signup\nSet the action of signup to https://example.com", /not available/);
+  const result = page("Add a paragraph called text\nSet the text of text to </style><script>alert(1)</script>");
+  assert.doesNotMatch(result.html, /<script>/);
+  const content = page('Add a paragraph called text\nSet the content of text to "</style><script>bad</script>"');
+  assert.doesNotMatch(content.html, /<script>/);
+});
+
+test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
+  const result = page(`Add an image called photo
+Set the source of photo to https://example.com/MyPhoto.png
+Set the alternative text of photo to My Photo.
+Add a paragraph called caption
+Set the background image of caption to url("https://example.com/MyPhoto10seconds.png")
+Set the font family of caption to Example Family
+Set the text of caption to Case Stays. And punctuation.`);
+  assert.equal(result.ir.elements[1]!.attributes.src, "https://example.com/MyPhoto.png");
+  assert.equal(result.ir.elements[1]!.attributes.alt, "My Photo.");
+  assert.match(result.ir.elements[2]!.styles["background-image"]!, /MyPhoto10seconds.png/);
+  assert.equal(result.ir.elements[2]!.styles["font-family"], "Example Family");
+});
+
+test("source, element and nesting limits fail explicitly", () => {
+  assert.equal(compilePageSource("x".repeat(20001)).ok, false);
+  invalid("Add a paragraph called greeting\nSet the text of greeting to bad\u0000text", /control characters/);
+  invalid(Array.from({ length: 201 }, (_, index) => `Add a paragraph called item ${index}`).join("\n"), /at most 200/);
+  invalid(Array.from({ length: 35 }, (_, index) => `Add a section called level ${index}${index ? ` inside level ${index - 1}` : ""}`).join("\n"), /32 levels/);
+  invalid("Add a constructor called example", /Unknown element/);
+  invalid("Add a paragraph called example\nMake the background constructor", /Invalid value/);
+});

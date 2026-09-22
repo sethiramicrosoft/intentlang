@@ -2682,7 +2682,7 @@ export const STUDIO_JS = `
       var unsupCard = document.createElement('div');
       unsupCard.className = 'describe-unsupported';
       var unsupTitle = document.createElement('h4');
-      unsupTitle.textContent = 'Not generated yet — unsupported capabilities:';
+      unsupTitle.textContent = 'Not generated — unsupported or unrecognized items:';
       unsupCard.appendChild(unsupTitle);
       var ul = document.createElement('ul');
       ul.className = 'describe-warning-list';
@@ -2763,7 +2763,7 @@ export const STUDIO_JS = `
     if (!describeState.pending) return;
     var data = describeState.pending;
     if (data.unsupportedCapabilities && data.unsupportedCapabilities.length > 0 && !describeState.unsupportedAcknowledged) {
-      announce('Please acknowledge the unsupported capabilities before applying.');
+      announce('Please acknowledge the items that were not generated before applying.');
       return;
     }
     var src = data.source;
@@ -3032,7 +3032,7 @@ export const STUDIO_JS = `
       var unsupported = document.createElement('div');
       unsupported.className = 'wizard-unsupported-box';
       var unsupportedTitle = document.createElement('strong');
-      unsupportedTitle.textContent = 'Unsupported items were left out of the generated source:';
+      unsupportedTitle.textContent = 'Unsupported or unrecognized items were left out of the generated source:';
       unsupported.appendChild(unsupportedTitle);
       var list = document.createElement('ul');
       data.unsupportedCapabilities.forEach(function (item) {
@@ -3085,7 +3085,10 @@ export const STUDIO_JS = `
       showWizStep(2);
       return;
     }
-    if (el('wiz-ack-checkbox').offsetParent !== null && !el('wiz-ack-checkbox').checked) {
+    if (wizardState.proposalData &&
+        wizardState.proposalData.unsupportedCapabilities &&
+        wizardState.proposalData.unsupportedCapabilities.length > 0 &&
+        !wizardState.unsupportedAcknowledged) {
       showWizardError('wizard-review-error', 'Acknowledge the unsupported items before building.');
       return;
     }
@@ -3101,7 +3104,8 @@ export const STUDIO_JS = `
     try {
       var resp = await postJson('/api/wizard/build', {
         proposalToken: wizardState.proposalToken,
-        proposedSource: wizardState.proposedSource
+        proposedSource: wizardState.proposedSource,
+        unsupportedAcknowledged: wizardState.unsupportedAcknowledged
       });
       var data = await resp.json();
       wizardState.proposalToken = null;
@@ -3280,6 +3284,7 @@ export function buildStudioHtml(filename: string, port: number): string {
 
   <header id="studio-header" role="banner">
     <h1>IntentLang App Builder</h1>
+    <a href="/playground">Try the visual language</a>
     <span class="badge">Studio</span>
     <span class="filename" title="${escapeHtml(filename)}">${escapeHtml(filename)}</span>
     <span class="badge" title="Experimental offline authoring tool — no AI tokens required">experimental · offline · no-AI</span>

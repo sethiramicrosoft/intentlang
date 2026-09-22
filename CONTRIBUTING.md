@@ -19,6 +19,16 @@ npm test
 npm run build
 ```
 
+Node.js 24 or newer is required. To start Studio without opening a browser:
+
+```bash
+npm run sample:studio
+```
+
+Open `http://127.0.0.1:3211`. Stopping a preview or closing Studio through its
+server API waits for the preview process to exit before returning, so generated
+files can be replaced or removed on Windows.
+
 ## Issue workflow
 
 When opening an issue, include:
@@ -76,6 +86,27 @@ Run the full suite locally before requesting review:
 ```bash
 npm test
 ```
+
+The visual playground also has real-browser coverage for styling, all four
+animation directions at desktop/tablet/mobile sizes, reduced motion, diagnostics,
+and standalone HTML export. Page coverage also checks named/nested elements,
+native controls, catalogue insertion, and all advertised element types in Chromium:
+
+```bash
+npx playwright install chromium
+npm run test:browser
+```
+
+Playwright is a development dependency only. Neither generated visual pages nor
+the compiler need a browser automation package at runtime.
+
+The page compiler uses pinned `@vscode/web-custom-data`, `css-tree`, and `parse5`
+runtime dependencies. When updating standards data or capability policy, update
+the explicit coverage counts in `test/web.test.ts` and the language documentation.
+Every available element must compile with its structural example and survive real
+browser parsing. Every available CSS property must pass the shared validator.
+Do not mark a capability available merely because the dataset contains its name.
+User-controlled script execution and form submission remain unsupported.
 
 ## License note
 

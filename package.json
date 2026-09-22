@@ -10,6 +10,8 @@
     "build": "tsc -p tsconfig.build.json",
     "check": "tsc --noEmit",
     "test": "tsx --test test/**/*.test.ts",
+    "test:browser": "tsx --test test/visual.browser.ts test/web.browser.ts",
+    "sample:visual": "tsx src/cli.ts visual examples/hello-world.visual.intent",
     "sample:check": "tsx src/cli.ts check examples/todo.intent",
     "sample:format": "tsx src/cli.ts format examples/todo.intent",
     "sample:compile": "tsx src/cli.ts compile examples/todo.intent --output examples/todo.ir.json --write --force",
@@ -19,8 +21,15 @@
     "example:issue-tracker:check": "tsx src/cli.ts check examples/issue-tracker.intent"
   },
   "devDependencies": {
+    "@types/css-tree": "3.2.0",
     "@types/node": "24.13.2",
+    "playwright": "1.63.0",
     "tsx": "4.23.0",
     "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "@vscode/web-custom-data": "0.6.3",
+    "css-tree": "3.2.1",
+    "parse5": "8.0.1"
   }
 }

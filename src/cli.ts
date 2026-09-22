@@ -12,11 +12,25 @@ import { generateRuntime } from "./runtime-codegen.js";
 import { generateUi } from "./ui-codegen.js";
 import { effectiveAiConfig } from "./ai-provider.js";
 import type { AiProviderKind } from "./ai-provider.js";
+import { compileEnglishSource } from "./english.js";
 
 const [command, sourceArgument, ...options] = process.argv.slice(2);
 
 if (command === "studio" && sourceArgument !== undefined) {
   await runStudio(sourceArgument, options);
+} else if (command === "visual" && sourceArgument !== undefined) {
+  const sourcePath = resolve(sourceArgument);
+  const result = compileEnglishSource(await readFile(sourcePath, "utf8"));
+  if (!result.ok) {
+    printDiagnostics(sourcePath, result.diagnostics);
+    process.exitCode = 1;
+  } else if (findOptionValue(options, "--output") !== undefined &&
+      resolve(findOptionValue(options, "--output")!) === sourcePath) {
+    console.error("Visual output must not overwrite its source file.");
+    process.exitCode = 2;
+  } else {
+    await writeCompiledOutput(result.html, "visual", options);
+  }
 } else if (
   (command !== "check" &&
     command !== "compile" &&
@@ -71,6 +85,10 @@ async function runCompile(
     return;
   }
 
+  await writeCompiledOutput(result.output, "compile", options);
+}
+
+async function writeCompiledOutput(output: string, command: string, options: string[]): Promise<void> {
   const outputArgument = findOptionValue(options, "--output");
   const doWrite = options.includes("--write");
   const force = options.includes("--force");
@@ -83,11 +101,11 @@ async function runCompile(
 
   if (outputArgument === undefined) {
     if (doWrite) {
-      console.error("compile requires --output <path> when --write is supplied.");
+      console.error(`${command} requires --output <path> when --write is supplied.`);
       process.exitCode = 2;
       return;
     }
-    process.stdout.write(result.output);
+    process.stdout.write(output);
     return;
   }
 
@@ -104,7 +122,7 @@ async function runCompile(
     return;
   }
 
-  await writeFile(outputPath, result.output, "utf8");
+  await writeFile(outputPath, output, "utf8");
   console.log(`Wrote: ${outputPath}`);
 }
 
@@ -302,6 +320,7 @@ function printUsage(): void {
   console.error("Usage:");
   console.error("  intentlang check <source>");
   console.error("  intentlang compile <source> [--output <path> --write [--force]]");
+  console.error("  intentlang visual <source> [--output <page.html> --write [--force]]");
   console.error("  intentlang format <source> [--write] [--output <path> --write [--force]]");
   console.error("  intentlang generate <source> --output <directory> [--write] [--force] [--allow-data-loss] [--allow-security-downgrade]");
   console.error("  intentlang studio <source> [--port <number>] [--no-open]");

@@ -9,6 +9,71 @@
 > [!WARNING]
 > IntentLang v0.8.0-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
 
+## Start with Hello World: the visual language
+
+Write English instructions and watch text change in a live preview:
+
+```text
+Show Hello, world!
+Make the text blue
+Make the background white
+Make the text large and bold
+Move the text from left to right over 3 seconds
+```
+
+After installing dependencies, run `npm run sample:studio` and open
+[the visual playground](http://127.0.0.1:3211/playground). Start with one `Show`
+instruction, then try the built-in color, size, position, and movement examples.
+The same compiler handles every example and combination; no AI model is involved.
+Download your source to keep editing later, or download standalone HTML to open
+without Studio.
+
+No quotes, escape characters, or code punctuation are required. For several lines,
+write `Show the words THINK, BUILD and MOVE on separate lines`, or add
+`Put each word on a new line` after showing your text. The compiler handles the
+layout; the IDE asks where breaks belong when the grouping is unclear.
+
+This is a separate, experimental **visual/page language**, not
+arbitrary English and not the database-app grammar below. Its single-text scenes support four
+movement directions, explicit durations, named colors, sizes, and positions.
+Styles compose: `Make the text large, blue and bold.` works as one instruction.
+The IDE distinguishes ambiguous meanings, unsupported instructions, and likely
+typos, with clickable suggestions that change source only when you choose one.
+Invalid or conflicting instructions show errors rather than partial output.
+See the [visual language reference](docs/visual-language.md).
+
+### Build a page, not just one text element
+
+The same playground and `visual` CLI command also compile named HTML elements:
+
+```text
+Add a section called welcome
+Add a heading called greeting inside welcome
+Set the text of greeting to Hello world
+Make greeting large and bold
+Set the background color of welcome to light blue
+Set the padding of welcome to 24 pixels
+Add an expandable section called explanation inside welcome
+Add a summary called question inside explanation
+Set the text of question to How does this work?
+Add a paragraph called answer inside explanation
+Set the text of answer to English becomes real HTML, without an AI model.
+```
+
+**Browse HTML and CSS capabilities** in the playground searches the same pinned
+standards catalogue used by the compiler and inserts English instructions.
+The current foundation exposes **96 element types and 512 validated CSS properties**.
+It includes nested sections, headings, links, images, lists, tables, accessible
+labels, form controls, and native expandable details. Property names and common
+units can be written as words; advanced CSS value expressions do not yet have a
+complete English vocabulary.
+
+This is **not complete HTML/CSS/JavaScript support**. Restricted or compiler-managed
+elements and properties appear with reasons. Custom scripts, event handlers,
+form submission, embedded documents, SVG/MathML, and backend connections are not
+implemented in this language. Browser support still varies. Try **A complete page**,
+**Native form controls**, and **A real table** in the example selector.
+
 ## App Builder wizard quick start
 
 The default Studio experience in **v0.8.0-alpha.0** is the beginner-first **IntentLang App Builder** wizard.
@@ -23,15 +88,19 @@ I want to build an app that just allows users to add their name, age, address, D
 
 What happens:
 
-1. **Describe** — the offline interpreter asks whether “users” means stored people or login accounts.
+1. **Describe** — the offline interpreter treats “users” as stored Person records and shows that assumption; it does not add login accounts.
 2. **Review** — Studio proposes Name, Age, Address, and Date of birth fields. It clearly warns that sorting is not supported yet and Date of birth is stored as text.
-3. **Build** — after you acknowledge the limitation, click **Build app without sorting**. Studio compiles and generates the app without separate Apply, Save, or Generate steps.
+3. **Build** — after you acknowledge the limitation, click **Build app**. Studio compiles and generates the app without separate Apply, Save, or Generate steps.
 4. **Open app** — Studio auto-starts preview only for unauthenticated apps. Authenticated apps show bootstrap guidance instead.
 
 ### Known limitations up front
 
 - The wizard uses a finite offline vocabulary. It does **not** accept arbitrary English.
 - Unsupported items such as sorting, search, and file upload are listed explicitly and are not silently generated.
+- Unrecognized field-list items are listed before building. For example,
+  `Build an app with name, age, occupation` proposes name and age, identifies
+  `occupation` as not generated, and requires acknowledgement before building
+  the supported portion. See [Describe App mode](docs/description-mode.md).
 - Authenticated apps are **not** previewed from the wizard.
 - Destructive migrations and security-downgrade changes are refused from the wizard.
 

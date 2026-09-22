@@ -17,6 +17,9 @@ import type { BuildManifest } from "./model.js";
 import { createAiAssistant } from "./ai-assistant.js";
 import type { AiConfig } from "./ai-provider.js";
 import { interpretDescription } from "./description-interpreter.js";
+import { compileEnglishSource } from "./english.js";
+import { getWebCatalogue } from "./web-catalogue.js";
+import { VISUAL_HTML, VISUAL_CSS, VISUAL_JS } from "./visual-assets.js";
 
 const BODY_LIMIT_BYTES = 1_048_576; // 1 MB
 const PLAN_TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -108,15 +111,17 @@ allow Member to run close on Ticket where owner is self
 interface PlanTokenEntry {
   sourceFingerprint: string;
   expiresAt: number;
+  requiresAcknowledgement: boolean;
 }
 
 const planTokenStore = new Map<string, PlanTokenEntry>();
 
-function createPlanToken(sourceFingerprint: string): string {
+function createPlanToken(sourceFingerprint: string, requiresAcknowledgement = false): string {
   const token = randomBytes(24).toString("hex");
   planTokenStore.set(token, {
     sourceFingerprint,
-    expiresAt: Date.now() + PLAN_TOKEN_TTL_MS
+    expiresAt: Date.now() + PLAN_TOKEN_TTL_MS,
+    requiresAcknowledgement
   });
   return token;
 }
@@ -599,14 +604,38 @@ export async function startStudio(options: StudioOptions): Promise<{
 
   async function stopPreviewProcess(): Promise<void> {
     const current = previewProc;
-    previewProc = null;
-    previewPort = null;
-    if (current !== null) {
-      try {
-        current.kill();
-      } catch {
-        // Non-fatal
-      }
+    if (current !== null && current.exitCode === null && current.signalCode === null) {
+      await new Promise<void>((resolveStop, rejectStop) => {
+        const cleanup = () => {
+          clearTimeout(timeout);
+          current.off("exit", onExit);
+          current.off("error", onError);
+        };
+        const onExit = () => {
+          cleanup();
+          resolveStop();
+        };
+        const onError = (error: Error) => {
+          cleanup();
+          rejectStop(error);
+        };
+        const timeout = setTimeout(() => {
+          onError(new Error("Preview process did not stop within 5 seconds."));
+        }, 5_000);
+        current.once("exit", onExit);
+        current.once("error", onError);
+        try {
+          if (!current.kill()) {
+            onError(new Error("Could not signal the preview process to stop."));
+          }
+        } catch (error) {
+          onError(error instanceof Error ? error : new Error(String(error)));
+        }
+      });
+    }
+    if (previewProc === current) {
+      previewProc = null;
+      previewPort = null;
     }
   }
 
@@ -640,11 +669,16 @@ export async function startStudio(options: StudioOptions): Promise<{
 
     const allowedRoutes: [string, string][] = [
       ["GET", "/"],
+      ["GET", "/playground"],
+      ["GET", "/visual.js"],
+      ["GET", "/visual.css"],
       ["GET", "/studio.js"],
       ["GET", "/studio.css"],
       ["GET", "/api/state"],
       ["GET", "/api/preview/status"],
       ["POST", "/api/check"],
+      ["POST", "/api/visual/compile"],
+      ["GET", "/api/visual/capabilities"],
       ["POST", "/api/format"],
       ["POST", "/api/save"],
       ["POST", "/api/plan"],
@@ -668,6 +702,22 @@ export async function startStudio(options: StudioOptions): Promise<{
 
     // ── Static assets ───────────────────────────────────────────────────────
 
+    if (method === "GET" && pathname === "/playground") {
+      sendHtml(res, VISUAL_HTML);
+      return;
+    }
+    if (method === "GET" && pathname === "/api/visual/capabilities") {
+      sendJson(res, 200, getWebCatalogue());
+      return;
+    }
+    if (method === "GET" && pathname === "/visual.js") {
+      sendText(res, "text/javascript; charset=utf-8", VISUAL_JS);
+      return;
+    }
+    if (method === "GET" && pathname === "/visual.css") {
+      sendText(res, "text/css; charset=utf-8", VISUAL_CSS);
+      return;
+    }
     if (method === "GET" && pathname === "/") {
       sendHtml(res, studioHtml);
       return;
@@ -760,6 +810,15 @@ export async function startStudio(options: StudioOptions): Promise<{
       body = rawBody ? (JSON.parse(rawBody) as Record<string, unknown>) : {};
     } catch {
       sendJson(res, 400, { code: "BAD_REQUEST", error: "Request body must be valid JSON." });
+      return;
+    }
+
+    if (pathname === "/api/visual/compile") {
+      if (!body || typeof body["source"] !== "string" || body["source"].length > 20_000) {
+        sendJson(res, 400, { code: "BAD_REQUEST", error: "source must be a string of at most 20000 characters." });
+        return;
+      }
+      sendJson(res, 200, compileEnglishSource(body["source"]));
       return;
     }
 
@@ -1186,7 +1245,7 @@ export async function startStudio(options: StudioOptions): Promise<{
 
       // Issue a wizard build token tied to the proposed source fingerprint
       const wizFp = sourceFingerprint(wizResult.source);
-      const proposalToken = createPlanToken(wizFp);
+      const proposalToken = createPlanToken(wizFp, wizResult.unsupportedCapabilities.length > 0);
 
       const proposedLines = wizResult.source.split("\n");
       const diff = proposedLines.map((line) => ({ op: "add", line }));
@@ -1224,6 +1283,16 @@ export async function startStudio(options: StudioOptions): Promise<{
 
       // Validate wizard build token (anti-TOCTOU, consumes on first use)
       const wizBuildFp = sourceFingerprint(proposedSource);
+      const proposal = planTokenStore.get(proposalToken);
+      if (proposal && proposal.sourceFingerprint === wizBuildFp &&
+          Date.now() <= proposal.expiresAt && proposal.requiresAcknowledgement &&
+          body["unsupportedAcknowledged"] !== true) {
+        sendJson(res, 409, {
+          code: "ACKNOWLEDGEMENT_REQUIRED",
+          error: "Review and acknowledge the items that were not generated before building the supported app."
+        });
+        return;
+      }
       if (!consumePlanToken(proposalToken, wizBuildFp)) {
         sendJson(res, 409, {
           code: "PLAN_TOKEN_INVALID",
@@ -1416,8 +1485,15 @@ export async function startStudio(options: StudioOptions): Promise<{
     // ── POST /api/preview/stop ──────────────────────────────────────────────
 
     if (pathname === "/api/preview/stop") {
-      await stopPreviewProcess();
-      sendJson(res, 200, { ok: true });
+      try {
+        await stopPreviewProcess();
+        sendJson(res, 200, { ok: true });
+      } catch (error) {
+        sendJson(res, 500, {
+          ok: false,
+          reason: error instanceof Error ? error.message : String(error)
+        });
+      }
       return;
     }
 
@@ -1441,11 +1517,15 @@ export async function startStudio(options: StudioOptions): Promise<{
   }
 
   return {
-    close: () => new Promise<void>((resolveC) => {
-      void stopPreviewProcess().finally(() => {
-        server.close(() => resolveC());
-      });
-    }),
+    close: async () => {
+      try {
+        await stopPreviewProcess();
+      } finally {
+        await new Promise<void>((resolveC, rejectC) => {
+          server.close((error) => error ? rejectC(error) : resolveC());
+        });
+      }
+    },
     port,
     url
   };

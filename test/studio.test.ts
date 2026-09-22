@@ -1262,6 +1262,57 @@ test("description interpreter - finite vocabulary: unrecognised fields produce n
   );
   // Should be unrecognized (no matching fields)
   assert.ok(result.kind === "unrecognized", "unrecognised fields result in unrecognized");
+  if (result.kind !== "unrecognized") throw new Error("expected unrecognized");
+  assert.match(result.reason, /xyzzy42, florp, blargh/);
+});
+
+test("description interpreter - mixed field lists report unknown items without guessing", () => {
+  const result = interpretDescription("Build an app with name, age, occupation, Occupation.");
+  if (result.kind !== "proposal") throw new Error("expected proposal");
+  assert.equal(result.supportedFieldCount, 2);
+  assert.deepEqual(result.unsupportedCapabilities.map((item) => ({
+    code: item.code, capability: item.capability
+  })), [{ code: "UNRECOGNIZED_FIELD", capability: "occupation" }]);
+  assert.match(result.unsupportedCapabilities[0]!.message, /not generated/);
+  assert.ok(!result.source.includes("occupation"));
+  assert.equal(compileSource(result.source).ok, true);
+});
+
+test("description interpreter - whole field phrases must match, not just a known word", () => {
+  for (const field of ["name required", "unique email", "age over 18", "company name", "constructor", "__proto__"]) {
+    const result = interpretDescription(`Build an app with title, ${field}`);
+    if (result.kind !== "proposal") throw new Error("expected proposal");
+    assert.equal(result.supportedFieldCount, 1, field);
+    assert.equal(result.unsupportedCapabilities[0]?.capability, field);
+    assert.equal(result.unsupportedCapabilities[0]?.code, "UNRECOGNIZED_FIELD");
+    assert.equal(compileSource(result.source).ok, true);
+  }
+});
+
+test("description interpreter - known synonyms tolerate punctuation and multiline lists", () => {
+  const result = interpretDescription(
+    "Build an app that allows users to add their full name;\nAGE, date of birth, and active."
+  );
+  if (result.kind !== "proposal") throw new Error("expected proposal");
+  assert.equal(result.supportedFieldCount, 4);
+  assert.deepEqual(result.unsupportedCapabilities, []);
+  assert.match(result.source, /required fullName as text/);
+  assert.match(result.source, /dateOfBirth as text/);
+  assert.equal(compileSource(result.source).ok, true);
+});
+
+test("description interpreter - reports unknown fields after capabilities and on later lines", () => {
+  for (const description of [
+    "Build an app with name and allow sorting and occupation",
+    "Build an app that allows users to add their name,\noccupation, then allow sorting"
+  ]) {
+    const result = interpretDescription(description);
+    if (result.kind !== "proposal") throw new Error("expected proposal");
+    assert.deepEqual(result.unsupportedCapabilities.map((item) => item.code),
+      ["UNSUPPORTED_SORTING", "UNRECOGNIZED_FIELD"]);
+    assert.equal(result.unsupportedCapabilities[1]?.capability, "occupation");
+    assert.equal(result.supportedFieldCount, 1);
+  }
 });
 
 test("description interpreter - boolean fields supported", () => {
@@ -1402,6 +1453,61 @@ test("studio JS unsupported ack required before apply (if unsupported present)",
   assert.ok(STUDIO_JS.includes("applyBtn.disabled = !ackBox.checked"), "apply enabled when ack done");
 });
 
+test("studio JS wizard blocks omissions regardless of checkbox visibility and sends acknowledgement", async () => {
+  const proposal = interpretDescription("Build an app with name, occupation");
+  if (proposal.kind !== "proposal") throw new Error("expected proposal");
+  const wizardState = {
+    proposalToken: "test-proposal",
+    proposedSource: proposal.source,
+    proposalData: proposal,
+    unsupportedAcknowledged: false
+  };
+  const errors: string[] = [];
+  const requests: Array<{ route: string; payload: Record<string, unknown> }> = [];
+  const element = {
+    disabled: false,
+    offsetParent: null,
+    setAttribute: () => {},
+    removeAttribute: () => {}
+  };
+  const context = {
+    wizardState,
+    el: () => element,
+    showWizardError: (_id: string, message: string) => errors.push(message),
+    hideWizardError: () => {},
+    showWizStep: () => {},
+    setBuildStage: () => {},
+    postJson: async (route: string, payload: Record<string, unknown>) => {
+      requests.push({ route, payload });
+      return { ok: false, json: async () => ({ error: "Test stops after request capture." }) };
+    }
+  };
+  const buttonSource = STUDIO_JS.slice(
+    STUDIO_JS.indexOf("  function updateWizardBuildButton()"),
+    STUDIO_JS.indexOf("  function resetClarificationUi()")
+  );
+  const updateButton: () => void = new Script(`${buttonSource}\nupdateWizardBuildButton`).runInNewContext(context);
+  const buildSource = STUDIO_JS.slice(
+    STUDIO_JS.indexOf("  async function onWizBuild()"),
+    STUDIO_JS.indexOf("  async function refreshPreviewStatus()")
+  );
+  const build: () => Promise<void> = new Script(`${buildSource}\nonWizBuild`).runInNewContext(context);
+  updateButton();
+  assert.equal(element.disabled, true);
+  await build();
+  assert.equal(requests.length, 0);
+  assert.match(errors[0]!, /Acknowledge/);
+
+  wizardState.unsupportedAcknowledged = true;
+  updateButton();
+  assert.equal(element.disabled, false);
+  await build();
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0]?.route, "/api/wizard/build");
+  assert.equal(requests[0]?.payload["unsupportedAcknowledged"], true);
+  assert.equal(requests[0]?.payload["proposedSource"], proposal.source);
+});
+
 // ── Studio Server /api/interpret tests ───────────────────────────────────────
 
 test("studio server POST /api/interpret returns proposal for observed sentence", async () => {
@@ -1503,6 +1609,71 @@ test("studio server POST /api/interpret returns 400 for empty description", asyn
 });
 
 // ── Studio v0.8.0 wizard routes ───────────────────────────────────────────────
+
+test("studio description routes report omissions and wizard requires acknowledgement before writing", async () => {
+  const { startStudio } = await import("../src/studio-server.js");
+  const tmpDir = join(TEST_OUTPUT_DIR, `wizard-omissions-${randomBytes(8).toString("hex")}`);
+  await mkdir(tmpDir, { recursive: true });
+  const sourcePath = join(tmpDir, "people.intent");
+  const outputDir = join(tmpDir, "people-app");
+  await writeFile(sourcePath, "", "utf8");
+  try {
+    const studio = await startStudio({ sourcePath, port: 3340, noOpen: true });
+    try {
+      const state = await (await fetch(`${studio.url}/api/state`)).json() as Record<string, unknown>;
+      const post = (route: string, body: Record<string, unknown>) => fetch(`${studio.url}${route}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": String(state["csrfToken"])
+        },
+        body: JSON.stringify(body)
+      });
+      const description = "Build an app with name, age, occupation, then allow sorting";
+      for (const route of ["/api/interpret", "/api/wizard/interpret"]) {
+        const response = await post(route, { description });
+        assert.equal(response.status, 200);
+        const proposal = await response.json() as {
+          kind: string; source: string; proposalToken?: string;
+          unsupportedCapabilities: Array<{ code: string; capability: string }>;
+        };
+        assert.equal(proposal.kind, "proposal");
+        assert.deepEqual(proposal.unsupportedCapabilities.map((item) => item.code),
+          ["UNSUPPORTED_SORTING", "UNRECOGNIZED_FIELD"]);
+        assert.equal(proposal.unsupportedCapabilities[1]?.capability, "occupation");
+        assert.equal(compileSource(proposal.source).ok, true);
+        if (route !== "/api/wizard/interpret") continue;
+        const build = { proposedSource: proposal.source, proposalToken: proposal.proposalToken };
+        for (const acknowledgement of [undefined, false, "true"]) {
+          const rejected = await post("/api/wizard/build", {
+            ...build, unsupportedAcknowledged: acknowledgement
+          });
+          assert.equal(rejected.status, 409);
+          assert.equal((await rejected.json() as Record<string, unknown>)["code"],
+            "ACKNOWLEDGEMENT_REQUIRED");
+          assert.equal(await readFile(sourcePath, "utf8"), "");
+          assert.equal(existsSync(outputDir), false);
+        }
+        const accepted = await post("/api/wizard/build", { ...build, unsupportedAcknowledged: true });
+        assert.equal(accepted.status, 200);
+        assert.equal((await accepted.json() as Record<string, unknown>)["ok"], true);
+        assert.equal(await readFile(sourcePath, "utf8"), proposal.source);
+        const schema = await readFile(join(outputDir, "migration.sql"), "utf8");
+        assert.match(schema, /"name" TEXT/);
+        assert.match(schema, /"age" INTEGER/);
+        assert.ok(!schema.includes("occupation"));
+        const replay = await post("/api/wizard/build", { ...build, unsupportedAcknowledged: true });
+        assert.equal(replay.status, 409);
+        assert.equal((await replay.json() as Record<string, unknown>)["code"], "PLAN_TOKEN_INVALID");
+      }
+    } finally {
+      await studio.close();
+    }
+  } finally {
+    await rm(tmpDir, { recursive: true, force: true });
+  }
+});
 
 test("studio server GET /api/preview/status returns not running initially", async () => {
   const { startStudio } = await import("../src/studio-server.js");
@@ -1964,6 +2135,35 @@ test("studio server preview start succeeds for wizard-built unauthenticated app"
       assert.equal(previewBody["ok"], true);
       assert.ok(typeof previewBody["port"] === "number");
       assert.ok(String(previewBody["url"] ?? "").startsWith("http://127.0.0.1:"), "preview url returned");
+
+      const stopResp = await fetch(`${studio.url}/api/preview/stop`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({})
+      });
+      assert.equal(stopResp.status, 200);
+      assert.deepEqual(await stopResp.json(), { ok: true });
+      await assert.rejects(fetch(String(previewBody["url"]), {
+        signal: AbortSignal.timeout(1_000)
+      }), "stopped preview must no longer accept requests");
+
+      const restartResp = await fetch(`${studio.url}/api/preview/start`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Origin": studio.url,
+          "X-Studio-CSRF-Token": csrfToken
+        },
+        body: JSON.stringify({})
+      });
+      assert.equal(restartResp.status, 200);
+      const restarted = await restartResp.json() as Record<string, unknown>;
+      assert.equal(restarted["ok"], true);
+      assert.equal((await fetch(String(restarted["url"]))).status, 200);
     } finally {
       await studio.close();
     }
