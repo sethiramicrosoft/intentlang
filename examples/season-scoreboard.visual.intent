@@ -1,0 +1,21 @@
+Add a section called scoreboard inside page
+Add a heading called headline inside scoreboard
+Set the text of headline to Riverside FC, Season Report
+Make headline large and bold
+Add a paragraph called points line inside scoreboard
+Add a paragraph called form line inside scoreboard
+Add a bullet list called fixtures inside scoreboard
+
+The wins is 14.
+The draws is 6.
+The losses is 4.
+The points from wins is the wins times 3.
+The points is the points from wins plus the draws.
+
+Set the text of points line to points
+
+If the points is at least 40, set the text of form line to Promotion form. Keep it up.
+Otherwise, set the text of form line to Steady form. Every match still counts.
+
+For each opponent in Ashford Town, Bellmoor United, Castlebridge and Dunwell Rovers, add a list item called result opponent inside fixtures
+For each opponent in Ashford Town, Bellmoor United, Castlebridge and Dunwell Rovers, set the text of result opponent to Played opponent

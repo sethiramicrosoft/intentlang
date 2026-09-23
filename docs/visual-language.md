@@ -173,6 +173,53 @@ compiler coverage, and every available element is also checked in a real browser
 Behavioral browser tests cover representative controls, layouts, exports, and
 responsive sizes; they do not claim to test every attribute/style combination.
 
+## Plain-English variables, conditions, and repetition
+
+A small set of sentence shapes adds compile-time computation to any page.
+This is still plain English (no colons, no code blocks, no "end" keywords) and
+still produces static HTML: nothing here runs after the page loads.
+
+```text
+The wins is 14.
+The draws is 6.
+The points is the wins times 3.
+The total points is the points plus the draws.
+Set the text of points line to total points
+
+If the total points is at least 40, set the text of form line to Promotion form.
+Otherwise, set the text of form line to Steady form.
+
+For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list item called result opponent inside fixtures
+```
+
+- **`The <name> is <value>.`** defines or recomputes a number. The value can be a
+  plain number, an existing variable, or one arithmetic step: `plus`, `minus`,
+  `times`, or `divided by` another number or variable. Each sentence performs at
+  most one operation; chain several sentences for anything larger, the same way
+  the rest of the language favors clear, repeated instructions over dense syntax.
+- **`If the <name> is <comparison> <value>, <one instruction>.`** keeps that one
+  instruction only when the comparison is true. Comparisons are written as words:
+  `greater than`, `less than`, `equal to`, `at least`, `at most`.
+- **`Otherwise, <one instruction>.`** runs when the If sentence right before it was
+  false.
+- **`For each <name> in <item, item and item>, <one instruction>.`** repeats that
+  one instruction once per item, replacing the loop word wherever it appears.
+
+A variable's value can be used anywhere a plain instruction ends with
+`to <name>`, such as `Set the text of points line to total points`.
+
+**Current limits, stated plainly:**
+- One instruction per If, Otherwise, or For each sentence. To do several things,
+  write the same condition or loop again on the next line.
+- No nested If inside If, or For each inside For each, yet.
+- Text values can't be stored in a variable yet, only numbers.
+- This is compile-time only. A page can react to what a variable's value was when
+  you compiled it, not to anything a visitor does afterward; there is still no
+  generated JavaScript. Runtime interactivity (state that changes after a click)
+  is a deliberate, larger design decision that hasn't been made yet.
+
+See `examples/season-scoreboard.visual.intent` for a complete, working file.
+
 ## Single-text scene grammar and behavior
 
 - One English instruction per line. Keywords ignore case. Quotes, escape

@@ -66,6 +66,31 @@ Set the accent color of intensity to seagreen
 fictional demonstration data. Form edits stay in the current page and are not
 saved or submitted. There is no backend.
 
+## Season Scoreboard
+
+Plain-English variables, a conditional message, and a repeated list, computed at
+compile time (no generated JavaScript, still).
+
+![Season Scoreboard's actual output: a computed points total, a form message, and a generated fixture list](season-scoreboard.png)
+
+**[English source](season-scoreboard.visual.intent)** ·
+**[HTML file](season-scoreboard.html)** ·
+**[Download HTML](https://github.com/sethiramicrosoft/intentlang/raw/refs/heads/main/examples/season-scoreboard.html)**
+
+The whole language addition is four sentence shapes, written as plain prose:
+
+```text
+The wins is 14.
+The points is the points from wins plus the draws.
+If the points is at least 40, set the text of form line to Promotion form.
+For each opponent in Ashford Town, Bellmoor United, Castlebridge and Dunwell Rovers, add a list item called result opponent inside fixtures
+```
+
+These are resolved before compilation, so the output is still static HTML: no
+scripts, no runtime state, no user input handling yet. See
+[the language reference](../docs/visual-language.md#plain-english-variables-conditions-and-repetition)
+for what this can and cannot do today.
+
 ## Words in Motion
 
 An animated poster built from just five instructions. This is the complete source:
@@ -99,6 +124,7 @@ dependencies:
 ```powershell
 node --import tsx src\cli.ts visual examples\last-signal.visual.intent --output examples\last-signal.html --write --force
 node --import tsx src\cli.ts visual examples\matchday.visual.intent --output examples\matchday.html --write --force
+node --import tsx src\cli.ts visual examples\season-scoreboard.visual.intent --output examples\season-scoreboard.html --write --force
 node --import tsx src\cli.ts visual examples\words-in-motion.visual.intent --output examples\words-in-motion.html --write --force
 ```
 

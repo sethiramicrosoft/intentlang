@@ -12,7 +12,7 @@ test("published gallery HTML matches its English source and opens without a serv
     const page = await browser.newPage();
     const errors: string[] = [];
     page.on("pageerror", (error) => errors.push(error.message));
-    for (const name of ["last-signal", "matchday", "words-in-motion"]) {
+    for (const name of ["last-signal", "matchday", "words-in-motion", "season-scoreboard"]) {
       const source = await readFile(`examples/${name}.visual.intent`, "utf8");
       const result = compileEnglishSource(source);
       if (!result.ok) assert.fail(JSON.stringify(result.diagnostics));
@@ -23,6 +23,10 @@ test("published gallery HTML matches its English source and opens without a serv
       assert.equal(await page.locator("body").evaluate((element) =>
         getComputedStyle(element).fontFamily.includes("system-ui")), true);
     }
+    await page.goto(pathToFileURL(resolve("examples/season-scoreboard.html")).href);
+    assert.equal(await page.getByText("48", { exact: true }).isVisible(), true);
+    assert.equal(await page.getByText("Promotion form. Keep it up", { exact: true }).isVisible(), true);
+    assert.equal(await page.getByText("Played Dunwell Rovers", { exact: true }).isVisible(), true);
     await page.goto(pathToFileURL(resolve("examples/matchday.html")).href);
     for (const viewport of [
       { width: 1440, height: 1100 }, { width: 768, height: 1024 }, { width: 390, height: 844 }
