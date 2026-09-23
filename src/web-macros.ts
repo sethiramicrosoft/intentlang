@@ -18,9 +18,11 @@ const EXPR_RE = new RegExp(`^${NUMBER_OR_NAME}(?:\\s+(plus|minus|times|divided b
 const NUMERIC_INTENT_RE = /\d|\b(?:plus|minus|times|divided by)\b/i;
 const IF_RE = /^if\s+the\s+([a-z][a-z ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*(.+?)\.?$/i;
 const OTHERWISE_RE = /^otherwise\s*,\s*(.+?)\.?$/i;
-// The list group is greedy so it claims everything up to the LAST comma (the one that
-// separates the list from the instruction), letting "red, green and blue" stay intact.
-const FOR_EACH_RE = /^for each\s+([a-z][a-z ]*?)\s+in\s+(.*)\s*,\s*(.+?)\.?$/i;
+// Only the head ("for each <name> in ") is a fixed shape; where the list ends and the
+// instruction begins is worked out by `matchForEach` below, because a naive "last comma
+// on the line" or "first comma on the line" rule each break in different real cases (see
+// the comment on `matchForEach`).
+const FOR_EACH_HEAD_RE = /^for each\s+([a-z][a-z ]*?)\s+in\s+(.+)$/i;
 const COMPARATORS = ["greater than", "less than", "not equal to", "equal to", "at least", "at most"];
 // Multiple instructions in one If/Otherwise/For each sentence are chained with "and then",
 // a phrase that reads naturally and never collides with ordinary instruction text (unlike a
@@ -29,6 +31,45 @@ const AND_THEN_RE = /\s+and\s+then\s+/i;
 
 function splitInstructions(text: string): string[] {
   return text.split(AND_THEN_RE).map((part) => part.trim()).filter(Boolean);
+}
+
+interface ForEachMatch {
+  loopVar: string;
+  list: string;
+  instruction: string;
+}
+
+/**
+ * Splits a "For each <name> in <list>, <instruction>" line into its list and instruction.
+ * This can't be a single regex with a fixed greedy/non-greedy choice, because either choice
+ * breaks a real case:
+ *   - A non-greedy list breaks a multi-item list ("red, green and blue"), which needs to keep
+ *     its internal commas.
+ *   - A greedy list (claim up to the LAST comma) breaks a nested If instruction ("if the a is
+ *     equal to 1, set the text ..."), which introduces a comma of its own after the list.
+ * Every item list in this language is written as "<item>", "<item> and <item>", or
+ * "<item>, <item> and <item>" — in other words, a list with more than one item always contains
+ * exactly one " and " connecting its last two items, and that " and " always appears before any
+ * instruction text (since the list always comes first). So: split the remainder on every comma,
+ * and the list is every segment up to and including the FIRST segment containing " and "; if no
+ * segment contains " and ", the list is just the first segment (a single item). Everything after
+ * that boundary, rejoined with commas, is the instruction — commas inside a nested If or
+ * Otherwise instruction are preserved untouched because they always come after the boundary.
+ */
+function matchForEach(trimmed: string): ForEachMatch | undefined {
+  const head = FOR_EACH_HEAD_RE.exec(trimmed);
+  if (!head) return undefined;
+  const loopVar = head[1]!.trim();
+  const rest = head[2]!.replace(/\.$/, "");
+  const segments = rest.split(",");
+  if (segments.length < 2) return undefined; // no comma at all: not a valid For each sentence
+  const andIndex = segments.findIndex((segment) => /\band\b/i.test(segment));
+  const boundary = andIndex === -1 ? 0 : andIndex;
+  if (boundary + 1 >= segments.length) return undefined; // nothing left for the instruction
+  const list = segments.slice(0, boundary + 1).join(",").trim();
+  const instruction = segments.slice(boundary + 1).join(",").trim().replace(/\.$/, "");
+  if (!instruction) return undefined;
+  return { loopVar, list, instruction };
 }
 
 function splitEnglishList(text: string): string[] {
@@ -160,7 +201,7 @@ function suggestMacroFix(trimmed: string): VisualSuggestion | undefined {
     const fixed = closestKeyword(forWord[1]!, ["for"]);
     if (fixed) {
       const corrected = `for${forWord[2]}`;
-      if (FOR_EACH_RE.test(corrected)) return { label: `Change "${forWord[1]}" to "for"`, replacement: corrected };
+      if (matchForEach(corrected)) return { label: `Change "${forWord[1]}" to "for"`, replacement: corrected };
     }
   }
   const inWord = /^(for\s+each\s+[a-z][a-z ]*?\s+)(\S+)(\s+.+)$/i.exec(trimmed);
@@ -168,7 +209,7 @@ function suggestMacroFix(trimmed: string): VisualSuggestion | undefined {
     const fixed = closestKeyword(inWord[2]!, ["in"]);
     if (fixed) {
       const corrected = `${inWord[1]}in${inWord[3]}`;
-      if (FOR_EACH_RE.test(corrected)) return { label: `Change "${inWord[2]}" to "in"`, replacement: corrected };
+      if (matchForEach(corrected)) return { label: `Change "${inWord[2]}" to "in"`, replacement: corrected };
     }
   }
   const comparatorPhrase = /^(if\s+the\s+[a-z][a-z ]*?\s+is\s+)([a-z]+\s+[a-z]+(?:\s+[a-z]+)?)(\s+(?:the\s+)?(?:-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*.+)$/i
@@ -233,26 +274,24 @@ function evaluateIfCondition(ifMatch: RegExpExecArray, text: string, lineNumber:
 }
 
 /**
- * Expands one For each sentence into its repeated instructions. The per-item instruction is
- * deliberately NOT re-checked for a nested If or For each: this loop's own list capture is
- * greedy (so a multi-item list like "red, green and blue" survives its internal commas), which
- * means it always claims up to the LAST comma on the line. If a nested clause after it added
- * another comma, the list and the nested clause would be parsed incorrectly. Plain, possibly
- * "and then"-chained instructions are still fully supported per item.
+ * Expands one For each sentence into its repeated instructions. Each item's instruction is
+ * itself expanded with `expandChain`, so it can be a plain instruction, several chained with
+ * "and then", or a nested If/Otherwise/For each sentence — see `matchForEach` for how the list
+ * and the (possibly nested, possibly comma-containing) instruction are told apart.
  */
-function evaluateForEach(forEachMatch: RegExpExecArray, lineNumber: number, variables: Map<string, VarValue>,
+function evaluateForEach(forEachMatch: ForEachMatch, lineNumber: number, variables: Map<string, VarValue>,
   diagnostics: VisualDiagnostic[]): string[] {
-  const loopVar = forEachMatch[1]!.trim();
-  const items = splitEnglishList(forEachMatch[2]!);
+  const { loopVar, list, instruction } = forEachMatch;
+  const items = splitEnglishList(list);
   if (items.length === 0) {
-    report(diagnostics, lineNumber, forEachMatch[0]!, "M004",
+    report(diagnostics, lineNumber, `for each ${loopVar} in ${list}`, "M004",
       `"For each ${loopVar} in ..." needs at least one item in its list.`,
       `List one or more items, such as "For each ${loopVar} in red, green and blue, ...".`);
     return [];
   }
   const results: string[] = [];
   for (const item of items) {
-    for (const instr of splitInstructions(substituteWord(forEachMatch[3]!, loopVar, item))) results.push(instr);
+    results.push(...expandChain(substituteWord(instruction, loopVar, item), lineNumber, variables, diagnostics));
   }
   return results;
 }
@@ -260,10 +299,10 @@ function evaluateForEach(forEachMatch: RegExpExecArray, lineNumber: number, vari
 /**
  * Expands one instruction, recognizing that the instruction can itself be a whole nested If or
  * For each sentence, e.g. "If the score is at least 40, if the wins is at least 10, set the text
- * of message to double win." Nesting works here because an If sentence's own parsing always
- * stops at the FIRST comma after its comparison target, no matter what follows, so a nested
- * clause after it never confuses the outer one. (For each's list can't make that same guarantee,
- * which is why it isn't recursively expanded here; see `evaluateForEach`.)
+ * of message to double win." Nesting works for If because its own parsing always stops at the
+ * FIRST comma after its comparison target, no matter what follows. Nesting works for For each too
+ * because `matchForEach` locates the list/instruction boundary by finding the list's own " and ",
+ * not by guessing from comma position, so a nested clause's commas never confuse it.
  */
 function expandInstruction(instr: string, lineNumber: number, variables: Map<string, VarValue>,
   diagnostics: VisualDiagnostic[]): string[] {
@@ -274,17 +313,31 @@ function expandInstruction(instr: string, lineNumber: number, variables: Map<str
     if (condition === undefined) return [];
     return condition ? expandChain(nestedIf[4]!, lineNumber, variables, diagnostics) : [];
   }
-  const nestedForEach = FOR_EACH_RE.exec(trimmedInstr);
+  const nestedForEach = matchForEach(trimmedInstr);
   if (nestedForEach) return evaluateForEach(nestedForEach, lineNumber, variables, diagnostics);
   return [instr];
 }
 
-/** Splits an If or Otherwise sentence's body on "and then", expanding each part (which may
- * itself be a nested If or For each sentence) in order. */
+/**
+ * Splits an If or Otherwise sentence's body on "and then", expanding each part (which may
+ * itself be a nested If or For each sentence) in order. Both a nested If's body and a nested For
+ * each's instruction always extend to the end of whatever string they're given (that's how each
+ * one's own regex is anchored), so once a chain part starts a nested If or For each, everything
+ * from there to the end of the chain belongs to that nested construct -- it must be rejoined and
+ * handled as one unit rather than being cut apart by this function's own "and then" split.
+ */
 function expandChain(text: string, lineNumber: number, variables: Map<string, VarValue>,
   diagnostics: VisualDiagnostic[]): string[] {
+  const parts = splitInstructions(text);
   const result: string[] = [];
-  for (const part of splitInstructions(text)) result.push(...expandInstruction(part, lineNumber, variables, diagnostics));
+  for (let i = 0; i < parts.length; i++) {
+    const rest = parts.slice(i).join(" and then ").trim();
+    if (IF_RE.test(rest) || matchForEach(rest)) {
+      result.push(...expandInstruction(rest, lineNumber, variables, diagnostics));
+      return result; // the nested construct consumed everything remaining in the chain
+    }
+    result.push(...expandInstruction(parts[i]!, lineNumber, variables, diagnostics));
+  }
   return result;
 }
 
@@ -292,16 +345,15 @@ function expandChain(text: string, lineNumber: number, variables: Map<string, Va
 export function usesMacroGrammar(source: string): boolean {
   return source.split(/\r?\n/).some((line) => {
     const trimmed = line.trim();
-    return ASSIGN_RE.test(trimmed) || IF_RE.test(trimmed) || OTHERWISE_RE.test(trimmed) || FOR_EACH_RE.test(trimmed);
+    return ASSIGN_RE.test(trimmed) || IF_RE.test(trimmed) || OTHERWISE_RE.test(trimmed) || matchForEach(trimmed) !== undefined;
   });
 }
 
 /**
  * Expands "The X is Y.", "If the X is ..., ...", "Otherwise, ...", and
  * "For each X in ..., ..." into plain page-grammar instructions. Each sentence can carry one
- * instruction, several chained with "and then", or a nested If sentence (an If or Otherwise's
- * instruction can itself be another If, or a For each). A For each's own repeated instruction
- * stays flat (see `evaluateForEach`) to keep its list parsing unambiguous.
+ * instruction, several chained with "and then", or a nested If/Otherwise/For each sentence,
+ * nested as deep as you like.
  */
 export function expandMacros(source: string): MacroExpandResult {
   const lines = source.split(/\r?\n/);
@@ -358,7 +410,7 @@ export function expandMacros(source: string): MacroExpandResult {
       return;
     }
 
-    const forEach = FOR_EACH_RE.exec(trimmed);
+    const forEach = matchForEach(trimmed);
     if (forEach) {
       for (const instr of evaluateForEach(forEach, lineNumber, variables, diagnostics)) output.push(instr);
       return;

@@ -223,17 +223,24 @@ inside ordinary text or a For each list) — only the exact phrase `and then`
 splits a sentence into multiple instructions.
 
 An If or Otherwise sentence's instruction can itself be another If, Otherwise-
-paired If, or For each sentence, written right there on the same line:
+paired If, or For each sentence, written right there on the same line — and a
+For each's own repeated instruction can do the same, nesting an If or another
+For each:
 
 ```text
 If the score is greater than 10, if the wins is greater than 5, set the text of message to double win
 Otherwise, if the consolation is greater than 5, set the text of message to good try
 If the show is equal to 1, for each color in red and blue, add a list item called swatch color inside colors
+For each color in red and blue, if the threshold is equal to 1, add a list item called swatch color inside colors
+For each row in a and b, for each column in x and y, add a list item called cell row column inside grid
 ```
 
 Nesting can go as deep as you like this way. A nested If's own condition never
 affects an outer If's pending Otherwise — only the outermost If on a line
-decides whether that line's Otherwise runs.
+decides whether that line's Otherwise runs. A nested For each's list is found
+by locating that list's own `and` rather than by guessing from comma
+position, so a nested instruction's commas (from a nested If, say) never get
+mistaken for list items.
 
 A variable's value, number or text, can be used anywhere a plain instruction ends
 with `to <name>`, such as `Set the text of points line to total points`.
@@ -251,14 +258,6 @@ style, and attribute names elsewhere in the page grammar. Typo fixes are always
 offered, never applied silently.
 
 **Current limits, stated plainly:**
-- A For each's own repeated instruction can't itself contain a nested If or
-  For each (though it can still chain plain instructions with `and then`).
-  This is a deliberate parsing safety limit, not a missing feature: For each's
-  list of items (like "red, green and blue") is matched greedily so it can
-  contain commas, and adding a nested clause after it would introduce more
-  commas that could be parsed as part of the list instead. If or Otherwise, on
-  the other hand, nest safely because their own parsing always stops at the
-  first comma no matter what follows.
 - Text variables can only be compared with `equal to` or `not equal to`;
   there's no ordering (`greater than`, etc.) for text, and text can't be used
   in arithmetic.

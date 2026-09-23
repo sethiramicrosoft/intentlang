@@ -359,8 +359,50 @@ If the show is equal to 1, for each color in red and blue, add a list item calle
   assert.equal(textOf(ir, "swatch blue"), "");
 });
 
-test("a For each's own repeated instruction is not itself parsed as a nested If or For each", () => {
+test("a For each's own repeated instruction can itself be a nested If", () => {
   const { ir } = page(`Add a bullet list called colors inside page
-For each color in red and blue, add a list item called swatch color inside colors`);
-  assert.equal(ir.elements.filter((element) => element.tag === "li").length, 2);
+The threshold is 1.
+For each color in red and blue, if the threshold is equal to 1, add a list item called swatch color inside colors`);
+  assert.equal(textOf(ir, "swatch red"), "");
+  assert.equal(textOf(ir, "swatch blue"), "");
+});
+
+test("a For each's nested If can suppress every item when its condition is false", () => {
+  const { ir } = page(`Add a bullet list called colors inside page
+The threshold is 2.
+For each color in red and blue, if the threshold is equal to 1, add a list item called swatch color inside colors`);
+  assert.equal(ir.elements.some((element) => element.name === "swatch red"), false);
+  assert.equal(ir.elements.some((element) => element.name === "swatch blue"), false);
+});
+
+test("a For each's own repeated instruction can itself be a nested For each", () => {
+  const { ir } = page(`Add a bullet list called grid inside page
+For each row in a and b, for each column in x and y, add a list item called cell row column inside grid`);
+  assert.equal(textOf(ir, "cell a x"), "");
+  assert.equal(textOf(ir, "cell a y"), "");
+  assert.equal(textOf(ir, "cell b x"), "");
+  assert.equal(textOf(ir, "cell b y"), "");
+});
+
+test("a nested For each inside For each still supports and-then chaining per item", () => {
+  const { ir } = page(`Add a bullet list called colors inside page
+For each color in red and blue, for each shade in light and dark, add a list item called swatch color shade inside colors and then add a list item called label color shade inside colors`);
+  assert.equal(textOf(ir, "swatch red light"), "");
+  assert.equal(textOf(ir, "label red light"), "");
+  assert.equal(textOf(ir, "swatch blue dark"), "");
+  assert.equal(textOf(ir, "label blue dark"), "");
+});
+
+test("For each list parsing still works for every existing list shape after the nesting rewrite", () => {
+  const oxford = page(`Add a bullet list called colors inside page
+For each color in red, green and blue, add a list item called swatch color inside colors`).ir;
+  assert.equal(oxford.elements.filter((element) => element.tag === "li").length, 3);
+
+  const noOxford = page(`Add a bullet list called colors inside page
+For each color in red and blue, add a list item called swatch color inside colors`).ir;
+  assert.equal(noOxford.elements.filter((element) => element.tag === "li").length, 2);
+
+  const single = page(`Add a bullet list called colors inside page
+For each color in red, add a list item called swatch color inside colors`).ir;
+  assert.equal(single.elements.filter((element) => element.tag === "li").length, 1);
 });
