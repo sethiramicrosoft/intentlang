@@ -521,66 +521,12 @@ a full reproduction checklist for developers and auditors.
 
 ## Optional AI assistance
 
-> **Core principle:** IntentLang remains fully usable with AI disabled. Compiling, checking, formatting, generating, and running applications consumes **zero AI tokens** and requires no AI provider.
+An optional AI drafting assistant is available in the business-app editor, disabled
+by default. It is not part of the English compiler. It proposes source for you to
+review; compilation and the gallery examples do not require it.
 
-v0.8.0-alpha.0 includes an optional **Describe with AI** panel in Advanced tools. It translates free-form descriptions into proposed IntentLang source for your review.
-
-### What it does
-
-- Accepts a natural language description from you
-- Sends description + current source to a configured AI provider
-- Validates the proposed source deterministically with the IntentLang compiler
-- Shows you the diff and compiler result
-- **You must explicitly Apply, then Save separately.** AI has no automatic write access.
-
-### Supported protocols
-
-Any model accessible via:
-- **Ollama** (local, many open models)
-- **OpenAI-compatible chat API** (LM Studio, LocalAI, llama.cpp, and OpenAI-compatible cloud gateways)
-- **Google Gemini** (remote REST API; requires `--allow-remote-ai`)
-
-### Quick start
-
-```bash
-# Ollama (local, recommended for privacy):
-intentlang studio my-app.intent --ai-provider ollama --ai-model llama3.2
-
-# LM Studio or LocalAI:
-intentlang studio my-app.intent \
-  --ai-provider openai-compatible \
-  --ai-model <model> \
-  --ai-endpoint http://127.0.0.1:1234
-
-# Cloud gateway with API key (set env before starting; never use a flag):
-export INTENTLANG_AI_API_KEY=<key>
-intentlang studio my-app.intent \
-  --ai-provider openai-compatible \
-  --ai-model <model> \
-  --ai-endpoint https://your-gateway.example.com \
-  --allow-remote-ai
-
-# Google Gemini direct (set INTENTLANG_AI_API_KEY env before starting):
-export INTENTLANG_AI_API_KEY=<key>
-intentlang studio my-app.intent \
-  --ai-provider gemini \
-  --ai-model <your-gemini-model> \
-  --allow-remote-ai
-```
-
-### Privacy boundary
-
-- **Loopback endpoints** (default): data stays on your machine, subject to the local server's behaviour.
-- **Remote endpoints** (opt-in with `--allow-remote-ai` + HTTPS): your description and source are sent to that provider. Costs, privacy, and retention are governed by the provider.
-- **Google Gemini** (`--ai-provider gemini`): description and source sent to Google Gemini. Free-tier availability, quotas, billing, and terms controlled by your Google account and can change.
-- **Compiler and generated app remain completely AI-free** in all cases.
-
-### Security
-
-- The API key comes only from the `INTENTLANG_AI_API_KEY` environment variable. It is never accepted as a CLI flag, logged, or sent to the browser.
-- Remote endpoints require `--allow-remote-ai` and HTTPS. HTTP to remote hosts is rejected.
-- AI output is untrusted text. The deterministic compiler validates it before any user action is possible.
-- See [`docs/ai-assistance.md`](docs/ai-assistance.md) for full architecture and threat model.
+See the [AI assistance guide](docs/ai-assistance.md) for provider setup, review
+steps, and privacy details.
 
 ---
 

@@ -1,6 +1,14 @@
 # Optional AI Assistance
 
-IntentLang v0.7.0-alpha adds **optional** AI assistance to Studio. The core compiler, guided mode, and all generated applications remain completely AI-free and consume zero tokens.
+The business-app editor includes an optional AI drafting assistant, disabled by
+default. It proposes IntentLang source from a description for you to review.
+It is not part of the English compiler and does not power the visual/page
+playground or the gallery examples.
+
+Compilation, checking, formatting, generation, and running the generated examples
+do not require an AI model. Only explicitly requesting a draft from a configured
+provider invokes AI. Use **Advanced tools** in Studio to access the assistant;
+provider setup and privacy details are below.
 
 ## Offline interpreter vs AI assistant
 
