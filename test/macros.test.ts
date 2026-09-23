@@ -100,6 +100,99 @@ For each color in red and blue, add a list item called swatch color inside color
   assert.equal(ir.elements.filter((element) => element.tag === "li").length, 2);
 });
 
+function suggestionOf(source: string): { label: string; replacement: string } {
+  const result = compileEnglishSource(source);
+  if (result.ok) assert.fail("Expected a typo diagnostic for: " + source);
+  const diagnostic = result.diagnostics.find((item) => item.suggestions?.length);
+  assert.ok(diagnostic, `Expected a suggestion for: ${source}\n${JSON.stringify(result.diagnostics, null, 2)}`);
+  assert.equal(diagnostic!.category, "typo");
+  return diagnostic!.suggestions![0]!;
+}
+
+test("a misspelled If keyword is offered as a one-click fix", () => {
+  const suggestion = suggestionOf(`Add a paragraph called message inside page
+The score is 5.
+Iff the score is greater than 3, set the text of message to high`);
+  assert.equal(suggestion.replacement, "if the score is greater than 3, set the text of message to high");
+});
+
+test("a misspelled comparator (than vs then) is offered as a one-click fix", () => {
+  const suggestion = suggestionOf(`Add a paragraph called message inside page
+The score is 5.
+If the score is greater then 3, set the text of message to high`);
+  assert.equal(suggestion.replacement, "If the score is greater than 3, set the text of message to high");
+});
+
+test("a misspelled leading The is offered as a one-click fix", () => {
+  const suggestion = suggestionOf(`Add a paragraph called message inside page
+Th score is 5.
+Set the text of message to score`);
+  assert.equal(suggestion.replacement, "the score is 5.");
+});
+
+test("a misspelled is (in a variable sentence) is offered as a one-click fix", () => {
+  const suggestion = suggestionOf(`Add a paragraph called message inside page
+The score iz 5.
+Set the text of message to score`);
+  assert.equal(suggestion.replacement, "The score is 5.");
+});
+
+test("a misspelled Otherwise keyword is offered as a one-click fix", () => {
+  const suggestion = suggestionOf(`Add a paragraph called message inside page
+The score is 5.
+If the score is greater than 3, set the text of message to high
+Otherwize, set the text of message to low`);
+  assert.equal(suggestion.replacement, "otherwise, set the text of message to low");
+});
+
+test("a misspelled For keyword is offered as a one-click fix", () => {
+  const suggestion = suggestionOf(`Add a bullet list called colors inside page
+Fr each color in red and blue, add a list item called swatch color inside colors`);
+  assert.equal(suggestion.replacement, "for each color in red and blue, add a list item called swatch color inside colors");
+});
+
+test("a misspelled in keyword (For each) is offered as a one-click fix", () => {
+  const suggestion = suggestionOf(`Add a bullet list called colors inside page
+For each color n red and blue, add a list item called swatch color inside colors`);
+  assert.equal(suggestion.replacement, "For each color in red and blue, add a list item called swatch color inside colors");
+});
+
+test("referencing an unknown variable that is close to a known one suggests the known name", () => {
+  const suggestion = suggestionOf(`Add a paragraph called message inside page
+The score is 5.
+If the scoer is greater than 3, set the text of message to high`);
+  assert.equal(suggestion.replacement, "If the score is greater than 3, set the text of message to high");
+});
+
+test("keywords, comparators, and variable names are not case sensitive", () => {
+  const { ir } = page(`ADD A PARAGRAPH CALLED MESSAGE INSIDE PAGE
+THE SCORE IS 5.
+IF THE SCORE IS GREATER THAN 3, SET THE TEXT OF MESSAGE TO HIGH
+OTHERWISE, SET THE TEXT OF MESSAGE TO LOW`);
+  assert.equal(textOf(ir, "message"), "HIGH");
+});
+
+test("a variable defined in one case is found when referenced in another case", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The Score is 5.
+If the SCORE is greater than 3, set the text of message to high`);
+  assert.equal(textOf(ir, "message"), "high");
+});
+
+test("a misspelled keyword in any case is still offered as a one-click fix", () => {
+  const suggestion = suggestionOf(`Add a paragraph called message inside page
+The score is 5.
+IFF THE SCORE IS GREATER THAN 3, set the text of message to high`);
+  assert.equal(suggestion.replacement, "if THE SCORE IS GREATER THAN 3, set the text of message to high");
+});
+
+test("ordinary page instructions are never mistaken for a macro typo", () => {
+  const { ir } = page(`Add a paragraph called greeting inside page
+Set the text of greeting to Hello, world!
+Put greeting inside page`);
+  assert.equal(textOf(ir, "greeting"), "Hello, world!");
+});
+
 test("a source without any variable, If, or For each sentence is untouched by macro expansion", () => {
   const source = `Add a paragraph called greeting inside page
 Set the text of greeting to Hello, world!`;

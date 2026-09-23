@@ -208,6 +208,18 @@ For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list 
 A variable's value can be used anywhere a plain instruction ends with
 `to <name>`, such as `Set the text of points line to total points`.
 
+Like the rest of the language, none of this is case sensitive: keywords
+(`the`, `is`, `if`, `otherwise`, `for each`, `in`), comparators, and variable
+names all match regardless of capitalization, so `THE SCORE IS 5` and
+`the score is 5` behave identically.
+
+If a line is close to one of these sentence shapes but has a spelling mistake
+(a misspelled keyword, connector word, or comparator, or a variable name that is
+one letter off from one defined earlier), the compiler reports it as a typo
+with a one-click "Change ... to ..." fix, the same as it does for element,
+style, and attribute names elsewhere in the page grammar. Typo fixes are always
+offered, never applied silently.
+
 **Current limits, stated plainly:**
 - One instruction per If, Otherwise, or For each sentence. To do several things,
   write the same condition or loop again on the next line.
