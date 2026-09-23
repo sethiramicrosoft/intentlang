@@ -4,7 +4,27 @@
 ![node](https://img.shields.io/badge/node-%3E%3D24-339933)
 ![version](https://img.shields.io/badge/version-v0.8.0--alpha-blue)
 
-**Tagline:** An experimental offline compiler designed to help non-software developers build applications using controlled natural English. AI assistance is optional and off by default.
+**Got an idea, but don't know how to code?**
+
+Learning a programming language can feel like a huge detour when you just want
+to build something. The syntax, the brackets, the error messages. Where do you
+even start?
+
+**Start with English.**
+
+IntentLang is an early, evolving programming language built around English
+instructions. Start by describing what to show, how it should look, and where
+things belong. The examples below already work: an animated poster, a coaching
+dashboard, and a playable story. A separate app-building grammar also supports
+simple database-backed apps.
+
+**The English is the code. No AI model required.**
+
+This is not a way to build any app from any English description. You still need
+to learn the supported phrases, and local setup currently requires a terminal.
+The compiler runs locally, and the IDE flags unsupported instructions and offers
+choices for ambiguities it recognizes. The language and editor are still being
+developed; the examples show what works today, not a promise of what works next.
 
 > [!WARNING]
 > IntentLang v0.8.0-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
@@ -13,7 +33,7 @@
 
 [![The Last Signal: a branching sci-fi story compiled from English](examples/last-signal.png)](examples/README.md#the-last-signal)
 
-**[Browse the example gallery](examples/README.md)** — a playable sci-fi story,
+**[Browse the example gallery](examples/README.md)** for a playable sci-fi story,
 a responsive coaching dashboard, and an animated typography poster.
 Each includes its English source, a screenshot of the actual output, and standalone
 HTML you can download and open locally. No model is called during compilation or
@@ -101,10 +121,10 @@ I want to build an app that just allows users to add their name, age, address, D
 
 What happens:
 
-1. **Describe** — the offline interpreter treats “users” as stored Person records and shows that assumption; it does not add login accounts.
-2. **Review** — Studio proposes Name, Age, Address, and Date of birth fields. It clearly warns that sorting is not supported yet and Date of birth is stored as text.
-3. **Build** — after you acknowledge the limitation, click **Build app**. Studio compiles and generates the app without separate Apply, Save, or Generate steps.
-4. **Open app** — Studio auto-starts preview only for unauthenticated apps. Authenticated apps show bootstrap guidance instead.
+1. **Describe:** the offline interpreter treats “users” as stored Person records and shows that assumption; it does not add login accounts.
+2. **Review:** Studio proposes Name, Age, Address, and Date of birth fields. It clearly warns that sorting is not supported yet and Date of birth is stored as text.
+3. **Build:** after you acknowledge the limitation, click **Build app**. Studio compiles and generates the app without separate Apply, Save, or Generate steps.
+4. **Open app:** Studio auto-starts preview only for unauthenticated apps. Authenticated apps show bootstrap guidance instead.
 
 ### Known limitations up front
 
@@ -240,22 +260,22 @@ Text fallback:
 
 **IntentLang Studio** is a local, dependency-free browser-based authoring environment for `.intent` source files.
 
-- **100% offline** — the Studio server runs on your machine and binds to `127.0.0.1` only. No traffic leaves your computer.
-- **No AI tokens** — Studio is a deterministic compiler front-end. Checking, formatting, and generating never contacts an AI model.
-- **No credentials required to run Studio** — Studio is an authoring tool and does not handle application login credentials.
+- **100% offline:** the Studio server runs on your machine and binds to `127.0.0.1` only. No traffic leaves your computer.
+- **No AI tokens:** Studio is a deterministic compiler front-end. Checking, formatting, and generating never contacts an AI model.
+- **No credentials required to run Studio:** Studio is an authoring tool and does not handle application login credentials.
 
-### App Builder Wizard (v0.8.0 — default view)
+### App Builder Wizard (v0.8.0 default view)
 
 Studio v0.8.0 adds a **beginner-first App Builder Wizard** as the default view. When you open Studio with an empty file, the wizard walks you through four steps:
 
 | Step | What happens |
 |------|---|
-| **1 — Describe** | Enter a plain-English description. The offline interpreter converts supported descriptions to IntentLang without AI tokens. |
-| **2 — Review** | See the proposed IntentLang source, warnings, and unsupported items. Acknowledge partial generation before building. |
-| **3 — Build** | One-click build: compiles, checks for destructive migrations, generates to a sibling temp directory, then swaps output safely. |
-| **4 — Open app** | Studio auto-starts preview only for unauthenticated apps. Authenticated apps show bootstrap guidance instead of previewing. |
+| **1. Describe** | Enter a plain-English description. The offline interpreter converts supported descriptions to IntentLang without AI tokens. |
+| **2. Review** | See the proposed IntentLang source, warnings, and unsupported items. Acknowledge partial generation before building. |
+| **3. Build** | One-click build: compiles, checks for destructive migrations, generates to a sibling temp directory, then swaps output safely. |
+| **4. Open app** | Studio auto-starts preview only for unauthenticated apps. Authenticated apps show bootstrap guidance instead of previewing. |
 
-> **Wizard limits:** The wizard uses the same offline interpreter as Describe App mode — it supports a finite vocabulary. Unsupported capabilities (sorting, search, file upload) are listed explicitly and never silently omitted. Destructive migrations and security-downgrade migrations are refused; use the CLI for those.
+> **Wizard limits:** The wizard uses the same offline interpreter as Describe App mode and supports a finite vocabulary. Unsupported capabilities (sorting, search, file upload) are listed explicitly and never silently omitted. Destructive migrations and security-downgrade migrations are refused; use the CLI for those.
 
 To edit IntentLang directly, expand the **Advanced tools** section below the wizard.
 
@@ -295,7 +315,7 @@ Studio v0.8.0 keeps the **App Builder wizard** visible by default, even when the
 | **App Builder wizard** | Beginner-first flow: describe → review → build → open app. |
 | **Advanced tools** | Full editor with Write IntentLang + Describe App modes, AI panel, Problems, Model, Canonical, IR panels. |
 
-#### Advanced IDE — Two editor modes
+#### Advanced IDE: two editor modes
 
 When in Advanced IDE, two modes are available at the top of the editor pane:
 
@@ -304,9 +324,9 @@ When in Advanced IDE, two modes are available at the top of the editor pane:
 | **Write IntentLang** | Default for existing source files. Accepts controlled grammar only. Errors are shown inline above the editor and in the Problems panel. |
 | **Describe App** | For plain-English input. The offline interpreter converts supported descriptions into IntentLang source without AI tokens. Optional AI handles broader descriptions if a provider is configured. |
 
-> **Not unrestricted English.** Describe App mode supports a finite vocabulary for simple CRUD apps. Unsupported features (sorting, search, delete, file upload) are listed explicitly — never silently omitted.
+> **Not unrestricted English.** Describe App mode supports a finite vocabulary for simple CRUD apps. Unsupported features (sorting, search, delete, file upload) are listed explicitly, never silently omitted.
 
-#### Describe App mode — quick example
+#### Describe App mode: quick example
 
 Input:
 ```
@@ -327,7 +347,7 @@ Assumptions shown:
 - *"Interpreted 'users' as Person records, not login accounts."*
 
 Warnings shown:
-- *"DOB/date of birth is mapped to a text field — native date type is not yet supported in IntentLang."*
+- DOB/date of birth is mapped to a text field because IntentLang does not yet support a native date type.
 - *"Sorting is not supported by IntentLang yet, so it was not added. The data-entry portion can be generated now."*
 
 To apply the supported portion, acknowledge the unsupported items and click **Apply supported source to Editor**. The editor content is updated but the file is not saved and no app is generated until you do those steps explicitly.
@@ -343,10 +363,10 @@ When the source has errors in Write IntentLang mode:
 
 - Type or paste IntentLang source into the editor.
 - After a short pause, the source is automatically checked and diagnostics appear in the Problems panel.
-- **Check** — manual compile run.
-- **Format** — shows a diff preview before replacing your text.
-- **Save** — confirms before writing to the original source file (atomic rename).
-- **Generate App** — shows a plan (with warnings for destructive or security-breaking changes), then confirms before writing artifacts to the sibling `<basename>-app/` directory.
+- **Check:** manual compile run.
+- **Format:** shows a diff preview before replacing your text.
+- **Save:** confirms before writing to the original source file (atomic rename).
+- **Generate App:** shows a plan (with warnings for destructive or security-breaking changes), then confirms before writing artifacts to the sibling `<basename>-app/` directory.
 - **Keyboard shortcuts:** `Ctrl+S` / `Cmd+S` = Save, `Ctrl+Shift+F` / `Cmd+Shift+F` = Format.
 
 **Output panels (right)**
@@ -388,7 +408,7 @@ Next steps:
   node app.mjs
 ```
 
-If authentication is enabled, Studio lists the **environment variable names** you must set — never the values.
+If authentication is enabled, Studio lists the **environment variable names** you must set, never the values.
 
 ### Studio security model
 
@@ -429,7 +449,7 @@ node /path/to/intentlang/dist/src/cli.js studio myapp.intent
 
 The `examples/issue-tracker.intent` source file (44 lines of controlled
 English) was fed to the IntentLang compiler. The compiler produced
-seven artifacts — backend, frontend, and database — with no AI
+seven artifacts covering the backend, frontend, and database, with no AI
 involvement at any stage. No generated file was hand-edited to make
 the proof pass.
 
@@ -490,12 +510,12 @@ node app.mjs
 
 ### Read the case study
 
-→ **[Read the 5-minute visual case study](docs/issue-tracker-full-stack.md)**
-— layperson-friendly: source, diagram, screenshots, tested steps, try-it guide.
+**[Read the 5-minute visual case study](docs/issue-tracker-full-stack.md)**
+for the source, diagram, screenshots, and steps to try it yourself.
 
-→ **[Technical appendix and generated-code explanation](docs/issue-tracker-technical-reference.md)**
-— for developers/auditors: pipeline internals, every generated-code excerpt,
-security architecture, and a full reproduction checklist.
+**[Technical appendix and generated-code explanation](docs/issue-tracker-technical-reference.md)**
+covers pipeline internals, generated-code excerpts, security architecture, and
+a full reproduction checklist for developers and auditors.
 
 ---
 
@@ -511,19 +531,19 @@ v0.8.0-alpha.0 includes an optional **Describe with AI** panel in Advanced tools
 - Sends description + current source to a configured AI provider
 - Validates the proposed source deterministically with the IntentLang compiler
 - Shows you the diff and compiler result
-- **You must explicitly Apply, then Save separately** — AI has no automatic write access
+- **You must explicitly Apply, then Save separately.** AI has no automatic write access.
 
 ### Supported protocols
 
 Any model accessible via:
 - **Ollama** (local, many open models)
 - **OpenAI-compatible chat API** (LM Studio, LocalAI, llama.cpp, and OpenAI-compatible cloud gateways)
-- **Google Gemini** (direct REST API — remote, requires `--allow-remote-ai`)
+- **Google Gemini** (remote REST API; requires `--allow-remote-ai`)
 
 ### Quick start
 
 ```bash
-# Ollama (local — recommended for privacy):
+# Ollama (local, recommended for privacy):
 intentlang studio my-app.intent --ai-provider ollama --ai-model llama3.2
 
 # LM Studio or LocalAI:
@@ -532,7 +552,7 @@ intentlang studio my-app.intent \
   --ai-model <model> \
   --ai-endpoint http://127.0.0.1:1234
 
-# Cloud gateway with API key (set env before starting — never use flag):
+# Cloud gateway with API key (set env before starting; never use a flag):
 export INTENTLANG_AI_API_KEY=<key>
 intentlang studio my-app.intent \
   --ai-provider openai-compatible \
@@ -557,9 +577,9 @@ intentlang studio my-app.intent \
 
 ### Security
 
-- API key from environment variable `INTENTLANG_AI_API_KEY` only — never a CLI flag, never logged, never sent to the browser.
+- The API key comes only from the `INTENTLANG_AI_API_KEY` environment variable. It is never accepted as a CLI flag, logged, or sent to the browser.
 - Remote endpoints require `--allow-remote-ai` and HTTPS. HTTP to remote hosts is rejected.
-- AI output is untrusted text — validated by the deterministic compiler before any user action is possible.
+- AI output is untrusted text. The deterministic compiler validates it before any user action is possible.
 - See [`docs/ai-assistance.md`](docs/ai-assistance.md) for full architecture and threat model.
 
 ---
@@ -1090,7 +1110,7 @@ IntentLang uses a deliberately limited form of English with published grammar. A
 
 **Is IntentLang intended for people who are not software developers?**
 
-Yes—that is the primary long-term purpose. Domain experts should eventually be able to describe supported applications in readable statements without learning Python, TypeScript, or SQL. The current experimental release still requires terminal use and learning the controlled grammar, so more usability work remains.
+Yes. That is the primary long-term purpose. Domain experts should eventually be able to describe supported applications in readable statements without learning Python, TypeScript, or SQL. The current experimental release still requires terminal use and learning the controlled grammar, so more usability work remains.
 
 **Can I write normal English?**  
 No. You must use IntentLang’s fixed grammar.
