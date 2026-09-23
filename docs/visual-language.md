@@ -222,6 +222,19 @@ Plain `and` is never treated as a chain separator (so it stays safe to use
 inside ordinary text or a For each list) — only the exact phrase `and then`
 splits a sentence into multiple instructions.
 
+An If or Otherwise sentence's instruction can itself be another If, Otherwise-
+paired If, or For each sentence, written right there on the same line:
+
+```text
+If the score is greater than 10, if the wins is greater than 5, set the text of message to double win
+Otherwise, if the consolation is greater than 5, set the text of message to good try
+If the show is equal to 1, for each color in red and blue, add a list item called swatch color inside colors
+```
+
+Nesting can go as deep as you like this way. A nested If's own condition never
+affects an outer If's pending Otherwise — only the outermost If on a line
+decides whether that line's Otherwise runs.
+
 A variable's value, number or text, can be used anywhere a plain instruction ends
 with `to <name>`, such as `Set the text of points line to total points`.
 
@@ -238,9 +251,14 @@ style, and attribute names elsewhere in the page grammar. Typo fixes are always
 offered, never applied silently.
 
 **Current limits, stated plainly:**
-- No nested If inside If, or For each inside For each, yet — each sentence's
-  instructions must be ordinary page instructions, not another If/Otherwise/
-  For each sentence.
+- A For each's own repeated instruction can't itself contain a nested If or
+  For each (though it can still chain plain instructions with `and then`).
+  This is a deliberate parsing safety limit, not a missing feature: For each's
+  list of items (like "red, green and blue") is matched greedily so it can
+  contain commas, and adding a nested clause after it would introduce more
+  commas that could be parsed as part of the list instead. If or Otherwise, on
+  the other hand, nest safely because their own parsing always stops at the
+  first comma no matter what follows.
 - Text variables can only be compared with `equal to` or `not equal to`;
   there's no ordering (`greater than`, etc.) for text, and text can't be used
   in arithmetic.

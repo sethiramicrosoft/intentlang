@@ -305,3 +305,62 @@ For each color in red and blue, add a list item called swatch color inside color
   assert.equal(textOf(ir, "swatch red"), "red");
   assert.equal(textOf(ir, "swatch blue"), "blue");
 });
+
+test("an If sentence can nest another If as its instruction", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 42.
+The wins is 12.
+If the score is greater than 10, if the wins is greater than 5, set the text of message to double win`);
+  assert.equal(textOf(ir, "message"), "double win");
+});
+
+test("a nested If's own condition can still be false without affecting the outer condition", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 42.
+The wins is 2.
+If the score is greater than 10, if the wins is greater than 5, set the text of message to double win`);
+  assert.equal(textOf(ir, "message"), "");
+});
+
+test("nested If can go three levels deep", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The a is 1.
+The b is 1.
+The c is 1.
+If the a is equal to 1, if the b is equal to 1, if the c is equal to 1, set the text of message to all true`);
+  assert.equal(textOf(ir, "message"), "all true");
+});
+
+test("Otherwise can nest an If as its instruction", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 2.
+The consolation is 9.
+If the score is greater than 10, set the text of message to high score
+Otherwise, if the consolation is greater than 5, set the text of message to good try`);
+  assert.equal(textOf(ir, "message"), "good try");
+});
+
+test("a nested If's own condition does not corrupt the outer If/Otherwise pairing", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 42.
+The wins is 1.
+If the score is greater than 10, if the wins is greater than 5, set the text of message to double win
+Otherwise, set the text of message to fallback`);
+  // The outer If was true (score > 10), so Otherwise must not run, even though the nested
+  // If's own condition (wins > 5) was false and produced no output.
+  assert.equal(textOf(ir, "message"), "");
+});
+
+test("an If sentence can nest a For each as its instruction", () => {
+  const { ir } = page(`Add a bullet list called colors inside page
+The show is 1.
+If the show is equal to 1, for each color in red and blue, add a list item called swatch color inside colors`);
+  assert.equal(textOf(ir, "swatch red"), "");
+  assert.equal(textOf(ir, "swatch blue"), "");
+});
+
+test("a For each's own repeated instruction is not itself parsed as a nested If or For each", () => {
+  const { ir } = page(`Add a bullet list called colors inside page
+For each color in red and blue, add a list item called swatch color inside colors`);
+  assert.equal(ir.elements.filter((element) => element.tag === "li").length, 2);
+});

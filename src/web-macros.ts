@@ -183,6 +183,111 @@ function suggestMacroFix(trimmed: string): VisualSuggestion | undefined {
   return undefined;
 }
 
+function report(diagnostics: VisualDiagnostic[], lineNumber: number, trimmed: string, code: string, message: string,
+  hint: string, suggestions?: VisualSuggestion[]) {
+  diagnostics.push({
+    code, category: suggestions?.length ? "typo" : "syntax", line: lineNumber, column: 1, length: trimmed.length,
+    message, hint, ...(suggestions?.length ? { suggestions } : {})
+  });
+}
+
+/**
+ * Evaluates an If sentence's condition only (does not touch the surrounding "last condition"
+ * state used for Otherwise-pairing, so a nested If never corrupts an outer one's pending
+ * Otherwise). Returns undefined when the condition itself couldn't be evaluated (a diagnostic
+ * has already been recorded in that case).
+ */
+function evaluateIfCondition(ifMatch: RegExpExecArray, text: string, lineNumber: number,
+  variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[]): boolean | undefined {
+  const name = ifMatch[1]!.trim().toLowerCase();
+  const subject = variables.get(name);
+  if (subject === undefined) {
+    const closest = closestVariable(ifMatch[1]!, variables);
+    report(diagnostics, lineNumber, text, "M001", `"${ifMatch[1]!.trim()}" was never given a value.`,
+      closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${ifMatch[1]!.trim()} is 0." before this line.`,
+      closest ? [{ label: `Use "${closest}"`, replacement: text.replace(ifMatch[1]!, closest) }] : undefined);
+    return undefined;
+  }
+  const comparator = ifMatch[2]!.trim().toLowerCase();
+  if (subject.type === "text") {
+    if (comparator !== "equal to" && comparator !== "not equal to") {
+      report(diagnostics, lineNumber, text, "M006",
+        `Text can only be compared with "is equal to" or "is not equal to", not "is ${comparator}".`,
+        `Try "If the ${ifMatch[1]!.trim()} is equal to ...".`,
+        [{ label: `Change "${comparator}" to "equal to"`, replacement: text.replace(ifMatch[2]!, "equal to") }]);
+      return undefined;
+    }
+    const target = resolveTextOperand(ifMatch[3]!, variables);
+    const isEqual = subject.value.trim().toLowerCase() === target.trim().toLowerCase();
+    return comparator === "equal to" ? isEqual : !isEqual;
+  }
+  const target = resolveNumericOperand(ifMatch[3]!, variables);
+  if (target === undefined) {
+    const closest = closestVariable(ifMatch[3]!, variables);
+    report(diagnostics, lineNumber, text, "M002", `"${ifMatch[3]!.trim()}" is not a number or a known variable.`,
+      closest ? `Did you mean "${closest}"?` : `Compare "${ifMatch[1]!.trim()}" to a number or to a variable defined earlier.`,
+      closest ? [{ label: `Use "${closest}"`, replacement: text.replace(ifMatch[3]!, closest) }] : undefined);
+    return undefined;
+  }
+  return compareNumbers(subject.value, comparator, target);
+}
+
+/**
+ * Expands one For each sentence into its repeated instructions. The per-item instruction is
+ * deliberately NOT re-checked for a nested If or For each: this loop's own list capture is
+ * greedy (so a multi-item list like "red, green and blue" survives its internal commas), which
+ * means it always claims up to the LAST comma on the line. If a nested clause after it added
+ * another comma, the list and the nested clause would be parsed incorrectly. Plain, possibly
+ * "and then"-chained instructions are still fully supported per item.
+ */
+function evaluateForEach(forEachMatch: RegExpExecArray, lineNumber: number, variables: Map<string, VarValue>,
+  diagnostics: VisualDiagnostic[]): string[] {
+  const loopVar = forEachMatch[1]!.trim();
+  const items = splitEnglishList(forEachMatch[2]!);
+  if (items.length === 0) {
+    report(diagnostics, lineNumber, forEachMatch[0]!, "M004",
+      `"For each ${loopVar} in ..." needs at least one item in its list.`,
+      `List one or more items, such as "For each ${loopVar} in red, green and blue, ...".`);
+    return [];
+  }
+  const results: string[] = [];
+  for (const item of items) {
+    for (const instr of splitInstructions(substituteWord(forEachMatch[3]!, loopVar, item))) results.push(instr);
+  }
+  return results;
+}
+
+/**
+ * Expands one instruction, recognizing that the instruction can itself be a whole nested If or
+ * For each sentence, e.g. "If the score is at least 40, if the wins is at least 10, set the text
+ * of message to double win." Nesting works here because an If sentence's own parsing always
+ * stops at the FIRST comma after its comparison target, no matter what follows, so a nested
+ * clause after it never confuses the outer one. (For each's list can't make that same guarantee,
+ * which is why it isn't recursively expanded here; see `evaluateForEach`.)
+ */
+function expandInstruction(instr: string, lineNumber: number, variables: Map<string, VarValue>,
+  diagnostics: VisualDiagnostic[]): string[] {
+  const trimmedInstr = instr.trim();
+  const nestedIf = IF_RE.exec(trimmedInstr);
+  if (nestedIf) {
+    const condition = evaluateIfCondition(nestedIf, trimmedInstr, lineNumber, variables, diagnostics);
+    if (condition === undefined) return [];
+    return condition ? expandChain(nestedIf[4]!, lineNumber, variables, diagnostics) : [];
+  }
+  const nestedForEach = FOR_EACH_RE.exec(trimmedInstr);
+  if (nestedForEach) return evaluateForEach(nestedForEach, lineNumber, variables, diagnostics);
+  return [instr];
+}
+
+/** Splits an If or Otherwise sentence's body on "and then", expanding each part (which may
+ * itself be a nested If or For each sentence) in order. */
+function expandChain(text: string, lineNumber: number, variables: Map<string, VarValue>,
+  diagnostics: VisualDiagnostic[]): string[] {
+  const result: string[] = [];
+  for (const part of splitInstructions(text)) result.push(...expandInstruction(part, lineNumber, variables, diagnostics));
+  return result;
+}
+
 /** True if any line looks like a variable, conditional, or repetition sentence. */
 export function usesMacroGrammar(source: string): boolean {
   return source.split(/\r?\n/).some((line) => {
@@ -193,10 +298,10 @@ export function usesMacroGrammar(source: string): boolean {
 
 /**
  * Expands "The X is Y.", "If the X is ..., ...", "Otherwise, ...", and
- * "For each X in ..., ..." into plain page-grammar instructions. Each sentence can carry
- * one instruction, or several chained with "and then" (e.g. "..., add a swatch and then
- * set its color."); nesting one of these sentences inside another is not supported yet, so
- * the grammar stays unambiguous while still reading as ordinary English.
+ * "For each X in ..., ..." into plain page-grammar instructions. Each sentence can carry one
+ * instruction, several chained with "and then", or a nested If sentence (an If or Otherwise's
+ * instruction can itself be another If, or a For each). A For each's own repeated instruction
+ * stays flat (see `evaluateForEach`) to keep its list parsing unambiguous.
  */
 export function expandMacros(source: string): MacroExpandResult {
   const lines = source.split(/\r?\n/);
@@ -204,13 +309,6 @@ export function expandMacros(source: string): MacroExpandResult {
   const output: string[] = [];
   const diagnostics: VisualDiagnostic[] = [];
   let lastCondition: boolean | undefined;
-  function report(lineNumber: number, trimmed: string, code: string, message: string, hint: string,
-    suggestions?: VisualSuggestion[]) {
-    diagnostics.push({
-      code, category: suggestions?.length ? "typo" : "syntax", line: lineNumber, column: 1, length: trimmed.length,
-      message, hint, ...(suggestions?.length ? { suggestions } : {})
-    });
-  }
 
   lines.forEach((rawLine, index) => {
     const lineNumber = index + 1;
@@ -242,72 +340,34 @@ export function expandMacros(source: string): MacroExpandResult {
 
     const ifMatch = IF_RE.exec(trimmed);
     if (ifMatch) {
-      const name = ifMatch[1]!.trim().toLowerCase();
-      const subject = variables.get(name);
-      if (subject === undefined) {
-        const closest = closestVariable(ifMatch[1]!, variables);
-        report(lineNumber, trimmed, "M001", `"${ifMatch[1]!.trim()}" was never given a value.`,
-          closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${ifMatch[1]!.trim()} is 0." before this line.`,
-          closest ? [{ label: `Use "${closest}"`, replacement: rawLine.replace(ifMatch[1]!, closest) }] : undefined);
-        return;
-      }
-      const comparator = ifMatch[2]!.trim().toLowerCase();
-      if (subject.type === "text") {
-        if (comparator !== "equal to" && comparator !== "not equal to") {
-          report(lineNumber, trimmed, "M006", `Text can only be compared with "is equal to" or "is not equal to", not "is ${comparator}".`,
-            `Try "If the ${ifMatch[1]!.trim()} is equal to ...".`,
-            [{ label: `Change "${comparator}" to "equal to"`, replacement: rawLine.replace(ifMatch[2]!, "equal to") }]);
-          return;
-        }
-        const target = resolveTextOperand(ifMatch[3]!, variables);
-        const isEqual = subject.value.trim().toLowerCase() === target.trim().toLowerCase();
-        lastCondition = comparator === "equal to" ? isEqual : !isEqual;
-        if (lastCondition) for (const instr of splitInstructions(ifMatch[4]!)) output.push(instr);
-        return;
-      }
-      const target = resolveNumericOperand(ifMatch[3]!, variables);
-      if (target === undefined) {
-        const closest = closestVariable(ifMatch[3]!, variables);
-        report(lineNumber, trimmed, "M002", `"${ifMatch[3]!.trim()}" is not a number or a known variable.`,
-          closest ? `Did you mean "${closest}"?` : `Compare "${ifMatch[1]!.trim()}" to a number or to a variable defined earlier.`,
-          closest ? [{ label: `Use "${closest}"`, replacement: rawLine.replace(ifMatch[3]!, closest) }] : undefined);
-        return;
-      }
-      lastCondition = compareNumbers(subject.value, comparator, target);
-      if (lastCondition) for (const instr of splitInstructions(ifMatch[4]!)) output.push(instr);
+      const condition = evaluateIfCondition(ifMatch, trimmed, lineNumber, variables, diagnostics);
+      if (condition === undefined) return; // a diagnostic was already recorded
+      lastCondition = condition;
+      if (condition) for (const instr of expandChain(ifMatch[4]!, lineNumber, variables, diagnostics)) output.push(instr);
       return;
     }
 
     const otherwise = OTHERWISE_RE.exec(trimmed);
     if (otherwise) {
       if (lastCondition === undefined) {
-        report(lineNumber, trimmed, "M003", `"Otherwise" must come right after an "If" sentence.`,
+        report(diagnostics, lineNumber, trimmed, "M003", `"Otherwise" must come right after an "If" sentence.`,
           `Add an "If the ... is ..., ..." sentence before this line.`);
         return;
       }
-      if (!lastCondition) for (const instr of splitInstructions(otherwise[1]!)) output.push(instr);
+      if (!lastCondition) for (const instr of expandChain(otherwise[1]!, lineNumber, variables, diagnostics)) output.push(instr);
       return;
     }
 
     const forEach = FOR_EACH_RE.exec(trimmed);
     if (forEach) {
-      const loopVar = forEach[1]!.trim();
-      const items = splitEnglishList(forEach[2]!);
-      if (items.length === 0) {
-        report(lineNumber, trimmed, "M004", `"For each ${loopVar} in ..." needs at least one item in its list.`,
-          `List one or more items, such as "For each ${loopVar} in red, green and blue, ...".`);
-        return;
-      }
-      const instructions = splitInstructions(forEach[3]!);
-      for (const item of items) {
-        for (const instr of instructions) output.push(substituteWord(instr, loopVar, item));
-      }
+      for (const instr of evaluateForEach(forEach, lineNumber, variables, diagnostics)) output.push(instr);
       return;
     }
 
     const fix = suggestMacroFix(trimmed);
     if (fix) {
-      report(lineNumber, trimmed, "M005", `This line looks like it was meant to be a variable, If, Otherwise, or For each sentence, but has a spelling mistake.`,
+      report(diagnostics, lineNumber, trimmed, "M005",
+        `This line looks like it was meant to be a variable, If, Otherwise, or For each sentence, but has a spelling mistake.`,
         fix.label, [fix]);
       return;
     }
