@@ -4,13 +4,15 @@ export type PageStatement =
   | { kind: "put"; target: string; parent: string }
   | { kind: "make"; phrase: string }
   | { kind: "underline"; target: string }
-  | { kind: "show"; source: string };
+  | { kind: "show"; source: string }
+  | { kind: "when"; target: string; body: string };
 
 export function usesPageGrammar(source: string): boolean {
   return source.split(/\r?\n/).some((line) =>
     /^\s*(?:add|create)\b/i.test(line) ||
     /^\s*set\s+.+?\s+of\s+.+?\s+to\b/i.test(line) ||
-    /^\s*put\s+.+?\s+inside\b/i.test(line));
+    /^\s*put\s+.+?\s+inside\b/i.test(line) ||
+    /^\s*when\s+.+?\s+is\s+clicked\s*,/i.test(line));
 }
 
 export function parsePageStatement(line: string): PageStatement | undefined {
@@ -30,5 +32,8 @@ export function parsePageStatement(line: string): PageStatement | undefined {
   const underline = /^underline\s+(.+)$/i.exec(control);
   if (underline) return { kind: "underline", target: underline[1]! };
   if (/^(show|display)\s+/i.test(source)) return { kind: "show", source };
+  const when = /^when\s+(?:the\s+)?(.+?)\s+is\s+clicked\s*,\s*(.+?)\.?$/i.exec(source);
+  if (when) return { kind: "when", target: when[1]!, body: when[2]! };
   return undefined;
 }
+

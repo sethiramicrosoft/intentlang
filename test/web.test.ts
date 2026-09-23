@@ -202,6 +202,61 @@ test("executable content, declaration injection and unsupported active capabilit
   assert.doesNotMatch(content.html, /<script>/);
 });
 
+test("a page with no When-clicked sentence stays entirely script-free, byte for byte", () => {
+  const result = page("Add a paragraph called greeting\nSet the text of greeting to Hello world");
+  assert.doesNotMatch(result.html, /<script>/);
+  assert.doesNotMatch(result.html, /script-src/);
+});
+
+test("When ... is clicked compiles to a single hash-pinned script, and only when used", () => {
+  const result = page(`Add a paragraph called counter
+Set the text of counter to 0
+Add a button called increment
+Set the text of increment to Add one
+When the increment is clicked, add 1 to the text of counter`);
+  assert.match(result.html, /<script>"use strict";.+<\/script>/);
+  assert.match(result.html, /script-src 'sha256-/);
+  // The script tag body's own hash must match what's declared in the CSP, so the browser will
+  // actually allow it to run instead of silently refusing it.
+  const scriptBody = /<script>(.+?)<\/script>/.exec(result.html)![1]!;
+  const expectedHash = createHash("sha256").update(scriptBody).digest("base64");
+  assert.ok(result.html.includes(`script-src 'sha256-${expectedHash}'`));
+  assert.doesNotMatch(result.html, /onclick=/);
+  // User-visible text is embedded as a JSON string literal, never as raw executable code.
+  assert.match(scriptBody, /getElementById\("element-2"\)\.addEventListener\("click"/);
+});
+
+test("When ... is clicked only accepts a button as its target", () => {
+  invalid(`Add a paragraph called label
+When the label is clicked, set the text of label to clicked`, /Only a button can be clicked/);
+});
+
+test("When ... is clicked only accepts its small closed set of runtime instructions", () => {
+  invalid(`Add a button called go
+When the go is clicked, delete everything`, /not one of the supported click instructions/);
+});
+
+test("When ... is clicked can chain multiple runtime instructions with and-then", () => {
+  const result = page(`Add a paragraph called counter
+Set the text of counter to 5
+Add a paragraph called status
+Add a button called reset
+Set the text of reset to Reset
+When the reset is clicked, set the text of counter to 0 and then set the text of status to Reset done`);
+  const scriptBody = /<script>(.+?)<\/script>/.exec(result.html)![1]!;
+  assert.match(scriptBody, /textContent=\"0\"/);
+  assert.match(scriptBody, /textContent=\"Reset done\"/);
+});
+
+test("subtracting from the text of a target works and clamps to a real number even if text isn't numeric yet", () => {
+  const result = page(`Add a paragraph called counter
+Add a button called decrement
+Set the text of decrement to Subtract one
+When the decrement is clicked, subtract 1 from the text of counter`);
+  const scriptBody = /<script>(.+?)<\/script>/.exec(result.html)![1]!;
+  assert.match(scriptBody, /Number\(e\.textContent\)\|\|0\)\+\(-1\)/);
+});
+
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
   const result = page(`Add an image called photo
 Set the source of photo to https://example.com/MyPhoto.png

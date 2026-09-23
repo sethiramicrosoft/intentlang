@@ -157,12 +157,37 @@ Details/summary expansion, checkbox toggling, text entry, select options, native
 constraint validation and media controls are browser behavior, not generated
 JavaScript. Buttons default to ordinary buttons, not submission. Forms do not
 submit data; generated pages prohibit form actions. The preview sandbox also
-blocks new windows and submissions. Creating a button does not create a click
-handler or backend service.
+blocks new windows and submissions.
 
-Script, inline event-handler, arbitrary stylesheet, embedded-document, template,
-shadow-DOM, canvas-drawing, SVG/MathML, named page-animation, and backend features
-are not implemented. The compiler manages the HTML document shell and security
+**`When the <button name> is clicked, <one or more instructions>.`** adds a real
+runtime click handler. This is still plain English, and the instruction is
+still a fixed, closed set (chained with `and then` the same way everywhere
+else in the language is): `set the text of <name> to <value>`,
+`add <number> to the text of <name>`, and `subtract <number> from the text of
+<name>`. The compiler turns every `When ... is clicked` sentence in a page into
+ONE small, entirely compiler-generated script (never containing any
+user-authored markup, attribute, or script tag — only compiler-fixed code with
+your text safely embedded as a JSON string), and pins that exact script into
+the page's Content-Security-Policy by its SHA-256 hash. A page that doesn't use
+`When ... is clicked` stays exactly as script-free as before, byte for byte.
+The target of "is clicked" must be a button (a native, keyboard-operable
+control), so this never creates a click-only trap for people who use a
+keyboard or assistive technology instead of a mouse.
+
+```text
+Add a paragraph called counter
+Set the text of counter to 0
+Add a button called increment
+Set the text of increment to Add one
+When the increment is clicked, add 1 to the text of counter
+```
+
+User-authored `<script>` elements, `onclick`-style inline event-handler
+attributes, arbitrary stylesheets, embedded documents, templates, shadow-DOM,
+canvas-drawing, SVG/MathML, named page-animation, and backend features are
+still not implemented and remain refused — the compiler is still the only
+thing that can ever put JavaScript on a page, and only for the one sanctioned
+runtime shape above. The compiler manages the HTML document shell and security
 policy. Vendor-specific or unvalidated CSS entries remain restricted.
 The capability browser and `GET /api/visual/capabilities` explain these limits.
 Adding catalogue entries alone is not sufficient to implement new behavior.
@@ -270,10 +295,12 @@ offered, never applied silently.
 - Text variables can only be compared with `equal to` or `not equal to`;
   there's no ordering (`greater than`, etc.) for text, and text can't be used
   in arithmetic.
-- This is compile-time only. A page can react to what a variable's value was when
-  you compiled it, not to anything a visitor does afterward; there is still no
-  generated JavaScript. Runtime interactivity (state that changes after a click)
-  is a deliberate, larger design decision that hasn't been made yet.
+- The, If, Otherwise, and For each sentences on this page are compile-time
+  only: they compute a value once, when the page is compiled, not in response
+  to anything a visitor does afterward. Real runtime interactivity does now
+  exist in the language, but as its own separate, much smaller sentence —
+  see **`When the <button> is clicked, ...`** under "Native behavior and
+  current limits" below — rather than as part of these variables.
 
 See `examples/season-scoreboard.visual.intent` for a complete, working file.
 

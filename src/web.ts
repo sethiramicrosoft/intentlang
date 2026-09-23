@@ -109,6 +109,9 @@ export function compilePageSource(source: string): PageCompileResult {
   const names = new Map<string, PageElement>([["page", root]]);
   const claims = new Set<string>();
   const references: { node: PageElement; attribute: string; value: string; line: number }[] = [];
+  // Each entry is one already-safe JS statement (element ids are compiler-generated,
+  // never derived from user text; literal text is always embedded via JSON.stringify).
+  const runtimeScripts: string[] = [];
   function report(index: number, message: string, hint: string, suggestions?: VisualSuggestion[], category: VisualDiagnostic["category"] = "syntax") {
     const line = lines[index] ?? "";
     diagnostics.push({ code: category === "ambiguity" ? "W002" : "W001", category, message, hint,
@@ -143,6 +146,42 @@ export function compilePageSource(source: string): PageCompileResult {
         matches.length ? "typo" : "syntax");
     }
     return found;
+  }
+  /**
+   * Compiles a "When ... is clicked, <body>" sentence's body into a single JS statement string,
+   * or undefined if a diagnostic was reported. Only a small, closed set of runtime instructions
+   * is supported (chained the same way macro instructions chain, with "and then"), so the
+   * generated code is always one of a handful of fixed shapes: it never runs user-supplied text
+   * as code, only ever embeds it as a JSON-encoded string or a validated plain number.
+   */
+  function compileClickBody(body: string, index: number): string | undefined {
+    const parts = body.split(/\s+and\s+then\s+/i).map((part) => part.trim()).filter(Boolean);
+    const statements: string[] = [];
+    for (const part of parts) {
+      const setText = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part);
+      const addText = /^add\s+(-?\d+(?:\.\d+)?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+      const subtractText = /^subtract\s+(-?\d+(?:\.\d+)?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+      if (setText) {
+        const target = resolve(setText[1]!, index);
+        if (!target) return undefined;
+        statements.push(`document.getElementById(${JSON.stringify(target.id)}).textContent=${JSON.stringify(dequoteRuntime(setText[2]!))};`);
+      } else if (addText || subtractText) {
+        const match = addText ?? subtractText!;
+        const target = resolve(match[2]!, index);
+        if (!target) return undefined;
+        const amount = (addText ? 1 : -1) * Number(match[1]);
+        statements.push(`(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
+          `e.textContent=String((Number(e.textContent)||0)+(${JSON.stringify(amount)}));})();`);
+      } else {
+        report(index, `"${part}" is not one of the supported click instructions.`,
+          `Try "set the text of ... to ...", "add ... to the text of ...", or "subtract ... from the text of ...".`);
+        return undefined;
+      }
+    }
+    return statements.join("");
+  }
+  function dequoteRuntime(text: string): string {
+    return /^"([\s\S]*)"$/.exec(text.trim())?.[1] ?? text.trim();
   }
   function setStyle(node: PageElement, property: string, value: string, index: number) {
     const capability = webStyles.find((entry) => entry.name === property);
@@ -289,6 +328,18 @@ export function compilePageSource(source: string): PageCompileResult {
       }
       continue;
     }
+    if (statement.kind === "when") {
+      const target = resolve(statement.target, index);
+      if (!target) continue;
+      if (target.tag !== "button") {
+        report(index, `Only a button can be clicked, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add a button called ${target.name} instead, such as Add a button called ${target.name}.`);
+        continue;
+      }
+      const snippet = compileClickBody(statement.body, index);
+      if (snippet) runtimeScripts.push(`document.getElementById(${JSON.stringify(target.id)}).addEventListener("click",function(){${snippet}});`);
+      continue;
+    }
     if (statement.kind === "make") {
       const phrase = targetKey(statement.phrase);
       const candidates = [...elements.map((node) => node.name), "it", "background"]
@@ -421,7 +472,8 @@ export function compilePageSource(source: string): PageCompileResult {
     if (!found.has(node.id)) report(node.line - 1, `The browser would discard ${node.name} in this position.`, "Choose a valid parent.");
   }
   if (diagnostics.length) return { ok: false, diagnostics };
-  return { ok: true, ir, html: renderPage(ir, body) };
+  const script = runtimeScripts.length ? `"use strict";${runtimeScripts.join("")}` : undefined;
+  return { ok: true, ir, html: renderPage(ir, body, script) };
 }
 
 function renderAttributes(node: PageElement): string {
@@ -435,16 +487,22 @@ function renderChildren(ir: PageProgram, parent: string): string {
     return `${start}${escapeHtml(text)}${renderChildren(ir, node.id)}</${node.tag}>`;
   }).join("");
 }
-function renderPage(ir: PageProgram, body: string): string {
+function renderPage(ir: PageProgram, body: string, script?: string): string {
   const css = `*{box-sizing:border-box}body{margin:24px;font-family:system-ui,sans-serif;overflow-wrap:anywhere}
 img,video{max-width:100%;height:auto}input,select,textarea,button{font:inherit;max-width:100%}
 ${ir.elements.filter((node) => Object.keys(node.styles).length).map((node) =>
     `#${node.id}{${Object.entries(node.styles).map(([property, value]) => `${property}:${value}`).join(";")}}`).join("\n")}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}`;
   const hash = createHash("sha256").update(css).digest("base64");
+  // A page stays entirely script-free unless it actually uses a "When ... is clicked" sentence.
+  // When it does, the ONE script the compiler itself generated (never user-authored markup or
+  // text) is hash-pinned into the CSP, so nothing else can ever execute.
+  const scriptTag = script ? `<script>${script}</script>` : "";
+  const scriptSrc = script ? ` script-src 'sha256-${createHash("sha256").update(script).digest("base64")}';` : "";
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-${hash}'; img-src 'self' https: data:; media-src 'self' https:; font-src 'self' https:; base-uri 'none'; form-action 'none'">
-<title>IntentLang page</title><style>${css}</style></head><body${renderAttributes(ir.elements[0]!)}>${body}</body></html>
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-${hash}';${scriptSrc} img-src 'self' https: data:; media-src 'self' https:; font-src 'self' https:; base-uri 'none'; form-action 'none'">
+<title>IntentLang page</title><style>${css}</style></head><body${renderAttributes(ir.elements[0]!)}>${body}${scriptTag}</body></html>
 `;
 }
+

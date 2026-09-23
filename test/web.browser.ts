@@ -125,6 +125,28 @@ test("page playground builds real HTML, discovers capabilities and exports nativ
   }
 });
 
+test("a compiled When-clicked page runs its own hash-pinned script live in a real browser", async () => {
+  const compiled = compilePageSource(`Add a paragraph called counter
+Set the text of counter to 0
+Add a button called increment
+Set the text of increment to Add one
+When the increment is clicked, add 1 to the text of counter`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    assert.equal(await page.locator("#element-1").textContent(), "0");
+    await page.locator("#element-2").click();
+    await page.locator("#element-2").click();
+    assert.equal(await page.locator("#element-1").textContent(), "2");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("all advertised element types survive real browser parsing with their requested parentage", async () => {
   const source = webElements.filter((element) => element.status === "available")
     .map((element) => elementExample(element).replace(/\b(called|inside) sample /g, `$1 sample ${element.name} `)).join("\n");

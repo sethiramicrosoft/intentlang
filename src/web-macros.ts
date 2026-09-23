@@ -1,7 +1,9 @@
 // Compile-time only: variables, conditionals, and repetition, written as plain English
 // sentences (no colons, no "end" keywords, no block syntax). Everything here is resolved
-// before the page grammar ever sees the source, so a page still compiles to static HTML/CSS
-// with no generated JavaScript.
+// before the page grammar ever sees the source, so THIS layer never generates JavaScript --
+// its output is always plain page-grammar text. (Real runtime interactivity does exist in
+// the language, as the page grammar's own "When ... is clicked" sentence in web.ts; it isn't
+// part of this compile-time macro layer.)
 import { oneEditAway, type VisualDiagnostic, type VisualSuggestion } from "./visual.js";
 
 export type MacroExpandResult =
