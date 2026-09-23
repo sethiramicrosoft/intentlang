@@ -10,7 +10,7 @@
     "build": "tsc -p tsconfig.build.json",
     "check": "tsc --noEmit",
     "test": "tsx --test test/**/*.test.ts",
-    "test:browser": "tsx --test test/visual.browser.ts test/web.browser.ts",
+    "test:browser": "tsx --test test/visual.browser.ts test/web.browser.ts test/last-signal.browser.ts test/gallery.browser.ts",
     "sample:visual": "tsx src/cli.ts visual examples/hello-world.visual.intent",
     "sample:check": "tsx src/cli.ts check examples/todo.intent",
     "sample:format": "tsx src/cli.ts format examples/todo.intent",

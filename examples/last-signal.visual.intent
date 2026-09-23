@@ -1,0 +1,379 @@
+Set the background color of page to black
+Set the color of page to ghostwhite
+Set the margin of page to auto
+Set the max width of page to 1200 pixels
+Set the padding of page to 24 pixels
+Set the font family of page to system-ui
+Set the line height of page to 1.6
+Add a header called masthead
+Set the display of masthead to flex
+Set the flex wrap of masthead to wrap
+Set the justify content of masthead to space between
+Set the gap of masthead to 12 pixels
+Set the border bottom of masthead to 1 pixels solid darkslategray
+Set the padding bottom of masthead to 16 pixels
+Add a paragraph called identity inside masthead
+Set the text of identity to ORBITAL ARCHIVE / INTERACTIVE FICTION
+Set the font size of identity to 12 pixels
+Set the letter spacing of identity to 2 pixels
+Set the color of identity to aquamarine
+Add a paragraph called issue inside masthead
+Set the text of issue to TRANSMISSION 009 / ENGLISH BUILT THIS
+Set the font size of issue to 12 pixels
+Set the color of issue to silver
+Add a main called story
+Add a section called hero inside story
+Set the display of hero to flex
+Set the flex wrap of hero to wrap
+Set the align items of hero to center
+Set the gap of hero to 40 pixels
+Set the padding of hero to 48 pixels 0
+Add a section called introduction inside hero
+Set the flex of introduction to 2 1 380 pixels
+Set the min width of introduction to 0
+Add a paragraph called coordinates inside introduction
+Set the text of coordinates to EUROPA ORBIT / 03:17 SHIP TIME
+Set the color of coordinates to aquamarine
+Set the letter spacing of coordinates to 3 pixels
+Set the font size of coordinates to 11 pixels
+Add a heading called title inside introduction
+Set the text of title to THE LAST SIGNAL
+Set the font size of title to 64 pixels
+Set the line height of title to 1
+Set the letter spacing of title to -3 pixels
+Set the margin of title to 20 pixels 0
+Add a paragraph called premise inside introduction
+Set the text of premise to A station that went dark eleven years ago has started transmitting your name.
+Set the font size of premise to 22 pixels
+Set the max width of premise to 540 pixels
+Set the color of premise to lightsteelblue
+Add a paragraph called challenge inside introduction
+Set the text of challenge to One boarding window. Two ways inside. Three endings. Follow the evidence, or trust the voice.
+Set the color of challenge to silver
+Add a button called start inside introduction
+Set the text of start to BEGIN TRANSMISSION
+Set the popover target of start to arrival
+Set the background color of start to aquamarine
+Set the color of start to black
+Set the border of start to none
+Set the padding of start to 18 pixels 26 pixels
+Set the border radius of start to 8 pixels
+Set the font weight of start to 700
+Set the letter spacing of start to 1 pixels
+Set the cursor of start to pointer
+Add a paragraph called play note inside introduction
+Set the text of play note to A short branching story. No account. No downloads. No generated JavaScript.
+Set the font size of play note to 12 pixels
+Set the color of play note to darkgray
+Add a section called viewport inside hero
+Set the flex of viewport to 1 1 300 pixels
+Set the min width of viewport to 0
+Set the position of viewport to relative
+Set the height of viewport to 340 pixels
+Set the overflow of viewport to hidden
+Set the border of viewport to 1 pixels solid darkslategray
+Set the border radius of viewport to 24 pixels
+Set the background color of viewport to midnightblue
+Set the aria label of viewport to Illustration of an icy moon and a distant station
+Add a container called moon inside viewport
+Set the position of moon to absolute
+Set the width of moon to 240 pixels
+Set the height of moon to 240 pixels
+Set the top of moon to 44 pixels
+Set the left of moon to 18 percent
+Set the border radius of moon to 50 percent
+Set the background color of moon to paleturquoise
+Set the box shadow of moon to 0 0 80 pixels teal
+Add a container called shadow inside moon
+Set the position of shadow to absolute
+Set the width of shadow to 220 pixels
+Set the height of shadow to 230 pixels
+Set the left of shadow to 32 pixels
+Set the top of shadow to -4 pixels
+Set the border radius of shadow to 50 percent
+Set the background color of shadow to midnightblue
+Add a paragraph called station inside viewport
+Set the text of station to + KEPLER STATION
+Set the position of station to absolute
+Set the top of station to 140 pixels
+Set the left of station to 20 pixels
+Set the color of station to white
+Set the font family of station to monospace
+Set the font size of station to 12 pixels
+Set the letter spacing of station to 2 pixels
+Add a paragraph called viewport caption inside viewport
+Set the text of viewport caption to OPTICAL FEED / SIGNAL REACQUIRED
+Set the position of viewport caption to absolute
+Set the bottom of viewport caption to 12 pixels
+Set the left of viewport caption to 20 pixels
+Set the font size of viewport caption to 10 pixels
+Set the letter spacing of viewport caption to 1 pixels
+Set the color of viewport caption to aquamarine
+Add a section called telemetry inside story
+Set the display of telemetry to flex
+Set the flex wrap of telemetry to wrap
+Set the gap of telemetry to 16 pixels
+Add an article called signal card inside telemetry
+Set the flex of signal card to 1 1 240 pixels
+Set the padding of signal card to 20 pixels
+Set the background color of signal card to midnightblue
+Set the border radius of signal card to 12 pixels
+Add a paragraph called signal label inside signal card
+Set the text of signal label to SIGNAL INTEGRITY
+Set the font size of signal label to 11 pixels
+Set the letter spacing of signal label to 2 pixels
+Add a progress bar called signal inside signal card
+Set the max of signal to 100
+Set the value of signal to 73
+Set the style width of signal to 100 percent
+Set the accent color of signal to aquamarine
+Set the accessible name of signal to Fictional signal integrity
+Add a paragraph called signal note inside signal card
+Set the text of signal note to 73 percent / enough to hear a voice
+Set the font size of signal note to 12 pixels
+Set the color of signal note to lightsteelblue
+Add an article called crew card inside telemetry
+Set the flex of crew card to 1 1 240 pixels
+Set the padding of crew card to 20 pixels
+Set the background color of crew card to midnightblue
+Set the border radius of crew card to 12 pixels
+Add a paragraph called crew label inside crew card
+Set the text of crew label to REGISTERED CREW
+Set the font size of crew label to 11 pixels
+Set the letter spacing of crew label to 2 pixels
+Add a subheading called crew number inside crew card
+Set the text of crew number to 0 / 12
+Set the margin of crew number to 0
+Add a paragraph called crew note inside crew card
+Set the text of crew note to Motion sensors disagree.
+Set the font size of crew note to 12 pixels
+Set the color of crew note to lightsteelblue
+Add an article called mission card inside telemetry
+Set the flex of mission card to 1 1 240 pixels
+Set the padding of mission card to 20 pixels
+Set the border of mission card to 1 pixels solid darkslategray
+Set the border radius of mission card to 12 pixels
+Add a paragraph called mission label inside mission card
+Set the text of mission label to MISSION DIRECTIVE
+Set the font size of mission label to 11 pixels
+Set the letter spacing of mission label to 2 pixels
+Add a subheading called mission title inside mission card
+Set the text of mission title to Bring back the truth.
+Set the margin of mission title to 0
+Set the font size of mission title to 20 pixels
+Add a paragraph called mission note inside mission card
+Set the text of mission note to Not everything that calls is asking for help.
+Set the font size of mission note to 12 pixels
+Set the color of mission note to lightsteelblue
+Add an expandable section called archive inside story
+Set the margin top of archive to 28 pixels
+Set the padding of archive to 22 pixels
+Set the border of archive to 1 pixels solid darkslategray
+Set the border radius of archive to 12 pixels
+Add a summary called archive title inside archive
+Set the text of archive title to OPTIONAL INTELLIGENCE / Open the recovered maintenance log
+Set the color of archive title to aquamarine
+Set the cursor of archive title to pointer
+Add a paragraph called archive first inside archive
+Set the text of archive first to ENGINEER'S LOG: The station relay can imitate any voice in the crew archive. Never authenticate a distress call by voice alone.
+Add a paragraph called archive second inside archive
+Set the text of archive second to The medical archive has an independent battery. Its amber beacon means life-support is still active. Cutting relay power does not cut medical power.
+Set the color of archive second to lightsteelblue
+Add a section called arrival
+Set the popover of arrival to auto
+Set the width of arrival to 560 pixels
+Set the max width of arrival to 90 percent
+Set the max height of arrival to 85 percent
+Set the overflow y of arrival to auto
+Set the padding of arrival to 28 pixels
+Set the background color of arrival to midnightblue
+Set the color of arrival to white
+Set the border of arrival to 2 pixels solid aquamarine
+Set the border radius of arrival to 20 pixels
+Set the box shadow of arrival to 0 0 0 10000 pixels black
+Set the accessible name of arrival to The docking bay
+Add a paragraph called arrival chapter inside arrival
+Set the text of arrival chapter to CHAPTER 01 / CONTACT
+Set the color of arrival chapter to aquamarine
+Add a subheading called arrival title inside arrival
+Set the text of arrival title to Someone is expecting you.
+Add a paragraph called arrival prose inside arrival
+Set the text of arrival prose to Your boots touch the docking bay. A voice crackles through the wall: "Finally. Come to the bridge. I can get us home." Along the opposite corridor, an amber medical beacon blinks.
+Add a paragraph called arrival question inside arrival
+Set the text of arrival question to Where do you go?
+Add a button called bridge choice inside arrival
+Set the text of bridge choice to Follow the voice
+Set the popover target of bridge choice to bridge
+Set the padding of bridge choice to 14 pixels
+Set the border radius of bridge choice to 8 pixels
+Set the border of bridge choice to none
+Set the background color of bridge choice to aquamarine
+Set the cursor of bridge choice to pointer
+Add a button called medical choice inside arrival
+Set the text of medical choice to Investigate the amber beacon
+Set the popover target of medical choice to medical
+Set the padding of medical choice to 14 pixels
+Set the border radius of medical choice to 8 pixels
+Set the border of medical choice to none
+Set the cursor of medical choice to pointer
+Add a section called bridge
+Set the popover of bridge to auto
+Set the width of bridge to 560 pixels
+Set the max width of bridge to 90 percent
+Set the max height of bridge to 85 percent
+Set the overflow y of bridge to auto
+Set the padding of bridge to 28 pixels
+Set the background color of bridge to midnightblue
+Set the color of bridge to white
+Set the border of bridge to 2 pixels solid lightsalmon
+Set the border radius of bridge to 20 pixels
+Set the box shadow of bridge to 0 0 0 10000 pixels black
+Set the accessible name of bridge to The bridge
+Add a paragraph called bridge chapter inside bridge
+Set the text of bridge chapter to CHAPTER 02 / THE VOICE
+Set the color of bridge chapter to lightsalmon
+Add a subheading called bridge title inside bridge
+Set the text of bridge title to It sounds exactly like you.
+Add a paragraph called bridge prose inside bridge
+Set the text of bridge prose to The bridge is empty. Your own voice asks you to connect the station relay to your ship. The display shows twelve crew signatures, all transmitted from one circuit.
+Add a button called trust choice inside bridge
+Set the text of trust choice to Connect the relay
+Set the popover target of trust choice to echo ending
+Set the padding of trust choice to 14 pixels
+Set the border of trust choice to none
+Set the border radius of trust choice to 8 pixels
+Set the background color of trust choice to lightsalmon
+Set the cursor of trust choice to pointer
+Add a button called cut choice inside bridge
+Set the text of cut choice to Isolate the relay first
+Set the popover target of cut choice to medical
+Set the padding of cut choice to 14 pixels
+Set the border of cut choice to none
+Set the border radius of cut choice to 8 pixels
+Set the cursor of cut choice to pointer
+Add a section called medical
+Set the popover of medical to auto
+Set the width of medical to 560 pixels
+Set the max width of medical to 90 percent
+Set the max height of medical to 85 percent
+Set the overflow y of medical to auto
+Set the padding of medical to 28 pixels
+Set the background color of medical to midnightblue
+Set the color of medical to white
+Set the border of medical to 2 pixels solid gold
+Set the border radius of medical to 20 pixels
+Set the box shadow of medical to 0 0 0 10000 pixels black
+Set the accessible name of medical to The medical archive
+Add a paragraph called medical chapter inside medical
+Set the text of medical chapter to CHAPTER 03 / WHAT REMAINS
+Set the color of medical chapter to gold
+Add a subheading called medical title inside medical
+Set the text of medical title to Not a ghost. A heartbeat.
+Add a paragraph called medical prose inside medical
+Set the text of medical prose to You isolate the relay. The voices stop. Behind the amber door, one emergency sleep pod is still running on its own battery. Beside it is a sealed record of the crew's final days. Your shuttle can carry the pod or the heavy archive, not both.
+Add a button called rescue choice inside medical
+Set the text of rescue choice to Bring the survivor home
+Set the popover target of rescue choice to dawn ending
+Set the padding of rescue choice to 14 pixels
+Set the border of rescue choice to none
+Set the border radius of rescue choice to 8 pixels
+Set the background color of rescue choice to gold
+Set the cursor of rescue choice to pointer
+Add a button called archive choice inside medical
+Set the text of archive choice to Preserve the crew archive
+Set the popover target of archive choice to archive ending
+Set the padding of archive choice to 14 pixels
+Set the border of archive choice to none
+Set the border radius of archive choice to 8 pixels
+Set the cursor of archive choice to pointer
+Add a section called echo ending
+Set the popover of echo ending to auto
+Set the width of echo ending to 560 pixels
+Set the max width of echo ending to 90 percent
+Set the max height of echo ending to 85 percent
+Set the overflow y of echo ending to auto
+Set the padding of echo ending to 28 pixels
+Set the background color of echo ending to maroon
+Set the color of echo ending to white
+Set the border of echo ending to 2 pixels solid lightsalmon
+Set the border radius of echo ending to 20 pixels
+Set the box shadow of echo ending to 0 0 0 10000 pixels black
+Set the accessible name of echo ending to The echo ending
+Add a paragraph called echo label inside echo ending
+Set the text of echo label to ENDING 01 / THE ECHO
+Add a subheading called echo title inside echo ending
+Set the text of echo title to You brought the signal home.
+Add a paragraph called echo prose inside echo ending
+Set the text of echo prose to The relay copies itself into your ship. At the next outpost, every speaker begins calling someone by name. You were never the rescue team. You were the transport.
+Add a button called echo replay inside echo ending
+Set the text of echo replay to Reconsider the relay
+Set the popover target of echo replay to echo ending
+Set the popover action of echo replay to hide
+Set the padding of echo replay to 14 pixels 20 pixels
+Set the border of echo replay to none
+Set the border radius of echo replay to 8 pixels
+Set the cursor of echo replay to pointer
+Add a section called dawn ending
+Set the popover of dawn ending to auto
+Set the width of dawn ending to 560 pixels
+Set the max width of dawn ending to 90 percent
+Set the max height of dawn ending to 85 percent
+Set the overflow y of dawn ending to auto
+Set the padding of dawn ending to 28 pixels
+Set the background color of dawn ending to darkslategray
+Set the color of dawn ending to white
+Set the border of dawn ending to 2 pixels solid aquamarine
+Set the border radius of dawn ending to 20 pixels
+Set the box shadow of dawn ending to 0 0 0 10000 pixels black
+Set the accessible name of dawn ending to The dawn ending
+Add a paragraph called dawn label inside dawn ending
+Set the text of dawn label to ENDING 02 / DAWN
+Set the color of dawn label to aquamarine
+Add a subheading called dawn title inside dawn ending
+Set the text of dawn title to One life is not a small thing.
+Add a paragraph called dawn prose inside dawn ending
+Set the text of dawn prose to As Europa catches the sun, the survivor wakes. She does not ask about the archive. She asks whether anyone remembered their names. You tell her she can tell you all twelve.
+Add a button called dawn replay inside dawn ending
+Set the text of dawn replay to Make a different choice
+Set the popover target of dawn replay to dawn ending
+Set the popover action of dawn replay to hide
+Set the padding of dawn replay to 14 pixels 20 pixels
+Set the border of dawn replay to none
+Set the border radius of dawn replay to 8 pixels
+Set the background color of dawn replay to aquamarine
+Set the cursor of dawn replay to pointer
+Add a section called archive ending
+Set the popover of archive ending to auto
+Set the width of archive ending to 560 pixels
+Set the max width of archive ending to 90 percent
+Set the max height of archive ending to 85 percent
+Set the overflow y of archive ending to auto
+Set the padding of archive ending to 28 pixels
+Set the background color of archive ending to midnightblue
+Set the color of archive ending to white
+Set the border of archive ending to 2 pixels solid gold
+Set the border radius of archive ending to 20 pixels
+Set the box shadow of archive ending to 0 0 0 10000 pixels black
+Set the accessible name of archive ending to The witness ending
+Add a paragraph called witness label inside archive ending
+Set the text of witness label to ENDING 03 / THE WITNESS
+Set the color of witness label to gold
+Add a subheading called witness title inside archive ending
+Set the text of witness title to The truth has a weight.
+Add a paragraph called witness prose inside archive ending
+Set the text of witness prose to You return with the evidence that will prevent another disaster. The pod remains on its independent battery. Before landing, you file a rescue request. This time, the signal you send is your own.
+Add a button called witness replay inside archive ending
+Set the text of witness replay to Reconsider the archive
+Set the popover target of witness replay to archive ending
+Set the popover action of witness replay to hide
+Set the padding of witness replay to 14 pixels 20 pixels
+Set the border of witness replay to none
+Set the border radius of witness replay to 8 pixels
+Set the background color of witness replay to gold
+Set the cursor of witness replay to pointer
+Add a footer called credits
+Set the padding of credits to 24 pixels 0
+Set the color of credits to darkgray
+Set the font size of credits to 11 pixels
+Add a paragraph called explanation inside credits
+Set the text of explanation to MADE WITH INTENTLANG / All scenes, artwork and choices are compiled from English. Native HTML popovers connect the branches. No custom scripts, saved progress, live telemetry or AI inference. Press Escape to go back one scene.

@@ -1,0 +1,336 @@
+Set the background color of page to aliceblue
+Set the color of page to midnightblue
+Set the max width of page to 1180 pixels
+Set the margin of page to auto
+Set the padding of page to 20 pixels
+Set the line height of page to 1.6
+Add a header called masthead
+Set the display of masthead to flex
+Set the flex wrap of masthead to wrap
+Set the justify content of masthead to space between
+Set the align items of masthead to center
+Set the gap of masthead to 16 pixels
+Add a paragraph called brand inside masthead
+Set the text of brand to TOUCHLINE / COACHING DESK
+Make brand bold
+Set the letter spacing of brand to 2 pixels
+Add a navigation called navigation inside masthead
+Set the display of navigation to flex
+Set the gap of navigation to 20 pixels
+Add a link called drills link inside navigation
+Set the text of drills link to Drill library
+Add a button called briefing button inside navigation
+Set the text of briefing button to Match briefing
+Set the popover target of briefing button to briefing
+Set the background color of briefing button to midnightblue
+Set the color of briefing button to white
+Set the padding of briefing button to 10 pixels 16 pixels
+Set the border of briefing button to none
+Set the border radius of briefing button to 12 pixels
+Set the cursor of briefing button to pointer
+Add a section called hero
+Set the background color of hero to midnightblue
+Set the color of hero to white
+Set the padding of hero to 28 pixels
+Set the border radius of hero to 24 pixels
+Set the margin top of hero to 16 pixels
+Add a paragraph called eyebrow inside hero
+Set the text of eyebrow to UNDER 16 / WEEK 07 / DEMONSTRATION DATA
+Set the color of eyebrow to aquamarine
+Set the letter spacing of eyebrow to 2 pixels
+Set the font size of eyebrow to 12 pixels
+Add a heading called headline inside hero
+Set the text of headline to Prepare with purpose.
+Set the font size of headline to 42 pixels
+Set the line height of headline to 1.1
+Set the margin of headline to 12 pixels 0
+Add a paragraph called deck inside hero
+Set the text of deck to Saturday is earned on Tuesday. Build the session, review the squad, and make every repetition count.
+Set the max width of deck to 680 pixels
+Set the color of deck to lavender
+Add a paragraph called next game inside hero
+Set the text of next game to NEXT MATCH   Northside FC   /   Saturday 10:30   /   Home
+Set the color of next game to aquamarine
+Make next game bold
+Add a section called metrics
+Set the display of metrics to flex
+Set the flex wrap of metrics to wrap
+Set the gap of metrics to 16 pixels
+Set the margin of metrics to 20 pixels 0
+Add an article called attendance card inside metrics
+Set the flex of attendance card to 1 1 220 pixels
+Set the padding of attendance card to 22 pixels
+Set the background color of attendance card to white
+Set the border radius of attendance card to 18 pixels
+Add a paragraph called attendance label inside attendance card
+Set the text of attendance label to SQUAD AVAILABLE
+Set the font size of attendance label to 12 pixels
+Set the letter spacing of attendance label to 1 pixels
+Add a subheading called attendance number inside attendance card
+Set the text of attendance number to 18 / 20
+Set the font size of attendance number to 36 pixels
+Set the margin of attendance number to 0
+Add a paragraph called attendance note inside attendance card
+Set the text of attendance note to Two players on modified training
+Set the color of attendance note to slategray
+Add an article called readiness card inside metrics
+Set the flex of readiness card to 1 1 220 pixels
+Set the padding of readiness card to 22 pixels
+Set the background color of readiness card to white
+Set the border radius of readiness card to 18 pixels
+Add a paragraph called readiness label inside readiness card
+Set the text of readiness label to SESSION READINESS
+Set the font size of readiness label to 12 pixels
+Set the letter spacing of readiness label to 1 pixels
+Add a subheading called readiness number inside readiness card
+Set the text of readiness number to 84 percent
+Set the font size of readiness number to 36 pixels
+Set the margin of readiness number to 0
+Add a progress bar called readiness bar inside readiness card
+Set the max of readiness bar to 100
+Set the value of readiness bar to 84
+Set the accessible name of readiness bar to Squad readiness
+Set the style width of readiness bar to 100 percent
+Set the accent color of readiness bar to seagreen
+Add an article called focus card inside metrics
+Set the flex of focus card to 1 1 220 pixels
+Set the padding of focus card to 22 pixels
+Set the background color of focus card to honeydew
+Set the border radius of focus card to 18 pixels
+Add a paragraph called focus label inside focus card
+Set the text of focus label to THIS WEEK'S FOCUS
+Set the font size of focus label to 12 pixels
+Set the letter spacing of focus label to 1 pixels
+Add a subheading called focus title inside focus card
+Set the text of focus title to Win it. Keep it.
+Set the font size of focus title to 28 pixels
+Set the margin of focus title to 0
+Add a paragraph called focus note inside focus card
+Set the text of focus note to Counter-pressing and the first forward pass
+Add a main called workspace
+Set the display of workspace to flex
+Set the flex wrap of workspace to wrap
+Set the gap of workspace to 20 pixels
+Add a section called session inside workspace
+Set the flex of session to 2 1 480 pixels
+Set the min width of session to 0
+Set the padding of session to 24 pixels
+Set the background color of session to white
+Set the border radius of session to 20 pixels
+Add a subheading called session heading inside session
+Set the text of session heading to Tonight's session
+Set the margin top of session heading to 0
+Add a paragraph called session subtitle inside session
+Set the text of session subtitle to 75 minutes / Pitch two / Open a drill for coaching detail
+Set the color of session subtitle to slategray
+Add an expandable section called warmup inside session
+Set the padding of warmup to 16 pixels 0
+Set the border bottom of warmup to 1 pixels solid lightgray
+Add a summary called warmup title inside warmup
+Set the text of warmup title to 01   ARRIVE + ACTIVATE   /   15 min
+Make warmup title bold
+Set the cursor of warmup title to pointer
+Add a paragraph called warmup description inside warmup
+Set the text of warmup description to Ball each. Scan before receiving. Progress from unopposed movement to pairs applying light pressure.
+Add a bullet list called warmup cues inside warmup
+Add a list item called warmup cue first inside warmup cues
+Set the text of warmup cue first to Open your body before the ball arrives.
+Add a list item called warmup cue second inside warmup cues
+Set the text of warmup cue second to Coach the first touch, not just the speed.
+Add an expandable section called rondo inside session
+Set the open of rondo to yes
+Set the padding of rondo to 16 pixels 0
+Set the border bottom of rondo to 1 pixels solid lightgray
+Add a summary called rondo title inside rondo
+Set the text of rondo title to 02   WIN IT BACK   /   25 min
+Make rondo title bold
+Set the cursor of rondo title to pointer
+Add a paragraph called rondo description inside rondo
+Set the text of rondo description to Four against two in a tight square. On a turnover, the nearest player presses and the second player closes the forward lane.
+Add a highlighted text called rondo cue inside rondo
+Set the text of rondo cue to Success measure: regain possession within five seconds.
+Set the background color of rondo cue to honeydew
+Add an expandable section called game inside session
+Set the padding of game to 16 pixels 0
+Add a summary called game title inside game
+Set the text of game title to 03   TRANSFER INTO THE GAME   /   35 min
+Make game title bold
+Set the cursor of game title to pointer
+Add a paragraph called game description inside game
+Set the text of game description to Seven against seven. Award a bonus point for a goal scored within ten seconds of a regain. Freeze sparingly and let players solve the problem.
+Add a section called squad inside session
+Add a heading level three called squad heading inside squad
+Set the text of squad heading to Player check-in
+Set the overflow x of squad to auto
+Add a table called squad table inside squad
+Set the style width of squad table to 100 percent
+Set the border collapse of squad table to collapse
+Set the text align of squad table to left
+Add a table caption called squad caption inside squad table
+Set the text of squad caption to Fictional squad snapshot - not live player data
+Set the text align of squad caption to left
+Set the color of squad caption to slategray
+Set the font size of squad caption to 12 pixels
+Set the padding bottom of squad caption to 12 pixels
+Add a table header called squad headings inside squad table
+Add a table row called squad header row inside squad headings
+Add a header cell called player column inside squad header row
+Set the text of player column to Player
+Set the scope of player column to col
+Add a header cell called role column inside squad header row
+Set the text of role column to Role
+Set the scope of role column to col
+Add a header cell called status column inside squad header row
+Set the text of status column to Status
+Set the scope of status column to col
+Add a table body called squad rows inside squad table
+Add a table row called alex row inside squad rows
+Set the background color of alex row to aliceblue
+Add a table cell called alex name inside alex row
+Set the text of alex name to Alex
+Set the padding of alex name to 12 pixels 8 pixels
+Add a table cell called alex role inside alex row
+Set the text of alex role to Midfield
+Add a table cell called alex status inside alex row
+Set the text of alex status to Ready
+Set the color of alex status to seagreen
+Add a table row called sam row inside squad rows
+Add a table cell called sam name inside sam row
+Set the text of sam name to Sam
+Set the padding of sam name to 12 pixels 8 pixels
+Add a table cell called sam role inside sam row
+Set the text of sam role to Defender
+Add a table cell called sam status inside sam row
+Set the text of sam status to Modified
+Set the color of sam status to darkgoldenrod
+Add a table row called jordan row inside squad rows
+Set the background color of jordan row to aliceblue
+Add a table cell called jordan name inside jordan row
+Set the text of jordan name to Jordan
+Set the padding of jordan name to 12 pixels 8 pixels
+Add a table cell called jordan role inside jordan row
+Set the text of jordan role to Forward
+Add a table cell called jordan status inside jordan row
+Set the text of jordan status to Ready
+Set the color of jordan status to seagreen
+Add a sidebar called planner inside workspace
+Set the flex of planner to 1 1 280 pixels
+Set the min width of planner to 0
+Set the padding of planner to 24 pixels
+Set the border radius of planner to 20 pixels
+Set the background color of planner to white
+Add a subheading called planner heading inside planner
+Set the text of planner heading to Make it your session
+Set the margin top of planner heading to 0
+Add a paragraph called planner note inside planner
+Set the text of planner note to Try the controls. Your edits stay in this page only and are not saved.
+Set the font size of planner note to 13 pixels
+Set the color of planner note to slategray
+Add a form called plan form inside planner
+Add a label called theme label inside plan form
+Set the text of theme label to Training theme
+Set the linked control of theme label to theme
+Set the display of theme label to block
+Make theme label bold
+Add a dropdown called theme inside plan form
+Set the style width of theme to 100 percent
+Set the padding of theme to 10 pixels
+Set the margin of theme to 8 pixels 0 20 pixels
+Set the border radius of theme to 8 pixels
+Add an option called pressing choice inside theme
+Set the text of pressing choice to Counter-pressing
+Add an option called possession choice inside theme
+Set the text of possession choice to Possession under pressure
+Add an option called finishing choice inside theme
+Set the text of finishing choice to Finishing in transition
+Add a label called intensity label inside plan form
+Set the text of intensity label to Training intensity
+Set the linked control of intensity label to intensity
+Set the display of intensity label to block
+Make intensity label bold
+Add a slider called intensity inside plan form
+Set the min of intensity to 1
+Set the max of intensity to 10
+Set the value of intensity to 6
+Set the style width of intensity to 100 percent
+Set the margin of intensity to 12 pixels 0 20 pixels
+Set the accent color of intensity to seagreen
+Add a label called notes label inside plan form
+Set the text of notes label to Coach notes
+Set the linked control of notes label to notes
+Set the display of notes label to block
+Make notes label bold
+Add a text area called notes inside plan form
+Set the rows of notes to 4
+Set the placeholder of notes to What will you notice? What will you ask?
+Set the style width of notes to 100 percent
+Set the padding of notes to 10 pixels
+Set the border of notes to 1 pixels solid lightgray
+Set the border radius of notes to 8 pixels
+Set the margin of notes to 8 pixels 0 20 pixels
+Add a field group called checklist inside plan form
+Set the border of checklist to 1 pixels solid lightgray
+Set the border radius of checklist to 12 pixels
+Add a field group title called checklist title inside checklist
+Set the text of checklist title to Before players arrive
+Add a paragraph called equipment item inside checklist
+Add a checkbox called equipment inside equipment item
+Set the checked of equipment to yes
+Set the accent color of equipment to seagreen
+Add a label called equipment label inside equipment item
+Set the text of equipment label to Balls, bibs and cones
+Set the linked control of equipment label to equipment
+Add a paragraph called safety item inside checklist
+Add a checkbox called safety inside safety item
+Set the accent color of safety to seagreen
+Add a label called safety label inside safety item
+Set the text of safety label to Pitch safety check
+Set the linked control of safety label to safety
+Add a paragraph called hydration item inside checklist
+Add a checkbox called hydration inside hydration item
+Set the accent color of hydration to seagreen
+Add a label called hydration label inside hydration item
+Set the text of hydration label to Water breaks planned
+Set the linked control of hydration label to hydration
+Add a button called reset plan inside plan form
+Set the type of reset plan to reset
+Set the text of reset plan to Reset my changes
+Set the margin top of reset plan to 20 pixels
+Set the padding of reset plan to 10 pixels 16 pixels
+Set the border of reset plan to 1 pixels solid lightgray
+Set the border radius of reset plan to 10 pixels
+Set the background color of reset plan to white
+Set the cursor of reset plan to pointer
+Add a section called briefing
+Set the popover of briefing to auto
+Set the max width of briefing to 560 pixels
+Set the padding of briefing to 28 pixels
+Set the border of briefing to 2 pixels solid seagreen
+Set the border radius of briefing to 20 pixels
+Set the background color of briefing to midnightblue
+Set the color of briefing to white
+Add a subheading called briefing title inside briefing
+Set the text of briefing title to Saturday: the three reminders
+Add a numbered list called reminders inside briefing
+Add a list item called first reminder inside reminders
+Set the text of first reminder to Press together. A solo sprint is not a press.
+Add a list item called second reminder inside reminders
+Set the text of second reminder to Find the forward pass after the regain.
+Add a list item called third reminder inside reminders
+Set the text of third reminder to Celebrate the recovery run, not only the goal.
+Add a button called close briefing inside briefing
+Set the text of close briefing to Got it
+Set the popover target of close briefing to briefing
+Set the popover action of close briefing to hide
+Set the padding of close briefing to 10 pixels 20 pixels
+Set the border radius of close briefing to 8 pixels
+Set the border of close briefing to none
+Set the background color of close briefing to aquamarine
+Set the cursor of close briefing to pointer
+Add a footer called footer
+Set the padding of footer to 24 pixels 0
+Set the font size of footer to 12 pixels
+Set the color of footer to slategray
+Add a paragraph called build note inside footer
+Set the text of build note to BUILT WITH INTENTLANG / English source, real HTML, zero generated JavaScript. Fictional data. No backend. No AI model.
+Set the destination of drills link to session

@@ -9,6 +9,16 @@
 > [!WARNING]
 > IntentLang v0.8.0-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
 
+## See what English can build
+
+[![The Last Signal: a branching sci-fi story compiled from English](examples/last-signal.png)](examples/README.md#the-last-signal)
+
+**[Browse the example gallery](examples/README.md)** — a playable sci-fi story,
+a responsive coaching dashboard, and an animated typography poster.
+Each includes its English source, a screenshot of the actual output, and standalone
+HTML you can download and open locally. No model is called during compilation or
+when these pages run.
+
 ## Start with Hello World: the visual language
 
 Write English instructions and watch text change in a live preview:
@@ -73,6 +83,9 @@ elements and properties appear with reasons. Custom scripts, event handlers,
 form submission, embedded documents, SVG/MathML, and backend connections are not
 implemented in this language. Browser support still varies. Try **A complete page**,
 **Native form controls**, and **A real table** in the example selector.
+
+See the [example gallery](examples/README.md) for full programs, generated outputs,
+interaction guides, and regeneration commands.
 
 ## App Builder wizard quick start
 
