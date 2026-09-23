@@ -192,26 +192,32 @@ Otherwise, set the text of form line to Steady form.
 For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list item called result opponent inside fixtures
 ```
 
-- **`The <name> is <value>.`** defines or recomputes a number. The value can be a
-  plain number, an existing variable, or one arithmetic step: `plus`, `minus`,
+- **`The <name> is <value>.`** defines or recomputes a variable. The value can be
+  a plain number, an existing variable, or one arithmetic step: `plus`, `minus`,
   `times`, or `divided by` another number or variable. Each sentence performs at
   most one operation; chain several sentences for anything larger, the same way
   the rest of the language favors clear, repeated instructions over dense syntax.
+  A value can also be plain text, either bare words (`The winner is Alex
+  Carter.`) or a quoted phrase (`The motto is "Play as a team".`) — quotes are
+  only needed if the text itself could be confused with a number or another
+  variable's name.
 - **`If the <name> is <comparison> <value>, <one instruction>.`** keeps that one
   instruction only when the comparison is true. Comparisons are written as words:
-  `greater than`, `less than`, `equal to`, `at least`, `at most`.
+  `greater than`, `less than`, `equal to`, `at least`, `at most`. Text variables
+  can only be compared with `equal to` (the others don't make sense for text);
+  using another comparator on text is reported as a clear error.
 - **`Otherwise, <one instruction>.`** runs when the If sentence right before it was
   false.
 - **`For each <name> in <item, item and item>, <one instruction>.`** repeats that
   one instruction once per item, replacing the loop word wherever it appears.
 
-A variable's value can be used anywhere a plain instruction ends with
-`to <name>`, such as `Set the text of points line to total points`.
+A variable's value, number or text, can be used anywhere a plain instruction ends
+with `to <name>`, such as `Set the text of points line to total points`.
 
 Like the rest of the language, none of this is case sensitive: keywords
-(`the`, `is`, `if`, `otherwise`, `for each`, `in`), comparators, and variable
-names all match regardless of capitalization, so `THE SCORE IS 5` and
-`the score is 5` behave identically.
+(`the`, `is`, `if`, `otherwise`, `for each`, `in`), comparators, variable names,
+and text comparisons all match regardless of capitalization, so
+`THE SCORE IS 5` and `the score is 5` behave identically.
 
 If a line is close to one of these sentence shapes but has a spelling mistake
 (a misspelled keyword, connector word, or comparator, or a variable name that is
@@ -224,7 +230,8 @@ offered, never applied silently.
 - One instruction per If, Otherwise, or For each sentence. To do several things,
   write the same condition or loop again on the next line.
 - No nested If inside If, or For each inside For each, yet.
-- Text values can't be stored in a variable yet, only numbers.
+- Text variables can only be compared with `equal to`; there's no ordering
+  (`greater than`, etc.) for text, and text can't be used in arithmetic.
 - This is compile-time only. A page can react to what a variable's value was when
   you compiled it, not to anything a visitor does afterward; there is still no
   generated JavaScript. Runtime interactivity (state that changes after a click)

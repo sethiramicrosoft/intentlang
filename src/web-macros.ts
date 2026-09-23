@@ -8,9 +8,14 @@ export type MacroExpandResult =
   | { ok: true; source: string }
   | { ok: false; diagnostics: VisualDiagnostic[] };
 
+/** A variable holds either a number (with arithmetic) or plain text (copied or compared, but
+ * not computed). Both kinds are written the same way: "The <name> is <value>." */
+type VarValue = { type: "number"; value: number } | { type: "text"; value: string };
+
 const NUMBER_OR_NAME = "(?:the\\s+)?(-?\\d+(?:\\.\\d+)?|[a-z][a-z ]*?)";
 const ASSIGN_RE = /^the\s+([a-z][a-z ]*?)\s+is\s+(.+?)\.?$/i;
 const EXPR_RE = new RegExp(`^${NUMBER_OR_NAME}(?:\\s+(plus|minus|times|divided by)\\s+${NUMBER_OR_NAME})?$`, "i");
+const NUMERIC_INTENT_RE = /\d|\b(?:plus|minus|times|divided by)\b/i;
 const IF_RE = /^if\s+the\s+([a-z][a-z ]*?)\s+is\s+(greater than|less than|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*(.+?)\.?$/i;
 const OTHERWISE_RE = /^otherwise\s*,\s*(.+?)\.?$/i;
 // The list group is greedy so it claims everything up to the LAST comma (the one that
@@ -28,19 +33,37 @@ function formatNumber(value: number): string {
   return Number.isInteger(rounded) ? String(rounded) : String(rounded);
 }
 
-function resolveOperand(raw: string, variables: Map<string, number>): number | undefined {
-  const token = raw.trim().toLowerCase();
-  if (/^-?\d+(?:\.\d+)?$/.test(token)) return Number(token);
-  return variables.get(token);
+function stripLeadingThe(text: string): string {
+  return text.trim().replace(/^the\s+/i, "");
 }
 
-function evaluateExpression(expr: string, variables: Map<string, number>): number | undefined {
+function dequote(text: string): string {
+  return /^"([\s\S]*)"$/.exec(text.trim())?.[1] ?? text.trim();
+}
+
+function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): number | undefined {
+  const token = raw.trim().toLowerCase();
+  if (/^-?\d+(?:\.\d+)?$/.test(token)) return Number(token);
+  const found = variables.get(token);
+  return found?.type === "number" ? found.value : undefined;
+}
+
+/** Text a comparison target resolves to: a known variable's value (of either kind, stringified),
+ * or, failing that, the raw words themselves. Unlike numbers, plain text never needs to be
+ * "defined first": "If the winner is equal to Alex" is valid even without an "Alex" variable. */
+function resolveTextOperand(raw: string, variables: Map<string, VarValue>): string {
+  const found = variables.get(stripLeadingThe(raw).toLowerCase());
+  if (found) return found.type === "number" ? formatNumber(found.value) : found.value;
+  return dequote(raw);
+}
+
+function evaluateExpression(expr: string, variables: Map<string, VarValue>): number | undefined {
   const match = EXPR_RE.exec(expr.trim());
   if (!match) return undefined;
-  const left = resolveOperand(match[1]!, variables);
+  const left = resolveNumericOperand(match[1]!, variables);
   if (left === undefined) return undefined;
   if (!match[2]) return left;
-  const right = resolveOperand(match[3]!, variables);
+  const right = resolveNumericOperand(match[3]!, variables);
   if (right === undefined) return undefined;
   switch (match[2].toLowerCase()) {
     case "plus": return left + right;
@@ -51,7 +74,7 @@ function evaluateExpression(expr: string, variables: Map<string, number>): numbe
   }
 }
 
-function compare(value: number, comparator: string, target: number): boolean {
+function compareNumbers(value: number, comparator: string, target: number): boolean {
   switch (comparator.toLowerCase()) {
     case "greater than": return value > target;
     case "less than": return value < target;
@@ -68,7 +91,7 @@ function substituteWord(text: string, word: string, replacement: string): string
 }
 
 /** Closest known variable name to an unresolved reference, for a "did you mean" suggestion. */
-function closestVariable(name: string, variables: Map<string, number>): string | undefined {
+function closestVariable(name: string, variables: Map<string, VarValue>): string | undefined {
   const key = name.trim().toLowerCase();
   for (const known of variables.keys()) if (oneEditAway(known, key)) return known;
   return undefined;
@@ -167,7 +190,7 @@ export function usesMacroGrammar(source: string): boolean {
  */
 export function expandMacros(source: string): MacroExpandResult {
   const lines = source.split(/\r?\n/);
-  const variables = new Map<string, number>();
+  const variables = new Map<string, VarValue>();
   const output: string[] = [];
   const diagnostics: VisualDiagnostic[] = [];
   let lastCondition: boolean | undefined;
@@ -186,10 +209,20 @@ export function expandMacros(source: string): MacroExpandResult {
 
     const assign = ASSIGN_RE.exec(trimmed);
     if (assign) {
-      const value = evaluateExpression(assign[2]!, variables);
-      if (value !== undefined) {
-        variables.set(assign[1]!.trim().toLowerCase(), value);
+      const name = assign[1]!.trim().toLowerCase();
+      const rawValue = assign[2]!.trim();
+      const numericValue = evaluateExpression(rawValue, variables);
+      if (numericValue !== undefined) {
+        variables.set(name, { type: "number", value: numericValue });
         return; // a variable sentence does not render anything by itself
+      }
+      // Only fall back to plain text when the value doesn't even look like an arithmetic
+      // attempt (no digits, no "plus"/"minus"/"times"/"divided by"). That keeps a genuine
+      // arithmetic mistake, such as dividing by zero, from silently becoming literal text.
+      if (!NUMERIC_INTENT_RE.test(rawValue)) {
+        const copied = variables.get(stripLeadingThe(rawValue).toLowerCase());
+        variables.set(name, copied ?? { type: "text", value: dequote(rawValue) });
+        return;
       }
       // Doesn't resolve to a known number or variable expression: leave it for the
       // page compiler to report as an ordinary unrecognized instruction.
@@ -200,15 +233,28 @@ export function expandMacros(source: string): MacroExpandResult {
     const ifMatch = IF_RE.exec(trimmed);
     if (ifMatch) {
       const name = ifMatch[1]!.trim().toLowerCase();
-      const value = variables.get(name);
-      if (value === undefined) {
+      const subject = variables.get(name);
+      if (subject === undefined) {
         const closest = closestVariable(ifMatch[1]!, variables);
         report(lineNumber, trimmed, "M001", `"${ifMatch[1]!.trim()}" was never given a value.`,
           closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${ifMatch[1]!.trim()} is 0." before this line.`,
           closest ? [{ label: `Use "${closest}"`, replacement: rawLine.replace(ifMatch[1]!, closest) }] : undefined);
         return;
       }
-      const target = resolveOperand(ifMatch[3]!, variables);
+      const comparator = ifMatch[2]!.trim().toLowerCase();
+      if (subject.type === "text") {
+        if (comparator !== "equal to") {
+          report(lineNumber, trimmed, "M006", `Text can only be compared with "is equal to", not "is ${comparator}".`,
+            `Try "If the ${ifMatch[1]!.trim()} is equal to ...".`,
+            [{ label: `Change "${comparator}" to "equal to"`, replacement: rawLine.replace(ifMatch[2]!, "equal to") }]);
+          return;
+        }
+        const target = resolveTextOperand(ifMatch[3]!, variables);
+        lastCondition = subject.value.trim().toLowerCase() === target.trim().toLowerCase();
+        if (lastCondition) output.push(ifMatch[4]!);
+        return;
+      }
+      const target = resolveNumericOperand(ifMatch[3]!, variables);
       if (target === undefined) {
         const closest = closestVariable(ifMatch[3]!, variables);
         report(lineNumber, trimmed, "M002", `"${ifMatch[3]!.trim()}" is not a number or a known variable.`,
@@ -216,7 +262,7 @@ export function expandMacros(source: string): MacroExpandResult {
           closest ? [{ label: `Use "${closest}"`, replacement: rawLine.replace(ifMatch[3]!, closest) }] : undefined);
         return;
       }
-      lastCondition = compare(value, ifMatch[2]!, target);
+      lastCondition = compareNumbers(subject.value, comparator, target);
       if (lastCondition) output.push(ifMatch[4]!);
       return;
     }
@@ -261,8 +307,9 @@ export function expandMacros(source: string): MacroExpandResult {
     const trailing = /^(.*\bto\s+)([a-z][a-z ]*)$/i.exec(line.trimEnd());
     if (!trailing) return line;
     const name = trailing[2]!.trim().toLowerCase();
-    if (!variables.has(name)) return line;
-    return `${trailing[1]}${formatNumber(variables.get(name)!)}`;
+    const found = variables.get(name);
+    if (!found) return line;
+    return `${trailing[1]}${found.type === "number" ? formatNumber(found.value) : found.value}`;
   });
 
   return { ok: true, source: finalLines.join("\n") };

@@ -27,6 +27,7 @@ test("published gallery HTML matches its English source and opens without a serv
     assert.equal(await page.getByText("48", { exact: true }).isVisible(), true);
     assert.equal(await page.getByText("Promotion form. Keep it up", { exact: true }).isVisible(), true);
     assert.equal(await page.getByText("Played Dunwell Rovers", { exact: true }).isVisible(), true);
+    assert.equal(await page.getByText("Captain: Jordan Ako, top scorer this season", { exact: true }).isVisible(), true);
     await page.goto(pathToFileURL(resolve("examples/matchday.html")).href);
     for (const viewport of [
       { width: 1440, height: 1100 }, { width: 768, height: 1024 }, { width: 390, height: 844 }

@@ -229,3 +229,43 @@ test("For each with an empty list is a clear error", () => {
   invalid(`Add a bullet list called colors inside page
 For each color in , add a list item called swatch inside colors`, /needs at least one item/);
 });
+
+test("a variable can hold plain text and be substituted into a Set instruction", () => {
+  const { ir } = page(`Add a paragraph called name display inside page
+The winner is Alex Carter.
+Set the text of name display to winner`);
+  assert.equal(textOf(ir, "name display"), "Alex Carter");
+});
+
+test("a text variable can be quoted, and can alias another text variable", () => {
+  const { ir } = page(`Add a paragraph called quote display inside page
+Add a paragraph called copy display inside page
+The motto is "Play as a team".
+The copy is the motto.
+Set the text of quote display to motto
+Set the text of copy display to copy`);
+  assert.equal(textOf(ir, "quote display"), "Play as a team");
+  assert.equal(textOf(ir, "copy display"), "Play as a team");
+});
+
+test("an If sentence can compare a text variable with is equal to", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The winner is Alex Carter.
+If the winner is equal to Alex Carter, set the text of message to champion
+Otherwise, set the text of message to runner up`);
+  assert.equal(textOf(ir, "message"), "champion");
+});
+
+test("text equality comparison is case-insensitive", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The winner is Alex Carter.
+If the winner is equal to alex carter, set the text of message to champion
+Otherwise, set the text of message to runner up`);
+  assert.equal(textOf(ir, "message"), "champion");
+});
+
+test("comparing a text variable with a numeric comparator is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+The winner is Alex Carter.
+If the winner is greater than Alex Carter, set the text of message to champion`, /can only be compared with/);
+});
