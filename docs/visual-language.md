@@ -186,7 +186,7 @@ The points is the wins times 3.
 The total points is the points plus the draws.
 Set the text of points line to total points
 
-If the total points is at least 40, set the text of form line to Promotion form.
+If the total points is at least 40, set the text of form line to Promotion form and then set the text of banner to Well played.
 Otherwise, set the text of form line to Steady form.
 
 For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list item called result opponent inside fixtures
@@ -201,23 +201,34 @@ For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list 
   Carter.`) or a quoted phrase (`The motto is "Play as a team".`) — quotes are
   only needed if the text itself could be confused with a number or another
   variable's name.
-- **`If the <name> is <comparison> <value>, <one instruction>.`** keeps that one
-  instruction only when the comparison is true. Comparisons are written as words:
-  `greater than`, `less than`, `equal to`, `at least`, `at most`. Text variables
-  can only be compared with `equal to` (the others don't make sense for text);
-  using another comparator on text is reported as a clear error.
-- **`Otherwise, <one instruction>.`** runs when the If sentence right before it was
-  false.
-- **`For each <name> in <item, item and item>, <one instruction>.`** repeats that
-  one instruction once per item, replacing the loop word wherever it appears.
+- **`If the <name> is <comparison> <value>, <one or more instructions>.`** keeps
+  its instruction(s) only when the comparison is true. Comparisons are written
+  as words: `greater than`, `less than`, `equal to`, `not equal to`, `at least`,
+  `at most`. Text variables can only be compared with `equal to` or
+  `not equal to` (the ordering comparators don't make sense for text); using
+  another comparator on text is reported as a clear error.
+- **`Otherwise, <one or more instructions>.`** runs when the If sentence right
+  before it was false.
+- **`For each <name> in <item, item and item>, <one or more instructions>.`**
+  repeats its instruction(s) once per item, replacing the loop word wherever
+  it appears. When there's more than one instruction, every instruction runs
+  for one item before moving to the next, so an element you add can be
+  referenced by a later instruction for that same item.
+
+An If, Otherwise, or For each sentence can carry several instructions by
+joining them with **`and then`**, for example:
+`If the score is at least 40, set the text of form line to Promotion form and then set the text of banner to Well played.`
+Plain `and` is never treated as a chain separator (so it stays safe to use
+inside ordinary text or a For each list) — only the exact phrase `and then`
+splits a sentence into multiple instructions.
 
 A variable's value, number or text, can be used anywhere a plain instruction ends
 with `to <name>`, such as `Set the text of points line to total points`.
 
 Like the rest of the language, none of this is case sensitive: keywords
-(`the`, `is`, `if`, `otherwise`, `for each`, `in`), comparators, variable names,
-and text comparisons all match regardless of capitalization, so
-`THE SCORE IS 5` and `the score is 5` behave identically.
+(`the`, `is`, `if`, `otherwise`, `for each`, `in`, `and then`), comparators,
+variable names, and text comparisons all match regardless of capitalization,
+so `THE SCORE IS 5` and `the score is 5` behave identically.
 
 If a line is close to one of these sentence shapes but has a spelling mistake
 (a misspelled keyword, connector word, or comparator, or a variable name that is
@@ -227,11 +238,12 @@ style, and attribute names elsewhere in the page grammar. Typo fixes are always
 offered, never applied silently.
 
 **Current limits, stated plainly:**
-- One instruction per If, Otherwise, or For each sentence. To do several things,
-  write the same condition or loop again on the next line.
-- No nested If inside If, or For each inside For each, yet.
-- Text variables can only be compared with `equal to`; there's no ordering
-  (`greater than`, etc.) for text, and text can't be used in arithmetic.
+- No nested If inside If, or For each inside For each, yet — each sentence's
+  instructions must be ordinary page instructions, not another If/Otherwise/
+  For each sentence.
+- Text variables can only be compared with `equal to` or `not equal to`;
+  there's no ordering (`greater than`, etc.) for text, and text can't be used
+  in arithmetic.
 - This is compile-time only. A page can react to what a variable's value was when
   you compiled it, not to anything a visitor does afterward; there is still no
   generated JavaScript. Runtime interactivity (state that changes after a click)

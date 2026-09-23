@@ -16,12 +16,20 @@ const NUMBER_OR_NAME = "(?:the\\s+)?(-?\\d+(?:\\.\\d+)?|[a-z][a-z ]*?)";
 const ASSIGN_RE = /^the\s+([a-z][a-z ]*?)\s+is\s+(.+?)\.?$/i;
 const EXPR_RE = new RegExp(`^${NUMBER_OR_NAME}(?:\\s+(plus|minus|times|divided by)\\s+${NUMBER_OR_NAME})?$`, "i");
 const NUMERIC_INTENT_RE = /\d|\b(?:plus|minus|times|divided by)\b/i;
-const IF_RE = /^if\s+the\s+([a-z][a-z ]*?)\s+is\s+(greater than|less than|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*(.+?)\.?$/i;
+const IF_RE = /^if\s+the\s+([a-z][a-z ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*(.+?)\.?$/i;
 const OTHERWISE_RE = /^otherwise\s*,\s*(.+?)\.?$/i;
 // The list group is greedy so it claims everything up to the LAST comma (the one that
 // separates the list from the instruction), letting "red, green and blue" stay intact.
 const FOR_EACH_RE = /^for each\s+([a-z][a-z ]*?)\s+in\s+(.*)\s*,\s*(.+?)\.?$/i;
-const COMPARATORS = ["greater than", "less than", "equal to", "at least", "at most"];
+const COMPARATORS = ["greater than", "less than", "not equal to", "equal to", "at least", "at most"];
+// Multiple instructions in one If/Otherwise/For each sentence are chained with "and then",
+// a phrase that reads naturally and never collides with ordinary instruction text (unlike a
+// bare "and", which can legitimately appear inside a list or a piece of display text).
+const AND_THEN_RE = /\s+and\s+then\s+/i;
+
+function splitInstructions(text: string): string[] {
+  return text.split(AND_THEN_RE).map((part) => part.trim()).filter(Boolean);
+}
 
 function splitEnglishList(text: string): string[] {
   const normalized = text.replace(/,?\s+and\s+(?=[^,]+$)/i, ", ");
@@ -79,6 +87,7 @@ function compareNumbers(value: number, comparator: string, target: number): bool
     case "greater than": return value > target;
     case "less than": return value < target;
     case "equal to": return value === target;
+    case "not equal to": return value !== target;
     case "at least": return value >= target;
     case "at most": return value <= target;
     default: return false;
@@ -162,7 +171,7 @@ function suggestMacroFix(trimmed: string): VisualSuggestion | undefined {
       if (FOR_EACH_RE.test(corrected)) return { label: `Change "${inWord[2]}" to "in"`, replacement: corrected };
     }
   }
-  const comparatorPhrase = /^(if\s+the\s+[a-z][a-z ]*?\s+is\s+)([a-z]+\s+[a-z]+)(\s+(?:the\s+)?(?:-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*.+)$/i
+  const comparatorPhrase = /^(if\s+the\s+[a-z][a-z ]*?\s+is\s+)([a-z]+\s+[a-z]+(?:\s+[a-z]+)?)(\s+(?:the\s+)?(?:-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*.+)$/i
     .exec(trimmed);
   if (comparatorPhrase) {
     const fixed = closestKeyword(comparatorPhrase[2]!, COMPARATORS);
@@ -184,9 +193,10 @@ export function usesMacroGrammar(source: string): boolean {
 
 /**
  * Expands "The X is Y.", "If the X is ..., ...", "Otherwise, ...", and
- * "For each X in ..., ..." into plain page-grammar instructions. Each sentence carries
- * exactly one instruction (no "and"-chained actions, no nesting) so the grammar stays
- * unambiguous while still reading as ordinary English.
+ * "For each X in ..., ..." into plain page-grammar instructions. Each sentence can carry
+ * one instruction, or several chained with "and then" (e.g. "..., add a swatch and then
+ * set its color."); nesting one of these sentences inside another is not supported yet, so
+ * the grammar stays unambiguous while still reading as ordinary English.
  */
 export function expandMacros(source: string): MacroExpandResult {
   const lines = source.split(/\r?\n/);
@@ -243,15 +253,16 @@ export function expandMacros(source: string): MacroExpandResult {
       }
       const comparator = ifMatch[2]!.trim().toLowerCase();
       if (subject.type === "text") {
-        if (comparator !== "equal to") {
-          report(lineNumber, trimmed, "M006", `Text can only be compared with "is equal to", not "is ${comparator}".`,
+        if (comparator !== "equal to" && comparator !== "not equal to") {
+          report(lineNumber, trimmed, "M006", `Text can only be compared with "is equal to" or "is not equal to", not "is ${comparator}".`,
             `Try "If the ${ifMatch[1]!.trim()} is equal to ...".`,
             [{ label: `Change "${comparator}" to "equal to"`, replacement: rawLine.replace(ifMatch[2]!, "equal to") }]);
           return;
         }
         const target = resolveTextOperand(ifMatch[3]!, variables);
-        lastCondition = subject.value.trim().toLowerCase() === target.trim().toLowerCase();
-        if (lastCondition) output.push(ifMatch[4]!);
+        const isEqual = subject.value.trim().toLowerCase() === target.trim().toLowerCase();
+        lastCondition = comparator === "equal to" ? isEqual : !isEqual;
+        if (lastCondition) for (const instr of splitInstructions(ifMatch[4]!)) output.push(instr);
         return;
       }
       const target = resolveNumericOperand(ifMatch[3]!, variables);
@@ -263,7 +274,7 @@ export function expandMacros(source: string): MacroExpandResult {
         return;
       }
       lastCondition = compareNumbers(subject.value, comparator, target);
-      if (lastCondition) output.push(ifMatch[4]!);
+      if (lastCondition) for (const instr of splitInstructions(ifMatch[4]!)) output.push(instr);
       return;
     }
 
@@ -274,7 +285,7 @@ export function expandMacros(source: string): MacroExpandResult {
           `Add an "If the ... is ..., ..." sentence before this line.`);
         return;
       }
-      if (!lastCondition) output.push(otherwise[1]!);
+      if (!lastCondition) for (const instr of splitInstructions(otherwise[1]!)) output.push(instr);
       return;
     }
 
@@ -287,7 +298,10 @@ export function expandMacros(source: string): MacroExpandResult {
           `List one or more items, such as "For each ${loopVar} in red, green and blue, ...".`);
         return;
       }
-      for (const item of items) output.push(substituteWord(forEach[3]!, loopVar, item));
+      const instructions = splitInstructions(forEach[3]!);
+      for (const item of items) {
+        for (const instr of instructions) output.push(substituteWord(instr, loopVar, item));
+      }
       return;
     }
 

@@ -71,6 +71,8 @@ test("every comparator word works", () => {
     ["greater than", 5, 3, true],
     ["less than", 5, 3, false],
     ["equal to", 3, 3, true],
+    ["not equal to", 3, 3, false],
+    ["not equal to", 5, 3, true],
     ["at least", 3, 3, true],
     ["at most", 4, 3, false],
   ];
@@ -268,4 +270,38 @@ test("comparing a text variable with a numeric comparator is a clear error", () 
   invalid(`Add a paragraph called message inside page
 The winner is Alex Carter.
 If the winner is greater than Alex Carter, set the text of message to champion`, /can only be compared with/);
+});
+
+test("text variables can also be compared with is not equal to", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The winner is Alex Carter.
+If the winner is not equal to Sam Reid, set the text of message to correct
+Otherwise, set the text of message to wrong`);
+  assert.equal(textOf(ir, "message"), "correct");
+});
+
+test("an If sentence can chain several instructions with and then", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+Add a paragraph called banner inside page
+The score is 42.
+If the score is greater than 10, set the text of message to high score and then set the text of banner to celebrate`);
+  assert.equal(textOf(ir, "message"), "high score");
+  assert.equal(textOf(ir, "banner"), "celebrate");
+});
+
+test("an Otherwise sentence can chain several instructions with and then", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+Add a paragraph called banner inside page
+The score is 2.
+If the score is greater than 10, set the text of message to high score
+Otherwise, set the text of message to try again and then set the text of banner to keep going`);
+  assert.equal(textOf(ir, "message"), "try again");
+  assert.equal(textOf(ir, "banner"), "keep going");
+});
+
+test("For each chains several instructions per item with and then, in order", () => {
+  const { ir } = page(`Add a bullet list called colors inside page
+For each color in red and blue, add a list item called swatch color inside colors and then set the text of swatch color to color`);
+  assert.equal(textOf(ir, "swatch red"), "red");
+  assert.equal(textOf(ir, "swatch blue"), "blue");
 });
