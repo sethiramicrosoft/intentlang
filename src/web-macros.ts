@@ -16,13 +16,20 @@ const NUMBER_OR_NAME = "(?:the\\s+)?(-?\\d+(?:\\.\\d+)?|[a-z][a-z ]*?)";
 const ASSIGN_RE = /^the\s+([a-z][a-z ]*?)\s+is\s+(.+?)\.?$/i;
 const EXPR_RE = new RegExp(`^${NUMBER_OR_NAME}(?:\\s+(plus|minus|times|divided by)\\s+${NUMBER_OR_NAME})?$`, "i");
 const NUMERIC_INTENT_RE = /\d|\b(?:plus|minus|times|divided by)\b/i;
-const IF_RE = /^if\s+the\s+([a-z][a-z ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*(.+?)\.?$/i;
+// The subject can be a variable name, or (since a For each counting loop's variable literally
+// substitutes to a number) a plain number too, so "if the number is greater than 3" still works
+// after "number" is replaced by, say, "4".
+const IF_RE = /^if\s+the\s+(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*(.+?)\.?$/i;
 const OTHERWISE_RE = /^otherwise\s*,\s*(.+?)\.?$/i;
 // Only the head ("for each <name> in ") is a fixed shape; where the list ends and the
-// instruction begins is worked out by `matchForEach` below, because a naive "last comma
+// instruction begins is worked out by `matchForEachList` below, because a naive "last comma
 // on the line" or "first comma on the line" rule each break in different real cases (see
-// the comment on `matchForEach`).
+// the comment on `matchForEachList`).
 const FOR_EACH_HEAD_RE = /^for each\s+([a-z][a-z ]*?)\s+in\s+(.+)$/i;
+// A counting loop's head is a fixed shape with plain numbers on both ends ("from 1 to 10"),
+// so unlike a word list, the boundary between the head and the instruction is never ambiguous:
+// numbers never contain commas, so the first comma after "to <end>" always separates them.
+const FOR_EACH_RANGE_RE = /^for each\s+([a-z][a-z ]*?)\s+from\s+(-?\d+)\s+to\s+(-?\d+)\s*,\s*(.+?)\.?$/i;
 const COMPARATORS = ["greater than", "less than", "not equal to", "equal to", "at least", "at most"];
 // Multiple instructions in one If/Otherwise/For each sentence are chained with "and then",
 // a phrase that reads naturally and never collides with ordinary instruction text (unlike a
@@ -35,7 +42,7 @@ function splitInstructions(text: string): string[] {
 
 interface ForEachMatch {
   loopVar: string;
-  list: string;
+  items: string[];
   instruction: string;
 }
 
@@ -56,7 +63,7 @@ interface ForEachMatch {
  * that boundary, rejoined with commas, is the instruction — commas inside a nested If or
  * Otherwise instruction are preserved untouched because they always come after the boundary.
  */
-function matchForEach(trimmed: string): ForEachMatch | undefined {
+function matchForEachList(trimmed: string): ForEachMatch | undefined {
   const head = FOR_EACH_HEAD_RE.exec(trimmed);
   if (!head) return undefined;
   const loopVar = head[1]!.trim();
@@ -69,7 +76,36 @@ function matchForEach(trimmed: string): ForEachMatch | undefined {
   const list = segments.slice(0, boundary + 1).join(",").trim();
   const instruction = segments.slice(boundary + 1).join(",").trim().replace(/\.$/, "");
   if (!instruction) return undefined;
-  return { loopVar, list, instruction };
+  return { loopVar, items: splitEnglishList(list), instruction };
+}
+
+/**
+ * Matches a "For each <name> from <start> to <end>, <instruction>" counting loop. Unlike a word
+ * list, the head here is unambiguous (both ends are plain numbers, which never contain commas),
+ * so the instruction is simply everything after the first comma following "to <end>". Counts
+ * upward when start <= end, downward otherwise, always inclusive of both ends.
+ */
+function matchForEachRange(trimmed: string): ForEachMatch | undefined {
+  const match = FOR_EACH_RANGE_RE.exec(trimmed);
+  if (!match) return undefined;
+  const loopVar = match[1]!.trim();
+  const start = Number(match[2]);
+  const end = Number(match[3]);
+  const instruction = match[4]!.trim();
+  if (!instruction) return undefined;
+  const items: string[] = [];
+  if (start <= end) {
+    for (let n = start; n <= end; n++) items.push(String(n));
+  } else {
+    for (let n = start; n >= end; n--) items.push(String(n));
+  }
+  return { loopVar, items, instruction };
+}
+
+/** Matches either shape of a For each sentence: a word list ("in red, green and blue") or a
+ * counting loop ("from 1 to 10"). */
+function matchForEach(trimmed: string): ForEachMatch | undefined {
+  return matchForEachRange(trimmed) ?? matchForEachList(trimmed);
 }
 
 function splitEnglishList(text: string): string[] {
@@ -240,14 +276,21 @@ function report(diagnostics: VisualDiagnostic[], lineNumber: number, trimmed: st
  */
 function evaluateIfCondition(ifMatch: RegExpExecArray, text: string, lineNumber: number,
   variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[]): boolean | undefined {
-  const name = ifMatch[1]!.trim().toLowerCase();
-  const subject = variables.get(name);
-  if (subject === undefined) {
-    const closest = closestVariable(ifMatch[1]!, variables);
-    report(diagnostics, lineNumber, text, "M001", `"${ifMatch[1]!.trim()}" was never given a value.`,
-      closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${ifMatch[1]!.trim()} is 0." before this line.`,
-      closest ? [{ label: `Use "${closest}"`, replacement: text.replace(ifMatch[1]!, closest) }] : undefined);
-    return undefined;
+  const rawSubject = ifMatch[1]!.trim();
+  let subject: VarValue;
+  if (/^-?\d+(?:\.\d+)?$/.test(rawSubject)) {
+    subject = { type: "number", value: Number(rawSubject) };
+  } else {
+    const name = rawSubject.toLowerCase();
+    const found = variables.get(name);
+    if (found === undefined) {
+      const closest = closestVariable(rawSubject, variables);
+      report(diagnostics, lineNumber, text, "M001", `"${rawSubject}" was never given a value.`,
+        closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${rawSubject} is 0." before this line.`,
+        closest ? [{ label: `Use "${closest}"`, replacement: text.replace(ifMatch[1]!, closest) }] : undefined);
+      return undefined;
+    }
+    subject = found;
   }
   const comparator = ifMatch[2]!.trim().toLowerCase();
   if (subject.type === "text") {
@@ -281,10 +324,9 @@ function evaluateIfCondition(ifMatch: RegExpExecArray, text: string, lineNumber:
  */
 function evaluateForEach(forEachMatch: ForEachMatch, lineNumber: number, variables: Map<string, VarValue>,
   diagnostics: VisualDiagnostic[]): string[] {
-  const { loopVar, list, instruction } = forEachMatch;
-  const items = splitEnglishList(list);
+  const { loopVar, items, instruction } = forEachMatch;
   if (items.length === 0) {
-    report(diagnostics, lineNumber, `for each ${loopVar} in ${list}`, "M004",
+    report(diagnostics, lineNumber, `for each ${loopVar}`, "M004",
       `"For each ${loopVar} in ..." needs at least one item in its list.`,
       `List one or more items, such as "For each ${loopVar} in red, green and blue, ...".`);
     return [];

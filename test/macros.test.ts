@@ -406,3 +406,47 @@ For each color in red and blue, add a list item called swatch color inside color
 For each color in red, add a list item called swatch color inside colors`).ir;
   assert.equal(single.elements.filter((element) => element.tag === "li").length, 1);
 });
+
+test("a For each counting loop repeats once per number, ascending inclusive of both ends", () => {
+  const { ir } = page(`Add a bullet list called rows inside page
+For each number from 1 to 5, add a list item called row number inside rows`);
+  for (const n of [1, 2, 3, 4, 5]) assert.equal(textOf(ir, `row ${n}`), "");
+  assert.equal(ir.elements.filter((element) => element.tag === "li").length, 5);
+});
+
+test("a For each counting loop can count downward when the start is greater than the end", () => {
+  const { ir } = page(`Add a bullet list called rows inside page
+For each number from 3 to 1, add a list item called row number inside rows`);
+  assert.equal(ir.elements.filter((element) => element.tag === "li").length, 3);
+  assert.equal(textOf(ir, "row 3"), "");
+  assert.equal(textOf(ir, "row 1"), "");
+});
+
+test("a For each counting loop with equal start and end runs exactly once", () => {
+  const { ir } = page(`Add a bullet list called rows inside page
+For each number from 4 to 4, add a list item called row number inside rows`);
+  assert.equal(ir.elements.filter((element) => element.tag === "li").length, 1);
+  assert.equal(textOf(ir, "row 4"), "");
+});
+
+test("an If sentence's subject can be a plain number, not just a variable name", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+If the 5 is greater than 3, set the text of message to five wins`);
+  assert.equal(textOf(ir, "message"), "five wins");
+});
+
+test("a For each counting loop can nest an If and chain with and-then", () => {
+  const { ir } = page(`Add a bullet list called rows inside page
+The threshold is 3.
+For each number from 1 to 4, if the number is greater than threshold, add a list item called big number inside rows and then add a list item called label number inside rows`);
+  assert.equal(textOf(ir, "big 4"), "");
+  assert.equal(textOf(ir, "label 4"), "");
+  assert.equal(ir.elements.some((element) => element.name === "big 1"), false);
+});
+
+test("a For each counting loop used inside a nested If still works", () => {
+  const { ir } = page(`Add a bullet list called rows inside page
+The show is 1.
+If the show is equal to 1, for each number from 1 to 3, add a list item called row number inside rows`);
+  assert.equal(ir.elements.filter((element) => element.tag === "li").length, 3);
+});

@@ -190,6 +190,8 @@ If the total points is at least 40, set the text of form line to Promotion form 
 Otherwise, set the text of form line to Steady form.
 
 For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list item called result opponent inside fixtures
+
+For each round from 1 to 5, add a list item called round line round inside fixtures
 ```
 
 - **`The <name> is <value>.`** defines or recomputes a variable. The value can be
@@ -206,7 +208,9 @@ For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list 
   as words: `greater than`, `less than`, `equal to`, `not equal to`, `at least`,
   `at most`. Text variables can only be compared with `equal to` or
   `not equal to` (the ordering comparators don't make sense for text); using
-  another comparator on text is reported as a clear error.
+  another comparator on text is reported as a clear error. The `<name>` can be
+  a variable, or a plain number (useful when it's a For each counting loop's
+  own variable, which is a number itself).
 - **`Otherwise, <one or more instructions>.`** runs when the If sentence right
   before it was false.
 - **`For each <name> in <item, item and item>, <one or more instructions>.`**
@@ -214,6 +218,11 @@ For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list 
   it appears. When there's more than one instruction, every instruction runs
   for one item before moving to the next, so an element you add can be
   referenced by a later instruction for that same item.
+- **`For each <name> from <start> to <end>, <one or more instructions>.`**
+  counts through every whole number from `<start>` to `<end>`, inclusive of
+  both ends, replacing the loop word with each number in turn. Counts upward
+  when `<start>` is less than or equal to `<end>`, downward otherwise
+  (`For each round from 5 to 1, ...` counts 5, 4, 3, 2, 1).
 
 An If, Otherwise, or For each sentence can carry several instructions by
 joining them with **`and then`**, for example:
