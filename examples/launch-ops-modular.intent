@@ -1,0 +1,7 @@
+requires IntentLang 0.8
+
+import "./launch-ops-modules/core.intent" as Core
+import "./launch-ops-modules/entities.intent" as Entities
+import "./launch-ops-modules/relationships.intent" as Relationships
+import "./launch-ops-modules/workflows.intent" as Workflows
+import "./launch-ops-modules/policies.intent" as Policies

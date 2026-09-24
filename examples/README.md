@@ -121,6 +121,7 @@ status updates, users, ownership, and workflow transitions.
 ![LaunchOps Administrator view showing the active Nova launch program and its generated workflow actions](launch-ops-admin.png)
 
 **[IntentLang source](launch-ops.intent)** ·
+**[Equivalent modular project](launch-ops-modular.intent)** ·
 **[Generated application](launch-ops-generated/)** ·
 **[SQL schema](launch-ops-generated/migration.sql)** ·
 **[Typed manifest](launch-ops-generated/intentlang.manifest.json)** ·

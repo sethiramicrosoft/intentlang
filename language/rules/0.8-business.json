@@ -163,6 +163,21 @@
       }
     },
     {
+      "id": "MODULE-COMPOSITION-001",
+      "status": "experimental",
+      "title": "Explicit modules compose deterministically with integrity metadata",
+      "canonicalForm": "Resolved modules flatten to one canonical application graph",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-SYNTAX-031", "BUS-SYNTAX-032", "BUS-SYNTAX-033", "BUS-SYNTAX-034", "BUS-SYNTAX-035", "E064", "E065", "E066", "E067", "E068", "E069", "E070", "E071", "E072"],
+      "specification": "docs/spec/modules-packages.md#module-composition-001",
+      "evidence": {
+        "positive": ["test/modules.test.ts"],
+        "negative": ["test/modules.test.ts"],
+        "canonical": ["test/modules.test.ts"],
+        "runtime": ["test/modules.test.ts"]
+      }
+    },
+    {
       "id": "RUNTIME-GENERATION-001",
       "status": "stable",
       "title": "Business IR generates synchronized persistence, UI, API, security, workflow, concurrency, idempotency, and audit behavior",

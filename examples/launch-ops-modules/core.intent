@@ -1,0 +1,10 @@
+module LaunchOps.Core
+export all
+
+application LaunchOps
+authentication uses User identified by email
+
+role Administrator
+role ProgramManager
+role Contributor
+role Executive

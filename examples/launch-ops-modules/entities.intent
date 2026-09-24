@@ -1,0 +1,40 @@
+module LaunchOps.Entities
+export all
+
+a User has a required name as text length between 1 and 120
+a User has a required unique email as text length between 3 and 320
+
+a Program has a required unique code as text length between 2 and 20
+a Program has a required name as text length between 2 and 160
+a Program has a summary as text
+a Program has a status as text default "planning"
+a Program has a healthScore as integer default 100
+
+a Milestone has a required title as text length between 2 and 160
+a Milestone has a targetDate as text
+a Milestone has a status as text default "planned"
+a Milestone has a progress as integer default 0
+
+a WorkItem has a required title as text length between 2 and 200
+a WorkItem has a details as text
+a WorkItem has a status as text default "open"
+a WorkItem has a priority as text default "medium"
+a WorkItem has an estimate as integer default 1
+a WorkItem has a done as boolean default false
+
+a Risk has a required title as text length between 2 and 200
+a Risk has an impact as text default "medium"
+a Risk has a probability as text default "medium"
+a Risk has a mitigation as text
+a Risk has a status as text default "open"
+a Risk has an escalated as boolean default false
+
+a Decision has a required title as text length between 2 and 200
+a Decision has a context as text
+a Decision has an outcome as text
+a Decision has a status as text default "pending"
+
+an Update has a required headline as text length between 2 and 200
+an Update has a details as text
+an Update has a health as text default "green"
+an Update has a status as text default "draft"

@@ -1,8 +1,9 @@
 # LaunchOps: controlled English to a full-stack application
 
 LaunchOps is the flagship IntentLang example: an authenticated program-launch
-management application generated deterministically from one controlled English
-source file.
+management application generated deterministically from controlled English. It
+is maintained as both one source file and an integrity-locked five-module
+project; executable tests prove that both forms produce identical canonical IR.
 
 > **The source is the specification and the program.** The generated
 > JavaScript, SQL, HTML, and CSS are compiler output; they were not handwritten
@@ -11,6 +12,8 @@ source file.
 ## Start here
 
 - **English source:** [`examples/launch-ops.intent`](../examples/launch-ops.intent)
+- **Modular entry:** [`examples/launch-ops-modular.intent`](../examples/launch-ops-modular.intent)
+- **Dependency lock:** [`examples/launch-ops-modular.lock.json`](../examples/launch-ops-modular.lock.json)
 - **Generated snapshot:** [`examples/launch-ops-generated/`](../examples/launch-ops-generated/)
 - **SQL schema:** [`migration.sql`](../examples/launch-ops-generated/migration.sql)
 - **Typed application model:** [`intentlang.manifest.json`](../examples/launch-ops-generated/intentlang.manifest.json)

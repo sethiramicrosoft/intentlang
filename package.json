@@ -17,6 +17,7 @@
     "test:adversarial:release": "node scripts/run-adversarial.mjs release",
     "test:policies": "tsx --test test/policies.test.ts",
     "test:abstractions": "tsx --test test/abstractions.test.ts",
+    "test:modules": "tsx --test test/modules.test.ts",
     "assurance": "tsx src/cli.ts assurance report",
     "assurance:complete": "tsx src/cli.ts assurance report --require-complete",
     "test:browser": "tsx --test test/visual.browser.ts test/web.browser.ts test/last-signal.browser.ts test/gallery.browser.ts test/studio.browser.ts",

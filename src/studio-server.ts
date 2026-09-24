@@ -23,6 +23,8 @@ import { VISUAL_HTML, VISUAL_CSS, VISUAL_JS } from "./visual-assets.js";
 import { buildTraceMap } from "./language/trace.js";
 import { expandPolicySource } from "./language/policies.js";
 import { expandDeclarationSource } from "./language/abstractions.js";
+import { compileProject, type ProjectCompileResult } from "./language/modules.js";
+import { remapTraceMapSources } from "./language/trace.js";
 
 const BODY_LIMIT_BYTES = 1_048_576; // 1 MB
 const PLAN_TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -281,7 +283,10 @@ class BodyTooLargeError extends Error {
 
 // ── Compile helper ────────────────────────────────────────────────────────────
 
-function compileAndBuildState(source: string): {
+function compileAndBuildState(
+  source: string,
+  project?: Extract<ProjectCompileResult, { ok: true }>
+): {
   ok: boolean;
   diagnostics: unknown[];
   model: unknown;
@@ -291,7 +296,7 @@ function compileAndBuildState(source: string): {
   policyExpansions: unknown[];
   declarationExpansions: unknown[];
 } {
-  const result = compileSource(source);
+  const result = project ?? compileSource(source);
 
   if (!result.ok) {
     return {
@@ -308,7 +313,8 @@ function compileAndBuildState(source: string): {
 
   const model = buildStudioViewModel(result.ir);
   const canonical = formatSource(result.ir);
-  const declarations = expandDeclarationSource(source);
+  const effectiveSource = project?.source ?? source;
+  const declarations = expandDeclarationSource(effectiveSource);
   const expanded = declarations.ok
     ? expandPolicySource(declarations.source)
     : null;
@@ -319,10 +325,23 @@ function compileAndBuildState(source: string): {
     model,
     canonical,
     ir: result.ir,
-    trace: buildTraceMap(source, result.ir, "<studio>"),
+    trace: project
+      ? remapTraceMapSources(
+          buildTraceMap(project.source, result.ir, "<studio>"),
+          project.sourceMap
+        )
+      : buildTraceMap(source, result.ir, "<studio>"),
     policyExpansions: expanded?.ok ? expanded.expansions : [],
     declarationExpansions: declarations.ok ? declarations.expansions : []
   };
+}
+
+async function compileStudioSource(
+  sourcePath: string,
+  source: string
+): Promise<ReturnType<typeof compileSource> | ProjectCompileResult> {
+  if (!/^\s*import "/m.test(source)) return compileSource(source);
+  return compileProject(sourcePath, { entrySource: source });
 }
 
 // ── Atomic write ──────────────────────────────────────────────────────────────
@@ -759,7 +778,10 @@ export async function startStudio(options: StudioOptions): Promise<{
         // File may not exist yet; return empty
       }
 
-      const compiled = compileAndBuildState(source);
+      const project = await compileProject(sourcePath);
+      const compiled = project.ok
+        ? compileAndBuildState(source, project)
+        : compileAndBuildState(source);
 
       sendJson(res, 200, {
         filename,
@@ -769,6 +791,7 @@ export async function startStudio(options: StudioOptions): Promise<{
         model: compiled.model,
         canonical: compiled.canonical,
         ir: compiled.ir,
+        projectModules: project.ok ? project.modules : [],
         outputDir,
         templates: {
           todo: TEMPLATE_TODO,
@@ -890,7 +913,7 @@ export async function startStudio(options: StudioOptions): Promise<{
 
     if (pathname === "/api/plan") {
       const source = typeof body["source"] === "string" ? body["source"] : "";
-      const result = compileSource(source);
+      const result = await compileStudioSource(sourcePath, source);
 
       if (!result.ok) {
         sendJson(res, 422, {
@@ -901,7 +924,10 @@ export async function startStudio(options: StudioOptions): Promise<{
         return;
       }
 
-      const manifest = buildManifest(result.ir);
+      const manifest = buildManifest(
+        result.ir,
+        "dependencies" in result ? result.dependencies : {}
+      );
       const manifestPath = join(outputDir, "intentlang.manifest.json");
 
       let previousManifest: BuildManifest | undefined;
@@ -968,7 +994,7 @@ export async function startStudio(options: StudioOptions): Promise<{
         return;
       }
 
-      const result = compileSource(source);
+      const result = await compileStudioSource(sourcePath, source);
       if (!result.ok) {
         sendJson(res, 422, {
           code: "COMPILE_ERROR",
@@ -979,7 +1005,10 @@ export async function startStudio(options: StudioOptions): Promise<{
       }
 
       // Safety checks — refuse destructive/security-downgrade from browser
-      const manifest = buildManifest(result.ir);
+      const manifest = buildManifest(
+        result.ir,
+        "dependencies" in result ? result.dependencies : {}
+      );
       const manifestPath = join(outputDir, "intentlang.manifest.json");
 
       let previousManifest: BuildManifest | undefined;

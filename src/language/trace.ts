@@ -298,3 +298,25 @@ export function buildTraceMap(
 
   return { sourceFingerprint: sourceFingerprint(ir), links };
 }
+
+export function remapTraceMapSources(
+  trace: TraceMap,
+  sourceMap: Array<{ file: string; line: number }>
+): TraceMap {
+  return {
+    ...trace,
+    links: trace.links.map((item) => {
+      const start = sourceMap[item.source.startLine - 1];
+      const end = sourceMap[item.source.endLine - 1] ?? start;
+      if (!start) return item;
+      return {
+        ...item,
+        source: {
+          file: start.file,
+          startLine: start.line,
+          endLine: end?.file === start.file ? end.line : start.line
+        }
+      };
+    })
+  };
+}

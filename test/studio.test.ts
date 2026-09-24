@@ -67,6 +67,12 @@ test("Studio model panel explains expanded declarations", () => {
   assert.ok(STUDIO_JS.includes("renderDeclarationExpansions"));
 });
 
+test("Studio model panel exposes project module navigation", () => {
+  assert.ok(STUDIO_JS.includes("Project Modules"));
+  assert.ok(STUDIO_JS.includes("renderProjectModules"));
+  assert.ok(STUDIO_JS.includes("module.integrity"));
+});
+
 const issueTrackerSource = `application IssueTracker
 authentication uses User identified by email
 

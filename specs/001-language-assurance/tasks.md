@@ -199,15 +199,15 @@ a normative rule and applicable fixtures.
 
 ## Phase 8: Modules, Imports, Namespaces, and Packages (US3, P1)
 
-- [ ] T059 [P] [US3] Specify module/import/export/namespace/version semantics.
-- [ ] T060 [P] [US3] Add module graph, cycle, conflict, and alias fixtures.
-- [ ] T061 [US3] Implement module parser and resolver in
+- [x] T059 [P] [US3] Specify module/import/export/namespace/version semantics.
+- [x] T060 [P] [US3] Add module graph, cycle, conflict, and alias fixtures.
+- [x] T061 [US3] Implement module parser and resolver in
   `src/language/modules.ts`.
-- [ ] T062 [US3] Preserve source locations, rule IDs, and trace links across
+- [x] T062 [US3] Preserve source locations, rule IDs, and trace links across
   modules.
-- [ ] T063 [US3] Add dependency lock and integrity metadata.
-- [ ] T064 [US3] Add Studio multi-file project navigation.
-- [ ] T065 [US3] Split LaunchOps into modules and prove semantic fingerprint
+- [x] T063 [US3] Add dependency lock and integrity metadata.
+- [x] T064 [US3] Add Studio multi-file project navigation.
+- [x] T065 [US3] Split LaunchOps into modules and prove semantic fingerprint
   equivalence.
 
 **Checkpoint**: SC-009 achieved.

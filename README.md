@@ -74,6 +74,7 @@ English source file that generates an authenticated program-launch system:
 
 **[Read the LaunchOps case study](docs/launch-ops-full-stack.md)** ·
 **[Browse the English source](examples/launch-ops.intent)** ·
+**[Browse the equivalent five-module project](examples/launch-ops-modular.intent)** ·
 **[Inspect every generated file](examples/launch-ops-generated/)**
 
 ## See what English can build

@@ -1208,6 +1208,7 @@ export const STUDIO_JS = `
     trace: null,
     policyExpansions: [],
     declarationExpansions: [],
+    projectModules: [],
     activeTab: 'problems',
     planToken: null,
     planItems: [],
@@ -1634,6 +1635,7 @@ export const STUDIO_JS = `
     state.trace = data.trace || null;
     state.policyExpansions = data.policyExpansions || [];
     state.declarationExpansions = data.declarationExpansions || [];
+    state.projectModules = data.projectModules || [];
   }
 
   function showFatal(msg) {
@@ -2300,6 +2302,28 @@ export const STUDIO_JS = `
     if (state.declarationExpansions && state.declarationExpansions.length) {
       appendModelSection(panel, 'Expanded Declarations', renderDeclarationExpansions(state.declarationExpansions));
     }
+    if (state.projectModules && state.projectModules.length) {
+      appendModelSection(panel, 'Project Modules', renderProjectModules(state.projectModules));
+    }
+  }
+
+  function renderProjectModules(modules) {
+    var container = document.createElement('div');
+    modules.forEach(function (module) {
+      var card = document.createElement('div');
+      card.className = 'model-card';
+      var name = document.createElement('div');
+      name.className = 'model-card-name';
+      name.textContent = module.alias + ' · ' + module.name;
+      var path = document.createElement('div');
+      path.className = 'model-field';
+      path.textContent = module.path;
+      path.title = module.integrity;
+      card.appendChild(name);
+      card.appendChild(path);
+      container.appendChild(card);
+    });
+    return container;
   }
 
   function renderDeclarationExpansions(expansions) {

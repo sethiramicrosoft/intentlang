@@ -115,6 +115,7 @@ export interface ProgramIr {
 export interface Diagnostic {
   code: string;
   message: string;
+  file?: string;
   line: number;
   column: number;
   length: number;

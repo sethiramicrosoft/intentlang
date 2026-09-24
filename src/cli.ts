@@ -18,6 +18,8 @@ import { buildLanguageCoverageReport } from "./language/coverage.js";
 import { loadLanguageInventories } from "./language/inventory.js";
 import { loadRuleRegistries } from "./language/rule-registry.js";
 import { buildTraceMap } from "./language/trace.js";
+import { remapTraceMapSources } from "./language/trace.js";
+import { compileProject } from "./language/modules.js";
 
 const [command, sourceArgument, ...options] = process.argv.slice(2);
 
@@ -61,8 +63,9 @@ async function runCompile(
   options: string[]
 ): Promise<void> {
   const sourcePath = resolve(sourceArgument);
-  const source = await readFile(sourcePath, "utf8");
-  const result = compileSource(source);
+  const result = await compileProject(sourcePath, {
+    verifyLock: !options.includes("--write-lock")
+  });
 
   if (!result.ok) {
     printDiagnostics(sourcePath, result.diagnostics);
@@ -89,6 +92,11 @@ async function runCompile(
     console.log(`  Roles: ${result.ir.roles.length}`);
     console.log(`  Permissions: ${result.ir.permissions.length}`);
     console.log("  Diagnostics: 0");
+    if (options.includes("--write-lock")) {
+      const lockPath = sourcePath.replace(/\.intent$/i, ".lock.json");
+      await writeFile(lockPath, result.lock, "utf8");
+      console.log(`  Lock: ${lockPath}`);
+    }
     return;
   }
 
@@ -186,8 +194,9 @@ async function runGenerate(
   options: string[]
 ): Promise<void> {
   const sourcePath = resolve(sourceArgument);
-  const source = await readFile(sourcePath, "utf8");
-  const result = compileSource(source);
+  const result = await compileProject(sourcePath, {
+    verifyLock: !options.includes("--write-lock")
+  });
 
   if (!result.ok) {
     printDiagnostics(sourcePath, result.diagnostics);
@@ -214,7 +223,7 @@ async function runGenerate(
 
   const outputDir = resolve(outputArgument);
   const schema = generateSchema(result.ir);
-  const manifest = buildManifest(result.ir);
+  const manifest = buildManifest(result.ir, result.dependencies);
   const manifestPath = `${outputDir}\\intentlang.manifest.json`;
   let previousManifest: BuildManifest | undefined;
 
@@ -275,8 +284,9 @@ async function runGenerate(
   const appJsPath = `${outputDir}\\app.js`;
   const stylesCssPath = `${outputDir}\\styles.css`;
   const tracePath = `${outputDir}\\intentlang.trace.json`;
+  const lockPath = `${outputDir}\\intentlang.lock.json`;
 
-  for (const outputPath of [appMjsPath, migrationPath, packageJsonPath, indexHtmlPath, appJsPath, stylesCssPath, tracePath]) {
+  for (const outputPath of [appMjsPath, migrationPath, packageJsonPath, indexHtmlPath, appJsPath, stylesCssPath, tracePath, lockPath]) {
     if (existsSync(outputPath) && !force) {
       console.error(`Refusing to overwrite ${outputPath}. Use --force after reviewing the plan.`);
       process.exitCode = 2;
@@ -296,9 +306,22 @@ async function runGenerate(
   await writeFile(stylesCssPath, ui.stylesCss, "utf8");
   await writeFile(
     tracePath,
-    canonicalJson(buildTraceMap(source, result.ir, sourcePath)) + "\n",
+    canonicalJson(
+      remapTraceMapSources(
+        buildTraceMap(result.source, result.ir, sourcePath),
+        result.sourceMap
+      )
+    ) + "\n",
     "utf8"
   );
+  await writeFile(lockPath, result.lock, "utf8");
+  if (options.includes("--write-lock")) {
+    await writeFile(
+      sourcePath.replace(/\.intent$/i, ".lock.json"),
+      result.lock,
+      "utf8"
+    );
+  }
 
   console.log(`\nGenerated artifacts in ${outputDir}:`);
   console.log("  app.mjs");
@@ -309,6 +332,7 @@ async function runGenerate(
   console.log("  app.js");
   console.log("  styles.css");
   console.log("  intentlang.trace.json");
+  console.log("  intentlang.lock.json");
   console.log("  (app.sqlite preserved if it exists)");
 }
 
@@ -317,8 +341,7 @@ async function runFormat(
   options: string[]
 ): Promise<void> {
   const sourcePath = resolve(sourceArgument);
-  const source = await readFile(sourcePath, "utf8");
-  const result = compileSource(source);
+  const result = await compileProject(sourcePath);
 
   if (!result.ok) {
     printDiagnostics(sourcePath, result.diagnostics);
@@ -330,6 +353,14 @@ async function runFormat(
   const outputArgument = findOptionValue(options, "--output");
   const doWrite = options.includes("--write");
   const force = options.includes("--force");
+
+  if (result.modules.length > 0 && doWrite && outputArgument === undefined) {
+    console.error(
+      "Refusing to replace a modular entry file with flattened canonical source. Use --output <path>."
+    );
+    process.exitCode = 2;
+    return;
+  }
 
   if (force && !doWrite) {
     console.error("--force requires --write.");
@@ -365,10 +396,10 @@ async function runFormat(
 
 function printDiagnostics(
   sourcePath: string,
-  diagnostics: Array<{ line: number; column: number; code: string; message: string; hint: string }>
+  diagnostics: Array<{ file?: string; line: number; column: number; code: string; message: string; hint: string }>
 ): void {
   for (const diagnostic of diagnostics) {
-    console.error(`${sourcePath}:${diagnostic.line}:${diagnostic.column} ${diagnostic.code} ${diagnostic.message}`);
+    console.error(`${diagnostic.file ?? sourcePath}:${diagnostic.line}:${diagnostic.column} ${diagnostic.code} ${diagnostic.message}`);
     console.error(`  Fix: ${diagnostic.hint}`);
   }
 }
@@ -380,11 +411,11 @@ function findOptionValue(options: string[], name: string): string | undefined {
 
 function printUsage(): void {
   console.error("Usage:");
-  console.error("  intentlang check <source>");
+  console.error("  intentlang check <source> [--write-lock]");
   console.error("  intentlang compile <source> [--output <path> --write [--force]]");
   console.error("  intentlang visual <source> [--output <page.html> --write [--force]]");
   console.error("  intentlang format <source> [--write] [--output <path> --write [--force]]");
-  console.error("  intentlang generate <source> --output <directory> [--write] [--force] [--allow-data-loss] [--allow-security-downgrade]");
+  console.error("  intentlang generate <source> --output <directory> [--write] [--force] [--write-lock] [--allow-data-loss] [--allow-security-downgrade]");
   console.error("  intentlang studio <source> [--port <number>] [--no-open]");
   console.error("    [--ai-provider none|ollama|openai-compatible|gemini]");
   console.error("    [--ai-model <model>] [--ai-endpoint <url>] [--ai-timeout <ms>]");

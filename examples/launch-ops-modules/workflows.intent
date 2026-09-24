@@ -1,0 +1,61 @@
+module LaunchOps.Workflows
+export all
+
+state machine ProgramLifecycle for Program using status
+  transition activate
+    require status is "planning" otherwise "Only a planning program can be activated"
+    set status to "active"
+  transition pause
+    require status is "active" otherwise "Only an active program can be paused"
+    set status to "paused"
+  transition complete
+    require status is "active" otherwise "Only an active program can be completed"
+    set status to "complete"
+
+state machine MilestoneLifecycle for Milestone using status
+  transition start
+    require status is "planned" otherwise "Only a planned milestone can be started"
+    set status to "active"
+  transition complete
+    require status is "active" otherwise "Only an active milestone can be completed"
+    set status to "complete"
+    set progress to 100
+
+state machine WorkItemLifecycle for WorkItem using status
+  transition start
+    require status is "open" otherwise "Only an open work item can be started"
+    set status to "in-progress"
+  transition block
+    require done is false otherwise "A completed work item cannot be blocked"
+    set status to "blocked"
+  transition complete
+    require done is false otherwise "Work item is already complete"
+    set done to true
+    set status to "done"
+  transition reopen
+    require done is true otherwise "Only a completed work item can be reopened"
+    set done to false
+    set status to "open"
+
+state machine RiskLifecycle for Risk using status
+  transition escalate
+    require escalated is false otherwise "Risk is already escalated"
+    set escalated to true
+    set status to "escalated"
+  transition mitigate
+    require status is not "mitigated" otherwise "Risk is already mitigated"
+    set escalated to false
+    set status to "mitigated"
+
+state machine DecisionLifecycle for Decision using status
+  transition approve
+    require status is "pending" otherwise "Only a pending decision can be approved"
+    set status to "approved"
+  transition reject
+    require status is "pending" otherwise "Only a pending decision can be rejected"
+    set status to "rejected"
+
+state machine UpdateLifecycle for Update using status
+  transition publish
+    require status is "draft" otherwise "Only a draft update can be published"
+    set status to "published"

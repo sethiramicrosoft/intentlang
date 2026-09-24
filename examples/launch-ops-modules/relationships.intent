@@ -1,0 +1,13 @@
+module LaunchOps.Relationships
+export all
+
+each Milestone belongs to a Program as program on delete cascade
+each WorkItem belongs to a Program as program on delete cascade
+each WorkItem belongs to a Milestone as milestone on delete cascade
+each WorkItem belongs to a User as owner on delete restrict
+each Risk belongs to a Program as program on delete cascade
+each Risk belongs to a User as owner on delete restrict
+each Decision belongs to a Program as program on delete cascade
+each Decision belongs to a User as owner on delete restrict
+each Update belongs to a Program as program on delete cascade
+each Update belongs to a User as owner on delete restrict

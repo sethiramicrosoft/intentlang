@@ -1,0 +1,11 @@
+{
+  "dependencies": {
+    "LaunchOps.Core": "sha256:4e57bf1f74b018ec5b33f80b3cefa85ecbbb4b882d1eb417367ad218b5a5e1a1",
+    "LaunchOps.Entities": "sha256:1f42b5ed88b04e55448fa9d5a2334d69314bf4aaf5ac369dc7318a1fc56f0174",
+    "LaunchOps.Policies": "sha256:bbe09e45ec38774451a5cc9235e9e2306da3f1c1eb05a520afd06c93fa1589cb",
+    "LaunchOps.Relationships": "sha256:45a7805e260ec4636425b1383a1c70585ba2fd5d80b344d6f8603c1e49f314c8",
+    "LaunchOps.Workflows": "sha256:2a65a64314a8288bbe7803d8d17136f52dd39e0d07a1a68efa59021fa27b6834"
+  },
+  "entry": "launch-ops-modular.intent",
+  "languageVersion": "0.8.0-alpha.0"
+}

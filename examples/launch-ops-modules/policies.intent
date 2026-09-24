@@ -1,0 +1,31 @@
+module LaunchOps.Policies
+export all
+
+policy AdministratorAccess
+  allow to provision accounts
+  allow to manage User, Program, Milestone, WorkItem, Risk, Decision and Update
+  allow to run all actions on Program, Milestone, WorkItem, Risk, Decision and Update
+
+policy ProgramManagerAccess
+  allow to read User
+  allow to manage Program, Milestone, WorkItem, Risk, Decision and Update
+  allow to run all actions on Program, Milestone, WorkItem, Risk and Update
+
+policy ContributorAccess
+  allow to read self User
+  allow to read Program, Milestone and WorkItem
+  allow to create and update own WorkItem
+  allow to read Risk
+  allow to create and update own Risk
+  allow to read Decision and Update
+  allow to create and update own Update
+  allow to run all actions on own WorkItem, Risk and Update
+
+policy ExecutiveAccess
+  allow to read Program, Milestone, WorkItem, Risk, Decision and Update
+  allow to run all actions on Decision
+
+grant AdministratorAccess to Administrator
+grant ProgramManagerAccess to ProgramManager
+grant ContributorAccess to Contributor
+grant ExecutiveAccess to Executive
