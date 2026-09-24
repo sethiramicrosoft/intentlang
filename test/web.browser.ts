@@ -508,6 +508,32 @@ When the open search is clicked, show search field and then focus search field`)
   } finally { await browser.close(); }
 });
 
+test("a click can disable or enable a real form control in a real browser", async () => {
+  const compiled = compilePageSource(`Add a checkbox called agree
+Add a button called submit
+Set the text of submit to Submit
+Add a button called toggle agree
+Set the text of toggle agree to Toggle
+When the toggle agree is clicked, if agree is checked, disable submit otherwise enable submit`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    assert.equal(await page.locator("#element-2").isEnabled(), true);
+    await page.locator("#element-1").check(); // a real user click on the checkbox
+    await page.locator("#element-3").click(); // "toggle agree" -- re-evaluates the if
+    assert.equal(await page.locator("#element-2").isDisabled(), true);
+    await page.locator("#element-1").uncheck();
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").isEnabled(), true);
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("When the <field> changes fires on a real dropdown selection or a committed text edit, in a real browser", async () => {
   const compiled = compilePageSource(`Add a dropdown called favorite color
 Add an option called red inside favorite color

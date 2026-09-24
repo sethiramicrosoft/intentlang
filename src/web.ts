@@ -260,6 +260,11 @@ export function compilePageSource(source: string): PageCompileResult {
     // so a keyboard or screen-reader user lands inside the newly-revealed content instead
     // of being left behind on the button that triggered it.
     const focusElement = /^focus\s+(.+)$/i.exec(part);
+    // Enables/disables any form control by its native ".disabled" property -- the same
+    // built-in mechanism a browser already uses to skip a control in tab order and grey it
+    // out for assistive technology, rather than a fragile CSS-only "looks disabled" trick.
+    const disableElement = /^disable\s+(.+)$/i.exec(part);
+    const enableElement = /^enable\s+(.+)$/i.exec(part);
     if (ifValue) {
       const source = resolve(ifValue[1]!, index);
       if (!source) return undefined;
@@ -498,6 +503,16 @@ export function compilePageSource(source: string): PageCompileResult {
       const target = resolve(focusElement[1]!, index);
       if (!target) return undefined;
       return `document.getElementById(${JSON.stringify(target.id)}).focus();`;
+    } else if (disableElement || enableElement) {
+      const match = disableElement ?? enableElement!;
+      const target = resolve(match[1]!, index);
+      if (!target) return undefined;
+      if (!hasDisabledSupport(target.tag)) {
+        report(index, `Only a button, an input, a text box, a dropdown, or a field group can be disabled, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add a button called ${target.name} instead, such as Add a button called ${target.name}.`);
+        return undefined;
+      }
+      return `document.getElementById(${JSON.stringify(target.id)}).disabled=${disableElement ? "true" : "false"};`;
     }
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
@@ -508,6 +523,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"set the value of ... to the value of ...", "clear the value of ...", ` +
       `"check ..."/"uncheck ..." for a checkbox or radio button, ` +
       `"hide ...", "show ...", "toggle the visibility of ...", "focus ...", ` +
+      `"disable ...", "enable ..." for a button, input, text box, dropdown, or field group, ` +
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is between ... and ... (two numbers), ... otherwise ...", ` +
@@ -523,6 +539,11 @@ export function compilePageSource(source: string): PageCompileResult {
   /** A checkbox or radio button has a live, readable/writable ".checked" state. */
   function hasCheckedState(node: PageElement): boolean {
     return node.tag === "input" && (node.attributes.type === "checkbox" || node.attributes.type === "radio");
+  }
+  /** Which element tags have a live ".disabled" property the browser actually honors. */
+  function hasDisabledSupport(tag: string): boolean {
+    return tag === "button" || tag === "input" || tag === "textarea" || tag === "select" ||
+      tag === "optgroup" || tag === "fieldset";
   }
   function dequoteRuntime(text: string): string {
     return /^"([\s\S]*)"$/.exec(text.trim())?.[1] ?? text.trim();

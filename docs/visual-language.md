@@ -224,7 +224,17 @@ page, from a paragraph to the whole page body, can be hidden, shown, or
 toggled. `focus <name>` moves keyboard focus to any element directly — most
 useful right after a `show`, so a keyboard or screen-reader user lands
 inside newly-revealed content (a search box, a details panel) instead of
-being left behind on the button that triggered it.
+being left behind on the button that triggered it. `disable <name>` and
+`enable <name>` set or clear a form control's native `disabled` property —
+the same real, built-in mechanism a browser uses to skip a control in the
+tab order and describe it as unavailable to assistive technology, rather
+than a CSS-only "looks greyed out" trick that a keyboard user could still
+activate. Handy for keeping a submit button disabled until a checkbox is
+ticked, or a field disabled until an earlier step is complete. The target
+must be a button, an input, a text box, a dropdown, an option group, or a
+field group specifically — the only elements whose `disabled` property the
+browser actually honors; using it on a paragraph or any other element is a
+clear error.
 
 **`When the page loads, <one or more instructions>.`** runs the exact same
 closed instruction set immediately, as soon as the page's markup exists,
@@ -402,6 +412,14 @@ Add a text input called search field
 Add a button called open search
 Set the text of open search to Search
 When the open search is clicked, show search field and then focus search field
+```
+
+```text
+Add a checkbox called agree
+Add a button called submit
+Set the text of submit to Submit
+When the page loads, disable submit
+When the agree changes, if agree is checked, enable submit otherwise disable submit
 ```
 
 ```text

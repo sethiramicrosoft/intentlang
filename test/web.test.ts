@@ -345,6 +345,32 @@ Set the text of go to Go
 When the go is clicked, focus missing`, /There is no earlier element called missing/);
 });
 
+test("a click can disable or enable a form control with \"disable <name>\"/\"enable <name>\"", () => {
+  const conditional = page(`Add a checkbox called agree
+Add a button called submit
+Set the text of submit to Submit
+Add a button called toggle agree
+Set the text of toggle agree to Toggle
+When the toggle agree is clicked, if agree is checked, disable submit otherwise enable submit`);
+  const conditionalScript = /<script>(.+?)<\/script>/.exec(conditional.html)![1]!;
+  assert.match(conditionalScript, /if\(document\.getElementById\("element-1"\)\.checked\)\{document\.getElementById\("element-2"\)\.disabled=true;\}else\{document\.getElementById\("element-2"\)\.disabled=false;\}/);
+
+  // Works on any form control that supports ".disabled", not just buttons: input, textarea,
+  // select, optgroup, and fieldset.
+  const input = page(`Add a text input called notes
+Add a button called unlock
+Set the text of unlock to Unlock
+When the unlock is clicked, enable notes`);
+  const inputScript = /<script>(.+?)<\/script>/.exec(input.html)![1]!;
+  assert.match(inputScript, /document\.getElementById\("element-1"\)\.disabled=false;/);
+
+  // A paragraph (or any element without a ".disabled" the browser honors) is a clear error.
+  invalid(`Add a paragraph called label
+Add a button called go
+Set the text of go to Go
+When the go is clicked, disable label`, /Only a button, an input, a text box, a dropdown, or a field group can be disabled/);
+});
+
 test("When the <field> changes reacts to a live edit or selection, not a click", () => {
   const dropdown = page(`Add a dropdown called favorite color
 Add an option called red inside favorite color
