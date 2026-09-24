@@ -393,6 +393,28 @@ scene — bringing them over would mean splitting an element's own text
 into separate pieces, a materially bigger change than animating an
 existing element in place.
 
+`fetch the text at <same-origin address> into the text of <name>` is the
+smallest possible bridge from a compiled page to a real backend: on click,
+it makes one real, live GET request in the visitor's own browser and shows
+whatever plain text comes back. The address must be same-origin — it has to
+start with a single `/` and not `//` (which would be protocol-relative to a
+different host) — because a static compiled page has no way to safely hold
+credentials for, or place trust in, an arbitrary third-party server; only
+the compiler's own generated `fetch()` call is ever hash-pinned into the
+page, never a user-supplied URL. Every other compiled page keeps today's
+exact security policy (`default-src 'none'`, blocking every network
+request); only a page that actually uses this one instruction opts in to
+the single additional `connect-src 'self'` policy clause needed to let its
+own generated fetch reach the same origin it was served from. This is
+deliberately GET-only and read-only — there is no matching instruction to
+send a request body, so a page can display backend data but never mutate
+it — and a failed request is swallowed silently, leaving the target's text
+unchanged, since there is not yet an instruction for showing a fetch error
+to a visitor. A page's own generated backend (see the CRUD/entity/auth
+language below) is one natural thing to point this at, but the instruction
+itself doesn't know anything about that generator's specific routes; it
+will read any same-origin path that returns plain text.
+
 **`When the page loads, <one or more instructions>.`** runs the exact same
 closed instruction set immediately, as soon as the page's markup exists,
 instead of waiting for a click — for setting up a default, rolling an
@@ -833,6 +855,14 @@ When the announce is clicked, move banner from left to right over 3 seconds
 ```
 
 ```text
+Add a paragraph called status
+Set the text of status to unknown
+Add a button called check status
+Set the text of check status to Check status
+When the check status is clicked, fetch the text at /status into the text of status
+```
+
+```text
 Add a paragraph called roll
 Set the text of roll to 0
 When the page loads, set the text of roll to a random number from 1 to 6
@@ -874,10 +904,10 @@ counter and then ...` five times by hand, but without repeating yourself.
 
 User-authored `<script>` elements, `onclick`-style inline event-handler
 attributes, arbitrary stylesheets, embedded documents, templates, shadow-DOM,
-canvas-drawing, SVG/MathML, named page-animation, and backend features are
-still not implemented and remain refused — the compiler is still the only
-thing that can ever put JavaScript on a page, and only for the one sanctioned
-runtime shape above. The compiler manages the HTML document shell and security
+canvas-drawing, SVG/MathML, and named page-animation are still not
+implemented and remain refused — the compiler is still the only thing that
+can ever put JavaScript on a page, and only for the one sanctioned runtime
+shape above. The compiler manages the HTML document shell and security
 policy. Vendor-specific or unvalidated CSS entries remain restricted.
 The capability browser and `GET /api/visual/capabilities` explain these limits.
 Adding catalogue entries alone is not sufficient to implement new behavior.

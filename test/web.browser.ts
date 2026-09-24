@@ -1152,6 +1152,33 @@ When the go is clicked, move banner from left to right over 5 seconds`);
   } finally { await reducedBrowser.close(); }
 });
 
+test("a click can read a real same-origin backend response with \"fetch the text at ... into the text of ...\", in a real browser", async () => {
+  const compiled = compilePageSource(`Add a paragraph called result
+Add a button called go
+Set the text of go to Go
+When the go is clicked, fetch the text at /status into the text of result`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    // page.setContent() leaves the page at "about:blank", which has no real origin a relative
+    // fetch("/status") can resolve against -- so, uniquely for this test, the compiled page
+    // itself is served from a routed same-origin URL, and "/status" is intercepted to stand in
+    // for a real backend response. This is exactly the one real network request the compiled
+    // page's own "connect-src 'self'" CSP clause allows.
+    await page.route("**/page", (route) => route.fulfill({ status: 200, contentType: "text/html", body: compiled.html }));
+    await page.route("**/status", (route) => route.fulfill({ status: 200, contentType: "text/plain", body: "All systems go" }));
+    await page.goto("https://intentlang.test/page");
+    await page.locator("#element-2").click(); // "go" -- fires the real fetch()
+    await page.locator("#element-1").filter({ hasText: "All systems go" }).waitFor();
+    assert.equal(await page.locator("#element-1").textContent(), "All systems go");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("When the <field> changes fires on a real dropdown selection or a committed text edit, in a real browser", async () => {
   const compiled = compilePageSource(`Add a dropdown called favorite color
 Add an option called red inside favorite color

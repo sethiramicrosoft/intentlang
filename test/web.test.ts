@@ -557,6 +557,42 @@ Set the text of go to Go
 When the go is clicked, move banner from left to right over 61 seconds`, /Movement duration must be between 0\.1 and 60 seconds/);
 });
 
+test("a click can read a same-origin backend with \"fetch the text at ... into the text of ...\"", () => {
+  const fetched = page(`Add a paragraph called result
+Add a button called go
+Set the text of go to Go
+When the go is clicked, fetch the text at /status into the text of result`);
+  const script = /<script>(.+?)<\/script>/.exec(fetched.html)![1]!;
+  assert.match(script,
+    /fetch\("\/status"\)\.then\(function\(r\)\{return r\.text\(\);\}\)\.then\(function\(t\)\{document\.getElementById\("element-1"\)\.textContent=t;\}\)\.catch\(function\(\)\{\}\);/);
+
+  // A page that never uses "fetch the text at ..." keeps today's exact CSP -- no
+  // "connect-src" clause at all -- so no page's security posture changes by default.
+  const plain = page(`Add a paragraph called label
+Add a button called go
+Set the text of go to Go
+When the go is clicked, set the text of label to Hi`);
+  assert.doesNotMatch(plain.html, /connect-src/);
+
+  // Only a page that actually compiles this action loosens its CSP, and only by the one
+  // narrow "connect-src 'self'" clause needed to let its own generated fetch() run.
+  assert.match(fetched.html, /Content-Security-Policy" content="default-src 'none'; style-src '[^']+';[^"]* connect-src 'self';/);
+
+  // An external or protocol-relative address is rejected -- same-origin only, since there is
+  // no way for a static page to safely hold credentials or trust an arbitrary third party.
+  invalid(`Add a paragraph called result
+Add a button called go
+Set the text of go to Go
+When the go is clicked, fetch the text at https://example.com/status into the text of result`,
+    /must be a same-origin address, starting with a single/);
+
+  invalid(`Add a paragraph called result
+Add a button called go
+Set the text of go to Go
+When the go is clicked, fetch the text at //example.com/status into the text of result`,
+    /must be a same-origin address, starting with a single/);
+});
+
 test("When the <field> changes reacts to a live edit or selection, not a click", () => {
   const dropdown = page(`Add a dropdown called favorite color
 Add an option called red inside favorite color

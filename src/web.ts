@@ -117,6 +117,15 @@ export function compilePageSource(source: string): PageCompileResult {
   // accidentally overwrite state a click has already set, which can't happen at parse
   // time anyway, but keeps the generated script's own ordering intuitive to read).
   const onloadScripts: string[] = [];
+  // Set to true the moment a "fetch the text at ..." action successfully compiles -- lets the
+  // CSP stay at its strictest "default-src 'none'" (blocking all network access) for every
+  // ordinary page, and only ever loosen to "connect-src 'self'" (same-origin requests only,
+  // never a third-party or cross-origin URL) for the specific pages that actually opt into
+  // talking to a backend. This is a narrower grant than default-src's own blanket "none": it
+  // still blocks images/media/fonts/scripts from anywhere but the existing allowances, and
+  // even same-origin fetches are restricted to whatever the compiler itself validated as a
+  // same-origin relative path (see fetchText's own path check below).
+  let usesFetch = false;
   function report(index: number, message: string, hint: string, suggestions?: VisualSuggestion[], category: VisualDiagnostic["category"] = "syntax") {
     const line = lines[index] ?? "";
     diagnostics.push({ code: category === "ambiguity" ? "W002" : "W001", category, message, hint,
@@ -414,6 +423,17 @@ export function compilePageSource(source: string): PageCompileResult {
     // materially bigger and riskier change than animating an existing element in place, and
     // remains a documented limitation.
     const moveElement = /^move\s+(.+?)\s+from\s+(left|right|top|bottom)\s+to\s+(left|right|top|bottom)\s+over\s+(-?\d+(?:\.\d+)?)\s+seconds?$/i.exec(part);
+    // The first bridge from the click language to a backend: fetches a same-origin address
+    // as plain text and writes it into an element's own textContent. The address must be a
+    // relative path starting with a single "/" (never "//" -- a protocol-relative URL that
+    // could reach a different origin -- and never a scheme like "https:", which can't appear
+    // here anyway since a leading "/" already rules out "scheme:" syntax); this is what lets
+    // the generated page's CSP loosen only to "connect-src 'self'" rather than an unrestricted
+    // grant, so the compiled page can never be made to call an arbitrary third-party server.
+    // Only a GET request is offered -- there's no instruction for sending a request body, so
+    // this can only ever read from a backend, never mutate one, keeping the smallest useful
+    // slice of "talk to a backend" as small as it can be.
+    const fetchText = /^fetch\s+the\s+text\s+at\s+(\S+)\s+into\s+the\s+text\s+of\s+(.+)$/i.exec(part);
     if (ifValue) {
       const source = resolve(ifValue[1]!, index);
       if (!source) return undefined;
@@ -1029,6 +1049,18 @@ export function compilePageSource(source: string): PageCompileResult {
         `if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches){return;}` +
         `e.animate([{transform:${JSON.stringify(offset[from]!)}},{transform:${JSON.stringify(offset[to]!)}}],` +
         `{duration:${Math.round(seconds * 1000)},fill:"forwards"});})();`;
+    } else if (fetchText) {
+      const path = fetchText[1]!;
+      if (!path.startsWith("/") || path.startsWith("//")) {
+        report(index, `"${path}" must be a same-origin address, starting with a single "/" and not "//".`,
+          "Try fetch the text at /status into the text of result -- an external or protocol-relative address is not allowed.");
+        return undefined;
+      }
+      const target = resolve(fetchText[2]!, index);
+      if (!target) return undefined;
+      usesFetch = true;
+      return `fetch(${JSON.stringify(path)}).then(function(r){return r.text();})` +
+        `.then(function(t){document.getElementById(${JSON.stringify(target.id)}).textContent=t;}).catch(function(){});`;
     }
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
@@ -1051,6 +1083,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"disable ...", "enable ..." for a button, input, text box, dropdown, or field group, ` +
       `"go to ..." to switch to a section, hiding its sibling sections, ` +
       `"move ... from left/right/top/bottom to the opposite edge over ... seconds" to animate any element across the screen, ` +
+      `"fetch the text at /a-same-origin-address into the text of ..." to read from a backend, ` +
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to/not equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is between ... and ... (two numbers, or the value of ..., or a mix), ... otherwise ...", ` +
@@ -1426,7 +1459,7 @@ export function compilePageSource(source: string): PageCompileResult {
   if (diagnostics.length) return { ok: false, diagnostics };
   const script = (onloadScripts.length || runtimeScripts.length) ?
     `"use strict";${onloadScripts.join("")}${runtimeScripts.join("")}` : undefined;
-  return { ok: true, ir, html: renderPage(ir, body, script) };
+  return { ok: true, ir, html: renderPage(ir, body, script, usesFetch) };
 }
 
 function renderAttributes(node: PageElement): string {
@@ -1440,7 +1473,7 @@ function renderChildren(ir: PageProgram, parent: string): string {
     return `${start}${escapeHtml(text)}${renderChildren(ir, node.id)}</${node.tag}>`;
   }).join("");
 }
-function renderPage(ir: PageProgram, body: string, script?: string): string {
+function renderPage(ir: PageProgram, body: string, script?: string, usesFetch = false): string {
   const css = `*{box-sizing:border-box}body{margin:24px;font-family:system-ui,sans-serif;overflow-wrap:anywhere}
 img,video{max-width:100%;height:auto}input,select,textarea,button{font:inherit;max-width:100%}
 ${ir.elements.filter((node) => Object.keys(node.styles).length).map((node) =>
@@ -1452,9 +1485,15 @@ ${ir.elements.filter((node) => Object.keys(node.styles).length).map((node) =>
   // text) is hash-pinned into the CSP, so nothing else can ever execute.
   const scriptTag = script ? `<script>${script}</script>` : "";
   const scriptSrc = script ? ` script-src 'sha256-${createHash("sha256").update(script).digest("base64")}';` : "";
+  // "default-src 'none'" already blocks every network request a page could otherwise make,
+  // including fetch -- this is the ONE narrow exception, and only for pages that actually
+  // compiled a "fetch the text at ..." action (see fetchText above, which already validated
+  // every such address as same-origin-relative at compile time). Every other page keeps the
+  // original zero-network-access posture unchanged.
+  const connectSrc = usesFetch ? " connect-src 'self';" : "";
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-${hash}';${scriptSrc} img-src 'self' https: data:; media-src 'self' https:; font-src 'self' https:; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'sha256-${hash}';${scriptSrc}${connectSrc} img-src 'self' https: data:; media-src 'self' https:; font-src 'self' https:; base-uri 'none'; form-action 'none'">
 <title>IntentLang page</title><style>${css}</style></head><body${renderAttributes(ir.elements[0]!)}>${body}${scriptTag}</body></html>
 `;
 }
