@@ -639,6 +639,30 @@ When the name field changes, set the text of echo to the value of name field`);
   } finally { await browser.close(); }
 });
 
+test("When Enter is pressed in <field> fires on a real keyboard Enter press, not a click, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called search field
+Add a paragraph called result
+Set the text of result to none
+When enter is pressed in search field, set the text of result to the value of search field`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("hello world");
+    // A plain Tab (or any other key) must not fire the handler -- only a real Enter keypress.
+    await page.locator("#element-1").press("Tab");
+    assert.equal(await page.locator("#element-2").textContent(), "none");
+    await page.locator("#element-1").focus();
+    await page.locator("#element-1").press("Enter");
+    assert.equal(await page.locator("#element-2").textContent(), "hello world");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can repeat an instruction the correct number of times, including nested repeats, in a real browser", async () => {
   const compiled = compilePageSource(`Add a paragraph called counter
 Set the text of counter to 0

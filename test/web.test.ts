@@ -418,6 +418,28 @@ Set the text of go to Go
 When the go changes, hide go`, /Only an input, a text box, or a dropdown can change/);
 });
 
+test("When Enter is pressed in <field> fires on a keydown, not a click, and prevents the default Enter behavior", () => {
+  const search = page(`Add a text input called search field
+Add a paragraph called result
+Set the text of result to none
+When enter is pressed in search field, set the text of result to the value of search field`);
+  const script = /<script>(.+?)<\/script>/.exec(search.html)![1]!;
+  assert.match(script, /addEventListener\("keydown",function\(event\)\{if\(event\.key==="Enter"\)\{event\.preventDefault\(\);document\.getElementById\("element-2"\)\.textContent=document\.getElementById\("element-1"\)\.value;\}\}\);/);
+
+  // Works on a dropdown too, using the same closed instruction set and readable-value check
+  // as "the value of ..." elsewhere.
+  const dropdown = page(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Set the text of red to Red
+Add a paragraph called result
+When enter is pressed in favorite color, set the text of result to the value of favorite color`);
+  assert.match(/<script>(.+?)<\/script>/.exec(dropdown.html)![1]!, /addEventListener\("keydown"/);
+
+  invalid(`Add a button called go
+Set the text of go to Go
+When enter is pressed in go, hide go`, /Only an input, a text box, or a dropdown can receive a key press/);
+});
+
 test("a click can read a text input's live value into another element's text", () => {
   const result = page(`Add a text input called name field
 Add a paragraph called greeting

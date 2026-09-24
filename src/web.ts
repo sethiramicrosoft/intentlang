@@ -791,6 +791,22 @@ export function compilePageSource(source: string): PageCompileResult {
       if (snippet) runtimeScripts.push(`document.getElementById(${JSON.stringify(target.id)}).addEventListener("change",function(){${snippet}});`);
       continue;
     }
+    if (statement.kind === "onenter") {
+      const target = resolve(statement.target, index);
+      if (!target) continue;
+      if (!hasReadableValue(target.tag)) {
+        report(index, `Only an input, a text box, or a dropdown can receive a key press, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add a text input called ${target.name} instead, such as Add a text input called ${target.name}.`);
+        continue;
+      }
+      // Reuses the exact same closed instruction set and compiler as a click handler --
+      // "Enter is pressed in ..." is just a different trigger, not a different set of
+      // actions. preventDefault stops the browser's own default Enter behavior for a text
+      // field inside an (absent, here) form from submitting anywhere.
+      const snippet = compileClickBody(statement.body, index);
+      if (snippet) runtimeScripts.push(`document.getElementById(${JSON.stringify(target.id)}).addEventListener("keydown",function(event){if(event.key==="Enter"){event.preventDefault();${snippet}}});`);
+      continue;
+    }
     if (statement.kind === "make") {
       const phrase = targetKey(statement.phrase);
       const candidates = [...elements.map((node) => node.name), "it", "background"]

@@ -7,7 +7,8 @@ export type PageStatement =
   | { kind: "show"; source: string }
   | { kind: "when"; target: string; body: string }
   | { kind: "onload"; body: string }
-  | { kind: "onchange"; target: string; body: string };
+  | { kind: "onchange"; target: string; body: string }
+  | { kind: "onenter"; target: string; body: string };
 
 export function usesPageGrammar(source: string): boolean {
   return source.split(/\r?\n/).some((line) =>
@@ -16,7 +17,8 @@ export function usesPageGrammar(source: string): boolean {
     /^\s*put\s+.+?\s+inside\b/i.test(line) ||
     /^\s*when\s+.+?\s+is\s+clicked\s*,/i.test(line) ||
     /^\s*when\s+the\s+page\s+loads\s*,/i.test(line) ||
-    /^\s*when\s+.+?\s+changes\s*,/i.test(line));
+    /^\s*when\s+.+?\s+changes\s*,/i.test(line) ||
+    /^\s*when\s+enter\s+is\s+pressed\s+in\s+.+?,/i.test(line));
 }
 
 export function parsePageStatement(line: string): PageStatement | undefined {
@@ -44,6 +46,12 @@ export function parsePageStatement(line: string): PageStatement | undefined {
   // distinct trigger, not a click.
   const onchange = /^when\s+(?:the\s+)?(.+?)\s+changes\s*,\s*(.+?)\.?$/i.exec(control);
   if (onchange) return { kind: "onchange", target: onchange[1]!, body: onchange[2]! };
+  // Checked before the plain "is clicked" pattern too, since "Enter is pressed in <name>" is
+  // a keyboard trigger, not a click -- most useful for submitting a single-field form without
+  // requiring a visible button, while still being fully keyboard/screen-reader operable (the
+  // browser's own native Enter-in-a-text-field behavior, not a custom key-trap).
+  const onenter = /^when\s+enter\s+is\s+pressed\s+in\s+(.+?)\s*,\s*(.+?)\.?$/i.exec(control);
+  if (onenter) return { kind: "onenter", target: onenter[1]!, body: onenter[2]! };
   const when = /^when\s+(?:the\s+)?(.+?)\s+is\s+clicked\s*,\s*(.+?)\.?$/i.exec(source);
   if (when) return { kind: "when", target: when[1]!, body: when[2]! };
   return undefined;

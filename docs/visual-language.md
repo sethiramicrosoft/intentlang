@@ -142,7 +142,8 @@ HTML conformance, complete English interpretation, or uniform browser support**.
   and then set the text of label to Note` both creates the element and fills it
   in, in one sentence. A plain `and` that is not `and then` is never treated as a
   chain split, so ordinary display text such as `salt and pepper` is unaffected.
-  A `When ... is clicked`/`When the page loads`/`When ... changes` trigger's own
+  A `When ... is clicked`/`When the page loads`/`When ... changes`/`When
+  enter is pressed in ...` trigger's own
   body already chains its instructions with `and then` through the click
   compiler, so that sentence is never re-split at this level.
 
@@ -262,7 +263,8 @@ with `When ... is clicked` (so every instruction documented above, including
 instructions run before any click handler is registered, in source order —
 so a later click can still visibly override whatever a page-load default
 set. The compiler turns
-every `When ... is clicked`, `When the page loads`, or `When ... changes`
+every `When ... is clicked`, `When the page loads`, `When ... changes`, or
+`When enter is pressed in ...`
 sentence in a page into
 ONE small, entirely
 compiler-generated script (never containing any user-authored markup,
@@ -312,6 +314,17 @@ triggers. The target must be an input, a text box, or a dropdown
 specifically (the only elements with a live value that can meaningfully
 "change") — using it on a button or any other element is a clear error,
 with a hint suggesting a text input instead.
+
+**`When enter is pressed in <input/text box/dropdown name>, <one or more
+instructions>.`** is a fourth trigger, for reacting to the Enter key itself
+rather than waiting for a field to lose focus (as `changes` does) or
+requiring a separate submit button — useful for a single-field
+search box or quick-entry form. It fires on the browser's native `keydown`
+event, checks that the pressed key really is Enter, and calls
+`preventDefault()` so the browser's own default Enter behavior for a text
+field doesn't do anything unexpected; it shares the exact same closed
+instruction set and compiler as the other three triggers. The target must
+likewise be an input, a text box, or a dropdown.
 
 ```text
 Add a paragraph called counter
@@ -457,6 +470,13 @@ Set the value of uk to UK
 Add a paragraph called result
 Set the text of result to Pick a country
 When the country changes, set the text of result to the selected label of country
+```
+
+```text
+Add a text input called search field
+Add a paragraph called result
+Set the text of result to Type and press Enter
+When enter is pressed in search field, set the text of result to the value of search field
 ```
 
 ```text
