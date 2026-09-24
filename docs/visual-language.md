@@ -228,7 +228,14 @@ checked, ...` branches on the opposite, and `check <checkbox name>` /
 `toggle whether <checkbox name> is checked` flips it without needing to
 know which way it currently is. The
 target of any of these must be a checkbox or a radio button specifically —
-using them on a text input or any other element is a clear error. A click
+using them on a text input or any other element is a clear error. A radio
+button's whole point is mutual exclusivity, so every radio button added
+directly under the same parent (the same grouping IntentLang already uses
+for containers) is automatically given a shared HTML `name` attribute
+behind the scenes, with no extra syntax required — picking one radio
+button natively un-picks every other radio button under that same parent,
+exactly like a real form, while a radio button under a different parent
+starts its own, separate group. A click
 can also change whether any element is on the page at all (not just its
 text or value): `hide <name>` and `show <name>` set or clear its visibility,
 and `toggle the visibility of <name>` flips whichever state it's currently
@@ -445,6 +452,17 @@ Add a checkbox called agree
 Add a button called turn
 Set the text of turn to Toggle agreement
 When the turn is clicked, toggle whether agree is checked
+```
+
+```text
+Add a radio button called small
+Add a radio button called medium
+Add a radio button called large
+Add a paragraph called result
+Set the text of result to Pick a size
+When the small changes, set the text of result to small
+When the medium changes, set the text of result to medium
+When the large changes, set the text of result to large
 ```
 
 ```text

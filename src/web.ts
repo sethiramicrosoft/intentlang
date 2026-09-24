@@ -715,6 +715,15 @@ export function compilePageSource(source: string): PageCompileResult {
       attributes: preset ? { type: preset } : capability.name === "button" ? { type: "button" } : {},
       styles: {}, line: index + 1
     };
+    // A real radio button's whole point is mutual exclusivity: picking one should un-pick every
+    // other radio button in the same group. The browser only enforces that natively when radio
+    // inputs share an HTML "name" attribute -- without one, every radio button here would behave
+    // like an independent checkbox instead, silently defeating the reason to use a radio button
+    // at all. Sharing the immediate parent is IntentLang's only existing notion of grouping (the
+    // same mechanism "For each" and every other container-based feature already relies on), so
+    // radio buttons under the same parent are auto-grouped by that parent's id, with no new
+    // syntax required; radio buttons under different parents are naturally separate groups.
+    if (preset === "radio") node.attributes.name = `${parent.id}-radio-group`;
     elements.push(node);
     names.set(key, node);
   }

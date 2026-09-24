@@ -532,6 +532,28 @@ When the turn on is clicked, check agree`);
   } finally { await browser.close(); }
 });
 
+test("radio buttons under the same parent are really mutually exclusive in a real browser (shared name)", async () => {
+  const compiled = compilePageSource(`Add a radio button called option a
+Add a radio button called option b`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").check();
+    assert.equal(await page.locator("#element-1").isChecked(), true);
+    // Picking the second radio button must un-pick the first -- this only happens natively
+    // because both inputs share one HTML "name" attribute.
+    await page.locator("#element-2").check();
+    assert.equal(await page.locator("#element-1").isChecked(), false);
+    assert.equal(await page.locator("#element-2").isChecked(), true);
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can flip a real checkbox's checked state with \"toggle whether ... is checked\" in a real browser", async () => {
   const compiledWithHandler = compilePageSource(`Add a checkbox called agree
 Add a button called turn

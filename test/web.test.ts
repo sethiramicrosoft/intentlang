@@ -972,6 +972,26 @@ Set the text of go to Go
 When the go is clicked, uncheck n`, /Only a checkbox or a radio button has a checked state/);
 });
 
+test("radio buttons under the same parent are auto-grouped by a shared HTML name, for real mutual exclusivity", () => {
+  const grouped = page(`Add a radio button called option a
+Add a radio button called option b
+Add a section called other group
+Add a radio button called option c inside other group`);
+  const inputs = grouped.html.match(/<input[^>]*type="radio"[^>]*>/g)!;
+  assert.equal(inputs.length, 3);
+  // Siblings under the implicit page body share one group...
+  assert.match(inputs[0]!, /name="page-radio-group"/);
+  assert.match(inputs[1]!, /name="page-radio-group"/);
+  // ...while a radio button under a different parent gets its own, separate group.
+  assert.doesNotMatch(inputs[2]!, /name="page-radio-group"/);
+  assert.match(inputs[2]!, /name="element-3-radio-group"/);
+
+  // A checkbox is unaffected -- it has no "name" attribute at all, since only radio buttons
+  // need grouping for mutual exclusivity.
+  const withCheckbox = page(`Add a checkbox called agree`);
+  assert.doesNotMatch(withCheckbox.html.match(/<input[^>]*>/)![0]!, /name=/);
+});
+
 test("a click can flip a checkbox or radio button's own checked state with \"toggle whether ... is checked\"", () => {
   const flip = page(`Add a checkbox called agree
 Add a button called turn
