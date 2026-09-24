@@ -235,14 +235,16 @@ For each round from 1 to 5, add a list item called round line round inside fixtu
 ```
 
 - **`The <name> is <value>.`** defines or recomputes a variable. The value can be
-  a plain number, an existing variable, or one arithmetic step: `plus`, `minus`,
-  `times`, or `divided by` another number or variable. Each sentence performs at
-  most one operation; chain several sentences for anything larger, the same way
-  the rest of the language favors clear, repeated instructions over dense syntax.
-  A value can also be plain text, either bare words (`The winner is Alex
-  Carter.`) or a quoted phrase (`The motto is "Play as a team".`) — quotes are
-  only needed if the text itself could be confused with a number or another
-  variable's name.
+  a plain number, an existing variable, or an arithmetic chain: `plus`, `minus`,
+  `times`, or `divided by` another number or variable, joined as many times in a
+  row as needed (`The total is a plus b minus c.`). A chain always evaluates
+  strictly left to right, with no operator precedence — the same order it
+  reads in English — so `a minus b times c` computes `(a minus b) times c`,
+  not `a minus (b times c)`; write two separate variable sentences if you need
+  the other grouping. A value can also be plain text, either bare words (`The
+  winner is Alex Carter.`) or a quoted phrase (`The motto is "Play as a
+  team".`) — quotes are only needed if the text itself could be confused with
+  a number or another variable's name.
 - **`If the <name> is <comparison> <value>, <one or more instructions>.`** keeps
   its instruction(s) only when the comparison is true. Comparisons are written
   as words: `greater than`, `less than`, `equal to`, `not equal to`, `at least`,
@@ -364,9 +366,9 @@ name and parameter list can't be confused.
 
 A variable's value, number or text, can be used anywhere a plain instruction ends
 with `to <name>`, such as `Set the text of points line to total points`. That
-same trailing spot also accepts one arithmetic step, such as
-`Set the text of message to a plus b`, which is what lets a two-parameter
-procedure combine its parameters directly.
+same trailing spot also accepts an arithmetic chain, such as
+`Set the text of message to a plus b plus c`, which is what lets a
+multi-parameter procedure combine its parameters directly.
 
 A `The ... is ...` variable sentence can also be used as the instruction
 inside an If, a For each, or a procedure's own body — not just on its own
@@ -405,10 +407,6 @@ offered, never applied silently.
   just from its parameter). Combine a procedure with the loop's own
   instruction — which *can* vary per item — for the parts that need to
   change each time.
-- Arithmetic only supports one operator between exactly two values at a
-  time (`a plus b`), never a longer chain like `a plus b plus c` in a single
-  step. Reaching the same result takes an extra variable sentence, such as
-  `The subtotal is a plus b.` followed by `The total is subtotal plus c.`.
 - A procedure's parameter *definition* list must be joined with `and` only
   (`To add with a and b, ...`) — a comma there would be indistinguishable
   from the comma that starts the procedure's body. A *call*'s value list has

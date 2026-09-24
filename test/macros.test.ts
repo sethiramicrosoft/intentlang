@@ -679,3 +679,47 @@ test("defining a procedure with the same parameter name twice is a clear error",
 To add with a and a, set the text of message to a
 Do add with 3 and 4.`, /more than once/);
 });
+
+test("arithmetic can chain more than one operator, evaluated strictly left to right", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The a is 2.
+The b is 3.
+The c is 4.
+Set the text of message to a plus b plus c`);
+  assert.equal(textOf(ir, "message"), "9");
+});
+
+test("a chained arithmetic expression can mix different operators, still left to right", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The a is 10.
+The b is 4.
+The c is 2.
+Set the text of message to a minus b times c`);
+  // Left to right, with no operator precedence: (10 - 4) * 2 = 12, not 10 - (4 * 2) = 2.
+  assert.equal(textOf(ir, "message"), "12");
+});
+
+test("a chained arithmetic expression works inside a variable sentence too", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The total is 0.
+The total is 1 plus 2 plus 3 plus 4.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "10");
+});
+
+test("a chained arithmetic expression works with a three-parameter procedure's own parameters", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To add with a and b and c, set the text of message to a plus b plus c
+Do add with 3, 4 and 5.`);
+  assert.equal(textOf(ir, "message"), "12");
+});
+
+test("dividing by zero anywhere in a chain leaves the whole expression unresolved, same as a single division by zero", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The a is 10.
+The b is 0.
+Set the text of message to a divided by b plus 5`);
+  // Consistent with a single division by zero: the expression is left as literal, unresolved
+  // text rather than silently guessing a value.
+  assert.equal(textOf(ir, "message"), "a divided by b plus 5");
+});

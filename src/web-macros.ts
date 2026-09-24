@@ -24,7 +24,13 @@ type FunctionMap = Map<string, { params: string[]; body: string }>;
 
 const NUMBER_OR_NAME = "(?:the\\s+)?(-?\\d+(?:\\.\\d+)?|[a-z][a-z ]*?)";
 const ASSIGN_RE = /^the\s+([a-z][a-z ]*?)\s+is\s+(.+?)\.?$/i;
-const EXPR_RE = new RegExp(`^${NUMBER_OR_NAME}(?:\\s+(plus|minus|times|divided by)\\s+${NUMBER_OR_NAME})?$`, "i");
+// A single operand, on its own (used to validate and resolve each link of a chain below).
+const OPERAND_RE = new RegExp(`^${NUMBER_OR_NAME}$`, "i");
+// Splits "a plus b minus c" into ["a", "plus", "b", "minus", "c"]: operands alternating with
+// the operator words that join them. Any number of operators can chain this way -- there's no
+// operator precedence, so a chain is always evaluated strictly left to right, the same order
+// it reads in English ("a plus b, then minus c").
+const CHAIN_SPLIT_RE = /\s+(plus|minus|times|divided by)\s+/i;
 const NUMERIC_INTENT_RE = /\d|\b(?:plus|minus|times|divided by)\b/i;
 // The subject can be a variable name, or (since a For each counting loop's variable literally
 // substitutes to a number) a plain number too, so "if the number is greater than 3" still works
@@ -205,20 +211,29 @@ function resolveTextOperand(raw: string, variables: Map<string, VarValue>): stri
 }
 
 function evaluateExpression(expr: string, variables: Map<string, VarValue>): number | undefined {
-  const match = EXPR_RE.exec(expr.trim());
-  if (!match) return undefined;
-  const left = resolveNumericOperand(match[1]!, variables);
-  if (left === undefined) return undefined;
-  if (!match[2]) return left;
-  const right = resolveNumericOperand(match[3]!, variables);
-  if (right === undefined) return undefined;
-  switch (match[2].toLowerCase()) {
-    case "plus": return left + right;
-    case "minus": return left - right;
-    case "times": return left * right;
-    case "divided by": return right === 0 ? undefined : left / right;
-    default: return undefined;
+  const parts = expr.trim().split(CHAIN_SPLIT_RE);
+  if (parts.length % 2 === 0) return undefined; // an operand must both start and end the chain
+  const firstMatch = OPERAND_RE.exec(parts[0]!.trim());
+  if (!firstMatch) return undefined;
+  let result = resolveNumericOperand(firstMatch[1]!, variables);
+  if (result === undefined) return undefined;
+  for (let i = 1; i < parts.length; i += 2) {
+    const operandMatch = OPERAND_RE.exec(parts[i + 1]!.trim());
+    if (!operandMatch) return undefined;
+    const right = resolveNumericOperand(operandMatch[1]!, variables);
+    if (right === undefined) return undefined;
+    switch (parts[i]!.toLowerCase()) {
+      case "plus": result = result + right; break;
+      case "minus": result = result - right; break;
+      case "times": result = result * right; break;
+      case "divided by":
+        if (right === 0) return undefined;
+        result = result / right;
+        break;
+      default: return undefined;
+    }
   }
+  return result;
 }
 
 function compareNumbers(value: number, comparator: string, target: number): boolean {
