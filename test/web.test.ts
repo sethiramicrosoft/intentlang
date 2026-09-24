@@ -749,7 +749,7 @@ Add a button called check
 Set the text of check to Check
 When the check is clicked, if the value of score field is between 1 and 10, set the text of result to valid otherwise set the text of result to out of range`);
   const script = /<script>(.+?)<\/script>/.exec(withOtherwise.html)![1]!;
-  assert.match(script, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>=1&&\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)<=10\)\{document\.getElementById\("element-2"\)\.textContent="valid";\}else\{document\.getElementById\("element-2"\)\.textContent="out of range";\}/);
+  assert.match(script, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>=\(1\)&&\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)<=\(10\)\)\{document\.getElementById\("element-2"\)\.textContent="valid";\}else\{document\.getElementById\("element-2"\)\.textContent="out of range";\}/);
 
   // A backwards range (low end greater than high end) is a clear compile-time error, not a
   // silently-always-false condition.
@@ -766,6 +766,48 @@ Add a paragraph called result
 Add a button called check
 Set the text of check to Check
 When the check is clicked, if the value of label is between 1 and 10, set the text of result to valid`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
+test("a click's if-conditional can check a range whose low and/or high end is a live input's value, not only fixed numbers", () => {
+  const bothLive = page(`Add a text input called score field
+Add a text input called low bound
+Add a text input called high bound
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is between the value of low bound and the value of high bound, set the text of result to valid otherwise set the text of result to out of range`);
+  const bothLiveScript = /<script>(.+?)<\/script>/.exec(bothLive.html)![1]!;
+  assert.match(bothLiveScript, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>=\(Number\(document\.getElementById\("element-2"\)\.value\)\|\|0\)&&\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)<=\(Number\(document\.getElementById\("element-3"\)\.value\)\|\|0\)\)\{document\.getElementById\("element-4"\)\.textContent="valid";\}else\{document\.getElementById\("element-4"\)\.textContent="out of range";\}/);
+
+  const mixedLive = page(`Add a text input called score field
+Add a text input called high bound
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is between 1 and the value of high bound, set the text of result to valid`);
+  const mixedLiveScript = /<script>(.+?)<\/script>/.exec(mixedLive.html)![1]!;
+  assert.match(mixedLiveScript, />=\(1\)&&\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)<=\(Number\(document\.getElementById\("element-2"\)\.value\)\|\|0\)/);
+
+  // A backwards range can only be caught at compile time when both ends are still plain
+  // numbers -- once either end is live, it's a runtime-only concern, so this compiles fine
+  // (the generated condition itself simply never matches at runtime instead).
+  const liveNeverBackwards = page(`Add a text input called score field
+Add a text input called low bound
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is between the value of low bound and 1, set the text of result to valid`);
+  assert.equal(liveNeverBackwards.ok, true);
+
+  invalid(`Add a text input called score field
+Add a paragraph called low bound
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is between the value of low bound and 10, set the text of result to valid`, /Only an input, a text box, or a dropdown has a value to read/);
 });
 
 test("a click's if-conditional can check a live text's own length with \"has ... characters\"", () => {

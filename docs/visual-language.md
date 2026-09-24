@@ -197,11 +197,18 @@ side of that comparison can be a plain number or another live input's value
 two things a visitor actually typed against each other. A sixth form,
 `if the value of <input name> is between <low> and <high>, <one
 instruction>` (also optionally followed by `otherwise <one instruction>`),
-checks a fixed, inclusive range in one step instead of writing two separate
-comparisons — both ends must be plain numbers known at compile time (not
-another live input's value), and a backwards range (a low end greater than
-the high end) is a clear compile-time error rather than a condition that's
-silently always false. A related form checks a live text's own length
+checks an inclusive range in one step instead of writing two separate
+comparisons. Either end can be a plain number known at compile time, or (the
+same as `ifValue`'s own right-hand side) another live input's own value
+(`if the value of score is between the value of low bound and the value of
+high bound, ...` or a mix of the two, such as `is between 1 and the value of
+high bound`), so a valid window can itself move with whatever a visitor
+actually typed rather than only ever being fixed. A backwards range (a low
+end greater than the high end) is a clear compile-time error rather than a
+condition that's silently always false — but only when both ends are still
+plain numbers; once either end is a live input's value, a would-be-backwards
+window can only be discovered at runtime, where the generated condition
+itself simply never matches instead. A related form checks a live text's own length
 instead of its value: `if the value of <input name> has more than/fewer
 than/at least/at most/exactly <number> characters, <one instruction>`
 (also optionally followed by `otherwise <one instruction>`) — handy for a
@@ -443,6 +450,17 @@ Set the text of result to none
 Add a button called check
 Set the text of check to Check
 When the check is clicked, if the value of score field is between 1 and 10, set the text of result to valid otherwise set the text of result to out of range
+```
+
+```text
+Add a text input called score field
+Add a text input called low bound
+Add a text input called high bound
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is between the value of low bound and the value of high bound, set the text of result to valid otherwise set the text of result to out of range
 ```
 
 ```text

@@ -522,6 +522,37 @@ When the check is clicked, if the value of score field is between 1 and 10, set 
   } finally { await browser.close(); }
 });
 
+test("a click's if-conditional can check a range whose bounds are live inputs, moving the valid window as they change, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called score field
+Add a text input called low bound
+Add a text input called high bound
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is between the value of low bound and the value of high bound, set the text of result to valid otherwise set the text of result to out of range`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-2").fill("1");
+    await page.locator("#element-3").fill("10");
+    await page.locator("#element-1").fill("5");
+    await page.locator("#element-5").click();
+    assert.equal(await page.locator("#element-4").textContent(), "valid");
+    // Move the window so the same score now falls outside it, proving the bounds are read
+    // live at click time rather than baked in at compile time.
+    await page.locator("#element-2").fill("6");
+    await page.locator("#element-5").click();
+    assert.equal(await page.locator("#element-4").textContent(), "out of range");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click's if-conditional can check a live text's own length in a real browser", async () => {
   const compiled = compilePageSource(`Add a text input called password
 Add a paragraph called hint

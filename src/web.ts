@@ -204,12 +204,14 @@ export function compilePageSource(source: string): PageCompileResult {
     // comparison (group 3 or group 4) is either a literal number or another live input's
     // value, checked as alternatives in the same capture position.
     const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|equal to)\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+(?:\.\d+)?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
-    // A fixed-range check, inclusive of both ends -- both ends are plain numbers known at
-    // compile time (not a live input's value, so a range can never be inverted or moved by
-    // user input), and checked before ifText below so "is between 1 and 10" is never
-    // misread as a literal-text comparison against the whole phrase "between 1 and 10".
+    // An inclusive range check on both ends. Either end can be a plain number known at
+    // compile time, or (like ifValue's right-hand side) another live input's own value --
+    // in which case the range can move with whatever a visitor actually typed, so the
+    // backwards-range compile-time check below only applies when both ends are still plain
+    // numbers. Checked before ifText below so "is between 1 and 10" is never misread as a
+    // literal-text comparison against the whole phrase "between 1 and 10".
     const ifBetween = !ifValue ?
-      /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+between\s+(-?\d+(?:\.\d+)?)\s+and\s+(-?\d+(?:\.\d+)?)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
+      /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+between\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+(?:\.\d+)?))\s+and\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+(?:\.\d+)?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // A live text's own length, for validation like a minimum/maximum password or username
     // length -- distinct from the value comparisons above, which compare the text/number
     // itself, not how long it is. Checked before ifText below for the same shadowing reason
@@ -374,23 +376,55 @@ export function compilePageSource(source: string): PageCompileResult {
           `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
         return undefined;
       }
-      const low = Number(ifBetween[2]);
-      const high = Number(ifBetween[3]);
-      if (low > high) {
-        report(index, `The range "between ${ifBetween[2]} and ${ifBetween[3]}" is backwards.`,
-          `Put the smaller number first, such as "is between ${ifBetween[3]} and ${ifBetween[2]}".`);
-        return undefined;
+      let lowSide: string;
+      if (ifBetween[2]) {
+        const lowOther = resolve(ifBetween[2]!, index);
+        if (!lowOther) return undefined;
+        if (!hasReadableValue(lowOther.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${lowOther.name} is a ${englishName(lowOther.tag)}.`,
+            `Add an input called ${lowOther.name} instead, such as Add a text input called ${lowOther.name}.`);
+          return undefined;
+        }
+        lowSide = `(Number(document.getElementById(${JSON.stringify(lowOther.id)}).value)||0)`;
+      } else {
+        lowSide = `(${JSON.stringify(Number(ifBetween[3]))})`;
       }
-      const inner = compileClickPart(ifBetween[4]!.trim(), index);
+      let highSide: string;
+      if (ifBetween[4]) {
+        const highOther = resolve(ifBetween[4]!, index);
+        if (!highOther) return undefined;
+        if (!hasReadableValue(highOther.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${highOther.name} is a ${englishName(highOther.tag)}.`,
+            `Add an input called ${highOther.name} instead, such as Add a text input called ${highOther.name}.`);
+          return undefined;
+        }
+        highSide = `(Number(document.getElementById(${JSON.stringify(highOther.id)}).value)||0)`;
+      } else {
+        highSide = `(${JSON.stringify(Number(ifBetween[5]))})`;
+      }
+      // A backwards range (e.g. "between 10 and 1") can only be caught at compile time when
+      // both ends are still plain numbers -- once either end is a live input's value, the
+      // range can only be checked at runtime, so the generated condition itself simply never
+      // matches rather than raising a false compile-time error.
+      if (!ifBetween[2] && !ifBetween[4]) {
+        const low = Number(ifBetween[3]);
+        const high = Number(ifBetween[5]);
+        if (low > high) {
+          report(index, `The range "between ${ifBetween[3]} and ${ifBetween[5]}" is backwards.`,
+            `Put the smaller number first, such as "is between ${ifBetween[5]} and ${ifBetween[3]}".`);
+          return undefined;
+        }
+      }
+      const inner = compileClickPart(ifBetween[6]!.trim(), index);
       if (inner === undefined) return undefined;
       let elseClause = "";
-      if (ifBetween[5]) {
-        const elseInner = compileClickPart(ifBetween[5].trim(), index);
+      if (ifBetween[7]) {
+        const elseInner = compileClickPart(ifBetween[7].trim(), index);
         if (elseInner === undefined) return undefined;
         elseClause = `else{${elseInner}}`;
       }
       const value = `(Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)`;
-      return `if(${value}>=${JSON.stringify(low)}&&${value}<=${JSON.stringify(high)}){${inner}}${elseClause}`;
+      return `if(${value}>=${lowSide}&&${value}<=${highSide}){${inner}}${elseClause}`;
     } else if (ifLength) {
       const source = resolve(ifLength[1]!, index);
       if (!source) return undefined;
@@ -721,7 +755,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"disable ...", "enable ..." for a button, input, text box, dropdown, or field group, ` +
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to (a number or the value of ...), ... otherwise ...", ` +
-      `"if the value of ... is between ... and ... (two numbers), ... otherwise ...", ` +
+      `"if the value of ... is between ... and ... (two numbers, or the value of ..., or a mix), ... otherwise ...", ` +
       `"if the value of ... has more than/fewer than/at least/at most/exactly ... characters, ... otherwise ...", ` +
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
       `"if the selected label of ... is/is not ... (a dropdown), ... otherwise ...", ` +
