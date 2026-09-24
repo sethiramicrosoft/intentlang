@@ -439,6 +439,55 @@ Set the text of check to Check
 When the check is clicked, if the value of a is greater than the value of b, set the text of result to high`, /Only an input, a text box, or a dropdown has a value to read/);
 });
 
+test("a click can repeat one instruction a fixed number of times, nesting safely and rejecting a bad count", () => {
+  const basic = page(`Add a paragraph called counter
+Set the text of counter to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat 5 times, add 1 to the text of counter`);
+  const basicScript = /<script>(.+?)<\/script>/.exec(basic.html)![1]!;
+  assert.match(basicScript, /for\(let i=0;i<5;i\+\+\)\{\(function\(\)\{var e=document\.getElementById\("element-1"\);e\.textContent=String\(\(Number\(e\.textContent\)\|\|0\)\+\(1\)\);\}\)\(\);\}/);
+
+  // Nested repeats need their own independently scoped counter (a bare "var i" would have the
+  // inner loop's counter stomp the outer loop's, breaking the outer loop's iteration count).
+  const nested = page(`Add a paragraph called counter
+Set the text of counter to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat 10 times, repeat 10 times, add 1 to the text of counter`);
+  const nestedScript = /<script>(.+?)<\/script>/.exec(nested.html)![1]!;
+  assert.match(nestedScript, /for\(let i=0;i<10;i\+\+\)\{for\(let i=0;i<10;i\+\+\)\{/);
+
+  // A repeat can be the "if" instruction, and the "if" condition can still read a live value.
+  const wrapped = page(`Add a text input called n
+Add a paragraph called counter
+Set the text of counter to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of n is greater than 5, repeat 3 times, add 1 to the text of counter`);
+  const wrappedScript = /<script>(.+?)<\/script>/.exec(wrapped.html)![1]!;
+  assert.match(wrappedScript, /if\(.+?\)\{for\(let i=0;i<3;i\+\+\)\{/);
+
+  invalid(`Add a paragraph called counter
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat -1 times, add 1 to the text of counter`, /needs a count of 0 or more/);
+
+  invalid(`Add a paragraph called counter
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat 999999999 times, add 1 to the text of counter`, /can run at most 100000 times per click/);
+
+  // A count of exactly zero is allowed and simply produces a loop that runs zero times.
+  const zero = page(`Add a paragraph called counter
+Set the text of counter to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat 0 times, add 1 to the text of counter`);
+  const zeroScript = /<script>(.+?)<\/script>/.exec(zero.html)![1]!;
+  assert.match(zeroScript, /for\(let i=0;i<0;i\+\+\)/);
+});
+
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
   const result = page(`Add an image called photo
 Set the source of photo to https://example.com/MyPhoto.png

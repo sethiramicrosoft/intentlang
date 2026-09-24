@@ -184,6 +184,9 @@ export function compilePageSource(source: string): PageCompileResult {
     // comparison (group 3 or group 4) is either a literal number or another live input's
     // value, checked as alternatives in the same capture position.
     const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|equal to)\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+(?:\.\d+)?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
+    // "Repeat" needs no shadowing precaution of its own -- no other pattern starts with the
+    // word "repeat" -- but like "if", its own trailing instruction is compiled recursively.
+    const repeat = /^repeat\s+(-?\d+)\s+times?\s*,\s*(.+)$/i.exec(part);
     // Checked before the plainer "set the text of X to Y", since that one's own value half
     // would otherwise happily swallow "the value of Y" as literal display text instead.
     const setFromValue = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
@@ -229,6 +232,24 @@ export function compilePageSource(source: string): PageCompileResult {
         elseClause = `else{${elseInner}}`;
       }
       return `if((Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)${operator}${rightSide}){${inner}}${elseClause}`;
+    } else if (repeat) {
+      const count = Number(repeat[1]);
+      if (count < 0) {
+        report(index, `"Repeat ${count} times" needs a count of 0 or more.`,
+          `Use a non-negative number, such as "repeat 3 times, ...".`);
+        return undefined;
+      }
+      if (count > 100_000) {
+        report(index, `"Repeat ${count} times" can run at most 100000 times per click.`,
+          "Use a smaller count.");
+        return undefined;
+      }
+      const inner = compileClickPart(repeat[2]!.trim(), index);
+      if (inner === undefined) return undefined;
+      // A block-scoped "let" (rather than "var") gives each repeat loop, even a nested one,
+      // its own counter, so "repeat ..., repeat ..., ..." never has an inner loop's counter
+      // stomp an outer loop's counter of the same name.
+      return `for(let i=0;i<${JSON.stringify(count)};i++){${inner}}`;
     } else if (setFromValue) {
       const target = resolve(setFromValue[1]!, index);
       const source = target ? resolve(setFromValue[2]!, index) : undefined;
@@ -280,7 +301,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
       `"subtract ... from the text of ...", "add the value of ... to the text of ...", ` +
       `"subtract the value of ... from the text of ...", or "if the value of ... is greater than/less than/` +
-      `at least/at most/equal to (a number or the value of ...), ... otherwise ...".`);
+      `at least/at most/equal to (a number or the value of ...), ... otherwise ..." or "repeat ... times, ...".`);
     return undefined;
   }
   /** Which element tags have a live, readable ".value" in the DOM. */

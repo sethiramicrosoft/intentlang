@@ -298,6 +298,28 @@ When the check is clicked, if the value of a is greater than the value of b, set
   } finally { await browser.close(); }
 });
 
+test("a click can repeat an instruction the correct number of times, including nested repeats, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a paragraph called counter
+Set the text of counter to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat 3 times, add 1 to the text of counter and then repeat 2 times, repeat 4 times, add 1 to the text of counter`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-2").click();
+    // 3 (first repeat) + 2*4 (nested repeat) = 11, proving the nested loop's own counter
+    // doesn't stomp the outer loop's, and both loops actually ran the right number of times.
+    assert.equal(await page.locator("#element-1").textContent(), "11");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("all advertised element types survive real browser parsing with their requested parentage", async () => {
   const source = webElements.filter((element) => element.status === "available")
     .map((element) => elementExample(element).replace(/\b(called|inside) sample /g, `$1 sample ${element.name} `)).join("\n");

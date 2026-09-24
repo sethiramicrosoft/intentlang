@@ -194,11 +194,18 @@ of ...` comparison. A random range's low end can't be greater than its high
 end (`from 6 to 1` is a clear error, not a silently reversed or empty range)
 — both ends are whole numbers, and the roll is inclusive of both. Both the
 `if`'s own instruction and its optional `otherwise` instruction can be any of
-the other supported instructions (including another `add the value of ...`),
-but each is exactly one instruction, not its own `and then` chain — chain
-further instructions after the whole `if ... otherwise ...` at the top level
-instead, and they'll run every time the button is clicked, regardless of
-which branch (or neither, if there's no `otherwise`) actually ran.
+the other supported instructions (including another `add the value of ...`
+or a `repeat ... times, ...`), but each is exactly one instruction, not its
+own `and then` chain — chain further instructions after the whole
+`if ... otherwise ...` at the top level instead, and they'll run every time
+the button is clicked, regardless of which branch (or neither, if there's no
+`otherwise`) actually ran. `repeat <count> times, <one instruction>` runs its
+one instruction that many times in a row on every click — the count must be
+a fixed whole number known at compile time (0 or more, and at most 100000),
+not a live input's value, so a click can never accidentally trigger a
+runaway loop; a negative count is a clear error rather than silently running
+zero times. Repeats nest safely, including a repeat inside another repeat's
+own instruction, or inside an `if`'s instruction.
 
 ```text
 Add a paragraph called counter
@@ -251,6 +258,14 @@ Set the text of check to Check
 When the check is clicked, if the value of a is greater than the value of b, set the text of result to a wins otherwise set the text of result to b wins
 ```
 
+```text
+Add a paragraph called counter
+Set the text of counter to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat 5 times, add 1 to the text of counter
+```
+
 The second example is real user input, not compile-time data: whatever a
 visitor actually types into the box is read live, the moment the button is
 clicked. The third rolls a genuine new random number in the browser on every
@@ -262,7 +277,10 @@ fixed amount, except the amount itself is real user input. The fifth branches
 on that live input at click time: it shows "high" or "low" depending on what a
 visitor actually typed, entirely in the browser, with no server involved.
 The sixth compares two visitors' inputs (well, one visitor typing into two
-boxes) directly against each other, rather than against a fixed number.
+boxes) directly against each other, rather than against a fixed number. The
+seventh adds 1 to the counter five times in a row on a single click, the same
+as writing `add 1 to the text of counter and then add 1 to the text of
+counter and then ...` five times by hand, but without repeating yourself.
 
 User-authored `<script>` elements, `onclick`-style inline event-handler
 attributes, arbitrary stylesheets, embedded documents, templates, shadow-DOM,
