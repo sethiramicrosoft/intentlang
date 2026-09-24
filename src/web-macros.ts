@@ -51,6 +51,14 @@ const CONDITION_RE = /^the\s+(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s+is\s+(greater tha
 // or "or" (e.g. "is equal to Alex and Sam") as long as the word right after it isn't "the".
 const CONDITION_SPLIT_RE = /\s+(and|or)\s+(?=the\s+)/i;
 const OTHERWISE_RE = /^otherwise\s*,\s*(.+?)\.?$/i;
+// "Otherwise if <conditions>, <instruction>." chains a second (or third, etc.) condition onto
+// an If/Otherwise chain: it only runs when every earlier condition in the same chain was false,
+// and its own condition is true. Reuses the exact same condition grammar as If (via `matchIf`)
+// by stripping the leading "otherwise " and parsing what's left as an ordinary If sentence.
+function matchOtherwiseIf(trimmed: string): IfMatch | undefined {
+  const rest = /^otherwise\s+(if\s+.+)$/i.exec(trimmed);
+  return rest ? matchIf(rest[1]!) : undefined;
+}
 // Only the head ("for each <name> in ") is a fixed shape; where the list ends and the
 // instruction begins is worked out by `matchForEachList` below, because a naive "last comma
 // on the line" or "first comma on the line" rule each break in different real cases (see
@@ -705,7 +713,8 @@ function expandChain(text: string, lineNumber: number, variables: Map<string, Va
 export function usesMacroGrammar(source: string): boolean {
   return source.split(/\r?\n/).some((line) => {
     const trimmed = line.trim();
-    return ASSIGN_RE.test(trimmed) || matchIf(trimmed) !== undefined || OTHERWISE_RE.test(trimmed) || matchForEach(trimmed) !== undefined
+    return ASSIGN_RE.test(trimmed) || matchIf(trimmed) !== undefined || OTHERWISE_RE.test(trimmed)
+      || matchOtherwiseIf(trimmed) !== undefined || matchForEach(trimmed) !== undefined
       || matchRepeat(trimmed) !== undefined || FUNCTION_DEF_RE.test(trimmed) || FUNCTION_CALL_RE.test(trimmed);
   });
 }
@@ -771,20 +780,44 @@ export function expandMacros(source: string): MacroExpandResult {
     const ifMatch = matchIf(trimmed);
     if (ifMatch) {
       const condition = evaluateIfCondition(ifMatch, trimmed, lineNumber, variables, diagnostics);
-      if (condition === undefined) return; // a diagnostic was already recorded
+      // An unresolved condition (a diagnostic was already recorded) breaks the chain, the same
+      // as if no If had started it at all -- so a later Otherwise can't silently pair itself
+      // with an unrelated, earlier If just because this one failed to evaluate.
       lastCondition = condition;
       if (condition) for (const instr of expandChain(ifMatch.instruction, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
+      return;
+    }
+
+    const otherwiseIf = matchOtherwiseIf(trimmed);
+    if (otherwiseIf) {
+      if (lastCondition === undefined) {
+        report(diagnostics, lineNumber, trimmed, "M003", `"Otherwise if" must come right after an "If" or "Otherwise if" sentence.`,
+          `Add an "If the ... is ..., ..." sentence before this line.`);
+        return;
+      }
+      // Once an earlier branch in this If/Otherwise-if chain has already run, every later
+      // "Otherwise if" in the same chain is skipped without even checking its own condition --
+      // exactly one branch in the whole chain ever runs, the same as "else if" in other
+      // languages -- but the chain stays open for a further "Otherwise if" or "Otherwise" to
+      // follow, so the chain isn't reported as broken just because it was already resolved.
+      if (lastCondition) return;
+      const condition = evaluateIfCondition(otherwiseIf, trimmed, lineNumber, variables, diagnostics);
+      lastCondition = condition;
+      if (condition) for (const instr of expandChain(otherwiseIf.instruction, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
       return;
     }
 
     const otherwise = OTHERWISE_RE.exec(trimmed);
     if (otherwise) {
       if (lastCondition === undefined) {
-        report(diagnostics, lineNumber, trimmed, "M003", `"Otherwise" must come right after an "If" sentence.`,
+        report(diagnostics, lineNumber, trimmed, "M003", `"Otherwise" must come right after an "If" or "Otherwise if" sentence.`,
           `Add an "If the ... is ..., ..." sentence before this line.`);
         return;
       }
       if (!lastCondition) for (const instr of expandChain(otherwise[1]!, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
+      // A plain "Otherwise" always closes its chain -- unlike "Otherwise if", nothing can
+      // follow it in the same chain, so a second "Otherwise" right after it is a clear error.
+      lastCondition = undefined;
       return;
     }
 

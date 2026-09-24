@@ -876,3 +876,55 @@ The c is a plus b.
 Set the text of message to c`);
   assert.equal(textOf(ir, "message"), "5");
 });
+
+test("'Otherwise if' runs when the If was false and its own condition is true", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 70.
+If the score is at least 80, set the text of message to A
+Otherwise if the score is at least 60, set the text of message to B
+Otherwise, set the text of message to C`);
+  assert.equal(textOf(ir, "message"), "B");
+});
+
+test("'Otherwise if' is skipped once an earlier branch in the chain already ran", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 90.
+If the score is at least 80, set the text of message to A
+Otherwise if the score is at least 60, set the text of message to B
+Otherwise, set the text of message to C`);
+  assert.equal(textOf(ir, "message"), "A");
+});
+
+test("a chain can have several 'Otherwise if' sentences, and a final 'Otherwise' still works", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 65.
+If the score is at least 90, set the text of message to A
+Otherwise if the score is at least 80, set the text of message to B
+Otherwise if the score is at least 60, set the text of message to C
+Otherwise, set the text of message to D`);
+  assert.equal(textOf(ir, "message"), "C");
+});
+
+test("an If/Otherwise-if chain with no matching branch and no final Otherwise simply produces no output", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The message is nothing set.
+The score is 1.
+If the score is at least 90, set the text of message to A
+Otherwise if the score is at least 60, set the text of message to B
+Set the text of message to message`);
+  assert.equal(textOf(ir, "message"), "nothing set");
+});
+
+test("a second 'Otherwise' right after the first is a clear error, not a silent re-run", () => {
+  invalid(`Add a paragraph called message inside page
+The score is 1.
+If the score is at least 90, set the text of message to A
+Otherwise, set the text of message to B
+Otherwise, set the text of message to C`, /Otherwise.*must come right after/);
+});
+
+test("'Otherwise if' after an If whose own condition couldn't be resolved is a clear error, not a silent guess", () => {
+  invalid(`Add a paragraph called message inside page
+If the missing is at least 90, set the text of message to A
+Otherwise if the missing is at least 60, set the text of message to B`, /Otherwise if.*must come right after/);
+});

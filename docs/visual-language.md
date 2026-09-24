@@ -278,6 +278,23 @@ Repeat 3 times, the wins is wins plus 1.
   same way no matter what order the values come in.
 - **`Otherwise, <one or more instructions>.`** runs when the If sentence right
   before it was false.
+- **`Otherwise if the <name> is <comparison> <value>, <one or more
+  instructions>.`** chains a second (or third, fourth, ...) condition onto the
+  same If, the same way "else if" works in other languages: it only runs
+  when every earlier condition in the chain was false *and* its own
+  condition is true. Once any branch in the chain has run, every later
+  `Otherwise if` in that same chain is skipped without even checking its own
+  condition, and a chain can still end with a plain `Otherwise` to cover
+  whatever no `Otherwise if` matched:
+  ```text
+  If the score is at least 90, set the text of grade to A
+  Otherwise if the score is at least 80, set the text of grade to B
+  Otherwise if the score is at least 60, set the text of grade to C
+  Otherwise, set the text of grade to F
+  ```
+  A second, unrelated `Otherwise` (or `Otherwise if`) right after one that
+  already ran is a clear error, not a silent re-run, since a plain
+  `Otherwise` always closes its chain.
 - **`For each <name> in <item, item and item>, <one or more instructions>.`**
   repeats its instruction(s) once per item, replacing the loop word wherever
   it appears. When there's more than one instruction, every instruction runs
@@ -324,6 +341,17 @@ decides whether that line's Otherwise runs. A nested For each's list is found
 by locating that list's own `and` rather than by guessing from comma
 position, so a nested instruction's commas (from a nested If, say) never get
 mistaken for list items.
+
+Note the difference between `Otherwise, if ...` (a comma right after
+"Otherwise", from the nesting shown above — a plain Otherwise whose own
+instruction just happens to be another, independent If) and `Otherwise if
+...` (no comma — the dedicated "else if" chain described earlier). They read
+almost identically but behave differently: the comma form's nested If has no
+memory of the outer chain (it doesn't skip itself once some earlier branch
+already ran, and nothing can follow it with a further plain `Otherwise` of
+its own on the next line, since that would pair with the *nested* If, not
+the outer one); the no-comma form is chain-aware. Prefer `Otherwise if`
+whenever the intent is a true "else if" ladder.
 
 ### Reusable procedures
 

@@ -1,0 +1,29 @@
+Add 'Otherwise if' else-if chains, and fix an Otherwise chain-state bug
+
+- New matchOtherwiseIf() recognizes "Otherwise if <conditions>, <instruction>."
+  by stripping the leading "otherwise " and reusing matchIf() on the rest,
+  so it shares the exact same condition grammar (including compound
+  and/or conditions) as a plain If.
+- The top-level dispatch loop now tracks the If/Otherwise-if chain's
+  resolution properly: once any branch in a chain has run, later
+  "Otherwise if" sentences in the same chain are skipped without even
+  evaluating their own condition (true "else if" semantics), and a
+  final plain "Otherwise" can still close the chain.
+- Fixed a latent bug in the process: previously, if an If's own
+  condition failed to resolve (a diagnostic was already recorded), the
+  chain-tracking variable was left unset, so a following "Otherwise"
+  could silently pair itself with some earlier, unrelated If instead
+  of reporting M003. Now an unresolved condition always closes/breaks
+  the chain. Also, a plain "Otherwise" now always closes its own
+  chain, so two "Otherwise" sentences in a row is a clear M003 error
+  instead of the second one silently re-running.
+- Documented "Otherwise if" chains, and clarified the difference
+  between "Otherwise if ..." (chain-aware) and the pre-existing
+  "Otherwise, if ..." nested-If emulation (not chain-aware), in
+  docs/visual-language.md.
+- 6 new unit tests covering a middle branch matching, an earlier
+  branch already having resolved the chain, a 3-way "Otherwise if"
+  ladder, no branch matching with no final Otherwise, and both of the
+  now-fixed error cases (double Otherwise, Otherwise-if after an
+  unresolved If). 521/521 tests passing, build and browser tests
+  green.
