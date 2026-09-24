@@ -313,12 +313,29 @@ fix when there's an obvious match. Defining the same name twice, or a
 procedure that calls itself (directly, or through another procedure), is
 also a clear error rather than a silent surprise or a compiler that hangs.
 
-A procedure has no parameters yet: it always runs the exact same
-instructions, using whatever variables already exist at the moment it's
-called. That's enough to give a repeated group of steps a name and call it
-from several places (including from inside a For each loop), but it can't yet
-receive a different value each time it's called — see "Current limits"
-below.
+A procedure can optionally take one parameter, using the word `with`:
+**`To <name> with <param>, <instructions>.`** defines it, and
+**`Do <name> with <value>.`** calls it with a specific value each time.
+
+```text
+To greet with person, set the text of message to person
+
+Do greet with Alex Carter.
+```
+
+Inside the procedure's own instructions, the parameter behaves just like a
+variable defined with a `The ... is ...` sentence — it can be used anywhere a
+variable can, including in comparisons and arithmetic. It's only bound for
+the duration of that one call: if a variable with the same name already
+existed outside the procedure, its value is temporarily set aside and
+restored once the call finishes, so the procedure's parameter can never leak
+out or permanently overwrite an unrelated variable of the same name.
+
+Calling a parameterized procedure without a value, or a parameterless
+procedure with a value, is reported as a clear error rather than silently
+ignored. Because `with` introduces the parameter, avoid using the word
+"with" inside a procedure's own name (for example, prefer "handle problems"
+over "deal with problems") so the name and parameter can't be confused.
 
 A variable's value, number or text, can be used anywhere a plain instruction ends
 with `to <name>`, such as `Set the text of points line to total points`.
@@ -340,10 +357,20 @@ offered, never applied silently.
 - Text variables can only be compared with `equal to` or `not equal to`;
   there's no ordering (`greater than`, etc.) for text, and text can't be used
   in arithmetic.
-- Procedures don't take parameters yet, so calling the same procedure from
-  several places (or several times inside a For each loop) always runs the
-  exact same instructions. Combine it with the loop's own instruction — which
-  *can* vary per item — for the parts that need to change each time.
+- A procedure takes at most one parameter, and the parameter can only be used
+  the same way a variable can — it can't be used to build a different element
+  name per call (for example, a procedure can't add a differently-named
+  element on each call just from its parameter). Combine a procedure with the
+  loop's own instruction — which *can* vary per item — for the parts that
+  need to change each time.
+- A procedure's own instructions can't yet contain a `The ... is ...`
+  variable sentence.
+- Chaining two *independent* If sentences with `and then` (where the second
+  doesn't depend on the first) is currently parsed as the second being nested
+  inside the first's own instruction, so if the first condition is false, the
+  second is skipped too, even though it doesn't depend on the first's result.
+  Put unrelated If sentences on separate lines instead of joining them with
+  `and then`.
 - The, If, Otherwise, For each, To, and Do sentences on this page are
   compile-time only: they compute a value once, when the page is compiled,
   not in response to anything a visitor does afterward. Real runtime

@@ -14,10 +14,13 @@ export type MacroExpandResult =
  * not computed). Both kinds are written the same way: "The <name> is <value>." */
 type VarValue = { type: "number"; value: number } | { type: "text"; value: string };
 
-/** A reusable procedure's name mapped to its raw, not-yet-expanded body text. Expanded fresh at
- * each call site, with whatever variables exist at that moment -- a procedure has no parameters
- * of its own yet, so it can only see the variables already defined by the time it's called. */
-type FunctionMap = Map<string, string>;
+/** A reusable procedure: its raw, not-yet-expanded body text, and (optionally) the name of the
+ * one parameter a caller supplies with "with". Expanded fresh at each call site: it sees every
+ * variable that exists at the moment it's called, plus (if it has one) its own parameter bound
+ * to whatever the caller passed -- shadowing an outer variable of the same name for the
+ * duration of the call, then restoring it, the same way a For each's own loop word only applies
+ * while that loop runs. */
+type FunctionMap = Map<string, { param?: string; body: string }>;
 
 const NUMBER_OR_NAME = "(?:the\\s+)?(-?\\d+(?:\\.\\d+)?|[a-z][a-z ]*?)";
 const ASSIGN_RE = /^the\s+([a-z][a-z ]*?)\s+is\s+(.+?)\.?$/i;
@@ -39,10 +42,13 @@ const FOR_EACH_HEAD_RE = /^for each\s+([a-z][a-z ]*?)\s+in\s+(.+)$/i;
 const FOR_EACH_RANGE_RE = /^for each\s+([a-z][a-z ]*?)\s+from\s+(-?\d+)\s+to\s+(-?\d+)\s*,\s*(.+?)\.?$/i;
 // A reusable procedure: "To <name>, <body>." defines it (no output by itself); "Do <name>."
 // calls it, expanding its body at the call site with whatever variables exist at that moment.
+// It can optionally take one argument: "To <name> with <param>, <body>." / "Do <name> with
+// <value>." -- the word "with" is what marks the parameter, so (like "inside"/"of"/"to" for
+// element names) a procedure name should avoid the word "with" to stay unambiguous.
 // A call's name has no delimiter of its own (unlike If/For each, which stop at a comma), so it
 // is anchored to the end of the line/chain-segment the same way Otherwise is.
-const FUNCTION_DEF_RE = /^to\s+([a-z][a-z ]*?)\s*,\s*(.+?)\.?$/i;
-const FUNCTION_CALL_RE = /^do\s+([a-z][a-z ]*?)\.?$/i;
+const FUNCTION_DEF_RE = /^to\s+([a-z][a-z ]*?)(?:\s+with\s+([a-z][a-z ]*?))?\s*,\s*(.+?)\.?$/i;
+const FUNCTION_CALL_RE = /^do\s+([a-z][a-z ]*?)(?:\s+with\s+(.+?))?\s*\.?$/i;
 const COMPARATORS = ["greater than", "less than", "not equal to", "equal to", "at least", "at most"];
 // Multiple instructions in one If/Otherwise/For each sentence are chained with "and then",
 // a phrase that reads naturally and never collides with ordinary instruction text (unlike a
@@ -129,6 +135,23 @@ function splitEnglishList(text: string): string[] {
 function formatNumber(value: number): string {
   const rounded = Math.round(value * 1e6) / 1e6;
   return Number.isInteger(rounded) ? String(rounded) : String(rounded);
+}
+
+/**
+ * Resolves a trailing "... to <variable name>" reference against the CURRENT variables map,
+ * right when the instruction is produced. This must happen immediately rather than being
+ * deferred to the very end of the file, because a procedure parameter is only bound to the
+ * variables map for the duration of its own call: by the time the whole file has been
+ * processed, a parameter's temporary binding has already been restored/removed, so resolving
+ * it later would see the wrong value (or no value at all).
+ */
+function resolveTrailingVariable(line: string, variables: Map<string, VarValue>): string {
+  const trailing = /^(.*\bto\s+)([a-z][a-z ]*)$/i.exec(line.trimEnd());
+  if (!trailing) return line;
+  const name = trailing[2]!.trim().toLowerCase();
+  const found = variables.get(name);
+  if (!found) return line;
+  return `${trailing[1]}${found.type === "number" ? formatNumber(found.value) : found.value}`;
 }
 
 function stripLeadingThe(text: string): string {
@@ -359,16 +382,20 @@ function evaluateForEach(forEachMatch: ForEachMatch, lineNumber: number, variabl
 }
 
 /**
- * Expands a "Do <name>." call: looks up the procedure's raw body (defined by a "To <name>, ..."
- * sentence, anywhere in the file) and expands it at the call site, with the variables that exist
- * right now. `callStack` carries every procedure name currently being expanded on this call path,
- * so a procedure that calls itself (directly, or through another procedure) is caught as a clear
- * error instead of hanging the compiler in infinite recursion.
+ * Expands a "Do <name>." or "Do <name> with <value>." call: looks up the procedure's raw body
+ * (defined by a "To <name>, ..." or "To <name> with <param>, ..." sentence, anywhere in the
+ * file) and expands it at the call site. If the procedure takes a parameter, the argument's
+ * value is bound to that parameter name for the duration of the call, temporarily shadowing any
+ * outer variable of the same name and restoring it afterward -- the same lexical-scoping idea
+ * a For each's own loop word already uses. `callStack` carries every procedure name currently
+ * being expanded on this call path, so a procedure that calls itself (directly, or through
+ * another procedure) is caught as a clear error instead of hanging the compiler in recursion.
  */
-function expandFunctionCall(name: string, callText: string, lineNumber: number, variables: Map<string, VarValue>,
-  diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): string[] {
-  const body = functions.get(name);
-  if (body === undefined) {
+function expandFunctionCall(name: string, argRaw: string | undefined, callText: string, lineNumber: number,
+  variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[], functions: FunctionMap,
+  callStack: Set<string>): string[] {
+  const fn = functions.get(name);
+  if (fn === undefined) {
     const closest = closestFunction(name, functions);
     report(diagnostics, lineNumber, callText, "M007", `"${name}" was never defined.`,
       closest ? `Did you mean "Do ${closest}."?` : `Add a sentence like "To ${name}, ..." before this line.`,
@@ -381,9 +408,34 @@ function expandFunctionCall(name: string, callText: string, lineNumber: number, 
       `Rewrite "${name}" so it doesn't call itself.`);
     return [];
   }
+  if (fn.param && argRaw === undefined) {
+    report(diagnostics, lineNumber, callText, "M010", `"${name}" needs a value.`,
+      `Try "Do ${name} with ...".`);
+    return [];
+  }
+  if (!fn.param && argRaw !== undefined) {
+    report(diagnostics, lineNumber, callText, "M011", `"${name}" doesn't take a value.`,
+      `Try "Do ${name}."`);
+    return [];
+  }
+  let hadPrevious = false;
+  let previous: VarValue | undefined;
+  if (fn.param) {
+    const rawValue = argRaw!.trim();
+    const numericValue = evaluateExpression(rawValue, variables);
+    const argValue: VarValue = numericValue !== undefined ? { type: "number", value: numericValue } :
+      (variables.get(stripLeadingThe(rawValue).toLowerCase()) ?? { type: "text", value: dequote(rawValue) });
+    hadPrevious = variables.has(fn.param);
+    previous = variables.get(fn.param);
+    variables.set(fn.param, argValue);
+  }
   const nextCallStack = new Set(callStack);
   nextCallStack.add(name);
-  return expandChain(body, lineNumber, variables, diagnostics, functions, nextCallStack);
+  const result = expandChain(fn.body, lineNumber, variables, diagnostics, functions, nextCallStack);
+  if (fn.param) {
+    if (hadPrevious) variables.set(fn.param, previous!); else variables.delete(fn.param);
+  }
+  return result;
 }
 
 /**
@@ -406,8 +458,8 @@ function expandInstruction(instr: string, lineNumber: number, variables: Map<str
   const nestedForEach = matchForEach(trimmedInstr);
   if (nestedForEach) return evaluateForEach(nestedForEach, lineNumber, variables, diagnostics, functions, callStack);
   const call = FUNCTION_CALL_RE.exec(trimmedInstr);
-  if (call) return expandFunctionCall(call[1]!.trim().toLowerCase(), trimmedInstr, lineNumber, variables, diagnostics, functions, callStack);
-  return [instr];
+  if (call) return expandFunctionCall(call[1]!.trim().toLowerCase(), call[2], trimmedInstr, lineNumber, variables, diagnostics, functions, callStack);
+  return [resolveTrailingVariable(instr, variables)];
 }
 
 /**
@@ -460,8 +512,9 @@ export function expandMacros(source: string): MacroExpandResult {
   const diagnostics: VisualDiagnostic[] = [];
   let lastCondition: boolean | undefined;
 
-  // First pass: collect every "To <name>, <body>." procedure definition, wherever it appears in
-  // the file, so a call further up the file can still find it.
+  // First pass: collect every "To <name>, <body>." (or "To <name> with <param>, <body>.")
+  // procedure definition, wherever it appears in the file, so a call further up the file can
+  // still find it.
   lines.forEach((rawLine, index) => {
     const trimmed = rawLine.trim();
     const def = FUNCTION_DEF_RE.exec(trimmed);
@@ -472,7 +525,7 @@ export function expandMacros(source: string): MacroExpandResult {
         `Give this procedure a different name, or remove the earlier "To ${name}, ..." sentence.`);
       return;
     }
-    functions.set(name, def[2]!.trim());
+    functions.set(name, { param: def[2]?.trim().toLowerCase(), body: def[3]!.trim() });
   });
   if (diagnostics.length > 0) return { ok: false, diagnostics };
 
@@ -502,7 +555,7 @@ export function expandMacros(source: string): MacroExpandResult {
       }
       // Doesn't resolve to a known number or variable expression: leave it for the
       // page compiler to report as an ordinary unrecognized instruction.
-      output.push(rawLine);
+      output.push(resolveTrailingVariable(rawLine, variables));
       return;
     }
 
@@ -534,7 +587,7 @@ export function expandMacros(source: string): MacroExpandResult {
 
     const call = FUNCTION_CALL_RE.exec(trimmed);
     if (call) {
-      for (const instr of expandFunctionCall(call[1]!.trim().toLowerCase(), trimmed, lineNumber, variables, diagnostics, functions, new Set())) {
+      for (const instr of expandFunctionCall(call[1]!.trim().toLowerCase(), call[2], trimmed, lineNumber, variables, diagnostics, functions, new Set())) {
         output.push(instr);
       }
       return;
@@ -548,20 +601,11 @@ export function expandMacros(source: string): MacroExpandResult {
       return;
     }
 
-    output.push(rawLine);
+    output.push(resolveTrailingVariable(rawLine, variables));
   });
 
   if (diagnostics.length > 0) return { ok: false, diagnostics };
 
-  const finalLines = output.map((line) => {
-    const trailing = /^(.*\bto\s+)([a-z][a-z ]*)$/i.exec(line.trimEnd());
-    if (!trailing) return line;
-    const name = trailing[2]!.trim().toLowerCase();
-    const found = variables.get(name);
-    if (!found) return line;
-    return `${trailing[1]}${found.type === "number" ? formatNumber(found.value) : found.value}`;
-  });
-
-  return { ok: true, source: finalLines.join("\n") };
+  return { ok: true, source: output.join("\n") };
 }
 

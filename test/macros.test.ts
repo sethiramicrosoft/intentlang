@@ -537,3 +537,70 @@ To greet, set the text of message to hello
 Do greet.`;
   assert.equal(usesMacroGrammar(source), true);
 });
+
+test("a procedure can take one parameter and use it in its body, bound fresh at each call", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To greet with person, set the text of message to person
+Do greet with Alex Carter.`);
+  assert.equal(textOf(ir, "message"), "Alex Carter");
+});
+
+test("a parameterized procedure called with a number can use it in arithmetic and comparisons", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To classify with score, if the score is at least 10, set the text of message to high and then if the score is less than 10, set the text of message to low
+Do classify with 15.`);
+  assert.equal(textOf(ir, "message"), "high");
+});
+
+test("a parameterized procedure called with an existing variable's name copies that variable's value", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The winner is Jordan.
+To announce with name, set the text of message to name
+Do announce with winner.`);
+  assert.equal(textOf(ir, "message"), "Jordan");
+});
+
+test("a procedure's own parameter only shadows an outer variable of the same name for the duration of the call", () => {
+  const { ir } = page(`Add a paragraph called before inside page
+Add a paragraph called during inside page
+Add a paragraph called after inside page
+The name is Original.
+To greet with name, set the text of during to name
+Set the text of before to name
+Do greet with Replacement.
+Set the text of after to name`);
+  assert.equal(textOf(ir, "before"), "Original");
+  assert.equal(textOf(ir, "during"), "Replacement");
+  assert.equal(textOf(ir, "after"), "Original");
+});
+
+test("a parameterized procedure can be called repeatedly from a For each loop, once per item", () => {
+  const { ir } = page(`Add a paragraph called red note inside page
+Add a paragraph called green note inside page
+Add a paragraph called blue note inside page
+To announce with item, if the item is equal to green, set the text of green note to seen
+For each color in red, green and blue, do announce with color.`);
+  assert.equal(textOf(ir, "red note"), "");
+  assert.equal(textOf(ir, "green note"), "seen");
+  assert.equal(textOf(ir, "blue note"), "");
+});
+
+test("one parameterized procedure can call another, passing its own parameter along", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To announce with name, set the text of message to name
+To welcome with guest, do announce with guest.
+Do welcome with Sam.`);
+  assert.equal(textOf(ir, "message"), "Sam");
+});
+
+test("calling a parameterized procedure without a value is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+To greet with person, set the text of message to person
+Do greet.`, /needs a value/);
+});
+
+test("calling a parameterless procedure with a value is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+To greet, set the text of message to hello
+Do greet with Alex.`, /doesn't take a value/);
+});
