@@ -695,6 +695,34 @@ When the check is clicked, if the value of a is greater than the value of b, set
   } finally { await browser.close(); }
 });
 
+test("a click's if-conditional supports 'is not equal to' against a live input's value in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called a
+Add a text input called b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of a is not equal to the value of b, set the text of result to different otherwise set the text of result to same`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("5");
+    await page.locator("#element-2").fill("5");
+    await page.locator("#element-4").click();
+    assert.equal(await page.locator("#element-3").textContent(), "same");
+    await page.locator("#element-1").fill("5");
+    await page.locator("#element-2").fill("7");
+    await page.locator("#element-4").click();
+    assert.equal(await page.locator("#element-3").textContent(), "different");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click's if-conditional can compare live text with is/contains/starts with/ends with in a real browser", async () => {
   const compiled = compilePageSource(`Add a text input called message
 Add a paragraph called result

@@ -169,10 +169,13 @@ export function compilePageSource(source: string): PageCompileResult {
     }
     return statements.join("");
   }
-  // Maps a plain-English comparison word to its JS operator; only these five are recognized,
-  // so a runtime "if" can never compile to an arbitrary/unsafe comparison.
+  // Maps a plain-English comparison word to its JS operator; only these six are recognized,
+  // so a runtime "if" can never compile to an arbitrary/unsafe comparison. "not equal to" is
+  // checked before "equal to" in the ifValue alternation below so "is not equal to" isn't cut
+  // short by "equal to" alone leaving a leftover "not" unmatched.
   const clickComparisons: Record<string, string> = {
-    "greater than": ">", "less than": "<", "at least": ">=", "at most": "<=", "equal to": "==="
+    "greater than": ">", "less than": "<", "at least": ">=", "at most": "<=", "equal to": "===",
+    "not equal to": "!=="
   };
   // Same idea for text comparisons; only these five verbs are recognized. Ordered with
   // "is not" before "is" in the regex alternation below so "is not" isn't cut short.
@@ -203,7 +206,7 @@ export function compilePageSource(source: string): PageCompileResult {
     // reserved after "If" everywhere else in the language. The right-hand side of the
     // comparison (group 3 or group 4) is either a literal number or another live input's
     // value, checked as alternatives in the same capture position.
-    const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|equal to)\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+(?:\.\d+)?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
+    const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|not equal to|equal to)\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+(?:\.\d+)?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
     // An inclusive range check on both ends. Either end can be a plain number known at
     // compile time, or (like ifValue's right-hand side) another live input's own value --
     // in which case the range can move with whatever a visitor actually typed, so the
@@ -846,7 +849,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"hide ...", "show ...", "toggle the visibility of ...", "focus ...", ` +
       `"disable ...", "enable ..." for a button, input, text box, dropdown, or field group, ` +
       `"if the value of ... is greater than/less than/` +
-      `at least/at most/equal to (a number or the value of ...), ... otherwise ...", ` +
+      `at least/at most/equal to/not equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is between ... and ... (two numbers, or the value of ..., or a mix), ... otherwise ...", ` +
       `"if the value of ... has more than/fewer than/at least/at most/exactly ... characters ` +
       `(a number, or as many characters as the value of ...), ... otherwise ...", ` +

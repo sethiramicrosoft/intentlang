@@ -751,7 +751,7 @@ Set the text of go to Go
 When the go is clicked, add the value of step to the value of quantity`, /Only an input, a text box, or a dropdown has a value to set/);
 });
 
-test("a click can run a runtime if-conditional over a live input's value, with all five comparisons and wrapping any other instruction", () => {
+test("a click can run a runtime if-conditional over a live input's value, with all six comparisons and wrapping any other instruction", () => {
   const greater = page(`Add a text input called score field
 Add a paragraph called result
 Set the text of result to none
@@ -761,7 +761,7 @@ When the check is clicked, if the value of score field is greater than 50, set t
   const greaterScript = /<script>(.+?)<\/script>/.exec(greater.html)![1]!;
   assert.match(greaterScript, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>\(50\)\)\{document\.getElementById\("element-2"\)\.textContent="high";\}/);
 
-  for (const [word, operator] of Object.entries({ "greater than": ">", "less than": "<", "at least": ">=", "at most": "<=", "equal to": "===" })) {
+  for (const [word, operator] of Object.entries({ "greater than": ">", "less than": "<", "at least": ">=", "at most": "<=", "equal to": "===", "not equal to": "!==" })) {
     const result = page(`Add a text input called n
 Add a paragraph called out
 Set the text of out to 0
@@ -1008,6 +1008,27 @@ Add a paragraph called result
 Add a button called check
 Set the text of check to Check
 When the check is clicked, if the value of a is greater than the value of b, set the text of result to high`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
+test("a click's if-conditional supports 'is not equal to', against both a literal number and another live input's value", () => {
+  const literal = page(`Add a text input called code
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of code is not equal to 0, set the text of result to nonzero otherwise set the text of result to zero`);
+  const literalScript = /<script>(.+?)<\/script>/.exec(literal.html)![1]!;
+  assert.match(literalScript, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)!==\(0\)\)\{document\.getElementById\("element-2"\)\.textContent="nonzero";\}else\{document\.getElementById\("element-2"\)\.textContent="zero";\}/);
+
+  const compared = page(`Add a text input called a
+Add a text input called b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of a is not equal to the value of b, set the text of result to different otherwise set the text of result to same`);
+  const comparedScript = /<script>(.+?)<\/script>/.exec(compared.html)![1]!;
+  assert.match(comparedScript, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)!==\(Number\(document\.getElementById\("element-2"\)\.value\)\|\|0\)\)\{document\.getElementById\("element-3"\)\.textContent="different";\}else\{document\.getElementById\("element-3"\)\.textContent="same";\}/);
 });
 
 test("a click can repeat one instruction a fixed number of times, nesting safely and rejecting a bad count", () => {

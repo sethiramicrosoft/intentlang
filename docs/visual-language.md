@@ -188,12 +188,13 @@ live input's value isn't known until the click actually happens, a zero
 divisor can't be caught at compile time here, so the generated code itself
 guards it at runtime, leaving the running total unchanged rather than
 producing NaN/Infinity), and `if the value of <input
-name> is greater than/less than/at least/at most/equal to <number>, <one
+name> is greater than/less than/at least/at most/equal to/not equal to
+<number>, <one
 instruction>` optionally followed by `otherwise <one instruction>` (a real
 runtime conditional, with an optional else branch, so a click can behave
 differently depending on what a visitor actually typed) — the right-hand
 side of that comparison can be a plain number or another live input's value
-(`if the value of a is greater than the value of b, ...`), for comparing
+(`if the value of a is not equal to the value of b, ...`), for comparing
 two things a visitor actually typed against each other. A sixth form,
 `if the value of <input name> is between <low> and <high>, <one
 instruction>` (also optionally followed by `otherwise <one instruction>`),
