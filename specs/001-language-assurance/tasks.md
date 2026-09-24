@@ -263,15 +263,15 @@ a normative rule and applicable fixtures.
 
 ## Phase 11: Transactions, Integrations, and Escape Hatches (US7, P2)
 
-- [ ] T085 [P] [US7] Specify multi-record transaction and rollback semantics.
-- [ ] T086 [P] [US7] Specify external contracts, retries, timeouts,
+- [x] T085 [P] [US7] Specify multi-record transaction and rollback semantics.
+- [x] T086 [P] [US7] Specify external contracts, retries, timeouts,
   idempotency, and secret references.
-- [ ] T087 [P] [US7] Specify capability-scoped escape hatches and excluded
+- [x] T087 [P] [US7] Specify capability-scoped escape hatches and excluded
   guarantees.
-- [ ] T088 [US7] Implement transaction planner/runtime.
-- [ ] T089 [US7] Implement external contract validation and adapters.
-- [ ] T090 [US7] Implement isolated escape-hatch execution and audit metadata.
-- [ ] T091 [US7] Add failure-injection reference application and tests.
+- [x] T088 [US7] Implement transaction planner/runtime.
+- [x] T089 [US7] Implement external contract validation and adapters.
+- [x] T090 [US7] Implement isolated escape-hatch execution and audit metadata.
+- [x] T091 [US7] Add failure-injection reference application and tests.
 
 ---
 

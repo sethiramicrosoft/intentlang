@@ -178,6 +178,23 @@ The hidden USD 999 order is removed by authorization before grouping and
 aggregation. The generated SQL contains placeholders and a separate parameter
 list; data values are never interpolated into SQL text.
 
+## Failure-Safe Fulfillment
+
+The experimental effects example combines an atomic order/outbox transaction,
+a bounded and idempotent billing retry, symbolic secret resolution, and a
+capability-scoped receipt formatter.
+
+**[Executable example](failure-safe-fulfillment.ts)** ·
+**[Normative semantics](../docs/spec/effects-and-integrations.md)**
+
+```powershell
+npm run example:effects
+```
+
+The example prints audit metadata for each boundary. It records secret reference
+names and escape-hatch source fingerprints, never secret values or raw custom
+code.
+
 ## Focus Board
 
 A small task board that combines both IntentLang pipelines in one app: a

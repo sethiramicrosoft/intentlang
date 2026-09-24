@@ -7,7 +7,7 @@ test("rule registry loads all files with globally unique IDs", async () => {
 
   assert.equal(registry.languageVersion, "0.8.0-alpha.0");
   assert.equal(registry.files.length, 2);
-  assert.equal(registry.rules.length, 25);
+  assert.equal(registry.rules.length, 28);
   assert.equal(
     new Set(registry.rules.map((rule) => rule.id)).size,
     registry.rules.length

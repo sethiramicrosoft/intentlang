@@ -41,6 +41,9 @@
     { "id": "BUS-COMPUTE-001", "category": "syntax", "status": "experimental", "title": "Exact typed values and deterministic expressions", "implementation": ["src/language/typed-values.ts", "src/language/typed-expressions.ts"] },
     { "id": "BUS-COMPUTE-002", "category": "syntax", "status": "experimental", "title": "Pure typed functions and explicit effectful procedures", "implementation": ["src/language/typed-functions.ts"] },
     { "id": "BUS-COMPUTE-003", "category": "syntax", "status": "experimental", "title": "Immutable collections, closed records, and exhaustive enum matching", "implementation": ["src/language/typed-collections.ts"] },
-    { "id": "BUS-QUERY-001", "category": "syntax", "status": "experimental", "title": "Authorization-aware typed query plans and parameterized SQL", "implementation": ["src/language/typed-queries.ts"] }
+    { "id": "BUS-QUERY-001", "category": "syntax", "status": "experimental", "title": "Authorization-aware typed query plans and parameterized SQL", "implementation": ["src/language/typed-queries.ts"] },
+    { "id": "BUS-EFFECT-001", "category": "syntax", "status": "experimental", "title": "Atomic multi-record transactions with idempotent replay", "implementation": ["src/language/transactions.ts"] },
+    { "id": "BUS-EFFECT-002", "category": "syntax", "status": "experimental", "title": "Closed external contracts with bounded retries and secret references", "implementation": ["src/language/integrations.ts"] },
+    { "id": "BUS-EFFECT-003", "category": "syntax", "status": "experimental", "title": "Capability-scoped audited escape hatches", "implementation": ["src/language/escape-hatches.ts"] }
   ]
 }

@@ -253,6 +253,51 @@
       }
     },
     {
+      "id": "TRANSACTION-001",
+      "status": "experimental",
+      "title": "Multi-record effects commit atomically or roll back completely",
+      "canonicalForm": "transaction <name> with idempotency key and ordered named steps",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-EFFECT-001"],
+      "specification": "docs/spec/effects-and-integrations.md#transaction-001",
+      "evidence": {
+        "positive": ["test/effects-runtime.test.ts"],
+        "negative": ["test/effects-runtime.test.ts"],
+        "canonical": ["test/effects-runtime.test.ts"],
+        "runtime": ["test/effects-runtime.test.ts"]
+      }
+    },
+    {
+      "id": "EXTERNAL-CONTRACT-001",
+      "status": "experimental",
+      "title": "External operations have closed contracts and bounded secret-safe execution",
+      "canonicalForm": "external contract <name> at <https-url> with typed operations, retries, timeouts, idempotency, and secret references",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-EFFECT-002"],
+      "specification": "docs/spec/effects-and-integrations.md#external-contract-001",
+      "evidence": {
+        "positive": ["test/effects-runtime.test.ts"],
+        "negative": ["test/effects-runtime.test.ts"],
+        "canonical": ["test/effects-runtime.test.ts"],
+        "runtime": ["test/effects-runtime.test.ts"]
+      }
+    },
+    {
+      "id": "CAPABILITY-ESCAPE-001",
+      "status": "experimental",
+      "title": "Escape hatches are capability-scoped, isolated, bounded, and audited",
+      "canonicalForm": "escape <name> requires <capabilities> excludes <guarantees> fingerprint <sha256>",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-EFFECT-003"],
+      "specification": "docs/spec/effects-and-integrations.md#capability-escape-001",
+      "evidence": {
+        "positive": ["test/effects-runtime.test.ts"],
+        "negative": ["test/effects-runtime.test.ts"],
+        "canonical": ["test/effects-runtime.test.ts"],
+        "runtime": ["test/effects-runtime.test.ts"]
+      }
+    },
+    {
       "id": "RUNTIME-GENERATION-001",
       "status": "stable",
       "title": "Business IR generates synchronized persistence, UI, API, security, workflow, concurrency, idempotency, and audit behavior",
