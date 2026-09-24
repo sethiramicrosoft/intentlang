@@ -14,13 +14,13 @@ export type MacroExpandResult =
  * not computed). Both kinds are written the same way: "The <name> is <value>." */
 type VarValue = { type: "number"; value: number } | { type: "text"; value: string };
 
-/** A reusable procedure: its raw, not-yet-expanded body text, and (optionally) the name of the
- * one parameter a caller supplies with "with". Expanded fresh at each call site: it sees every
- * variable that exists at the moment it's called, plus (if it has one) its own parameter bound
- * to whatever the caller passed -- shadowing an outer variable of the same name for the
- * duration of the call, then restoring it, the same way a For each's own loop word only applies
- * while that loop runs. */
-type FunctionMap = Map<string, { param?: string; body: string }>;
+/** A reusable procedure: its raw, not-yet-expanded body text, and the names of the zero or more
+ * parameters a caller supplies with "with" (several are joined with "and", e.g. "with a and b").
+ * Expanded fresh at each call site: it sees every variable that exists at the moment it's
+ * called, plus its own parameters bound to whatever the caller passed -- shadowing any outer
+ * variable of the same name for the duration of the call, then restoring it, the same way a For
+ * each's own loop word only applies while that loop runs. */
+type FunctionMap = Map<string, { params: string[]; body: string }>;
 
 const NUMBER_OR_NAME = "(?:the\\s+)?(-?\\d+(?:\\.\\d+)?|[a-z][a-z ]*?)";
 const ASSIGN_RE = /^the\s+([a-z][a-z ]*?)\s+is\s+(.+?)\.?$/i;
@@ -42,9 +42,14 @@ const FOR_EACH_HEAD_RE = /^for each\s+([a-z][a-z ]*?)\s+in\s+(.+)$/i;
 const FOR_EACH_RANGE_RE = /^for each\s+([a-z][a-z ]*?)\s+from\s+(-?\d+)\s+to\s+(-?\d+)\s*,\s*(.+?)\.?$/i;
 // A reusable procedure: "To <name>, <body>." defines it (no output by itself); "Do <name>."
 // calls it, expanding its body at the call site with whatever variables exist at that moment.
-// It can optionally take one argument: "To <name> with <param>, <body>." / "Do <name> with
-// <value>." -- the word "with" is what marks the parameter, so (like "inside"/"of"/"to" for
-// element names) a procedure name should avoid the word "with" to stay unambiguous.
+// It can optionally take one or more parameters: "To <name> with <param>, <body>." or
+// "To <name> with <param1> and <param2>, <body>." / "Do <name> with <value>." or
+// "Do <name> with <value1> and <value2>." -- the word "with" is what marks the parameter list,
+// so (like "inside"/"of"/"to" for element names) a procedure name should avoid the word "with"
+// to stay unambiguous. Parameter names in a definition are joined with "and" only (never a
+// comma), because a comma there would collide with the comma that separates the parameter list
+// from the body; a call's argument list may use either style ("with 3 and 4" or "with 3, 4 and
+// 5"), since nothing follows it on the line.
 // A call's name has no delimiter of its own (unlike If/For each, which stop at a comma), so it
 // is anchored to the end of the line/chain-segment the same way Otherwise is.
 const FUNCTION_DEF_RE = /^to\s+([a-z][a-z ]*?)(?:\s+with\s+([a-z][a-z ]*?))?\s*,\s*(.+?)\.?$/i;
@@ -132,6 +137,14 @@ function splitEnglishList(text: string): string[] {
   return normalized.split(",").map((item) => item.trim()).filter(Boolean);
 }
 
+/** Splits a procedure definition's parameter clause ("a", "a and b", "a and b and c") into
+ * individual names. Unlike `splitEnglishList`, this never accepts a comma: a comma there would
+ * be indistinguishable from the comma that ends the parameter clause and starts the procedure's
+ * body, so multiple parameters in a DEFINITION must be joined with "and" only. */
+function splitParamNames(text: string): string[] {
+  return text.split(/\s+and\s+/i).map((item) => item.trim().toLowerCase()).filter(Boolean);
+}
+
 function formatNumber(value: number): string {
   const rounded = Math.round(value * 1e6) / 1e6;
   return Number.isInteger(rounded) ? String(rounded) : String(rounded);
@@ -145,10 +158,23 @@ function formatNumber(value: number): string {
  * processed, a parameter's temporary binding has already been restored/removed, so resolving
  * it later would see the wrong value (or no value at all).
  */
+/**
+ * Resolves a trailing "... to <variable name>" or "... to <arithmetic expression>" reference
+ * against the CURRENT variables map, right when the instruction is produced. This must happen
+ * immediately rather than being deferred to the very end of the file, because a procedure
+ * parameter (or a For each loop word) is only bound to the variables map for the duration of
+ * its own call/iteration: by the time the whole file has been processed, that binding has
+ * already been restored/removed, so resolving it later would see the wrong value (or no value
+ * at all). Arithmetic is tried first (e.g. "to a plus b") so a procedure with two or more
+ * parameters can combine them directly in a plain instruction, not only inside a "The ... is
+ * ..." assignment.
+ */
 function resolveTrailingVariable(line: string, variables: Map<string, VarValue>): string {
   const trailing = /^(.*\bto\s+)([a-z][a-z ]*)$/i.exec(line.trimEnd());
   if (!trailing) return line;
   const name = trailing[2]!.trim().toLowerCase();
+  const numericValue = evaluateExpression(name, variables);
+  if (numericValue !== undefined) return `${trailing[1]}${formatNumber(numericValue)}`;
   const found = variables.get(name);
   if (!found) return line;
   return `${trailing[1]}${found.type === "number" ? formatNumber(found.value) : found.value}`;
@@ -384,13 +410,21 @@ function evaluateForEach(forEachMatch: ForEachMatch, lineNumber: number, variabl
 /**
  * Expands a "Do <name>." or "Do <name> with <value>." call: looks up the procedure's raw body
  * (defined by a "To <name>, ..." or "To <name> with <param>, ..." sentence, anywhere in the
- * file) and expands it at the call site. If the procedure takes a parameter, the argument's
- * value is bound to that parameter name for the duration of the call, temporarily shadowing any
- * outer variable of the same name and restoring it afterward -- the same lexical-scoping idea
- * a For each's own loop word already uses. `callStack` carries every procedure name currently
- * being expanded on this call path, so a procedure that calls itself (directly, or through
- * another procedure) is caught as a clear error instead of hanging the compiler in recursion.
+ * file) and expands it at the call site. If the procedure takes one or more parameters, each
+ * argument's value is bound to its matching parameter name for the duration of the call,
+ * temporarily shadowing any outer variable of the same name and restoring it afterward -- the
+ * same lexical-scoping idea a For each's own loop word already uses. `callStack` carries every
+ * procedure name currently being expanded on this call path, so a procedure that calls itself
+ * (directly, or through another procedure) is caught as a clear error instead of hanging the
+ * compiler in recursion.
  */
+function resolveArgValue(rawValue: string, variables: Map<string, VarValue>): VarValue {
+  const trimmed = rawValue.trim();
+  const numericValue = evaluateExpression(trimmed, variables);
+  if (numericValue !== undefined) return { type: "number", value: numericValue };
+  return variables.get(stripLeadingThe(trimmed).toLowerCase()) ?? { type: "text", value: dequote(trimmed) };
+}
+
 function expandFunctionCall(name: string, argRaw: string | undefined, callText: string, lineNumber: number,
   variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[], functions: FunctionMap,
   callStack: Set<string>): string[] {
@@ -408,32 +442,38 @@ function expandFunctionCall(name: string, argRaw: string | undefined, callText: 
       `Rewrite "${name}" so it doesn't call itself.`);
     return [];
   }
-  if (fn.param && argRaw === undefined) {
-    report(diagnostics, lineNumber, callText, "M010", `"${name}" needs a value.`,
-      `Try "Do ${name} with ...".`);
+  if (fn.params.length > 0 && argRaw === undefined) {
+    report(diagnostics, lineNumber, callText, "M010", `"${name}" needs ${fn.params.length === 1 ? "a value" : `${fn.params.length} values`}.`,
+      `Try "Do ${name} with ${fn.params.map((_, i) => `<value${fn.params.length > 1 ? ` ${i + 1}` : ""}>`).join(" and ")}".`);
     return [];
   }
-  if (!fn.param && argRaw !== undefined) {
+  if (fn.params.length === 0 && argRaw !== undefined) {
     report(diagnostics, lineNumber, callText, "M011", `"${name}" doesn't take a value.`,
       `Try "Do ${name}."`);
     return [];
   }
-  let hadPrevious = false;
-  let previous: VarValue | undefined;
-  if (fn.param) {
-    const rawValue = argRaw!.trim();
-    const numericValue = evaluateExpression(rawValue, variables);
-    const argValue: VarValue = numericValue !== undefined ? { type: "number", value: numericValue } :
-      (variables.get(stripLeadingThe(rawValue).toLowerCase()) ?? { type: "text", value: dequote(rawValue) });
-    hadPrevious = variables.has(fn.param);
-    previous = variables.get(fn.param);
-    variables.set(fn.param, argValue);
+  // A single-parameter call's whole argument is taken as one literal value (so text containing
+  // the word "and", such as "Do greet with Alex and Sam.", still works as one value). Only a
+  // procedure that takes two or more parameters splits its argument text on "and"/commas, the
+  // same way a For each's own list does.
+  const values = fn.params.length === 0 ? [] : fn.params.length === 1 ? [argRaw!.trim()] : splitEnglishList(argRaw!);
+  if (values.length !== fn.params.length) {
+    report(diagnostics, lineNumber, callText, "M012",
+      `"${name}" needs ${fn.params.length} values, but this call gives ${values.length}.`,
+      `Try "Do ${name} with ${fn.params.map((_, i) => `<value ${i + 1}>`).join(" and ")}".`);
+    return [];
+  }
+  const restore: { name: string; hadPrevious: boolean; previous: VarValue | undefined }[] = [];
+  for (let i = 0; i < fn.params.length; i++) {
+    const paramName = fn.params[i]!;
+    restore.push({ name: paramName, hadPrevious: variables.has(paramName), previous: variables.get(paramName) });
+    variables.set(paramName, resolveArgValue(values[i]!, variables));
   }
   const nextCallStack = new Set(callStack);
   nextCallStack.add(name);
   const result = expandChain(fn.body, lineNumber, variables, diagnostics, functions, nextCallStack);
-  if (fn.param) {
-    if (hadPrevious) variables.set(fn.param, previous!); else variables.delete(fn.param);
+  for (const entry of restore) {
+    if (entry.hadPrevious) variables.set(entry.name, entry.previous!); else variables.delete(entry.name);
   }
   return result;
 }
@@ -548,7 +588,14 @@ export function expandMacros(source: string): MacroExpandResult {
         `Give this procedure a different name, or remove the earlier "To ${name}, ..." sentence.`);
       return;
     }
-    functions.set(name, { param: def[2]?.trim().toLowerCase(), body: def[3]!.trim() });
+    const params = def[2] ? splitParamNames(def[2]) : [];
+    const duplicate = params.find((param, i) => params.indexOf(param) !== i);
+    if (duplicate) {
+      report(diagnostics, index + 1, trimmed, "M013", `"${name}" uses the parameter name "${duplicate}" more than once.`,
+        `Give each parameter a different name.`);
+      return;
+    }
+    functions.set(name, { params, body: def[3]!.trim() });
   });
   if (diagnostics.length > 0) return { ok: false, diagnostics };
 

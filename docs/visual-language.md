@@ -313,8 +313,8 @@ fix when there's an obvious match. Defining the same name twice, or a
 procedure that calls itself (directly, or through another procedure), is
 also a clear error rather than a silent surprise or a compiler that hangs.
 
-A procedure can optionally take one parameter, using the word `with`:
-**`To <name> with <param>, <instructions>.`** defines it, and
+A procedure can optionally take one or more parameters, using the word
+`with`: **`To <name> with <param>, <instructions>.`** defines it, and
 **`Do <name> with <value>.`** calls it with a specific value each time.
 
 ```text
@@ -323,22 +323,50 @@ To greet with person, set the text of message to person
 Do greet with Alex Carter.
 ```
 
-Inside the procedure's own instructions, the parameter behaves just like a
-variable defined with a `The ... is ...` sentence — it can be used anywhere a
-variable can, including in comparisons and arithmetic. It's only bound for
-the duration of that one call: if a variable with the same name already
-existed outside the procedure, its value is temporarily set aside and
-restored once the call finishes, so the procedure's parameter can never leak
-out or permanently overwrite an unrelated variable of the same name.
+A procedure can take more than one parameter by joining their names with
+`and`: **`To <name> with <param1> and <param2>, <instructions>.`**. A call
+supplies one value per parameter, in the same order, joined either with
+`and` or as a natural English list (`3, 4 and 5`):
 
-Calling a parameterized procedure without a value, or a parameterless
-procedure with a value, is reported as a clear error rather than silently
-ignored. Because `with` introduces the parameter, avoid using the word
-"with" inside a procedure's own name (for example, prefer "handle problems"
-over "deal with problems") so the name and parameter can't be confused.
+```text
+To add with a and b, set the text of message to a plus b
+
+Do add with 3 and 4.
+```
+
+A parameter *definition*'s own list must be joined with `and` only — never a
+comma — because a comma there would be indistinguishable from the comma that
+ends the parameter list and starts the procedure's body. A *call*'s value
+list has no such restriction, so it can use either style. Calling a
+procedure with the wrong number of values (too few or too many) is reported
+as a clear error naming exactly how many values it needs. Defining two
+parameters with the same name is also a clear error.
+
+Inside the procedure's own instructions, each parameter behaves just like a
+variable defined with a `The ... is ...` sentence — it can be used anywhere a
+variable can, including in comparisons, arithmetic, and other variable
+sentences. Each parameter is only bound for the duration of that one call:
+if a variable with the same name already existed outside the procedure, its
+value is temporarily set aside and restored once the call finishes, so a
+parameter can never leak out or permanently overwrite an unrelated variable
+of the same name.
+
+A procedure that takes exactly one parameter treats its call's entire value
+as one literal piece of text, even if that text itself contains the word
+"and" (`Do announce with Alex and Sam.` passes the single value
+"Alex and Sam"). Only a call to a procedure that takes two or more
+parameters splits its value list apart. Calling a parameterized procedure
+without a value, or a parameterless procedure with a value, is reported as a
+clear error rather than silently ignored. Because `with` introduces the
+parameter list, avoid using the word "with" inside a procedure's own name
+(for example, prefer "handle problems" over "deal with problems") so the
+name and parameter list can't be confused.
 
 A variable's value, number or text, can be used anywhere a plain instruction ends
-with `to <name>`, such as `Set the text of points line to total points`.
+with `to <name>`, such as `Set the text of points line to total points`. That
+same trailing spot also accepts one arithmetic step, such as
+`Set the text of message to a plus b`, which is what lets a two-parameter
+procedure combine its parameters directly.
 
 A `The ... is ...` variable sentence can also be used as the instruction
 inside an If, a For each, or a procedure's own body — not just on its own
@@ -371,18 +399,27 @@ offered, never applied silently.
 - Text variables can only be compared with `equal to` or `not equal to`;
   there's no ordering (`greater than`, etc.) for text, and text can't be used
   in arithmetic.
-- A procedure takes at most one parameter, and the parameter can only be used
-  the same way a variable can — it can't be used to build a different element
-  name per call (for example, a procedure can't add a differently-named
-  element on each call just from its parameter). Combine a procedure with the
-  loop's own instruction — which *can* vary per item — for the parts that
-  need to change each time.
-- Chaining two *independent* If sentences with `and then` (where the second
-  doesn't depend on the first) is currently parsed as the second being nested
-  inside the first's own instruction, so if the first condition is false, the
-  second is skipped too, even though it doesn't depend on the first's result.
-  Put unrelated If sentences on separate lines instead of joining them with
-  `and then`.
+- A procedure's parameters can only be used the same way a variable can —
+  a parameter can't be used to build a different element name per call (for
+  example, a procedure can't add a differently-named element on each call
+  just from its parameter). Combine a procedure with the loop's own
+  instruction — which *can* vary per item — for the parts that need to
+  change each time.
+- Arithmetic only supports one operator between exactly two values at a
+  time (`a plus b`), never a longer chain like `a plus b plus c` in a single
+  step. Reaching the same result takes an extra variable sentence, such as
+  `The subtotal is a plus b.` followed by `The total is subtotal plus c.`.
+- A procedure's parameter *definition* list must be joined with `and` only
+  (`To add with a and b, ...`) — a comma there would be indistinguishable
+  from the comma that starts the procedure's body. A *call*'s value list has
+  no such restriction and may use either `and` or a comma-and-`and` list.
+- Chaining an If sentence's own instruction with `and then` into a second,
+  independent If sentence nests the second one-line-deep: it only runs when
+  the *first* If's condition is true, even when the second condition doesn't
+  depend on the first at all. This is deliberate, consistent behavior (not
+  an inconsistency) — it's how a single line always reads as "do this, then,
+  if still applicable, do that" — but it means two truly independent If
+  checks should be put on separate lines rather than joined with `and then`.
 - The, If, Otherwise, For each, To, and Do sentences on this page are
   compile-time only: they compute a value once, when the page is compiled,
   not in response to anything a visitor does afterward. Real runtime

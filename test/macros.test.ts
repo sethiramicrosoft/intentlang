@@ -631,3 +631,51 @@ If the score is less than 0, the score is score plus 1000.
 Set the text of message to score`);
   assert.equal(textOf(ir, "message"), "103");
 });
+
+test("a procedure can take two parameters, joined with 'and' in both the definition and the call", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To add with a and b, set the text of message to a plus b
+Do add with 3 and 4.`);
+  assert.equal(textOf(ir, "message"), "7");
+});
+
+test("a procedure can take three parameters, and a call may list its values with commas", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To greet with first and middle and last, set the text of message to first
+Do greet with Alex, Q and Carter.`);
+  assert.equal(textOf(ir, "message"), "Alex");
+});
+
+test("a single-parameter call's whole value can itself contain the word 'and' as literal text", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To announce with pair, set the text of message to pair
+Do announce with Alex and Sam.`);
+  assert.equal(textOf(ir, "message"), "Alex and Sam");
+});
+
+test("a multi-parameter procedure's parameters can be used inside a variable sentence in its body", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The total is 0.
+To add with a and b, the total is a plus b.
+Do add with 10 and 20.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "30");
+});
+
+test("calling a two-parameter procedure with only one value is a clear error naming the required count", () => {
+  invalid(`Add a paragraph called message inside page
+To add with a and b, set the text of message to a plus b
+Do add with 3.`, /needs 2 values, but this call gives 1/);
+});
+
+test("calling a two-parameter procedure with three values is a clear error naming the required count", () => {
+  invalid(`Add a paragraph called message inside page
+To add with a and b, set the text of message to a plus b
+Do add with 1, 2 and 3.`, /needs 2 values, but this call gives 3/);
+});
+
+test("defining a procedure with the same parameter name twice is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+To add with a and a, set the text of message to a
+Do add with 3 and 4.`, /more than once/);
+});
