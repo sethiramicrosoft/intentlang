@@ -391,6 +391,14 @@ export function compilePageSource(source: string): PageCompileResult {
     // out for assistive technology, rather than a fragile CSS-only "looks disabled" trick.
     const disableElement = /^disable\s+(.+)$/i.exec(part);
     const enableElement = /^enable\s+(.+)$/i.exec(part);
+    // Switches between "screens" built out of ordinary sections -- no new pseudo-element is
+    // introduced; a "screen" is simply any section, the same real HTML element "Add a section
+    // called ..." already produces. Resolved against the real DOM at click time (querying the
+    // target's own actual siblings), not against a compile-time list of sections seen so far,
+    // so it works regardless of which order the sections happen to appear in the source --
+    // there's no separate "register this as a screen" step to remember, and a section declared
+    // anywhere else in the file is still correctly hidden once this runs.
+    const goToSection = /^go\s+to\s+(.+)$/i.exec(part);
     if (ifValue) {
       const source = resolve(ifValue[1]!, index);
       if (!source) return undefined;
@@ -966,6 +974,16 @@ export function compilePageSource(source: string): PageCompileResult {
         return undefined;
       }
       return `document.getElementById(${JSON.stringify(target.id)}).disabled=${disableElement ? "true" : "false"};`;
+    } else if (goToSection) {
+      const target = resolve(goToSection[1]!, index);
+      if (!target) return undefined;
+      if (target.tag !== "section") {
+        report(index, `Only a section can be navigated to, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add a section called ${target.name} instead, such as Add a section called ${target.name}.`);
+        return undefined;
+      }
+      return `(function(){var t=document.getElementById(${JSON.stringify(target.id)});var sibs=t.parentElement?t.parentElement.children:[];` +
+        `for(var i=0;i<sibs.length;i++){if(sibs[i].tagName==="SECTION")sibs[i].hidden=sibs[i]!==t;}})();`;
     }
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
@@ -986,6 +1004,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"toggle whether ... is checked" for a checkbox or radio button, ` +
       `"hide ...", "show ...", "toggle the visibility of ...", "focus ...", ` +
       `"disable ...", "enable ..." for a button, input, text box, dropdown, or field group, ` +
+      `"go to ..." to switch to a section, hiding its sibling sections, ` +
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to/not equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is between ... and ... (two numbers, or the value of ..., or a mix), ... otherwise ...", ` +

@@ -1081,6 +1081,40 @@ When the check is clicked, if target is disabled, set the text of result to lock
   } finally { await browser.close(); }
 });
 
+test("a click can switch between real sections with \"go to <name>\", hiding sibling sections, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a section called home screen
+Add a paragraph called home text inside home screen
+Set the text of home text to Welcome home
+Add a section called settings screen
+Add a paragraph called settings text inside settings screen
+Set the text of settings text to Settings page
+Add a button called show settings
+Set the text of show settings to Settings
+Add a button called show home
+Set the text of show home to Home
+When the show settings is clicked, go to settings screen
+When the show home is clicked, go to home screen`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    // Both sections are visible by default -- "go to" only takes effect once clicked.
+    assert.equal(await page.locator("#element-1").isVisible(), true);
+    assert.equal(await page.locator("#element-3").isVisible(), true);
+    await page.locator("#element-5").click(); // "show settings" -- go to settings screen
+    assert.equal(await page.locator("#element-1").isHidden(), true);
+    assert.equal(await page.locator("#element-3").isVisible(), true);
+    await page.locator("#element-6").click(); // "show home" -- go to home screen
+    assert.equal(await page.locator("#element-1").isVisible(), true);
+    assert.equal(await page.locator("#element-3").isHidden(), true);
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("When the <field> changes fires on a real dropdown selection or a committed text edit, in a real browser", async () => {
   const compiled = compilePageSource(`Add a dropdown called favorite color
 Add an option called red inside favorite color

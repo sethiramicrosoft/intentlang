@@ -348,6 +348,21 @@ control has actually become disabled or re-enabled — for example, a click
 that only fires once a prerequisite field it previously disabled is
 enabled again.
 
+`go to <section name>` switches between "screens" built out of ordinary
+sections — no new element is introduced for this; a screen is simply any
+`section`, the same real element `Add a section called ...` already
+produces. It hides every other section that shares the target's own parent
+and shows the target itself, so a page with two or more top-level sections
+can behave like a simple multi-screen app (a home screen and a settings
+screen, say) with one button per screen switch. The check is resolved
+against the real page at the moment of the click, not a fixed list
+recorded at compile time, so it doesn't matter which order the sections
+happen to appear in the source. The target must itself be a section — a
+paragraph or any other element has no sibling group to switch between, and
+using it on one is a clear error. Nothing is hidden automatically just by
+adding a section; combine this with `When the page loads, hide <name>` to
+choose which screen (if any) starts out of view.
+
 **`When the page loads, <one or more instructions>.`** runs the exact same
 closed instruction set immediately, as soon as the page's markup exists,
 instead of waiting for a click — for setting up a default, rolling an
@@ -761,6 +776,22 @@ Add a button called check strength
 Add a paragraph called status
 Set the text of status to none
 When the check strength is clicked, if new password is disabled, set the text of status to locked otherwise set the text of status to open
+```
+
+```text
+Add a section called home screen
+Add a paragraph called home text inside home screen
+Set the text of home text to Welcome home
+Add a section called settings screen
+Add a paragraph called settings text inside settings screen
+Set the text of settings text to Settings page
+Add a button called open settings
+Set the text of open settings to Settings
+Add a button called back home
+Set the text of back home to Home
+When the page loads, hide settings screen
+When the open settings is clicked, go to settings screen
+When the back home is clicked, go to home screen
 ```
 
 ```text

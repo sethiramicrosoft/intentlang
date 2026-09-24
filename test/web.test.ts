@@ -490,6 +490,33 @@ Set the text of go to Go
 When the go is clicked, disable label`, /Only a button, an input, a text box, a dropdown, or a field group can be disabled/);
 });
 
+test("a click can switch to a section with \"go to <name>\", hiding its sibling sections", () => {
+  const nav = page(`Add a section called home screen
+Add a paragraph called home text inside home screen
+Set the text of home text to Welcome home
+Add a section called settings screen
+Add a paragraph called settings text inside settings screen
+Set the text of settings text to Settings page
+Add a button called show settings
+Set the text of show settings to Settings
+Add a button called show home
+Set the text of show home to Home
+When the show settings is clicked, go to settings screen
+When the show home is clicked, go to home screen`);
+  const script = /<script>(.+?)<\/script>/.exec(nav.html)![1]!;
+  assert.match(script,
+    /var t=document\.getElementById\("element-3"\);var sibs=t\.parentElement\?t\.parentElement\.children:\[\];for\(var i=0;i<sibs\.length;i\+\+\)\{if\(sibs\[i\]\.tagName==="SECTION"\)sibs\[i\]\.hidden=sibs\[i\]!==t;\}/);
+  assert.match(script,
+    /var t=document\.getElementById\("element-1"\);var sibs=t\.parentElement\?t\.parentElement\.children:\[\];/);
+
+  // A non-section target (e.g. a paragraph) is a clear error -- "go to" only navigates
+  // between sections, the same real element "Add a section called ..." already produces.
+  invalid(`Add a paragraph called label
+Add a button called go
+Set the text of go to Go
+When the go is clicked, go to label`, /Only a section can be navigated to, and label is a p\./);
+});
+
 test("When the <field> changes reacts to a live edit or selection, not a click", () => {
   const dropdown = page(`Add a dropdown called favorite color
 Add an option called red inside favorite color
