@@ -450,3 +450,90 @@ The show is 1.
 If the show is equal to 1, for each number from 1 to 3, add a list item called row number inside rows`);
   assert.equal(ir.elements.filter((element) => element.tag === "li").length, 3);
 });
+
+test("a To/Do procedure defines no output by itself but runs its body when called", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To greet, set the text of message to hello
+Do greet.`);
+  assert.equal(textOf(ir, "message"), "hello");
+});
+
+test("a procedure can be called before the line that defines it", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+Do greet.
+To greet, set the text of message to hello`);
+  assert.equal(textOf(ir, "message"), "hello");
+});
+
+test("a procedure's body can chain several instructions with and then", () => {
+  const { ir } = page(`Add a paragraph called first inside page
+Add a paragraph called second inside page
+To greet, set the text of first to hi and then set the text of second to there
+Do greet.`);
+  assert.equal(textOf(ir, "first"), "hi");
+  assert.equal(textOf(ir, "second"), "there");
+});
+
+test("a procedure's body can contain a nested If", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 42.
+To report, if the score is greater than 10, set the text of message to high score
+Do report.`);
+  assert.equal(textOf(ir, "message"), "high score");
+});
+
+test("a procedure can be called (conditionally) from inside a for-each loop", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+Add a bullet list called rows inside page
+To announce, set the text of message to announced
+For each number from 1 to 3, add a list item called row number inside rows and then if the number is equal to 2, do announce.`);
+  assert.equal(ir.elements.filter((element) => element.tag === "li").length, 3);
+  assert.equal(textOf(ir, "message"), "announced");
+});
+
+test("one procedure can call another", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To greet, set the text of message to hello
+To welcome, do greet.
+Do welcome.`);
+  assert.equal(textOf(ir, "message"), "hello");
+});
+
+test("calling an undefined procedure is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+Do greet.`, /was never defined/);
+});
+
+test("calling a procedure name that is close to a defined one suggests the defined name", () => {
+  const diagnostics = invalid(`Add a paragraph called message inside page
+To greet, set the text of message to hello
+Do greett.`, /Did you mean/);
+  assert.match(JSON.stringify(diagnostics), /Do greet/);
+});
+
+test("a procedure that calls itself is a clear error instead of hanging the compiler", () => {
+  invalid(`Add a paragraph called message inside page
+To loop forever, do loop forever.
+Do loop forever.`, /calls itself/);
+});
+
+test("two procedures that call each other is a clear error instead of hanging the compiler", () => {
+  invalid(`Add a paragraph called message inside page
+To a, do b.
+To b, do a.
+Do a.`, /calls itself/);
+});
+
+test("defining the same procedure name twice is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+To greet, set the text of message to hello
+To greet, set the text of message to hi
+Do greet.`, /was already defined/);
+});
+
+test("a source that only uses To/Do sentences is still routed through macro expansion", () => {
+  const source = `Add a paragraph called message inside page
+To greet, set the text of message to hello
+Do greet.`;
+  assert.equal(usesMacroGrammar(source), true);
+});

@@ -1,9 +1,9 @@
-// Compile-time only: variables, conditionals, and repetition, written as plain English
-// sentences (no colons, no "end" keywords, no block syntax). Everything here is resolved
-// before the page grammar ever sees the source, so THIS layer never generates JavaScript --
-// its output is always plain page-grammar text. (Real runtime interactivity does exist in
-// the language, as the page grammar's own "When ... is clicked" sentence in web.ts; it isn't
-// part of this compile-time macro layer.)
+// Compile-time only: variables, conditionals, repetition, and reusable procedures, written as
+// plain English sentences (no colons, no "end" keywords, no block syntax). Everything here is
+// resolved before the page grammar ever sees the source, so THIS layer never generates
+// JavaScript -- its output is always plain page-grammar text. (Real runtime interactivity does
+// exist in the language, as the page grammar's own "When ... is clicked" sentence in web.ts;
+// it isn't part of this compile-time macro layer.)
 import { oneEditAway, type VisualDiagnostic, type VisualSuggestion } from "./visual.js";
 
 export type MacroExpandResult =
@@ -13,6 +13,11 @@ export type MacroExpandResult =
 /** A variable holds either a number (with arithmetic) or plain text (copied or compared, but
  * not computed). Both kinds are written the same way: "The <name> is <value>." */
 type VarValue = { type: "number"; value: number } | { type: "text"; value: string };
+
+/** A reusable procedure's name mapped to its raw, not-yet-expanded body text. Expanded fresh at
+ * each call site, with whatever variables exist at that moment -- a procedure has no parameters
+ * of its own yet, so it can only see the variables already defined by the time it's called. */
+type FunctionMap = Map<string, string>;
 
 const NUMBER_OR_NAME = "(?:the\\s+)?(-?\\d+(?:\\.\\d+)?|[a-z][a-z ]*?)";
 const ASSIGN_RE = /^the\s+([a-z][a-z ]*?)\s+is\s+(.+?)\.?$/i;
@@ -32,6 +37,12 @@ const FOR_EACH_HEAD_RE = /^for each\s+([a-z][a-z ]*?)\s+in\s+(.+)$/i;
 // so unlike a word list, the boundary between the head and the instruction is never ambiguous:
 // numbers never contain commas, so the first comma after "to <end>" always separates them.
 const FOR_EACH_RANGE_RE = /^for each\s+([a-z][a-z ]*?)\s+from\s+(-?\d+)\s+to\s+(-?\d+)\s*,\s*(.+?)\.?$/i;
+// A reusable procedure: "To <name>, <body>." defines it (no output by itself); "Do <name>."
+// calls it, expanding its body at the call site with whatever variables exist at that moment.
+// A call's name has no delimiter of its own (unlike If/For each, which stop at a comma), so it
+// is anchored to the end of the line/chain-segment the same way Otherwise is.
+const FUNCTION_DEF_RE = /^to\s+([a-z][a-z ]*?)\s*,\s*(.+?)\.?$/i;
+const FUNCTION_CALL_RE = /^do\s+([a-z][a-z ]*?)\.?$/i;
 const COMPARATORS = ["greater than", "less than", "not equal to", "equal to", "at least", "at most"];
 // Multiple instructions in one If/Otherwise/For each sentence are chained with "and then",
 // a phrase that reads naturally and never collides with ordinary instruction text (unlike a
@@ -185,6 +196,13 @@ function closestVariable(name: string, variables: Map<string, VarValue>): string
   return undefined;
 }
 
+/** Closest known procedure name to an unresolved "Do ..." call, for a "did you mean" suggestion. */
+function closestFunction(name: string, functions: FunctionMap): string | undefined {
+  const key = name.trim().toLowerCase();
+  for (const known of functions.keys()) if (oneEditAway(known, key)) return known;
+  return undefined;
+}
+
 /** A single word (or, for comparators, a two-word phrase) that is one edit away from a known
  * keyword but is not that keyword. Used only to power "did you mean" suggestions, never applied
  * automatically. */
@@ -321,11 +339,11 @@ function evaluateIfCondition(ifMatch: RegExpExecArray, text: string, lineNumber:
 /**
  * Expands one For each sentence into its repeated instructions. Each item's instruction is
  * itself expanded with `expandChain`, so it can be a plain instruction, several chained with
- * "and then", or a nested If/Otherwise/For each sentence — see `matchForEach` for how the list
- * and the (possibly nested, possibly comma-containing) instruction are told apart.
+ * "and then", or a nested If/Otherwise/For each/Do sentence — see `matchForEach` for how the
+ * list and the (possibly nested, possibly comma-containing) instruction are told apart.
  */
 function evaluateForEach(forEachMatch: ForEachMatch, lineNumber: number, variables: Map<string, VarValue>,
-  diagnostics: VisualDiagnostic[]): string[] {
+  diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): string[] {
   const { loopVar, items, instruction } = forEachMatch;
   if (items.length === 0) {
     report(diagnostics, lineNumber, `for each ${loopVar}`, "M004",
@@ -335,81 +353,135 @@ function evaluateForEach(forEachMatch: ForEachMatch, lineNumber: number, variabl
   }
   const results: string[] = [];
   for (const item of items) {
-    results.push(...expandChain(substituteWord(instruction, loopVar, item), lineNumber, variables, diagnostics));
+    results.push(...expandChain(substituteWord(instruction, loopVar, item), lineNumber, variables, diagnostics, functions, callStack));
   }
   return results;
 }
 
 /**
- * Expands one instruction, recognizing that the instruction can itself be a whole nested If or
- * For each sentence, e.g. "If the score is at least 40, if the wins is at least 10, set the text
- * of message to double win." Nesting works for If because its own parsing always stops at the
- * FIRST comma after its comparison target, no matter what follows. Nesting works for For each too
- * because `matchForEach` locates the list/instruction boundary by finding the list's own " and ",
- * not by guessing from comma position, so a nested clause's commas never confuse it.
+ * Expands a "Do <name>." call: looks up the procedure's raw body (defined by a "To <name>, ..."
+ * sentence, anywhere in the file) and expands it at the call site, with the variables that exist
+ * right now. `callStack` carries every procedure name currently being expanded on this call path,
+ * so a procedure that calls itself (directly, or through another procedure) is caught as a clear
+ * error instead of hanging the compiler in infinite recursion.
+ */
+function expandFunctionCall(name: string, callText: string, lineNumber: number, variables: Map<string, VarValue>,
+  diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): string[] {
+  const body = functions.get(name);
+  if (body === undefined) {
+    const closest = closestFunction(name, functions);
+    report(diagnostics, lineNumber, callText, "M007", `"${name}" was never defined.`,
+      closest ? `Did you mean "Do ${closest}."?` : `Add a sentence like "To ${name}, ..." before this line.`,
+      closest ? [{ label: `Use "${closest}"`, replacement: callText.replace(name, closest) }] : undefined);
+    return [];
+  }
+  if (callStack.has(name)) {
+    report(diagnostics, lineNumber, callText, "M008",
+      `"${name}" calls itself, directly or indirectly, which isn't supported yet.`,
+      `Rewrite "${name}" so it doesn't call itself.`);
+    return [];
+  }
+  const nextCallStack = new Set(callStack);
+  nextCallStack.add(name);
+  return expandChain(body, lineNumber, variables, diagnostics, functions, nextCallStack);
+}
+
+/**
+ * Expands one instruction, recognizing that the instruction can itself be a whole nested If,
+ * For each, or Do sentence, e.g. "If the score is at least 40, if the wins is at least 10, set
+ * the text of message to double win." Nesting works for If because its own parsing always stops
+ * at the FIRST comma after its comparison target, no matter what follows. Nesting works for For
+ * each too because `matchForEach` locates the list/instruction boundary by finding the list's
+ * own " and ", not by guessing from comma position, so a nested clause's commas never confuse it.
  */
 function expandInstruction(instr: string, lineNumber: number, variables: Map<string, VarValue>,
-  diagnostics: VisualDiagnostic[]): string[] {
+  diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): string[] {
   const trimmedInstr = instr.trim();
   const nestedIf = IF_RE.exec(trimmedInstr);
   if (nestedIf) {
     const condition = evaluateIfCondition(nestedIf, trimmedInstr, lineNumber, variables, diagnostics);
     if (condition === undefined) return [];
-    return condition ? expandChain(nestedIf[4]!, lineNumber, variables, diagnostics) : [];
+    return condition ? expandChain(nestedIf[4]!, lineNumber, variables, diagnostics, functions, callStack) : [];
   }
   const nestedForEach = matchForEach(trimmedInstr);
-  if (nestedForEach) return evaluateForEach(nestedForEach, lineNumber, variables, diagnostics);
+  if (nestedForEach) return evaluateForEach(nestedForEach, lineNumber, variables, diagnostics, functions, callStack);
+  const call = FUNCTION_CALL_RE.exec(trimmedInstr);
+  if (call) return expandFunctionCall(call[1]!.trim().toLowerCase(), trimmedInstr, lineNumber, variables, diagnostics, functions, callStack);
   return [instr];
 }
 
 /**
  * Splits an If or Otherwise sentence's body on "and then", expanding each part (which may
- * itself be a nested If or For each sentence) in order. Both a nested If's body and a nested For
+ * itself be a nested If, For each, or Do sentence) in order. A nested If's body and a nested For
  * each's instruction always extend to the end of whatever string they're given (that's how each
  * one's own regex is anchored), so once a chain part starts a nested If or For each, everything
  * from there to the end of the chain belongs to that nested construct -- it must be rejoined and
- * handled as one unit rather than being cut apart by this function's own "and then" split.
+ * handled as one unit rather than being cut apart by this function's own "and then" split. A Do
+ * call has no such body of its own (its name is the whole remaining text), so it needs no
+ * rejoining: `splitInstructions` already isolates it as one ordinary part.
  */
 function expandChain(text: string, lineNumber: number, variables: Map<string, VarValue>,
-  diagnostics: VisualDiagnostic[]): string[] {
+  diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): string[] {
   const parts = splitInstructions(text);
   const result: string[] = [];
   for (let i = 0; i < parts.length; i++) {
     const rest = parts.slice(i).join(" and then ").trim();
     if (IF_RE.test(rest) || matchForEach(rest)) {
-      result.push(...expandInstruction(rest, lineNumber, variables, diagnostics));
+      result.push(...expandInstruction(rest, lineNumber, variables, diagnostics, functions, callStack));
       return result; // the nested construct consumed everything remaining in the chain
     }
-    result.push(...expandInstruction(parts[i]!, lineNumber, variables, diagnostics));
+    result.push(...expandInstruction(parts[i]!, lineNumber, variables, diagnostics, functions, callStack));
   }
   return result;
 }
 
-/** True if any line looks like a variable, conditional, or repetition sentence. */
+/** True if any line looks like a variable, conditional, repetition, or procedure sentence. */
 export function usesMacroGrammar(source: string): boolean {
   return source.split(/\r?\n/).some((line) => {
     const trimmed = line.trim();
-    return ASSIGN_RE.test(trimmed) || IF_RE.test(trimmed) || OTHERWISE_RE.test(trimmed) || matchForEach(trimmed) !== undefined;
+    return ASSIGN_RE.test(trimmed) || IF_RE.test(trimmed) || OTHERWISE_RE.test(trimmed) || matchForEach(trimmed) !== undefined
+      || FUNCTION_DEF_RE.test(trimmed) || FUNCTION_CALL_RE.test(trimmed);
   });
 }
 
 /**
- * Expands "The X is Y.", "If the X is ..., ...", "Otherwise, ...", and
- * "For each X in ..., ..." into plain page-grammar instructions. Each sentence can carry one
- * instruction, several chained with "and then", or a nested If/Otherwise/For each sentence,
- * nested as deep as you like.
+ * Expands "The X is Y.", "If the X is ..., ...", "Otherwise, ...", "For each X in ..., ...",
+ * "To <name>, ..." and "Do <name>." into plain page-grammar instructions. Each sentence can
+ * carry one instruction, several chained with "and then", or a nested If/Otherwise/For each/Do
+ * sentence, nested as deep as you like. Procedures ("To .../Do ...") can be called from anywhere
+ * in the file, including before the line that defines them -- like any real function -- because
+ * every definition is collected in a first pass before the file's instructions are expanded.
  */
 export function expandMacros(source: string): MacroExpandResult {
   const lines = source.split(/\r?\n/);
   const variables = new Map<string, VarValue>();
+  const functions: FunctionMap = new Map();
   const output: string[] = [];
   const diagnostics: VisualDiagnostic[] = [];
   let lastCondition: boolean | undefined;
+
+  // First pass: collect every "To <name>, <body>." procedure definition, wherever it appears in
+  // the file, so a call further up the file can still find it.
+  lines.forEach((rawLine, index) => {
+    const trimmed = rawLine.trim();
+    const def = FUNCTION_DEF_RE.exec(trimmed);
+    if (!def) return;
+    const name = def[1]!.trim().toLowerCase();
+    if (functions.has(name)) {
+      report(diagnostics, index + 1, trimmed, "M009", `"${name}" was already defined.`,
+        `Give this procedure a different name, or remove the earlier "To ${name}, ..." sentence.`);
+      return;
+    }
+    functions.set(name, def[2]!.trim());
+  });
+  if (diagnostics.length > 0) return { ok: false, diagnostics };
 
   lines.forEach((rawLine, index) => {
     const lineNumber = index + 1;
     const trimmed = rawLine.trim();
     if (!trimmed) { output.push(rawLine); return; }
+
+    if (FUNCTION_DEF_RE.test(trimmed)) return; // already collected above; defines, renders nothing
 
     const assign = ASSIGN_RE.exec(trimmed);
     if (assign) {
@@ -439,7 +511,7 @@ export function expandMacros(source: string): MacroExpandResult {
       const condition = evaluateIfCondition(ifMatch, trimmed, lineNumber, variables, diagnostics);
       if (condition === undefined) return; // a diagnostic was already recorded
       lastCondition = condition;
-      if (condition) for (const instr of expandChain(ifMatch[4]!, lineNumber, variables, diagnostics)) output.push(instr);
+      if (condition) for (const instr of expandChain(ifMatch[4]!, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
       return;
     }
 
@@ -450,20 +522,28 @@ export function expandMacros(source: string): MacroExpandResult {
           `Add an "If the ... is ..., ..." sentence before this line.`);
         return;
       }
-      if (!lastCondition) for (const instr of expandChain(otherwise[1]!, lineNumber, variables, diagnostics)) output.push(instr);
+      if (!lastCondition) for (const instr of expandChain(otherwise[1]!, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
       return;
     }
 
     const forEach = matchForEach(trimmed);
     if (forEach) {
-      for (const instr of evaluateForEach(forEach, lineNumber, variables, diagnostics)) output.push(instr);
+      for (const instr of evaluateForEach(forEach, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
+      return;
+    }
+
+    const call = FUNCTION_CALL_RE.exec(trimmed);
+    if (call) {
+      for (const instr of expandFunctionCall(call[1]!.trim().toLowerCase(), trimmed, lineNumber, variables, diagnostics, functions, new Set())) {
+        output.push(instr);
+      }
       return;
     }
 
     const fix = suggestMacroFix(trimmed);
     if (fix) {
       report(diagnostics, lineNumber, trimmed, "M005",
-        `This line looks like it was meant to be a variable, If, Otherwise, or For each sentence, but has a spelling mistake.`,
+        `This line looks like it was meant to be a variable, If, Otherwise, For each, To, or Do sentence, but has a spelling mistake.`,
         fix.label, [fix]);
       return;
     }

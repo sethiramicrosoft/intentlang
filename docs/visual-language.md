@@ -276,13 +276,43 @@ by locating that list's own `and` rather than by guessing from comma
 position, so a nested instruction's commas (from a nested If, say) never get
 mistaken for list items.
 
+### Reusable procedures
+
+**`To <name>, <one or more instructions>.`** defines a named, reusable group
+of instructions — it produces no output by itself. **`Do <name>.`** calls it,
+running its instructions right there. A call can appear anywhere a plain
+instruction can: on its own line, chained with `and then`, or as the
+instruction inside an If, Otherwise, or For each.
+
+```text
+To announce the winner, set the text of banner to Champions and then set the text of message to Well played.
+
+If the total points is at least 40, do announce the winner.
+```
+
+A procedure can be called before the line that defines it (like a real
+function), and one procedure can call another. Calling a procedure that was
+never defined, or one whose name is close to a defined one, is reported the
+same way an unknown variable is — as a clear error, with a "did you mean"
+fix when there's an obvious match. Defining the same name twice, or a
+procedure that calls itself (directly, or through another procedure), is
+also a clear error rather than a silent surprise or a compiler that hangs.
+
+A procedure has no parameters yet: it always runs the exact same
+instructions, using whatever variables already exist at the moment it's
+called. That's enough to give a repeated group of steps a name and call it
+from several places (including from inside a For each loop), but it can't yet
+receive a different value each time it's called — see "Current limits"
+below.
+
 A variable's value, number or text, can be used anywhere a plain instruction ends
 with `to <name>`, such as `Set the text of points line to total points`.
 
 Like the rest of the language, none of this is case sensitive: keywords
-(`the`, `is`, `if`, `otherwise`, `for each`, `in`, `and then`), comparators,
-variable names, and text comparisons all match regardless of capitalization,
-so `THE SCORE IS 5` and `the score is 5` behave identically.
+(`the`, `is`, `if`, `otherwise`, `for each`, `in`, `and then`, `to`, `do`),
+comparators, variable names, procedure names, and text comparisons all match
+regardless of capitalization, so `THE SCORE IS 5` and `the score is 5` behave
+identically.
 
 If a line is close to one of these sentence shapes but has a spelling mistake
 (a misspelled keyword, connector word, or comparator, or a variable name that is
@@ -295,12 +325,17 @@ offered, never applied silently.
 - Text variables can only be compared with `equal to` or `not equal to`;
   there's no ordering (`greater than`, etc.) for text, and text can't be used
   in arithmetic.
-- The, If, Otherwise, and For each sentences on this page are compile-time
-  only: they compute a value once, when the page is compiled, not in response
-  to anything a visitor does afterward. Real runtime interactivity does now
-  exist in the language, but as its own separate, much smaller sentence —
-  see **`When the <button> is clicked, ...`** under "Native behavior and
-  current limits" below — rather than as part of these variables.
+- Procedures don't take parameters yet, so calling the same procedure from
+  several places (or several times inside a For each loop) always runs the
+  exact same instructions. Combine it with the loop's own instruction — which
+  *can* vary per item — for the parts that need to change each time.
+- The, If, Otherwise, For each, To, and Do sentences on this page are
+  compile-time only: they compute a value once, when the page is compiled,
+  not in response to anything a visitor does afterward. Real runtime
+  interactivity does now exist in the language, but as its own separate, much
+  smaller sentence — see **`When the <button> is clicked, ...`** under
+  "Native behavior and current limits" below — rather than as part of these
+  variables.
 
 See `examples/season-scoreboard.visual.intent` for a complete, working file.
 
