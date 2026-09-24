@@ -1,0 +1,10 @@
+{
+  "id": "missing-application-invalid",
+  "category": "invalid",
+  "ruleIds": ["APP-DECL-001"],
+  "source": "entity Task with id task\n  title is required text with id task-title\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E004"]
+  }
+}

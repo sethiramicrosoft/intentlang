@@ -1,0 +1,10 @@
+{
+  "id": "visual-show-valid",
+  "category": "valid",
+  "ruleIds": ["VIS-DISPLAY-001", "VIS-AMBIGUITY-001"],
+  "source": "Show IntentLang",
+  "expected": {
+    "ok": true,
+    "text": "IntentLang"
+  }
+}

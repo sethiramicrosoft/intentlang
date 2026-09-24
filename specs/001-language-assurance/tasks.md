@@ -61,30 +61,30 @@ a normative rule and applicable fixtures.
 
 ### Tests first
 
-- [ ] T012 [P] [US1] Add failing rule-registry schema and uniqueness tests in
+- [x] T012 [P] [US1] Add failing rule-registry schema and uniqueness tests in
   `test/rule-registry.test.ts`.
-- [ ] T013 [P] [US1] Add failing fixture-loader tests in
+- [x] T013 [P] [US1] Add failing fixture-loader tests in
   `test/conformance.test.ts`.
-- [ ] T014 [P] [US1] Add failing rule-to-evidence coverage tests in
+- [x] T014 [P] [US1] Add failing rule-to-evidence coverage tests in
   `test/language-coverage.test.ts`.
 
 ### Implementation
 
-- [ ] T015 [US1] Implement the rule registry loader and validator in
+- [x] T015 [US1] Implement the rule registry loader and validator in
   `src/language/rule-registry.ts`.
-- [ ] T016 [US1] Implement conformance fixture loading in
+- [x] T016 [US1] Implement conformance fixture loading in
   `src/language/conformance.ts`.
-- [ ] T017 [US1] Implement rule-to-inventory and rule-to-fixture coverage
+- [x] T017 [US1] Implement rule-to-inventory and rule-to-fixture coverage
   reporting in `src/language/coverage.ts`.
-- [ ] T018 [US1] Create the initial v0.8 business-app normative rules in
+- [x] T018 [US1] Create the initial v0.8 business-app normative rules in
   `language/rules/0.8-business.json`.
-- [ ] T019 [US1] Create the initial v0.8 visual/page normative rules in
+- [x] T019 [US1] Create the initial v0.8 visual/page normative rules in
   `language/rules/0.8-visual.json`.
-- [ ] T020 [US1] Add baseline valid, invalid, ambiguous, and canonical fixtures
+- [x] T020 [US1] Add baseline valid, invalid, ambiguous, and canonical fixtures
   under `conformance/`.
-- [ ] T021 [US1] Add `intentlang assurance report` CLI output showing uncovered
+- [x] T021 [US1] Add `intentlang assurance report` CLI output showing uncovered
   inventory entries and rules in `src/cli.ts`.
-- [ ] T022 [US1] Publish normative specification chapters under `docs/spec/`
+- [x] T022 [US1] Publish normative specification chapters under `docs/spec/`
   linked to rule IDs.
 
 **Checkpoint**: SC-001 baseline achieved for current stable constructs.

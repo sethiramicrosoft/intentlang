@@ -1,0 +1,9 @@
+{
+  "id": "natural-application-canonical",
+  "category": "canonical",
+  "ruleIds": ["APP-DECL-001", "ENTITY-DECL-001", "FIELD-DECL-001"],
+  "source": "application Todo\na Task has a required title as text\n",
+  "expected": {
+    "canonicalSource": "application Todo with id todo\n\nentity Task with id task\n  title is required text with id task-title\n"
+  }
+}

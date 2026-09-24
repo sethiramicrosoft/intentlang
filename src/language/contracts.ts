@@ -31,6 +31,7 @@ export interface NormativeRule {
   canonicalForm: string;
   compatibilityClass: CompatibilityClass;
   evidence: RuleEvidence;
+  inventoryIds?: string[];
   specification?: string;
 }
 
@@ -201,6 +202,9 @@ export function parseRuleRegistry(value: unknown): RuleRegistry {
       compatibilityClass: compatibilityClass as CompatibilityClass,
       evidence
     };
+    if (candidate.inventoryIds !== undefined) {
+      rule.inventoryIds = requireStringArray(candidate, "inventoryIds", context);
+    }
     if (candidate.specification !== undefined) {
       rule.specification = requireString(candidate, "specification", context);
     }

@@ -1,0 +1,10 @@
+{
+  "id": "visual-unknown-invalid",
+  "category": "invalid",
+  "ruleIds": ["VIS-DISPLAY-001"],
+  "source": "Paint me a masterpiece",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["V001", "V007"]
+  }
+}

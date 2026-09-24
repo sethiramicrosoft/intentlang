@@ -1,0 +1,11 @@
+{
+  "id": "visual-it-ambiguous",
+  "category": "ambiguous",
+  "ruleIds": ["VIS-AMBIGUITY-001"],
+  "source": "Make it red",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["V008", "V007"],
+    "silentGuess": false
+  }
+}

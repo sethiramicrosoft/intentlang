@@ -1,0 +1,31 @@
+{
+  "languageVersion": "0.8.0-alpha.0",
+  "rules": [
+    {
+      "id": "VIS-DISPLAY-001",
+      "status": "stable",
+      "title": "A visual program displays explicit text",
+      "canonicalForm": "Show <text>",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["VIS-SYNTAX-001", "V001", "V003", "V007", "IR-NODE-007"],
+      "specification": "docs/spec/visual-core.md#vis-display-001",
+      "evidence": {
+        "positive": ["conformance/valid/visual-show.json"],
+        "negative": ["conformance/invalid/visual-unknown.json"]
+      }
+    },
+    {
+      "id": "VIS-AMBIGUITY-001",
+      "status": "stable",
+      "title": "Ambiguous visual references are rejected",
+      "canonicalForm": "Use an explicit target such as the text or the background",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["V008"],
+      "specification": "docs/spec/visual-core.md#vis-ambiguity-001",
+      "evidence": {
+        "positive": ["conformance/valid/visual-show.json"],
+        "negative": ["conformance/ambiguous/visual-it.json"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "languageVersion": "0.8.0-alpha.0",
+  "rules": [
+    {
+      "id": "APP-DECL-001",
+      "status": "stable",
+      "title": "Exactly one application declaration",
+      "canonicalForm": "application <Name> with id <stable-id>",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["BUS-SYNTAX-001", "BUS-SYNTAX-002", "E002", "E004", "IR-NODE-001"],
+      "specification": "docs/spec/business-core.md#app-decl-001",
+      "evidence": {
+        "positive": ["conformance/valid/business-core.json"],
+        "negative": ["conformance/invalid/missing-application.json"],
+        "canonical": ["conformance/canonical/natural-application.json"]
+      }
+    },
+    {
+      "id": "ENTITY-DECL-001",
+      "status": "stable",
+      "title": "Entities have unique names and stable identifiers",
+      "canonicalForm": "entity <Name> with id <stable-id>",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["BUS-SYNTAX-003", "E005", "E006", "IR-NODE-002"],
+      "specification": "docs/spec/business-core.md#entity-decl-001",
+      "evidence": {
+        "positive": ["conformance/valid/business-core.json"],
+        "negative": ["test/compiler.test.ts"],
+        "canonical": ["conformance/canonical/natural-application.json"],
+        "runtime": ["test/compiler.test.ts"]
+      }
+    },
+    {
+      "id": "FIELD-DECL-001",
+      "status": "stable",
+      "title": "Fields have typed, validated declarations",
+      "canonicalForm": "  <name> is [required ][unique ]<type> with id <stable-id> [length between <min> and <max>] [default <literal>]",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["BUS-SYNTAX-004", "BUS-SYNTAX-005", "BUS-SYNTAX-006", "BUS-SYNTAX-007", "BUS-SYNTAX-008", "BUS-SYNTAX-009", "E003", "E008", "E009", "E010", "E013", "E014"],
+      "specification": "docs/spec/business-core.md#field-decl-001",
+      "evidence": {
+        "positive": ["conformance/valid/business-core.json"],
+        "negative": ["test/compiler.test.ts"],
+        "canonical": ["conformance/canonical/natural-application.json"],
+        "runtime": ["test/compiler.test.ts"]
+      }
+    }
+  ]
+}

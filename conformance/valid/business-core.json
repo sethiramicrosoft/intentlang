@@ -1,0 +1,11 @@
+{
+  "id": "business-core-valid",
+  "category": "valid",
+  "ruleIds": ["APP-DECL-001", "ENTITY-DECL-001", "FIELD-DECL-001"],
+  "source": "application Todo with id todo\nentity Task with id task\n  title is required text with id task-title length between 1 and 200\n  done is boolean with id task-done default false\n",
+  "expected": {
+    "ok": true,
+    "applicationId": "todo",
+    "entityIds": ["task"]
+  }
+}

@@ -13,10 +13,16 @@ import { generateUi } from "./ui-codegen.js";
 import { effectiveAiConfig } from "./ai-provider.js";
 import type { AiProviderKind } from "./ai-provider.js";
 import { compileEnglishSource } from "./english.js";
+import { loadConformanceFixtures } from "./language/conformance.js";
+import { buildLanguageCoverageReport } from "./language/coverage.js";
+import { loadLanguageInventories } from "./language/inventory.js";
+import { loadRuleRegistries } from "./language/rule-registry.js";
 
 const [command, sourceArgument, ...options] = process.argv.slice(2);
 
-if (command === "studio" && sourceArgument !== undefined) {
+if (command === "assurance" && sourceArgument === "report") {
+  await runAssuranceReport(options);
+} else if (command === "studio" && sourceArgument !== undefined) {
   await runStudio(sourceArgument, options);
 } else if (command === "visual" && sourceArgument !== undefined) {
   const sourcePath = resolve(sourceArgument);
@@ -86,6 +92,54 @@ async function runCompile(
   }
 
   await writeCompiledOutput(result.output, "compile", options);
+}
+
+async function runAssuranceReport(options: string[]): Promise<void> {
+  const [inventories, registry, fixtures] = await Promise.all([
+    loadLanguageInventories(),
+    loadRuleRegistries(),
+    loadConformanceFixtures()
+  ]);
+  const report = buildLanguageCoverageReport(
+    inventories,
+    registry.rules,
+    fixtures
+  );
+
+  if (options.includes("--json")) {
+    console.log(JSON.stringify(report, null, 2));
+  } else {
+    console.log("IntentLang language assurance");
+    console.log(`  Language version: ${registry.languageVersion}`);
+    console.log(`  Registry files: ${registry.files.length}`);
+    console.log(`  Stable rules: ${report.stableRules}`);
+    console.log(`  Conformance fixtures: ${fixtures.length}`);
+    console.log(
+      `  Stable inventory coverage: ${report.coveredInventoryEntries}/${report.stableInventoryEntries}`
+    );
+    console.log(
+      `  Stable rules without fixtures: ${report.rulesWithoutFixtures.length}`
+    );
+    console.log(
+      `  Fixtures with unknown rules: ${report.fixturesWithUnknownRules.length}`
+    );
+    if (report.uncoveredInventoryIds.length > 0) {
+      console.log("  Uncovered inventory:");
+      for (const id of report.uncoveredInventoryIds) {
+        console.log(`    ${id}`);
+      }
+    }
+  }
+
+  const invalid =
+    report.rulesWithoutFixtures.length > 0 ||
+    report.fixturesWithUnknownRules.length > 0;
+  const incomplete =
+    options.includes("--require-complete") &&
+    report.uncoveredInventoryIds.length > 0;
+  if (invalid || incomplete) {
+    process.exitCode = 1;
+  }
 }
 
 async function writeCompiledOutput(output: string, command: string, options: string[]): Promise<void> {
@@ -327,6 +381,7 @@ function printUsage(): void {
   console.error("    [--ai-provider none|ollama|openai-compatible|gemini]");
   console.error("    [--ai-model <model>] [--ai-endpoint <url>] [--ai-timeout <ms>]");
   console.error("    [--allow-remote-ai]");
+  console.error("  intentlang assurance report [--json] [--require-complete]");
   console.error("  API key (if needed): set env INTENTLANG_AI_API_KEY before starting Studio.");
 }
 
