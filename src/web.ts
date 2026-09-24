@@ -158,10 +158,23 @@ export function compilePageSource(source: string): PageCompileResult {
     const parts = body.split(/\s+and\s+then\s+/i).map((part) => part.trim()).filter(Boolean);
     const statements: string[] = [];
     for (const part of parts) {
+      // Checked before the plainer "set the text of X to Y", since that one's own value half
+      // would otherwise happily swallow "the value of Y" as literal display text instead.
+      const setFromValue = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
       const setText = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part);
       const addText = /^add\s+(-?\d+(?:\.\d+)?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
       const subtractText = /^subtract\s+(-?\d+(?:\.\d+)?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
-      if (setText) {
+      if (setFromValue) {
+        const target = resolve(setFromValue[1]!, index);
+        const source = target ? resolve(setFromValue[2]!, index) : undefined;
+        if (!target || !source) return undefined;
+        if (!hasReadableValue(source.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+            `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+          return undefined;
+        }
+        statements.push(`document.getElementById(${JSON.stringify(target.id)}).textContent=document.getElementById(${JSON.stringify(source.id)}).value;`);
+      } else if (setText) {
         const target = resolve(setText[1]!, index);
         if (!target) return undefined;
         statements.push(`document.getElementById(${JSON.stringify(target.id)}).textContent=${JSON.stringify(dequoteRuntime(setText[2]!))};`);
@@ -174,11 +187,16 @@ export function compilePageSource(source: string): PageCompileResult {
           `e.textContent=String((Number(e.textContent)||0)+(${JSON.stringify(amount)}));})();`);
       } else {
         report(index, `"${part}" is not one of the supported click instructions.`,
-          `Try "set the text of ... to ...", "add ... to the text of ...", or "subtract ... from the text of ...".`);
+          `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
+          `"add ... to the text of ...", or "subtract ... from the text of ...".`);
         return undefined;
       }
     }
     return statements.join("");
+  }
+  /** Which element tags have a live, readable ".value" in the DOM. */
+  function hasReadableValue(tag: string): boolean {
+    return tag === "input" || tag === "textarea" || tag === "select";
   }
   function dequoteRuntime(text: string): string {
     return /^"([\s\S]*)"$/.exec(text.trim())?.[1] ?? text.trim();

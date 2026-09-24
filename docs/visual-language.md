@@ -163,6 +163,7 @@ blocks new windows and submissions.
 runtime click handler. This is still plain English, and the instruction is
 still a fixed, closed set (chained with `and then` the same way everywhere
 else in the language is): `set the text of <name> to <value>`,
+`set the text of <name> to the value of <input name>`,
 `add <number> to the text of <name>`, and `subtract <number> from the text of
 <name>`. The compiler turns every `When ... is clicked` sentence in a page into
 ONE small, entirely compiler-generated script (never containing any
@@ -172,7 +173,9 @@ the page's Content-Security-Policy by its SHA-256 hash. A page that doesn't use
 `When ... is clicked` stays exactly as script-free as before, byte for byte.
 The target of "is clicked" must be a button (a native, keyboard-operable
 control), so this never creates a click-only trap for people who use a
-keyboard or assistive technology instead of a mouse.
+keyboard or assistive technology instead of a mouse. The source of
+"the value of ..." must be an input, a text box, or a dropdown (anything with
+a live value to read) — using anything else there is a clear error.
 
 ```text
 Add a paragraph called counter
@@ -181,6 +184,18 @@ Add a button called increment
 Set the text of increment to Add one
 When the increment is clicked, add 1 to the text of counter
 ```
+
+```text
+Add a text input called name field
+Add a paragraph called greeting
+Add a button called submit
+Set the text of submit to Say hello
+When the submit is clicked, set the text of greeting to the value of name field
+```
+
+The second example is real user input, not compile-time data: whatever a
+visitor actually types into the box is read live, the moment the button is
+clicked.
 
 User-authored `<script>` elements, `onclick`-style inline event-handler
 attributes, arbitrary stylesheets, embedded documents, templates, shadow-DOM,

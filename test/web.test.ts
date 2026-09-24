@@ -257,6 +257,23 @@ When the decrement is clicked, subtract 1 from the text of counter`);
   assert.match(scriptBody, /Number\(e\.textContent\)\|\|0\)\+\(-1\)/);
 });
 
+test("a click can read a text input's live value into another element's text", () => {
+  const result = page(`Add a text input called name field
+Add a paragraph called greeting
+Add a button called submit
+Set the text of submit to Say hello
+When the submit is clicked, set the text of greeting to the value of name field`);
+  const scriptBody = /<script>(.+?)<\/script>/.exec(result.html)![1]!;
+  assert.match(scriptBody, /textContent=document\.getElementById\("element-1"\)\.value/);
+});
+
+test("reading a value from an element that isn't an input, textarea, or select is a clear error", () => {
+  invalid(`Add a paragraph called label
+Add a paragraph called greeting
+Add a button called submit
+When the submit is clicked, set the text of greeting to the value of label`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
   const result = page(`Add an image called photo
 Set the source of photo to https://example.com/MyPhoto.png

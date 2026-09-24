@@ -147,6 +147,27 @@ When the increment is clicked, add 1 to the text of counter`);
   } finally { await browser.close(); }
 });
 
+test("a click can read what a visitor actually typed into a real text input", async () => {
+  const compiled = compilePageSource(`Add a text input called name field
+Add a paragraph called greeting
+Add a button called submit
+Set the text of submit to Say hello
+When the submit is clicked, set the text of greeting to the value of name field`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("Ada Lovelace");
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").textContent(), "Ada Lovelace");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("all advertised element types survive real browser parsing with their requested parentage", async () => {
   const source = webElements.filter((element) => element.status === "available")
     .map((element) => elementExample(element).replace(/\b(called|inside) sample /g, `$1 sample ${element.name} `)).join("\n");
