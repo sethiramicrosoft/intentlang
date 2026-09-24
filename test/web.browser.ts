@@ -168,6 +168,30 @@ When the submit is clicked, set the text of greeting to the value of name field`
   } finally { await browser.close(); }
 });
 
+test("a click can set a target's text to a real random number in a live browser, within the requested range", async () => {
+  const compiled = compilePageSource(`Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from 1 to 6`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    const seen = new Set<number>();
+    for (let i = 0; i < 20; i++) {
+      await page.locator("#element-2").click();
+      seen.add(Number(await page.locator("#element-1").textContent()));
+    }
+    for (const value of seen) assert.ok(value >= 1 && value <= 6, `${value} was outside 1-6`);
+    assert.ok(seen.size > 1, "expected at least some variety across 20 rolls");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("all advertised element types survive real browser parsing with their requested parentage", async () => {
   const source = webElements.filter((element) => element.status === "available")
     .map((element) => elementExample(element).replace(/\b(called|inside) sample /g, `$1 sample ${element.name} `)).join("\n");

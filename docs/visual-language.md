@@ -164,6 +164,7 @@ runtime click handler. This is still plain English, and the instruction is
 still a fixed, closed set (chained with `and then` the same way everywhere
 else in the language is): `set the text of <name> to <value>`,
 `set the text of <name> to the value of <input name>`,
+`set the text of <name> to a random number from <min> to <max>`,
 `add <number> to the text of <name>`, and `subtract <number> from the text of
 <name>`. The compiler turns every `When ... is clicked` sentence in a page into
 ONE small, entirely compiler-generated script (never containing any
@@ -175,7 +176,10 @@ The target of "is clicked" must be a button (a native, keyboard-operable
 control), so this never creates a click-only trap for people who use a
 keyboard or assistive technology instead of a mouse. The source of
 "the value of ..." must be an input, a text box, or a dropdown (anything with
-a live value to read) — using anything else there is a clear error.
+a live value to read) — using anything else there is a clear error. A random
+range's low end can't be greater than its high end (`from 6 to 1` is a clear
+error, not a silently reversed or empty range) — both ends are whole numbers,
+and the roll is inclusive of both.
 
 ```text
 Add a paragraph called counter
@@ -193,9 +197,18 @@ Set the text of submit to Say hello
 When the submit is clicked, set the text of greeting to the value of name field
 ```
 
+```text
+Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from 1 to 6
+```
+
 The second example is real user input, not compile-time data: whatever a
 visitor actually types into the box is read live, the moment the button is
-clicked.
+clicked. The third rolls a genuine new random number in the browser on every
+click, unlike everything else on this page, which is computed once at compile
+time.
 
 User-authored `<script>` elements, `onclick`-style inline event-handler
 attributes, arbitrary stylesheets, embedded documents, templates, shadow-DOM,

@@ -267,6 +267,19 @@ When the submit is clicked, set the text of greeting to the value of name field`
   assert.match(scriptBody, /textContent=document\.getElementById\("element-1"\)\.value/);
 });
 
+test("a click can set a target's text to a random number in a range, and a backwards range is a clear error", () => {
+  const result = page(`Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from 1 to 6`);
+  const scriptBody = /<script>(.+?)<\/script>/.exec(result.html)![1]!;
+  assert.match(scriptBody, /Math\.floor\(Math\.random\(\)\*\(6\)\)\+\(1\)/);
+  invalid(`Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from 6 to 1`, /low end \(6\) can't be greater than its high end \(1\)/);
+});
+
 test("reading a value from an element that isn't an input, textarea, or select is a clear error", () => {
   invalid(`Add a paragraph called label
 Add a paragraph called greeting

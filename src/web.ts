@@ -161,6 +161,9 @@ export function compilePageSource(source: string): PageCompileResult {
       // Checked before the plainer "set the text of X to Y", since that one's own value half
       // would otherwise happily swallow "the value of Y" as literal display text instead.
       const setFromValue = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
+      // Same reason: checked before the plainer "set the text of X to Y", so its own value
+      // half doesn't swallow "a random number from A to B" as literal display text instead.
+      const setRandom = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+a\s+random\s+number\s+from\s+(-?\d+)\s+to\s+(-?\d+)$/i.exec(part);
       const setText = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part);
       const addText = /^add\s+(-?\d+(?:\.\d+)?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
       const subtractText = /^subtract\s+(-?\d+(?:\.\d+)?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
@@ -174,6 +177,17 @@ export function compilePageSource(source: string): PageCompileResult {
           return undefined;
         }
         statements.push(`document.getElementById(${JSON.stringify(target.id)}).textContent=document.getElementById(${JSON.stringify(source.id)}).value;`);
+      } else if (setRandom) {
+        const target = resolve(setRandom[1]!, index);
+        if (!target) return undefined;
+        const min = Number(setRandom[2]);
+        const max = Number(setRandom[3]);
+        if (min > max) {
+          report(index, `A random range's low end (${min}) can't be greater than its high end (${max}).`,
+            `Try "a random number from ${max} to ${min}" instead.`);
+          return undefined;
+        }
+        statements.push(`document.getElementById(${JSON.stringify(target.id)}).textContent=String(Math.floor(Math.random()*(${JSON.stringify(max - min + 1)}))+(${JSON.stringify(min)}));`);
       } else if (setText) {
         const target = resolve(setText[1]!, index);
         if (!target) return undefined;
@@ -188,7 +202,8 @@ export function compilePageSource(source: string): PageCompileResult {
       } else {
         report(index, `"${part}" is not one of the supported click instructions.`,
           `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
-          `"add ... to the text of ...", or "subtract ... from the text of ...".`);
+          `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
+          `or "subtract ... from the text of ...".`);
         return undefined;
       }
     }
