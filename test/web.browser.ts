@@ -219,6 +219,30 @@ When the check is clicked, set the text of result to the selected label of favor
   } finally { await browser.close(); }
 });
 
+test("a live character count tracks real typed input length as it changes, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called message
+Add a paragraph called counter
+Set the text of counter to 0
+When the message changes, set the text of counter to the number of characters in the value of message`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    assert.equal(await page.locator("#element-2").textContent(), "0");
+    await page.locator("#element-1").fill("hello world");
+    await page.locator("#element-1").blur(); // commits the edit so "changes" fires, same as every other onchange test
+    assert.equal(await page.locator("#element-2").textContent(), "11");
+    await page.locator("#element-1").fill("hi");
+    await page.locator("#element-1").blur();
+    assert.equal(await page.locator("#element-2").textContent(), "2");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can set a target's text to a real random number in a live browser, within the requested range", async () => {
   const compiled = compilePageSource(`Add a paragraph called roll
 Add a button called dice

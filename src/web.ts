@@ -242,6 +242,12 @@ export function compilePageSource(source: string): PageCompileResult {
     // option's own displayed text instead, regardless of its value attribute. Checked before
     // setText for the same shadowing reason as setFromValue/setRandom.
     const setFromLabel = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+selected\s+label\s+of\s+(.+)$/i.exec(part);
+    // A live character counter -- how many characters a visitor has actually typed so far --
+    // read directly from a live input's own value, without needing the compile-time-only
+    // "the number of items in <list>" length helper (which only measures a fixed list
+    // variable, never a live input). Checked before setText for the same shadowing reason as
+    // setFromValue/setFromLabel/setRandom.
+    const setFromLength = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+number\s+of\s+characters\s+in\s+the\s+value\s+of\s+(.+)$/i.exec(part);
     // Same reason: checked before the plainer "set the text of X to Y", so its own value
     // half doesn't swallow "a random number from A to B" as literal display text instead.
     const setRandom = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+a\s+random\s+number\s+from\s+(-?\d+)\s+to\s+(-?\d+)$/i.exec(part);
@@ -442,6 +448,16 @@ export function compilePageSource(source: string): PageCompileResult {
         return undefined;
       }
       return `document.getElementById(${JSON.stringify(target.id)}).textContent=document.getElementById(${JSON.stringify(source.id)}).value;`;
+    } else if (setFromLength) {
+      const target = resolve(setFromLength[1]!, index);
+      const source = target ? resolve(setFromLength[2]!, index) : undefined;
+      if (!target || !source) return undefined;
+      if (!hasReadableValue(source.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      return `document.getElementById(${JSON.stringify(target.id)}).textContent=String(document.getElementById(${JSON.stringify(source.id)}).value.length);`;
     } else if (setFromLabel) {
       const target = resolve(setFromLabel[1]!, index);
       const source = target ? resolve(setFromLabel[2]!, index) : undefined;
@@ -571,6 +587,7 @@ export function compilePageSource(source: string): PageCompileResult {
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
       `"set the text of ... to the selected label of ... (a dropdown)", ` +
+      `"set the text of ... to the number of characters in the value of ...", ` +
       `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
       `"subtract ... from the text of ...", "multiply the text of ... by ...", ` +
       `"divide the text of ... by ...", "add the value of ... to the text of ...", ` +

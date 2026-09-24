@@ -286,7 +286,14 @@ value of red to r`), reading `the value of ...` no longer reflects what the
 visitor actually saw and picked. `set the text of <target> to the selected
 label of <dropdown name>` reads the selected option's own displayed text
 directly, regardless of its value attribute; the source must be a dropdown
-specifically. A random range's low end can't be greater than its high
+specifically. `set the text of <target> to the number of characters in
+the value of <input/text box/dropdown name>` reads a live field's own
+current length directly — the live-value sibling of the compile-time-only
+`if the value of ... has ... characters` comparison (and of the separate
+`the length of ...` list/text helper): it measures what's actually typed or
+selected right now, so pairing it with `When ... changes` gives a
+live-updating character counter without a separate button click. The source
+must likewise be an input, a text box, or a dropdown. A random range's low end can't be greater than its high
 end (`from 6 to 1` is a clear error, not a silently reversed or empty range)
 — both ends are whole numbers, and the roll is inclusive of both. Both the
 `if`'s own instruction and its optional `otherwise` instruction can be any of
@@ -470,6 +477,13 @@ Set the value of uk to UK
 Add a paragraph called result
 Set the text of result to Pick a country
 When the country changes, set the text of result to the selected label of country
+```
+
+```text
+Add a text input called message
+Add a paragraph called counter
+Set the text of counter to 0
+When the message changes, set the text of counter to the number of characters in the value of message
 ```
 
 ```text

@@ -473,6 +473,30 @@ Set the text of go to Go
 When the go is clicked, set the text of result to the selected label of n`, /Only a dropdown has a selected option's label/);
 });
 
+test("a click can read a live character count with \"the number of characters in the value of ...\"", () => {
+  const counter = page(`Add a text input called message
+Add a paragraph called counter
+Set the text of counter to 0
+When the message changes, set the text of counter to the number of characters in the value of message`);
+  const script = /<script>(.+?)<\/script>/.exec(counter.html)![1]!;
+  assert.match(script, /textContent=String\(document\.getElementById\("element-1"\)\.value\.length\);/);
+
+  // Also works from a click, using the same source-validation as every other "the value of ..."
+  // reference (must be an input, a text box, or a dropdown).
+  const fromClick = page(`Add a text input called message
+Add a paragraph called counter
+Set the text of counter to 0
+Add a button called check
+Set the text of check to Check
+When the check is clicked, set the text of counter to the number of characters in the value of message`);
+  assert.match(/<script>(.+?)<\/script>/.exec(fromClick.html)![1]!, /\.value\.length\)/);
+
+  invalid(`Add a button called go
+Set the text of go to Go
+Add a paragraph called counter
+When the go is clicked, set the text of counter to the number of characters in the value of go`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("a click can set a target's text to a random number in a range, and a backwards range is a clear error", () => {
   const result = page(`Add a paragraph called roll
 Add a button called dice
