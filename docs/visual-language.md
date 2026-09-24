@@ -225,7 +225,8 @@ with `When ... is clicked` (so every instruction documented above, including
 instructions run before any click handler is registered, in source order —
 so a later click can still visibly override whatever a page-load default
 set. The compiler turns
-every `When ... is clicked` or `When the page loads` sentence in a page into
+every `When ... is clicked`, `When the page loads`, or `When ... changes`
+sentence in a page into
 ONE small, entirely
 compiler-generated script (never containing any user-authored markup,
 attribute, or script tag — only compiler-fixed code with your text safely
@@ -255,6 +256,18 @@ not a live input's value, so a click can never accidentally trigger a
 runaway loop; a negative count is a clear error rather than silently running
 zero times. Repeats nest safely, including a repeat inside another repeat's
 own instruction, or inside an `if`'s instruction.
+
+**`When the <input/text box/dropdown name> changes, <one or more
+instructions>.`** is a third trigger, alongside a click and the page
+loading — it fires on the native browser `change` event, so it reacts the
+moment a visitor picks a dropdown option, or commits an edit to a text
+field (leaving the field, or pressing Enter), rather than requiring a
+separate button click just to notice what they typed or chose. It shares
+the exact same closed instruction set and compiler as the other two
+triggers. The target must be an input, a text box, or a dropdown
+specifically (the only elements with a live value that can meaningfully
+"change") — using it on a button or any other element is a clear error,
+with a hint suggesting a text input instead.
 
 ```text
 Add a paragraph called counter
@@ -351,6 +364,17 @@ Set the text of details to The full terms go here.
 Add a button called toggle
 Set the text of toggle to Show details
 When the toggle is clicked, toggle the visibility of details
+```
+
+```text
+Add a dropdown called favorite color
+Add an option called red inside favorite color
+Add an option called blue inside favorite color
+Set the text of red to Red
+Set the text of blue to Blue
+Add a paragraph called result
+Set the text of result to Pick a color
+When the favorite color changes, set the text of result to the value of favorite color
 ```
 
 ```text

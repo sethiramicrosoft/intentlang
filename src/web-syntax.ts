@@ -6,7 +6,8 @@ export type PageStatement =
   | { kind: "underline"; target: string }
   | { kind: "show"; source: string }
   | { kind: "when"; target: string; body: string }
-  | { kind: "onload"; body: string };
+  | { kind: "onload"; body: string }
+  | { kind: "onchange"; target: string; body: string };
 
 export function usesPageGrammar(source: string): boolean {
   return source.split(/\r?\n/).some((line) =>
@@ -14,7 +15,8 @@ export function usesPageGrammar(source: string): boolean {
     /^\s*set\s+.+?\s+of\s+.+?\s+to\b/i.test(line) ||
     /^\s*put\s+.+?\s+inside\b/i.test(line) ||
     /^\s*when\s+.+?\s+is\s+clicked\s*,/i.test(line) ||
-    /^\s*when\s+the\s+page\s+loads\s*,/i.test(line));
+    /^\s*when\s+the\s+page\s+loads\s*,/i.test(line) ||
+    /^\s*when\s+.+?\s+changes\s*,/i.test(line));
 }
 
 export function parsePageStatement(line: string): PageStatement | undefined {
@@ -38,6 +40,10 @@ export function parsePageStatement(line: string): PageStatement | undefined {
   // otherwise be read (and fail) as a clickable element name.
   const onload = /^when\s+the\s+page\s+loads\s*,\s*(.+?)\.?$/i.exec(control);
   if (onload) return { kind: "onload", body: onload[1]! };
+  // Checked before the plain "is clicked" pattern too, since "the <name> changes" is a
+  // distinct trigger, not a click.
+  const onchange = /^when\s+(?:the\s+)?(.+?)\s+changes\s*,\s*(.+?)\.?$/i.exec(control);
+  if (onchange) return { kind: "onchange", target: onchange[1]!, body: onchange[2]! };
   const when = /^when\s+(?:the\s+)?(.+?)\s+is\s+clicked\s*,\s*(.+?)\.?$/i.exec(source);
   if (when) return { kind: "when", target: when[1]!, body: when[2]! };
   return undefined;

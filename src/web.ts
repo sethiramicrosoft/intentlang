@@ -651,6 +651,18 @@ export function compilePageSource(source: string): PageCompileResult {
       if (snippet) onloadScripts.push(snippet);
       continue;
     }
+    if (statement.kind === "onchange") {
+      const target = resolve(statement.target, index);
+      if (!target) continue;
+      if (!hasReadableValue(target.tag)) {
+        report(index, `Only an input, a text box, or a dropdown can change, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add a text input called ${target.name} instead, such as Add a text input called ${target.name}.`);
+        continue;
+      }
+      const snippet = compileClickBody(statement.body, index);
+      if (snippet) runtimeScripts.push(`document.getElementById(${JSON.stringify(target.id)}).addEventListener("change",function(){${snippet}});`);
+      continue;
+    }
     if (statement.kind === "make") {
       const phrase = targetKey(statement.phrase);
       const candidates = [...elements.map((node) => node.name), "it", "background"]

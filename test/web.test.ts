@@ -332,6 +332,30 @@ Set the text of go to Go
 When the go is clicked, hide missing`, /There is no earlier element called missing/);
 });
 
+test("When the <field> changes reacts to a live edit or selection, not a click", () => {
+  const dropdown = page(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Add an option called blue inside favorite color
+Set the text of red to Red
+Set the text of blue to Blue
+Add a paragraph called result
+When the favorite color changes, set the text of result to the value of favorite color`);
+  const dropdownScript = /<script>(.+?)<\/script>/.exec(dropdown.html)![1]!;
+  assert.match(dropdownScript, /addEventListener\("change",function\(\)\{document\.getElementById\("element-4"\)\.textContent=document\.getElementById\("element-1"\)\.value;\}\);/);
+
+  // The same closed instruction set backs this trigger too, and it works on a text input
+  // or a text box, not just a dropdown.
+  const textInput = page(`Add a text input called name field
+Add a paragraph called echo
+When the name field changes, set the text of echo to the value of name field`);
+  const textInputScript = /<script>(.+?)<\/script>/.exec(textInput.html)![1]!;
+  assert.match(textInputScript, /addEventListener\("change"/);
+
+  invalid(`Add a button called go
+Set the text of go to Go
+When the go changes, hide go`, /Only an input, a text box, or a dropdown can change/);
+});
+
 test("a click can read a text input's live value into another element's text", () => {
   const result = page(`Add a text input called name field
 Add a paragraph called greeting

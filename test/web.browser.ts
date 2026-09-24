@@ -457,6 +457,36 @@ When the toggle is clicked, toggle the visibility of details`);
   } finally { await browser.close(); }
 });
 
+test("When the <field> changes fires on a real dropdown selection or a committed text edit, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Add an option called blue inside favorite color
+Set the text of red to Red
+Set the text of blue to Blue
+Add a paragraph called result
+Set the text of result to none
+Add a text input called name field
+Add a paragraph called echo
+Set the text of echo to none
+When the favorite color changes, set the text of result to the value of favorite color
+When the name field changes, set the text of echo to the value of name field`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").selectOption("Blue");
+    assert.equal(await page.locator("#element-4").textContent(), "Blue");
+    await page.locator("#element-5").fill("Ada");
+    await page.locator("#element-5").dispatchEvent("change"); // fill() alone doesn't fire "change"
+    assert.equal(await page.locator("#element-6").textContent(), "Ada");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can repeat an instruction the correct number of times, including nested repeats, in a real browser", async () => {
   const compiled = compilePageSource(`Add a paragraph called counter
 Set the text of counter to 0
