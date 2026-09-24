@@ -291,6 +291,47 @@ Set the text of go to Go
 When the go is clicked, divide the text of total by 0`, /would produce an undefined result/);
 });
 
+test("a click can hide, show, or toggle the visibility of any element", () => {
+  const hidden = page(`Add a paragraph called details
+Set the text of details to Secret info
+Add a button called hide it
+Set the text of hide it to Hide
+When the hide it is clicked, hide details`);
+  const hiddenScript = /<script>(.+?)<\/script>/.exec(hidden.html)![1]!;
+  assert.match(hiddenScript, /document\.getElementById\("element-1"\)\.hidden=true;/);
+
+  const shown = page(`Add a paragraph called details
+Set the text of details to Secret info
+Add a button called show it
+Set the text of show it to Show
+When the show it is clicked, show details`);
+  const shownScript = /<script>(.+?)<\/script>/.exec(shown.html)![1]!;
+  assert.match(shownScript, /document\.getElementById\("element-1"\)\.hidden=false;/);
+
+  const toggled = page(`Add a paragraph called details
+Set the text of details to Secret info
+Add a button called toggle
+Set the text of toggle to Toggle
+When the toggle is clicked, toggle the visibility of details`);
+  const toggledScript = /<script>(.+?)<\/script>/.exec(toggled.html)![1]!;
+  assert.match(toggledScript, /e\.hidden=!e\.hidden;/);
+
+  // Hide/show/toggle work on any element, not just form controls -- unlike the readable/
+  // writable-value instructions, there's no tag restriction here.
+  const container = page(`Add a container called panel
+Add a paragraph called label inside panel
+Set the text of label to Inside the panel
+Add a button called close
+Set the text of close to Close
+When the close is clicked, hide panel`);
+  const containerScript = /<script>(.+?)<\/script>/.exec(container.html)![1]!;
+  assert.match(containerScript, /document\.getElementById\("element-1"\)\.hidden=true;/);
+
+  invalid(`Add a button called go
+Set the text of go to Go
+When the go is clicked, hide missing`, /There is no earlier element called missing/);
+});
+
 test("a click can read a text input's live value into another element's text", () => {
   const result = page(`Add a text input called name field
 Add a paragraph called greeting

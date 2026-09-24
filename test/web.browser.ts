@@ -424,6 +424,39 @@ When the turn on is clicked, check agree`);
   } finally { await browser.close(); }
 });
 
+test("a click can hide, show or toggle the visibility of a real element in a real browser", async () => {
+  const compiled = compilePageSource(`Add a paragraph called details
+Set the text of details to Secret info
+Add a button called hide it
+Set the text of hide it to Hide
+Add a button called show it
+Set the text of show it to Show
+Add a button called toggle
+Set the text of toggle to Toggle
+When the hide it is clicked, hide details
+When the show it is clicked, show details
+When the toggle is clicked, toggle the visibility of details`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    assert.equal(await page.locator("#element-1").isVisible(), true);
+    await page.locator("#element-2").click(); // "hide it"
+    assert.equal(await page.locator("#element-1").isHidden(), true);
+    await page.locator("#element-3").click(); // "show it"
+    assert.equal(await page.locator("#element-1").isVisible(), true);
+    await page.locator("#element-4").click(); // "toggle", was visible, becomes hidden
+    assert.equal(await page.locator("#element-1").isHidden(), true);
+    await page.locator("#element-4").click(); // "toggle" again, becomes visible again
+    assert.equal(await page.locator("#element-1").isVisible(), true);
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can repeat an instruction the correct number of times, including nested repeats, in a real browser", async () => {
   const compiled = compilePageSource(`Add a paragraph called counter
 Set the text of counter to 0

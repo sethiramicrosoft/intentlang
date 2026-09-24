@@ -203,7 +203,17 @@ instruction>`) branches on whether it's ticked, `if <checkbox name> is not
 checked, ...` branches on the opposite, and `check <checkbox name>` /
 `uncheck <checkbox name>` tick or untick it directly from a click. The
 target of any of these must be a checkbox or a radio button specifically —
-using them on a text input or any other element is a clear error.
+using them on a text input or any other element is a clear error. A click
+can also change whether any element is on the page at all (not just its
+text or value): `hide <name>` and `show <name>` set or clear its visibility,
+and `toggle the visibility of <name>` flips whichever state it's currently
+in. These use the element's native `hidden` property, the same mechanism a
+screen reader or the keyboard-navigation order respects, rather than a
+CSS-only trick that would still leave a "hidden" element focusable and
+readable by assistive technology. Unlike the value/checked-state
+instructions above, there's no type restriction here — any element on the
+page, from a paragraph to the whole page body, can be hidden, shown, or
+toggled.
 
 **`When the page loads, <one or more instructions>.`** runs the exact same
 closed instruction set immediately, as soon as the page's markup exists,
@@ -333,6 +343,14 @@ Set the text of result to none
 Add a button called submit
 Set the text of submit to Submit
 When the submit is clicked, if agree is checked, set the text of result to thanks otherwise set the text of result to please agree first
+```
+
+```text
+Add a paragraph called details
+Set the text of details to The full terms go here.
+Add a button called toggle
+Set the text of toggle to Show details
+When the toggle is clicked, toggle the visibility of details
 ```
 
 ```text

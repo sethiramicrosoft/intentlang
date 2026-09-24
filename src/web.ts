@@ -243,6 +243,13 @@ export function compilePageSource(source: string): PageCompileResult {
     // Toggles a checkbox/radio button's own ".checked" state directly.
     const checkBox = /^check\s+(.+)$/i.exec(part);
     const uncheckBox = /^uncheck\s+(.+)$/i.exec(part);
+    // Shows/hides any element by its ".hidden" property (a real, accessible, built-in
+    // browser mechanism -- a hidden element is removed from the accessibility tree and
+    // stops rendering, unlike a CSS trick that only fools sighted mouse users). Works on
+    // any element, not just inputs, since visibility isn't specific to form controls.
+    const hideElement = /^hide\s+(.+)$/i.exec(part);
+    const showElement = /^show\s+(.+)$/i.exec(part);
+    const toggleVisibility = /^toggle\s+the\s+visibility\s+of\s+(.+)$/i.exec(part);
     if (ifValue) {
       const source = resolve(ifValue[1]!, index);
       if (!source) return undefined;
@@ -443,6 +450,15 @@ export function compilePageSource(source: string): PageCompileResult {
         return undefined;
       }
       return `document.getElementById(${JSON.stringify(target.id)}).checked=${checkBox ? "true" : "false"};`;
+    } else if (hideElement || showElement) {
+      const match = hideElement ?? showElement!;
+      const target = resolve(match[1]!, index);
+      if (!target) return undefined;
+      return `document.getElementById(${JSON.stringify(target.id)}).hidden=${hideElement ? "true" : "false"};`;
+    } else if (toggleVisibility) {
+      const target = resolve(toggleVisibility[1]!, index);
+      if (!target) return undefined;
+      return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});e.hidden=!e.hidden;})();`;
     }
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
@@ -452,6 +468,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"subtract the value of ... from the text of ...", "set the value of ... to ...", ` +
       `"set the value of ... to the value of ...", "clear the value of ...", ` +
       `"check ..."/"uncheck ..." for a checkbox or radio button, ` +
+      `"hide ...", "show ...", "toggle the visibility of ...", ` +
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
