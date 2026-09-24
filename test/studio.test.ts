@@ -49,6 +49,13 @@ allow Member to update Task where owner is self
 allow Member to run complete on Task where owner is self
 `;
 
+test("Studio model panel exposes trace links with source navigation", () => {
+  assert.ok(STUDIO_JS.includes("Source to Generated Trace"));
+  assert.ok(STUDIO_JS.includes("renderTraceCards"));
+  assert.ok(STUDIO_JS.includes("focusEditorLine(item.source.startLine)"));
+  assert.ok(STUDIO_JS.includes("item.artifacts"));
+});
+
 const issueTrackerSource = `application IssueTracker
 authentication uses User identified by email
 

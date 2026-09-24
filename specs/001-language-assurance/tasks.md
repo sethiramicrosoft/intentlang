@@ -129,22 +129,22 @@ a normative rule and applicable fixtures.
 
 ### Tests first
 
-- [ ] T033 [P] [US5] Add source-span preservation tests in
+- [x] T033 [P] [US5] Add source-span preservation tests in
   `test/traceability.test.ts`.
-- [ ] T034 [P] [US5] Add LaunchOps authorization/workflow trace tests in
+- [x] T034 [P] [US5] Add LaunchOps authorization/workflow trace tests in
   `test/launch-ops-trace.test.ts`.
 
 ### Implementation
 
-- [ ] T035 [US5] Add stable IR node identifiers and source spans in
+- [x] T035 [US5] Add stable IR node identifiers and source spans in
   `src/model.ts` and parser/compiler paths.
-- [ ] T036 [US5] Implement trace collection in `src/language/trace.ts`.
-- [ ] T037 [US5] Emit schema, route, UI, authorization, audit, and test trace
+- [x] T036 [US5] Implement trace collection in `src/language/trace.ts`.
+- [x] T037 [US5] Emit schema, route, UI, authorization, audit, and test trace
   links from generators.
-- [ ] T038 [US5] Emit `intentlang.trace.json` with generated applications.
-- [ ] T039 [US5] Add Studio trace explorer and source/artifact navigation in
+- [x] T038 [US5] Emit `intentlang.trace.json` with generated applications.
+- [x] T039 [US5] Add Studio trace explorer and source/artifact navigation in
   `src/studio-assets.ts`.
-- [ ] T040 [US5] Document trace semantics in `docs/spec/traceability.md`.
+- [x] T040 [US5] Document trace semantics in `docs/spec/traceability.md`.
 
 **Checkpoint**: SC-006 achieved for LaunchOps representative rules.
 

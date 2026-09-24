@@ -70,21 +70,27 @@ export interface SemanticManifest {
   generatorVersions: Record<string, string>;
 }
 
+export interface TraceArtifact {
+  kind: string;
+  path: string;
+  symbol?: string;
+}
+
 export interface TraceLink {
-  sourceId: string;
-  sourceSpan: {
+  source: {
+    file: string;
     startLine: number;
-    startColumn: number;
     endLine: number;
-    endColumn: number;
   };
   ruleIds: string[];
-  irNodeIds: string[];
-  artifacts: Array<{
-    kind: string;
-    path: string;
-    symbol?: string;
-  }>;
+  irNodeId: string;
+  artifacts: TraceArtifact[];
+  tests?: string[];
+}
+
+export interface TraceMap {
+  sourceFingerprint: string;
+  links: TraceLink[];
 }
 
 const ruleIdPattern = /^[A-Z]+(?:-[A-Z]+)*-[0-9]{3}$/;

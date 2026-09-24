@@ -1205,6 +1205,7 @@ export const STUDIO_JS = `
     model: null,
     canonical: '',
     ir: null,
+    trace: null,
     activeTab: 'problems',
     planToken: null,
     planItems: [],
@@ -1628,6 +1629,7 @@ export const STUDIO_JS = `
     state.model = data.model || null;
     state.canonical = data.canonical || '';
     state.ir = data.ir || null;
+    state.trace = data.trace || null;
   }
 
   function showFatal(msg) {
@@ -2285,6 +2287,35 @@ export const STUDIO_JS = `
     if (m.safety) {
       appendModelSection(panel, 'Safety Summary', renderSafety(m.safety));
     }
+    if (state.trace && state.trace.links && state.trace.links.length) {
+      appendModelSection(panel, 'Source to Generated Trace', renderTraceCards(state.trace.links));
+    }
+  }
+
+  function renderTraceCards(links) {
+    var container = document.createElement('div');
+    links.forEach(function (item) {
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'model-card';
+      button.style.cssText = 'display:block;width:100%;text-align:left;cursor:pointer;';
+      var name = document.createElement('div');
+      name.className = 'model-card-name';
+      name.textContent = item.irNodeId;
+      var meta = document.createElement('div');
+      meta.className = 'model-card-meta';
+      var paths = (item.artifacts || []).map(function (artifact) { return artifact.path; });
+      meta.textContent = 'Line ' + item.source.startLine + ' · ' +
+        (item.ruleIds || []).join(', ') + ' · ' + paths.join(', ');
+      button.appendChild(name);
+      button.appendChild(meta);
+      button.addEventListener('click', function () {
+        focusEditorLine(item.source.startLine);
+        announce('Opened source for ' + item.irNodeId + ' at line ' + item.source.startLine);
+      });
+      container.appendChild(button);
+    });
+    return container;
   }
 
   function appendModelSection(parent, title, content) {

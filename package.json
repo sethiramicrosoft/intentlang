@@ -10,7 +10,7 @@
     "build": "tsc -p tsconfig.build.json",
     "check": "tsc --noEmit",
     "test": "tsx --test test/**/*.test.ts",
-    "test:assurance": "tsx --test test/language-contracts.test.ts test/language-inventory.test.ts test/rule-registry.test.ts test/conformance.test.ts test/language-coverage.test.ts test/canonical-properties.test.ts test/semantic-fingerprint.test.ts test/compatibility.test.ts",
+    "test:assurance": "tsx --test test/language-contracts.test.ts test/language-inventory.test.ts test/rule-registry.test.ts test/conformance.test.ts test/language-coverage.test.ts test/canonical-properties.test.ts test/semantic-fingerprint.test.ts test/compatibility.test.ts test/traceability.test.ts test/launch-ops-trace.test.ts",
     "test:compatibility": "tsx --test test/canonical-properties.test.ts test/semantic-fingerprint.test.ts test/compatibility.test.ts",
     "assurance": "tsx src/cli.ts assurance report",
     "assurance:complete": "tsx src/cli.ts assurance report --require-complete",

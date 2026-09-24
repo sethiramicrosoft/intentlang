@@ -20,6 +20,7 @@ import { interpretDescription } from "./description-interpreter.js";
 import { compileEnglishSource } from "./english.js";
 import { getWebCatalogue } from "./web-catalogue.js";
 import { VISUAL_HTML, VISUAL_CSS, VISUAL_JS } from "./visual-assets.js";
+import { buildTraceMap } from "./language/trace.js";
 
 const BODY_LIMIT_BYTES = 1_048_576; // 1 MB
 const PLAN_TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -284,6 +285,7 @@ function compileAndBuildState(source: string): {
   model: unknown;
   canonical: string;
   ir: unknown;
+  trace: unknown;
 } {
   const result = compileSource(source);
 
@@ -293,7 +295,8 @@ function compileAndBuildState(source: string): {
       diagnostics: result.diagnostics,
       model: null,
       canonical: "",
-      ir: null
+      ir: null,
+      trace: null
     };
   }
 
@@ -305,7 +308,8 @@ function compileAndBuildState(source: string): {
     diagnostics: [],
     model,
     canonical,
-    ir: result.ir
+    ir: result.ir,
+    trace: buildTraceMap(source, result.ir, "<studio>")
   };
 }
 

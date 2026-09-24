@@ -17,6 +17,7 @@ import { loadConformanceFixtures } from "./language/conformance.js";
 import { buildLanguageCoverageReport } from "./language/coverage.js";
 import { loadLanguageInventories } from "./language/inventory.js";
 import { loadRuleRegistries } from "./language/rule-registry.js";
+import { buildTraceMap } from "./language/trace.js";
 
 const [command, sourceArgument, ...options] = process.argv.slice(2);
 
@@ -273,8 +274,9 @@ async function runGenerate(
   const indexHtmlPath = `${outputDir}\\index.html`;
   const appJsPath = `${outputDir}\\app.js`;
   const stylesCssPath = `${outputDir}\\styles.css`;
+  const tracePath = `${outputDir}\\intentlang.trace.json`;
 
-  for (const outputPath of [appMjsPath, migrationPath, packageJsonPath, indexHtmlPath, appJsPath, stylesCssPath]) {
+  for (const outputPath of [appMjsPath, migrationPath, packageJsonPath, indexHtmlPath, appJsPath, stylesCssPath, tracePath]) {
     if (existsSync(outputPath) && !force) {
       console.error(`Refusing to overwrite ${outputPath}. Use --force after reviewing the plan.`);
       process.exitCode = 2;
@@ -292,6 +294,11 @@ async function runGenerate(
   await writeFile(indexHtmlPath, ui.indexHtml, "utf8");
   await writeFile(appJsPath, ui.appJs, "utf8");
   await writeFile(stylesCssPath, ui.stylesCss, "utf8");
+  await writeFile(
+    tracePath,
+    canonicalJson(buildTraceMap(source, result.ir, sourcePath)) + "\n",
+    "utf8"
+  );
 
   console.log(`\nGenerated artifacts in ${outputDir}:`);
   console.log("  app.mjs");
@@ -301,6 +308,7 @@ async function runGenerate(
   console.log("  index.html");
   console.log("  app.js");
   console.log("  styles.css");
+  console.log("  intentlang.trace.json");
   console.log("  (app.sqlite preserved if it exists)");
 }
 
