@@ -905,6 +905,30 @@ When the check is clicked, if a is checked the same as b, set the text of result
   } finally { await browser.close(); }
 });
 
+test("a click can copy a real checkbox's checked state into another with \"check ... the same as ...\", in a real browser", async () => {
+  const compiled = compilePageSource(`Add a checkbox called source
+Add a checkbox called target
+Add a button called sync
+Set the text of sync to Sync
+When the sync is clicked, check target the same as source`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").check(); // a real user click on the source checkbox
+    await page.locator("#element-3").click(); // sync
+    assert.equal(await page.locator("#element-2").isChecked(), true);
+    await page.locator("#element-1").uncheck();
+    await page.locator("#element-3").click(); // sync again
+    assert.equal(await page.locator("#element-2").isChecked(), false);
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("radio buttons under the same parent are really mutually exclusive in a real browser (shared name)", async () => {
   const compiled = compilePageSource(`Add a radio button called option a
 Add a radio button called option b`);

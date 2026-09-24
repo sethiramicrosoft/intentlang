@@ -1449,6 +1449,47 @@ Set the text of check to Check
 When the check is clicked, if a is checked the same as b, set the text of result to match`, /Only a checkbox or a radio button has a checked state, and b is a input/);
 });
 
+test("a click can copy one checkbox's checked state into another with \"check ... the same as ...\"", () => {
+  const copied = page(`Add a checkbox called source
+Add a checkbox called target
+Add a button called sync
+Set the text of sync to Sync
+When the sync is clicked, check target the same as source`);
+  const script = /<script>(.+?)<\/script>/.exec(copied.html)![1]!;
+  assert.match(script, /document\.getElementById\("element-2"\)\.checked=document\.getElementById\("element-1"\)\.checked;/);
+
+  // The plain fixed "check <name>" form still compiles as before (no regression -- "check X
+  // the same as Y" is checked first so it never gets swallowed by the plainer form's greedy
+  // capture, and "check X" alone still matches when there's no trailing "the same as").
+  const plain = page(`Add a checkbox called agree
+Add a button called go
+Set the text of go to Go
+When the go is clicked, check agree`);
+  const plainScript = /<script>(.+?)<\/script>/.exec(plain.html)![1]!;
+  assert.match(plainScript, /document\.getElementById\("element-1"\)\.checked=true;/);
+
+  // Radio buttons work the same way as checkboxes here.
+  const radios = page(`Add a radio button called source
+Add a radio button called target
+Add a button called sync
+Set the text of sync to Sync
+When the sync is clicked, check target the same as source`);
+  const radiosScript = /<script>(.+?)<\/script>/.exec(radios.html)![1]!;
+  assert.match(radiosScript, /document\.getElementById\("element-2"\)\.checked=document\.getElementById\("element-1"\)\.checked;/);
+
+  invalid(`Add a text input called source
+Add a checkbox called target
+Add a button called sync
+Set the text of sync to Sync
+When the sync is clicked, check target the same as source`, /Only a checkbox or a radio button has a checked state, and source is a input/);
+
+  invalid(`Add a checkbox called source
+Add a text input called target
+Add a button called sync
+Set the text of sync to Sync
+When the sync is clicked, check target the same as source`, /Only a checkbox or a radio button has a checked state, and target is a input/);
+});
+
 test("radio buttons under the same parent are auto-grouped by a shared HTML name, for real mutual exclusivity", () => {
   const grouped = page(`Add a radio button called option a
 Add a radio button called option b

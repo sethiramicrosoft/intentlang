@@ -295,7 +295,12 @@ instruction>`) branches on whether it's ticked, `if <checkbox name> is not
 checked, ...` branches on the opposite, and `check <checkbox name>` /
 `uncheck <checkbox name>` tick or untick it directly from a click, and
 `toggle whether <checkbox name> is checked` flips it without needing to
-know which way it currently is. A checkbox's checked state can also be
+know which way it currently is. `check <checkbox name> the same as <other
+checkbox name>` copies another checkbox's or radio button's own checked
+state directly, rather than fixing it to always-ticked/always-unticked —
+handy for a "match my previous answer" button, or for syncing two related
+toggles without needing a runtime `if`/`otherwise` pair to spell out both
+directions by hand. A checkbox's checked state can also be
 compared against *another* checkbox's or radio button's checked state
 directly, with `if <checkbox name> is checked the same as <other checkbox
 name>, <one instruction>` (also optionally followed by `otherwise <one
@@ -578,6 +583,14 @@ Set the text of result to none
 Add a button called submit
 Set the text of submit to Submit
 When the submit is clicked, if accept terms is checked the same as confirm adult, set the text of result to consistent otherwise set the text of result to please check both boxes
+```
+
+```text
+Add a checkbox called ship here
+Add a checkbox called billing confirmed
+Add a button called sync
+Set the text of sync to Use same address
+When the sync is clicked, check ship here the same as billing confirmed
 ```
 
 ```text

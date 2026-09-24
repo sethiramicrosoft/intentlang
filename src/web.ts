@@ -351,8 +351,15 @@ export function compilePageSource(source: string): PageCompileResult {
     const selectByLabel = !setValueFromValue ? /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+the\s+option\s+labeled\s+(.+)$/i.exec(part) : null;
     const setValue = !setValueFromValue && !selectByLabel ? /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part) : null;
     const clearValue = /^clear\s+the\s+value\s+of\s+(.+)$/i.exec(part);
+    // Copies one checkbox/radio button's own ".checked" state into another's, so a click can
+    // sync two toggles together (e.g. a "match my previous answer" button) without needing a
+    // runtime if/otherwise pair to spell out both directions by hand. Checked before the plain
+    // "check <name>" form below, for the same shadowing reason as every other "<verb> X the
+    // same as Y" vs. "<verb> X" pair in this function: otherwise the plain form's greedy
+    // capture would swallow "X the same as Y" whole as a single (invalid) target name.
+    const checkMatch = /^check\s+(.+?)\s+the\s+same\s+as\s+(.+)$/i.exec(part);
     // Sets a checkbox/radio button's own ".checked" state directly.
-    const checkBox = /^check\s+(.+)$/i.exec(part);
+    const checkBox = !checkMatch ? /^check\s+(.+)$/i.exec(part) : null;
     const uncheckBox = /^uncheck\s+(.+)$/i.exec(part);
     // Flips a checkbox/radio button's own ".checked" state without needing to know which way
     // it currently is -- the checked-state sibling of "toggle the visibility of ...", written
@@ -883,6 +890,22 @@ export function compilePageSource(source: string): PageCompileResult {
         return undefined;
       }
       return `document.getElementById(${JSON.stringify(target.id)}).value="";`;
+    } else if (checkMatch) {
+      const target = resolve(checkMatch[1]!, index);
+      if (!target) return undefined;
+      if (!hasCheckedState(target)) {
+        report(index, `Only a checkbox or a radio button has a checked state, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add a checkbox called ${target.name} instead, such as Add a checkbox called ${target.name}.`);
+        return undefined;
+      }
+      const other = resolve(checkMatch[2]!, index);
+      if (!other) return undefined;
+      if (!hasCheckedState(other)) {
+        report(index, `Only a checkbox or a radio button has a checked state, and ${other.name} is a ${englishName(other.tag)}.`,
+          `Add a checkbox called ${other.name} instead, such as Add a checkbox called ${other.name}.`);
+        return undefined;
+      }
+      return `document.getElementById(${JSON.stringify(target.id)}).checked=document.getElementById(${JSON.stringify(other.id)}).checked;`;
     } else if (checkBox || uncheckBox || toggleChecked) {
       const match = checkBox ?? uncheckBox ?? toggleChecked!;
       const target = resolve(match[1]!, index);
@@ -933,6 +956,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"divide the value of ... by the value of ...", "set the value of ... to ...", ` +
       `"set the value of ... to the value of ...", "set the value of ... to the option labeled ... (a dropdown)", "clear the value of ...", ` +
       `"check ..."/"uncheck ..." for a checkbox or radio button, ` +
+      `"check ... the same as ..." to copy another checkbox or radio button's checked state, ` +
       `"toggle whether ... is checked" for a checkbox or radio button, ` +
       `"hide ...", "show ...", "toggle the visibility of ...", "focus ...", ` +
       `"disable ...", "enable ..." for a button, input, text box, dropdown, or field group, ` +
