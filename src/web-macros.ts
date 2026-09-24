@@ -455,6 +455,20 @@ function compareNumbers(value: number, comparator: string, target: number): bool
   }
 }
 
+/** Compares two already-lowercased, already-trimmed text values ordinally (plain code-point
+ * order, not locale-aware alphabetization) so results are simple and predictable regardless of
+ * the machine's locale. "equal to" / "not equal to" are handled by the caller before reaching
+ * here; only the four ordering comparators are needed. */
+function compareText(value: string, comparator: string, target: string): boolean {
+  switch (comparator) {
+    case "greater than": return value > target;
+    case "less than": return value < target;
+    case "at least": return value >= target;
+    case "at most": return value <= target;
+    default: return false;
+  }
+}
+
 function substituteWord(text: string, word: string, replacement: string): string {
   const escaped = word.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return text.replace(new RegExp(`\\b${escaped}\\b`, "gi"), replacement);
@@ -601,10 +615,10 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
     }
   }
   const comparator = clause.comparator.toLowerCase();
-  if (subject.type === "text" || subject.type === "list") {
+  if (subject.type === "list") {
     if (comparator !== "equal to" && comparator !== "not equal to") {
       report(diagnostics, lineNumber, text, "M006",
-        `Text can only be compared with "is equal to" or "is not equal to", not "is ${comparator}".`,
+        `A list can only be compared with "is equal to" or "is not equal to", not "is ${comparator}".`,
         `Try "If the ${rawSubject} is equal to ...".`,
         [{ label: `Change "${comparator}" to "equal to"`, replacement: text.replace(clause.comparator, "equal to") }]);
       return undefined;
@@ -612,6 +626,14 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
     const target = resolveTextOperand(clause.target, variables);
     const isEqual = formatVarValueText(subject).trim().toLowerCase() === target.trim().toLowerCase();
     return comparator === "equal to" ? isEqual : !isEqual;
+  }
+  if (subject.type === "text") {
+    const target = resolveTextOperand(clause.target, variables);
+    const a = formatVarValueText(subject).trim().toLowerCase();
+    const b = target.trim().toLowerCase();
+    if (comparator === "equal to") return a === b;
+    if (comparator === "not equal to") return a !== b;
+    return compareText(a, comparator, b);
   }
   const target = resolveNumericOperand(clause.target, variables);
   if (target === undefined) {

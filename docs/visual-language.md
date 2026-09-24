@@ -263,11 +263,13 @@ Repeat 3 times, the wins is wins plus 1.
 - **`If the <name> is <comparison> <value>, <one or more instructions>.`** keeps
   its instruction(s) only when the comparison is true. Comparisons are written
   as words: `greater than`, `less than`, `equal to`, `not equal to`, `at least`,
-  `at most`. Text variables can only be compared with `equal to` or
-  `not equal to` (the ordering comparators don't make sense for text); using
-  another comparator on text is reported as a clear error. The `<name>` can be
-  a variable, or a plain number (useful when it's a For each counting loop's
-  own variable, which is a number itself).
+  `at most`. Text variables can use all six too — the ordering comparators
+  compare text alphabetically (plain code-point order, case-insensitive, so
+  `Alex` reads as coming before `Zack`) — but a list variable can still only be
+  compared with `equal to` or `not equal to` (ordering doesn't make sense for a
+  whole list); using another comparator on a list is reported as a clear
+  error. The `<name>` can be a variable, or a plain number (useful when it's a
+  For each counting loop's own variable, which is a number itself).
 - **`If the <name> is <comparison> <value> and the <name> is <comparison>
   <value>, ...`** (or joined with `or` instead of `and`) combines two or more
   conditions into one: `and` requires every one of them to be true, `or`
@@ -504,10 +506,14 @@ style, and attribute names elsewhere in the page grammar. Typo fixes are always
 offered, never applied silently.
 
 **Current limits, stated plainly:**
-- Text variables can only be compared with `equal to` or `not equal to`;
-  there's no ordering (`greater than`, etc.) for text, and text can't be used
-  in arithmetic. Text does have its own `joined with` chain for
-  concatenation, but that's string-building only, not arithmetic.
+- Text variables can be compared with all six comparators — `equal to`,
+  `not equal to`, `greater than`, `less than`, `at least`, `at most` — with
+  the ordering ones comparing alphabetically (plain code-point order, not
+  locale-aware alphabetization, and case-insensitive). Text still can't be
+  used in arithmetic, though; it has its own `joined with` chain for
+  concatenation, which is string-building only, not arithmetic. A list
+  variable, unlike a plain text variable, can still only be compared with
+  `equal to` or `not equal to` (ordering a whole list doesn't make sense).
 - A list variable can be looped over, displayed, copied, measured with
   `the number of items in ...`, read one item at a time by position with
   `item N in ...` / `the first item in ...` / `the last item in ...`, and

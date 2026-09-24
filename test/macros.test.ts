@@ -266,10 +266,40 @@ Otherwise, set the text of message to runner up`);
   assert.equal(textOf(ir, "message"), "champion");
 });
 
-test("comparing a text variable with a numeric comparator is a clear error", () => {
+test("text variables can be compared alphabetically with greater than, less than, at least and at most", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The winner is Zack.
+If the winner is greater than Alex, set the text of message to after alex
+Otherwise, set the text of message to before or same as alex`);
+  assert.equal(textOf(ir, "message"), "after alex");
+});
+
+test("a text 'less than' comparison correctly reads alphabetically-earlier as true", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The winner is Alex.
+If the winner is less than Zack, set the text of message to before zack
+Otherwise, set the text of message to after or same as zack`);
+  assert.equal(textOf(ir, "message"), "before zack");
+});
+
+test("text 'at least' and 'at most' comparisons include the equal case", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The winner is Alex.
+If the winner is at least Alex, if the winner is at most Alex, set the text of message to both hold`);
+  assert.equal(textOf(ir, "message"), "both hold");
+});
+
+test("text ordering comparisons are case-insensitive, matching text equality", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The winner is alex.
+If the winner is less than ZACK, set the text of message to matched`);
+  assert.equal(textOf(ir, "message"), "matched");
+});
+
+test("comparing a list variable with a numeric or ordering comparator is still a clear error", () => {
   invalid(`Add a paragraph called message inside page
-The winner is Alex Carter.
-If the winner is greater than Alex Carter, set the text of message to champion`, /can only be compared with/);
+The favorite colors is a list of red, green and blue.
+If the favorite colors is greater than red, set the text of message to champion`, /can only be compared with/);
 });
 
 test("text variables can also be compared with is not equal to", () => {
