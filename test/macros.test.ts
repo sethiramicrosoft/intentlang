@@ -1113,3 +1113,50 @@ Repeat 1 times, set item 1 in favorite colors to changed.
 Set the text of message to favorite colors`);
   assert.equal(textOf(ir, "message"), "changed, green and blue");
 });
+
+test("a whole list variable can be passed as a single procedure argument, and read inside with 'the number of items in'", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To count items with items, the total is the number of items in items.
+The favorite colors is a list of red, green and blue.
+The total is 0.
+Do count items with favorite colors.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "3");
+});
+
+test("a list passed as a procedure argument can be looped over with a For each inside the procedure's own body", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To sum with numbers, the total is 0 and then for each n in numbers, the total is total plus n.
+The scores is a list of 10, 20 and 30.
+Do sum with scores.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "60");
+});
+
+test("'the number of items in <list>' resolves inside a 'joined with' text chain, not just plain arithmetic", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To combine with prefix and items, the result is prefix joined with the number of items in items.
+The scores is a list of 10, 20 and 30.
+Do combine with tag and scores.
+Set the text of message to result`);
+  assert.equal(textOf(ir, "message"), "tag3");
+});
+
+test("'item N in <list>' can be passed directly as a procedure call's argument", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To double with n, the result is n plus n.
+The scores is a list of 10, 20 and 30.
+Do double with item 2 in scores.
+Set the text of message to result`);
+  assert.equal(textOf(ir, "message"), "40");
+});
+
+test("'the first item in <list>' can be passed directly as a procedure call's argument, resolving as text", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To shout with word, the result is word joined with the exclaim.
+The exclaim is "!".
+The colors is a list of red, green and blue.
+Do shout with the first item in colors.
+Set the text of message to result`);
+  assert.equal(textOf(ir, "message"), "red!");
+});

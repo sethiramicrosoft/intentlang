@@ -453,6 +453,23 @@ parameter list, avoid using the word "with" inside a procedure's own name
 (for example, prefer "handle problems" over "deal with problems") so the
 name and parameter list can't be confused.
 
+A call's value isn't limited to a plain number or piece of text — it can
+also be the name of a list variable, in which case the parameter receives
+the whole list, not just its display text, and can be looped over with its
+own For each, measured with `the number of items in ...`, or indexed with
+`item N in ...` inside the procedure's body, exactly like any other list
+variable:
+
+```text
+To sum with numbers, the total is 0 and then for each n in numbers, the total is total plus n
+
+The scores is a list of 10, 20 and 30.
+Do sum with scores.
+```
+
+A call's value can likewise be `item N in <list>` or `the first/last item
+in <list>` directly, passing just that one item rather than the whole list.
+
 A variable's value, number or text, can be used anywhere a plain instruction ends
 with `to <name>`, such as `Set the text of points line to total points`. That
 same trailing spot also accepts an arithmetic chain, such as
@@ -494,9 +511,15 @@ offered, never applied silently.
 - A list variable can be looped over, displayed, copied, measured with
   `the number of items in ...`, read one item at a time by position with
   `item N in ...` / `the first item in ...` / `the last item in ...`, and
-  have one item changed in place with `Set item N in ... to ...`, but a
-  `Do <procedure> with <list>` call can't yet pass a whole list as one
-  argument — a procedure only receives plain numbers and text.
+  have one item changed in place with `Set item N in ... to ...`. A whole
+  list can also be passed as a procedure's argument — a single-parameter
+  call passes its one argument through untouched, list and all
+  (`Do count items with favorite colors.`), and the parameter can then be
+  looped over with its own For each, measured, or indexed, exactly the same
+  as any other list variable. A procedure with two or more parameters can
+  take a list as any one of them too, as long as the argument list's other
+  values don't themselves need commas or "and" to separate them (the same
+  word-splitting rule a For each's own inline list already follows).
 - A `For each <name> in <list>, <instruction> and then <instruction>.` loop
   can misparse when the list is a single-word named list variable (no comma
   or "and" of its own, e.g. `favorite colors`) and the chained instruction

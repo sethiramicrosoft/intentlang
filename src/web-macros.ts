@@ -382,6 +382,11 @@ function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): n
 function resolveTextOperand(raw: string, variables: Map<string, VarValue>): string {
   const itemLookup = resolveListItem(raw, variables);
   if (itemLookup.kind === "ok") return itemLookup.value;
+  const lengthOf = LIST_LENGTH_RE.exec(stripLeadingThe(raw).toLowerCase());
+  if (lengthOf) {
+    const list = variables.get(stripLeadingThe(lengthOf[1]!).toLowerCase());
+    if (list?.type === "list") return formatNumber(list.value.length);
+  }
   const found = variables.get(stripLeadingThe(raw).toLowerCase());
   if (found) return formatVarValueText(found);
   return dequote(raw);
@@ -704,6 +709,10 @@ function resolveArgValue(rawValue: string, variables: Map<string, VarValue>): Va
   const trimmed = rawValue.trim();
   const numericValue = evaluateExpression(trimmed, variables);
   if (numericValue !== undefined) return { type: "number", value: numericValue };
+  const itemLookup = resolveListItem(trimmed, variables);
+  if (itemLookup.kind === "ok") {
+    return /^-?\d+(?:\.\d+)?$/.test(itemLookup.value) ? { type: "number", value: Number(itemLookup.value) } : { type: "text", value: itemLookup.value };
+  }
   return variables.get(stripLeadingThe(trimmed).toLowerCase()) ?? { type: "text", value: dequote(trimmed) };
 }
 
