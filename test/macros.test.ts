@@ -66,6 +66,53 @@ The share is the score modulo 0.
 Set the text of message to share`, /not part of the page language/);
 });
 
+test("'the uppercase of ...' and 'the lowercase of ...' convert a text value's case, and nest", () => {
+  const { ir } = page(`Add a paragraph called shout display inside page
+Add a paragraph called whisper display inside page
+Add a paragraph called nested display inside page
+The name is Bob Carter.
+The shout is the uppercase of name.
+The whisper is the lowercase of shout.
+The nested is the uppercase of the lowercase of name.
+Set the text of shout display to shout
+Set the text of whisper display to whisper
+Set the text of nested display to nested`);
+  assert.equal(textOf(ir, "shout display"), "BOB CARTER");
+  assert.equal(textOf(ir, "whisper display"), "bob carter");
+  assert.equal(textOf(ir, "nested display"), "BOB CARTER");
+});
+
+test("'the uppercase of ...' works as an If condition's subject and target, and as a 'joined with' chain operand", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The name is bob.
+The banner is the uppercase of name joined with "!"
+If the uppercase of name is equal to BOB, set the text of message to banner`);
+  assert.equal(textOf(ir, "message"), "BOB!");
+});
+
+test("'the length of ...' resolves to a text value's character count, usable in arithmetic and If conditions", () => {
+  const { ir } = page(`Add a paragraph called count display inside page
+Add a paragraph called sum display inside page
+Add a paragraph called flag display inside page
+The name is bob.
+The count is the length of name.
+The sum is the length of name plus 1.
+Set the text of count display to count
+Set the text of sum display to sum
+If the length of name is greater than 2, set the text of flag display to long enough`);
+  assert.equal(textOf(ir, "count display"), "3");
+  assert.equal(textOf(ir, "sum display"), "4");
+  assert.equal(textOf(ir, "flag display"), "long enough");
+});
+
+test("'Do <name> with the uppercase of <value>' passes the case-converted text as the argument", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The name is bob.
+To shout with n, set the text of message to n.
+Do shout with the uppercase of name.`);
+  assert.equal(textOf(ir, "message"), "BOB");
+});
+
 test("an If sentence keeps its instruction only when the condition is true", () => {
   const { ir } = page(`Add a paragraph called message inside page
 The score is 42.

@@ -262,6 +262,17 @@ Repeat 3 times, the wins is wins plus 1.
   word "plus". Each operand in a `joined with` chain can be a variable
   (stringified if it's a number) or a literal — quote a literal that's just
   whitespace, like `" "`, since bare whitespace alone isn't a word.
+  Text also has two built-in conversions: **`the uppercase of <text>`** and
+  **`the lowercase of <text>`** produce an upper- or lower-cased copy of a
+  text value or variable (`The shout is the uppercase of name.`), and can be
+  nested (`the uppercase of the lowercase of name`). They work anywhere a
+  text value is expected: an assignment, a `joined with` chain operand
+  (`the uppercase of name joined with "!"`), an If condition's subject or
+  target, or a procedure call argument. Separately, **`the length of
+  <text>`** resolves to that text's character count as a number, so it can
+  be used anywhere a number is expected: an assignment, an arithmetic
+  chain (`the length of name plus 1`), or an If condition (`If the length
+  of name is greater than 2, ...`).
 - **`If the <name> is <comparison> <value>, <one or more instructions>.`** keeps
   its instruction(s) only when the comparison is true. Comparisons are written
   as words: `greater than`, `less than`, `equal to`, `not equal to`, `at least`,
@@ -585,7 +596,11 @@ offered, never applied silently.
   not `(the result of double with 5) plus 1`), for the same reason a call's
   own single-parameter argument already reads to the end of the line:
   assign the result to a variable first, then use that variable in the
-  chain.
+  chain. The same applies to `the uppercase of ...` / `the lowercase of ...`
+  as a call argument: it works fine on its own (`Do shout with the
+  uppercase of name.`), but can't be followed by a `joined with` chain in
+  the same argument — assign the converted text to a variable first if you
+  need to join it with something else before passing it.
 - A list variable can be looped over, displayed, copied, measured with
   `the number of items in ...`, read one item at a time by position with
   `item N in ...` / `the first item in ...` / `the last item in ...`, and

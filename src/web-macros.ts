@@ -46,6 +46,15 @@ const LIST_OF_RE = /^a\s+list\s+of\s+(.+)$/i;
 // one whole phrase before an ordinary variable lookup is tried, so a variable literally named
 // "number of items in x" is never possible to accidentally shadow it.
 const LIST_LENGTH_RE = /^number of items in\s+(.+)$/i;
+// "the length of <text>" resolves to a text value's character count wherever a plain number
+// could go -- the text sibling of "the number of items in <list>" above.
+const TEXT_LENGTH_RE = /^length of\s+(.+)$/i;
+// "the uppercase/lowercase of <text>" resolves to that text value converted to all-caps or
+// all-lowercase, wherever a text value could go (an assignment's value, an If condition's
+// subject or target, a "joined with" chain operand, or a call's own argument). It can nest
+// (`the uppercase of the lowercase of x`), since it resolves its inner text the same way any
+// other text operand does.
+const CASE_CONVERT_RE = /^(uppercase|lowercase) of\s+(.+)$/i;
 // "item <N> in <list>" (1-based) or "the first/last item in <list>" reads one item out of a
 // named list by position, wherever a value could go (an assignment's value, an If condition's
 // text target, or a "Set ... to" trailing reference).
@@ -408,6 +417,8 @@ function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): n
     const list = variables.get(stripLeadingThe(lengthOf[1]!).toLowerCase());
     return list?.type === "list" ? list.value.length : undefined;
   }
+  const textLengthOf = TEXT_LENGTH_RE.exec(token);
+  if (textLengthOf) return resolveTextOperand(textLengthOf[1]!, variables).length;
   const found = variables.get(token);
   return found?.type === "number" ? found.value : undefined;
 }
@@ -422,6 +433,11 @@ function resolveTextOperand(raw: string, variables: Map<string, VarValue>): stri
   if (lengthOf) {
     const list = variables.get(stripLeadingThe(lengthOf[1]!).toLowerCase());
     if (list?.type === "list") return formatNumber(list.value.length);
+  }
+  const caseConvert = CASE_CONVERT_RE.exec(stripLeadingThe(raw).toLowerCase());
+  if (caseConvert) {
+    const inner = resolveTextOperand(caseConvert[2]!, variables);
+    return caseConvert[1]! === "uppercase" ? inner.toUpperCase() : inner.toLowerCase();
   }
   const found = variables.get(stripLeadingThe(raw).toLowerCase());
   if (found) return formatVarValueText(found);
@@ -678,10 +694,17 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
     subject = { type: "number", value: Number(rawSubject) };
   } else {
     const lengthOf = LIST_LENGTH_RE.exec(rawSubject);
-    const resultOf = lengthOf ? undefined : RESULT_OF_RE.exec(`the ${rawSubject}`);
+    const textLengthOf = lengthOf ? undefined : TEXT_LENGTH_RE.exec(rawSubject.toLowerCase());
+    const caseConvert = lengthOf || textLengthOf ? undefined : CASE_CONVERT_RE.exec(rawSubject.toLowerCase());
+    const resultOf = lengthOf || textLengthOf || caseConvert ? undefined : RESULT_OF_RE.exec(`the ${rawSubject}`);
     const displayName = lengthOf ? stripLeadingThe(lengthOf[1]!) : rawSubject;
     const name = displayName.toLowerCase();
-    if (resultOf) {
+    if (textLengthOf) {
+      subject = { type: "number", value: resolveTextOperand(textLengthOf[1]!, variables).length };
+    } else if (caseConvert) {
+      const inner = resolveTextOperand(caseConvert[2]!, variables);
+      subject = { type: "text", value: caseConvert[1]! === "uppercase" ? inner.toUpperCase() : inner.toLowerCase() };
+    } else if (resultOf) {
       const value = evaluateProcedureResult(resultOf[1]!.trim().toLowerCase(), resultOf[2], rawSubject, lineNumber,
         variables, diagnostics, functions, callStack);
       if (value === undefined) return undefined;
@@ -873,6 +896,11 @@ function resolveArgValue(rawValue: string, variables: Map<string, VarValue>, lin
   }
   const numericValue = evaluateExpression(trimmed, variables);
   if (numericValue !== undefined) return { type: "number", value: numericValue };
+  const caseConvert = TEXT_CHAIN_SPLIT_RE.test(trimmed) ? undefined : CASE_CONVERT_RE.exec(stripLeadingThe(trimmed).toLowerCase());
+  if (caseConvert) {
+    const inner = resolveTextOperand(caseConvert[2]!, variables);
+    return { type: "text", value: caseConvert[1]! === "uppercase" ? inner.toUpperCase() : inner.toLowerCase() };
+  }
   const itemLookup = resolveListItem(trimmed, variables);
   if (itemLookup.kind === "ok") {
     return /^-?\d+(?:\.\d+)?$/.test(itemLookup.value) ? { type: "number", value: Number(itemLookup.value) } : { type: "text", value: itemLookup.value };
@@ -1009,14 +1037,16 @@ function expandFunctionCall(name: string, argRaw: string | undefined, callText: 
 /**
  * Applies a "The X is Y." assignment: resolves Y as a procedure's result ("the result of ...",
  * checked first since it's a fixed phrase that can't collide with any other shape), then a
- * number expression, then a text "joined with" chain, then as a list literal ("a list of ..."),
- * then as a list-item-by-position read ("item N in ..." / "the first/last item in ..."),
- * falling back to copying an existing variable's value, and finally to literal text (only when Y
- * doesn't even look like an arithmetic attempt, so a genuine mistake like dividing by zero isn't
- * silently treated as text). Returns true once handled (this includes a recognized-but-invalid
- * list-item access or procedure call, where a diagnostic is reported instead of silently falling
- * through to a confusing generic "unrecognized instruction" error); false means the caller
- * should leave the line for the page compiler to report as an ordinary unrecognized instruction.
+ * number expression (which also covers "the length of <text>", resolved as a numeric operand),
+ * then "the uppercase/lowercase of <text>", then a text "joined with" chain, then as a list
+ * literal ("a list of ..."), then as a list-item-by-position read ("item N in ..." / "the
+ * first/last item in ..."), falling back to copying an existing variable's value, and finally to
+ * literal text (only when Y doesn't even look like an arithmetic attempt, so a genuine mistake
+ * like dividing by zero isn't silently treated as text). Returns true once handled (this
+ * includes a recognized-but-invalid list-item access or procedure call, where a diagnostic is
+ * reported instead of silently falling through to a confusing generic "unrecognized instruction"
+ * error); false means the caller should leave the line for the page compiler to report as an
+ * ordinary unrecognized instruction.
  */
 function applyAssignment(name: string, rawValue: string, variables: Map<string, VarValue>, lineNumber: number,
   diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): boolean {
@@ -1034,6 +1064,12 @@ function applyAssignment(name: string, rawValue: string, variables: Map<string, 
   }
   if (TEXT_CHAIN_SPLIT_RE.test(rawValue)) {
     variables.set(name, { type: "text", value: evaluateTextChain(rawValue, variables) });
+    return true;
+  }
+  const caseConvert = CASE_CONVERT_RE.exec(stripLeadingThe(rawValue.trim()).toLowerCase());
+  if (caseConvert) {
+    const inner = resolveTextOperand(caseConvert[2]!, variables);
+    variables.set(name, { type: "text", value: caseConvert[1]! === "uppercase" ? inner.toUpperCase() : inner.toLowerCase() });
     return true;
   }
   const listOf = LIST_OF_RE.exec(rawValue.trim());
