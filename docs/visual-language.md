@@ -320,8 +320,13 @@ Repeat 3 times, the wins is wins plus 1.
   works anywhere a number or piece of text could go — an assignment's value,
   an If condition's target, or a `Set the text of ... to ...` — and comes
   back as a number if it looks like one (so a list of numbers can be indexed
-  into and used in arithmetic directly). Asking for the number of items in,
-  or an item in, something that isn't a list — or a position that's out of
+  into and used in arithmetic directly). One item can also be changed in
+  place with **`Set item <N> in <list> to <value>.`** (or `Set the first/last
+  item in <list> to <value>.`), which keeps the list's identity — the same
+  variable, with every other item unchanged — and resolves its value the
+  same way an assignment does (a number expression, or otherwise plain
+  text). Asking for the number of items in, reading an item from, or setting
+  an item in something that isn't a list — or a position that's out of
   range — is reported as a clear error rather than silently returning zero
   or blank text.
 - **`For each <name> from <start> to <end>, <one or more instructions>.`**
@@ -487,12 +492,20 @@ offered, never applied silently.
   in arithmetic. Text does have its own `joined with` chain for
   concatenation, but that's string-building only, not arithmetic.
 - A list variable can be looped over, displayed, copied, measured with
-  `the number of items in ...`, and read one item at a time by position with
-  `item N in ...` / `the first item in ...` / `the last item in ...`, but
-  there's still no way to *change* one specific item in place (e.g. no "set
-  item 2 in favorite colors to purple"), and a `Do <procedure> with <list>`
-  call can't yet pass a whole list as one argument — a procedure only
-  receives plain numbers and text.
+  `the number of items in ...`, read one item at a time by position with
+  `item N in ...` / `the first item in ...` / `the last item in ...`, and
+  have one item changed in place with `Set item N in ... to ...`, but a
+  `Do <procedure> with <list>` call can't yet pass a whole list as one
+  argument — a procedure only receives plain numbers and text.
+- A `For each <name> in <list>, <instruction> and then <instruction>.` loop
+  can misparse when the list is a single-word named list variable (no comma
+  or "and" of its own, e.g. `favorite colors`) and the chained instruction
+  itself contains the bare word "and" (as `and then` does): the boundary
+  between the list and the instruction is found by scanning for the first
+  segment containing "and", so it can land inside the instruction instead of
+  the list. Splitting the loop body across two separate lines (or using a
+  `Repeat` loop for the chained part) avoids it; the fix would require a
+  different list/instruction boundary rule and is left for later.
 - A parenthesis-free `a list of ...` value is recognized by its exact
   leading words, the same way `joined with` and the arithmetic operator
   words are — so a piece of literal text that itself happens to start with

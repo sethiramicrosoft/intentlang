@@ -1065,3 +1065,51 @@ The first color is item 1 in favorite colors.
 Set the text of message to count`);
   assert.equal(textOf(ir, "message"), "3");
 });
+
+test("'Set item N in <list> to <value>' mutates one item in place, leaving the rest untouched", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+Set item 2 in favorite colors to purple
+Set the text of message to favorite colors`);
+  assert.equal(textOf(ir, "message"), "red, purple and blue");
+});
+
+test("'Set the first item in ...' and 'Set the last item in ...' are convenience words, same as reading", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+Set the first item in favorite colors to orange
+Set the last item in favorite colors to yellow
+Set the text of message to favorite colors`);
+  assert.equal(textOf(ir, "message"), "orange, green and yellow");
+});
+
+test("'Set item N in <list> to <value>' resolves its value the same way an assignment does: a variable, or arithmetic", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The scores is a list of 10, 20 and 30.
+The extra is 5.
+Set item 1 in scores to extra plus 10
+Set the text of message to scores`);
+  assert.equal(textOf(ir, "message"), "15, 20 and 30");
+});
+
+test("'Set item N in <list> to <value>' on a variable that isn't a list is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+The score is 5.
+Set item 1 in score to 10
+Set the text of message to score`, /is not a list, so it has no items to set by position/);
+});
+
+test("'Set item N in <list> to <value>' with an out-of-range position is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+Set item 9 in favorite colors to purple
+Set the text of message to favorite colors`, /out of range.*only has 3 items/);
+});
+
+test("'Set item N in <list> to <value>' works nested inside a Repeat loop", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+Repeat 1 times, set item 1 in favorite colors to changed.
+Set the text of message to favorite colors`);
+  assert.equal(textOf(ir, "message"), "changed, green and blue");
+});

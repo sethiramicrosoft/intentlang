@@ -50,6 +50,12 @@ const LIST_LENGTH_RE = /^number of items in\s+(.+)$/i;
 // named list by position, wherever a value could go (an assignment's value, an If condition's
 // text target, or a "Set ... to" trailing reference).
 const LIST_ITEM_RE = /^(?:item\s+(-?\d+)|the\s+(first|last)\s+item)\s+in\s+(.+)$/i;
+// "Set item <N> in <list> to <value>." (or "Set the first/last item in <list> to <value>.")
+// mutates one item of a named list variable in place. Deliberately a different verb ("Set")
+// from a plain assignment ("The ... is ...") so it reads as an imperative instruction, the same
+// way "Set the text of ... to ..." does in the page grammar -- this is a macro-layer sentence,
+// though, resolved before the page grammar ever sees it, just like every other macro sentence.
+const SET_LIST_ITEM_RE = /^set\s+(?:item\s+(-?\d+)|the\s+(first|last)\s+item)\s+in\s+(.+?)\s+to\s+(.+?)\.?$/i;
 // An If sentence's head, up to its FIRST comma (no matter what follows -- this is what lets an
 // If's own instruction be another nested If/For each/Repeat/Do without confusing this boundary).
 // The captured text between "if " and that comma is one or more conditions, described below.
@@ -296,13 +302,17 @@ type ListItemLookup =
   | { kind: "out-of-range"; name: string; index: number; length: number }
   | { kind: "ok"; value: string };
 
+function listIndexFromParts(numGroup: string | undefined, firstLastGroup: string | undefined, length: number): number {
+  return numGroup !== undefined ? Number(numGroup) : (firstLastGroup!.toLowerCase() === "first" ? 1 : length);
+}
+
 function resolveListItem(raw: string, variables: Map<string, VarValue>): ListItemLookup {
   const match = LIST_ITEM_RE.exec(raw.trim());
   if (!match) return { kind: "no-match" };
   const name = stripLeadingThe(match[3]!).toLowerCase();
   const list = variables.get(name);
   if (list?.type !== "list") return { kind: "not-a-list", name };
-  const index = match[1] !== undefined ? Number(match[1]) : (match[2]!.toLowerCase() === "first" ? 1 : list.value.length);
+  const index = listIndexFromParts(match[1], match[2], list.value.length);
   if (!Number.isInteger(index) || index < 1 || index > list.value.length) {
     return { kind: "out-of-range", name, index, length: list.value.length };
   }
@@ -310,17 +320,49 @@ function resolveListItem(raw: string, variables: Map<string, VarValue>): ListIte
 }
 
 function reportListItemError(lookup: { kind: "not-a-list"; name: string } | { kind: "out-of-range"; name: string; index: number; length: number },
-  lineNumber: number, text: string, diagnostics: VisualDiagnostic[]) {
+  lineNumber: number, text: string, diagnostics: VisualDiagnostic[], action: "access" | "set" = "access") {
   if (lookup.kind === "not-a-list") {
     report(diagnostics, lineNumber, text, "M016",
-      `"${lookup.name}" is not a list, so it has no items to access by position.`,
-      `Access an item on a variable defined with "is a list of ...".`);
+      `"${lookup.name}" is not a list, so it has no items to ${action} by position.`,
+      `${action === "set" ? "Set" : "Access"} an item on a variable defined with "is a list of ...".`);
   } else {
     report(diagnostics, lineNumber, text, "M017",
       `Item ${lookup.index} in "${lookup.name}" is out of range: it only has ${lookup.length} item${lookup.length === 1 ? "" : "s"}.`,
       `Use a position from 1 to ${lookup.length}, or "the first item"/"the last item".`);
   }
 }
+
+/**
+ * Applies a "Set item <N> in <list> to <value>." (or "Set the first/last item in <list> to
+ * <value>.") mutation: replaces one item, in place, in an existing list variable. The
+ * replacement value resolves the same way an assignment's value does -- a number expression
+ * first, then plain text -- and the list keeps its identity (same variable, same other items),
+ * so a For each already midway over it, or a length check, still sees the same list afterward
+ * (aside from the one changed item). Always returns true (handled) once the sentence matches
+ * the syntax at all, even when it turns out to be an error, so a mistake here reports a clear
+ * M016/M017 diagnostic rather than falling through to a confusing generic "unrecognized
+ * instruction" message.
+ */
+function applySetListItem(numGroup: string | undefined, firstLastGroup: string | undefined, listNameRaw: string,
+  valueRaw: string, lineNumber: number, text: string, variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[]): void {
+  const name = stripLeadingThe(listNameRaw).toLowerCase();
+  const list = variables.get(name);
+  if (list?.type !== "list") {
+    reportListItemError({ kind: "not-a-list", name }, lineNumber, text, diagnostics, "set");
+    return;
+  }
+  const index = listIndexFromParts(numGroup, firstLastGroup, list.value.length);
+  if (!Number.isInteger(index) || index < 1 || index > list.value.length) {
+    reportListItemError({ kind: "out-of-range", name, index, length: list.value.length }, lineNumber, text, diagnostics, "set");
+    return;
+  }
+  const numericValue = evaluateExpression(valueRaw, variables);
+  const newValue = numericValue !== undefined ? formatNumber(numericValue) : resolveTextOperand(valueRaw, variables);
+  const newItems = list.value.slice();
+  newItems[index - 1] = newValue;
+  variables.set(name, { type: "list", value: newItems });
+}
+
 
 function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): number | undefined {
   const token = raw.trim().toLowerCase();
@@ -776,6 +818,11 @@ function expandInstruction(instr: string, lineNumber: number, variables: Map<str
   const trimmedInstr = instr.trim();
   const assign = ASSIGN_RE.exec(trimmedInstr);
   if (assign && applyAssignment(assign[1]!.trim().toLowerCase(), assign[2]!.trim(), variables, lineNumber, diagnostics)) return [];
+  const setItem = SET_LIST_ITEM_RE.exec(trimmedInstr);
+  if (setItem) {
+    applySetListItem(setItem[1], setItem[2], setItem[3]!.trim(), setItem[4]!.trim(), lineNumber, trimmedInstr, variables, diagnostics);
+    return [];
+  }
   const nestedIf = matchIf(trimmedInstr);
   if (nestedIf) {
     const condition = evaluateIfCondition(nestedIf, trimmedInstr, lineNumber, variables, diagnostics);
@@ -882,6 +929,12 @@ export function expandMacros(source: string): MacroExpandResult {
       // page compiler to report as an ordinary unrecognized instruction.
       output.push(resolveTrailingVariable(rawLine, variables));
       return;
+    }
+
+    const setItem = SET_LIST_ITEM_RE.exec(trimmed);
+    if (setItem) {
+      applySetListItem(setItem[1], setItem[2], setItem[3]!.trim(), setItem[4]!.trim(), lineNumber, trimmed, variables, diagnostics);
+      return; // a list mutation does not render anything by itself
     }
 
     const ifMatch = matchIf(trimmed);
