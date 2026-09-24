@@ -244,7 +244,11 @@ followed by `otherwise <one instruction>`) compares the selected option's
 own displayed text directly, the read-side counterpart of `set the value
 of ... to the option labeled ...` — unlike `if the value of <dropdown> is
 ...`, which compares the raw, possibly-divergent `.value`, this always
-reflects exactly what a visitor saw and picked.
+reflects exactly what a visitor saw and picked. The right-hand side can
+also be another dropdown's own selected label instead of a fixed phrase
+(`if the selected label of color a is the selected label of color b,
+...`), for comparing what two dropdowns actually show a visitor, regardless
+of either one's underlying value attribute.
 A click can also write into a live input's own value (as opposed to
 `set the text of ...`, which only changes what's displayed elsewhere):
 `set the value of <input name> to <text>` and `set the value of <input
@@ -652,6 +656,24 @@ Set the text of result to Pick a country
 Add a button called check
 Set the text of check to Check
 When the check is clicked, if the selected label of country is United Kingdom, set the text of result to across the pond otherwise set the text of result to elsewhere
+```
+
+```text
+Add a dropdown called color a
+Add an option called red a inside color a
+Add an option called blue a inside color a
+Set the text of red a to Red
+Set the text of blue a to Blue
+Add a dropdown called color b
+Add an option called red b inside color b
+Add an option called blue b inside color b
+Set the text of red b to Red
+Set the text of blue b to Blue
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the selected label of color a is the selected label of color b, set the text of result to match otherwise set the text of result to mismatch
 ```
 
 ```text

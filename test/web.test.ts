@@ -623,6 +623,57 @@ Set the text of go to Go
 When the go is clicked, if the selected label of n is X, set the text of result to yes`, /Only a dropdown has a selected option's label/);
 });
 
+test("a click's if-conditional can compare two dropdowns' selected labels against each other with \"is/is not the selected label of ...\"", () => {
+  const compared = page(`Add a dropdown called color a
+Add an option called red a inside color a
+Set the text of red a to Red
+Add a dropdown called color b
+Add an option called red b inside color b
+Set the text of red b to Red
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the selected label of color a is the selected label of color b, set the text of result to match otherwise set the text of result to mismatch`);
+  const script = /<script>(.+?)<\/script>/.exec(compared.html)![1]!;
+  assert.match(script, /if\(\(function\(\)\{var s=document\.getElementById\("element-1"\);return s\.options\[s\.selectedIndex\]\?s\.options\[s\.selectedIndex\]\.text:"";\}\)\(\)===\(function\(\)\{var s=document\.getElementById\("element-3"\);return s\.options\[s\.selectedIndex\]\?s\.options\[s\.selectedIndex\]\.text:"";\}\)\(\)\)\{document\.getElementById\("element-5"\)\.textContent="match";\}else\{document\.getElementById\("element-5"\)\.textContent="mismatch";\}/);
+
+  // "is not" negates the comparison, same as the literal-text form.
+  const negated = page(`Add a dropdown called color a
+Add an option called red a inside color a
+Set the text of red a to Red
+Add a dropdown called color b
+Add an option called red b inside color b
+Set the text of red b to Red
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the selected label of color a is not the selected label of color b, set the text of result to different`);
+  const negatedScript = /<script>(.+?)<\/script>/.exec(negated.html)![1]!;
+  assert.match(negatedScript, /\)\(\)!==\(function/);
+
+  // Comparing against a literal word/phrase still compiles exactly as before (no regression).
+  const literal = page(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Set the text of red to Red
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the selected label of favorite color is Red, set the text of result to yes`);
+  const literalScript = /<script>(.+?)<\/script>/.exec(literal.html)![1]!;
+  assert.match(literalScript, /\)\(\)==="Red"\)/);
+
+  invalid(`Add a dropdown called color a
+Add an option called red a inside color a
+Set the text of red a to Red
+Add a text input called n
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the selected label of color a is the selected label of n, set the text of result to match`, /Only a dropdown has a selected option's label, and n is a input/);
+});
+
 test("a click can read a live character count with \"the number of characters in the value of ...\"", () => {
   const counter = page(`Add a text input called message
 Add a paragraph called counter

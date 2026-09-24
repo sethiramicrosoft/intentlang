@@ -236,7 +236,10 @@ export function compilePageSource(source: string): PageCompileResult {
     // distinct from ifText, which only ever compares raw ".value". Its own literal ("the
     // selected label of ...") never overlaps with ifText's ("the value of ..."), so there's
     // no shadowing risk either way, but it's placed alongside the other If forms for clarity.
-    const ifLabel = /^if\s+the\s+selected\s+label\s+of\s+(.+?)\s+(is not|is)\s+(.+?)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
+    // The right-hand side can be a plain word/phrase, or (like ifText's own right-hand side)
+    // another dropdown's own selected label, for comparing what two dropdowns actually show
+    // a visitor, regardless of either one's underlying value attribute.
+    const ifLabel = /^if\s+the\s+selected\s+label\s+of\s+(.+?)\s+(is not|is)\s+(?:the\s+selected\s+label\s+of\s+(.+?)|(.+?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
     // A checkbox/radio button's state lives in ".checked", not ".value" (its ".value" is a
     // fixed attribute, never reflecting whether it's ticked) -- this is a separate condition
     // form for that reason. The negative lookahead keeps it from ever matching "if the value
@@ -534,12 +537,24 @@ export function compilePageSource(source: string): PageCompileResult {
       }
       const op = ifLabel[2]!.toLowerCase();
       const left = `(function(){var s=document.getElementById(${JSON.stringify(source.id)});return s.options[s.selectedIndex]?s.options[s.selectedIndex].text:"";})()`;
-      const rightSide = JSON.stringify(dequoteRuntime(ifLabel[3]!.trim()));
-      const inner = compileClickPart(ifLabel[4]!.trim(), index);
+      let rightSide: string;
+      if (ifLabel[3]) {
+        const other = resolve(ifLabel[3]!, index);
+        if (!other) return undefined;
+        if (other.tag !== "select") {
+          report(index, `Only a dropdown has a selected option's label, and ${other.name} is a ${englishName(other.tag)}.`,
+            `Add a dropdown called ${other.name} instead, such as Add a dropdown called ${other.name}.`);
+          return undefined;
+        }
+        rightSide = `(function(){var s=document.getElementById(${JSON.stringify(other.id)});return s.options[s.selectedIndex]?s.options[s.selectedIndex].text:"";})()`;
+      } else {
+        rightSide = JSON.stringify(dequoteRuntime(ifLabel[4]!.trim()));
+      }
+      const inner = compileClickPart(ifLabel[5]!.trim(), index);
       if (inner === undefined) return undefined;
       let elseClause = "";
-      if (ifLabel[5]) {
-        const elseInner = compileClickPart(ifLabel[5].trim(), index);
+      if (ifLabel[6]) {
+        const elseInner = compileClickPart(ifLabel[6].trim(), index);
         if (elseInner === undefined) return undefined;
         elseClause = `else{${elseInner}}`;
       }
@@ -927,7 +942,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"if the value of ... has more than/fewer than/at least/at most/exactly ... characters ` +
       `(a number, or as many characters as the value of ...), ... otherwise ...", ` +
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
-      `"if the selected label of ... is/is not ... (a dropdown), ... otherwise ...", ` +
+      `"if the selected label of ... is/is not ... (a dropdown, comparing text or the selected label of another dropdown), ... otherwise ...", ` +
       `"if ... is/is not checked, ... otherwise ...", ` +
       `"if ... is/is not checked the same as ... (another checkbox or radio button), ... otherwise ...", ` +
       `or "repeat ... times, ..." (a number, or the value of ...).`);

@@ -275,6 +275,42 @@ When the check is clicked, if the selected label of favorite color is Blue, set 
   } finally { await browser.close(); }
 });
 
+test("a click's if-conditional can compare two real dropdowns' selected labels against each other, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a dropdown called color a
+Add an option called red a inside color a
+Add an option called blue a inside color a
+Set the text of red a to Red
+Set the text of blue a to Blue
+Add a dropdown called color b
+Add an option called red b inside color b
+Add an option called blue b inside color b
+Set the text of red b to Red
+Set the text of blue b to Blue
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the selected label of color a is the selected label of color b, set the text of result to match otherwise set the text of result to mismatch`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-8").click(); // both default to "Red" -> match
+    assert.equal(await page.locator("#element-7").textContent(), "match");
+    await page.locator("#element-4").selectOption({ label: "Blue" });
+    await page.locator("#element-8").click(); // a is now Blue, b is Red -> mismatch
+    assert.equal(await page.locator("#element-7").textContent(), "mismatch");
+    await page.locator("#element-1").selectOption({ label: "Blue" });
+    await page.locator("#element-8").click(); // both Blue again -> match
+    assert.equal(await page.locator("#element-7").textContent(), "match");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a live character count tracks real typed input length as it changes, in a real browser", async () => {
   const compiled = compilePageSource(`Add a text input called message
 Add a paragraph called counter
