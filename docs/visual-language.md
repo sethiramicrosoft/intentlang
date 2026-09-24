@@ -244,12 +244,14 @@ Repeat 3 times, the wins is wins plus 1.
 
 - **`The <name> is <value>.`** defines or recomputes a variable. The value can be
   a plain number, an existing variable, or an arithmetic chain: `plus`, `minus`,
-  `times`, or `divided by` another number or variable, joined as many times in a
+  `times`, `divided by`, or `modulo` (remainder after division) another number
+  or variable, joined as many times in a
   row as needed (`The total is a plus b minus c.`). A chain always evaluates
   strictly left to right, with no operator precedence — the same order it
   reads in English — so `a minus b times c` computes `(a minus b) times c`,
   not `a minus (b times c)`; write two separate variable sentences if you need
-  the other grouping. A value can also be plain text, either bare words (`The
+  the other grouping. Dividing or taking the modulo of a chain by zero is a
+  clear error, the same for both operators. A value can also be plain text, either bare words (`The
   winner is Alex Carter.`) or a quoted phrase (`The motto is "Play as a
   team".`) — quotes are only needed if the text itself could be confused with
   a number or another variable's name. Text has its own chain operator,

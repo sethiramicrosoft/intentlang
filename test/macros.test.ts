@@ -51,6 +51,21 @@ Set the text of copy display to copy`);
   assert.equal(textOf(ir, "copy display"), "10");
 });
 
+test("modulo computes the remainder, chains left to right with other operators, and is a clear error when dividing by zero", () => {
+  const { ir } = page(`Add a paragraph called remainder display inside page
+Add a paragraph called chained display inside page
+The remainder is 10 modulo 3.
+The chained is 17 modulo 5 plus 1.
+Set the text of remainder display to remainder
+Set the text of chained display to chained`);
+  assert.equal(textOf(ir, "remainder display"), "1");
+  assert.equal(textOf(ir, "chained display"), "3");
+  invalid(`Add a paragraph called message inside page
+The score is 5.
+The share is the score modulo 0.
+Set the text of message to share`, /not part of the page language/);
+});
+
 test("an If sentence keeps its instruction only when the condition is true", () => {
   const { ir } = page(`Add a paragraph called message inside page
 The score is 42.

@@ -31,8 +31,8 @@ const OPERAND_RE = new RegExp(`^${NUMBER_OR_NAME}$`, "i");
 // the operator words that join them. Any number of operators can chain this way -- there's no
 // operator precedence, so a chain is always evaluated strictly left to right, the same order
 // it reads in English ("a plus b, then minus c").
-const CHAIN_SPLIT_RE = /\s+(plus|minus|times|divided by)\s+/i;
-const NUMERIC_INTENT_RE = /\d|\b(?:plus|minus|times|divided by)\b/i;
+const CHAIN_SPLIT_RE = /\s+(plus|minus|times|divided by|modulo)\s+/i;
+const NUMERIC_INTENT_RE = /\d|\b(?:plus|minus|times|divided by|modulo)\b/i;
 // Text's own chain operator: "the full name is the first name joined with the last name."
 // Kept as a separate word from numeric "plus" so a number chain and a text chain never look
 // alike, and so an ordinary piece of text can still safely contain the bare word "plus".
@@ -447,6 +447,10 @@ function evaluateExpression(expr: string, variables: Map<string, VarValue>): num
       case "divided by":
         if (right === 0) return undefined;
         result = result / right;
+        break;
+      case "modulo":
+        if (right === 0) return undefined;
+        result = result % right;
         break;
       default: return undefined;
     }
