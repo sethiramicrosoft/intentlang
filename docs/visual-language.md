@@ -169,7 +169,10 @@ else in the language is): `set the text of <name> to <value>`,
 <name>`, `add the value of <input name> to the text of <name>`, and
 `subtract the value of <input name> from the text of <name>` (the live-input
 siblings of the plain-number add/subtract, for totaling up whatever a visitor
-actually typed rather than a fixed amount). The compiler turns every `When
+actually typed rather than a fixed amount), and `if the value of <input
+name> is greater than/less than/at least/at most/equal to <number>, <one
+instruction>` (a real runtime conditional, so a click can behave differently
+depending on what a visitor actually typed). The compiler turns every `When
 ... is clicked` sentence in a page into ONE small, entirely compiler-generated
 script (never containing any user-authored markup, attribute, or script tag —
 only compiler-fixed code with your text safely embedded as a JSON string), and
@@ -181,10 +184,15 @@ click-only trap for people who use a keyboard or assistive technology instead
 of a mouse. The source of "the value of ..." must be an input, a text box, or
 a dropdown (anything with a live value to read) — using anything else there
 is a clear error, whether it's the direct source of a `set ... to the value
-of ...` or the source of an `add/subtract the value of ...` amount. A random
-range's low end can't be greater than its high end (`from 6 to 1` is a clear
-error, not a silently reversed or empty range) — both ends are whole numbers,
-and the roll is inclusive of both.
+of ...`, the source of an `add/subtract the value of ...` amount, or the
+subject of an `if the value of ...` comparison. A random range's low end
+can't be greater than its high end (`from 6 to 1` is a clear error, not a
+silently reversed or empty range) — both ends are whole numbers, and the roll
+is inclusive of both. The `if`'s own instruction can be any of the other
+supported instructions (including another `add the value of ...`), but it is
+exactly one instruction, not its own `and then` chain — chain further
+instructions after the `if` at the top level instead, and they'll run every
+time the button is clicked, regardless of whether the condition was true.
 
 ```text
 Add a paragraph called counter
@@ -218,6 +226,15 @@ Set the text of add to Add
 When the add is clicked, add the value of amount field to the text of total
 ```
 
+```text
+Add a text input called score field
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is greater than 50, set the text of result to high and then if the value of score field is at most 50, set the text of result to low
+```
+
 The second example is real user input, not compile-time data: whatever a
 visitor actually types into the box is read live, the moment the button is
 clicked. The third rolls a genuine new random number in the browser on every
@@ -225,7 +242,9 @@ click, unlike everything else on this page, which is computed once at compile
 time. The fourth combines both ideas — it reads whatever number a visitor
 actually typed into the input, live, and adds it into the running total shown
 elsewhere on the page, the same way `add 1 to the text of ...` would with a
-fixed amount, except the amount itself is real user input.
+fixed amount, except the amount itself is real user input. The fifth branches
+on that live input at click time: it shows "high" or "low" depending on what a
+visitor actually typed, entirely in the browser, with no server involved.
 
 User-authored `<script>` elements, `onclick`-style inline event-handler
 attributes, arbitrary stylesheets, embedded documents, templates, shadow-DOM,

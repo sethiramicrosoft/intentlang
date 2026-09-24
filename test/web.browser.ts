@@ -220,6 +220,31 @@ When the subtract is clicked, subtract the value of amount field from the text o
   } finally { await browser.close(); }
 });
 
+test("a click can run a real runtime if-conditional over a live input's value in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called score field
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is greater than 50, set the text of result to high and then if the value of score field is at most 50, set the text of result to low`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("90");
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").textContent(), "high");
+    await page.locator("#element-1").fill("10");
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").textContent(), "low");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("all advertised element types survive real browser parsing with their requested parentage", async () => {
   const source = webElements.filter((element) => element.status === "available")
     .map((element) => elementExample(element).replace(/\b(called|inside) sample /g, `$1 sample ${element.name} `)).join("\n");

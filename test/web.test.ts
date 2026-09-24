@@ -313,6 +313,61 @@ Set the text of go to Go
 When the go is clicked, add the value of source to the text of total`, /Only an input, a text box, or a dropdown has a value to read/);
 });
 
+test("a click can run a runtime if-conditional over a live input's value, with all five comparisons and wrapping any other instruction", () => {
+  const greater = page(`Add a text input called score field
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is greater than 50, set the text of result to high`);
+  const greaterScript = /<script>(.+?)<\/script>/.exec(greater.html)![1]!;
+  assert.match(greaterScript, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>\(50\)\)\{document\.getElementById\("element-2"\)\.textContent="high";\}/);
+
+  for (const [word, operator] of Object.entries({ "greater than": ">", "less than": "<", "at least": ">=", "at most": "<=", "equal to": "===" })) {
+    const result = page(`Add a text input called n
+Add a paragraph called out
+Set the text of out to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of n is ${word} 5, add 1 to the text of out`);
+    const script = /<script>(.+?)<\/script>/.exec(result.html)![1]!;
+    assert.match(script, new RegExp(`if\\(\\(Number\\(document\\.getElementById\\("element-1"\\)\\.value\\)\\|\\|0\\)${operator.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\(5\\)\\)`));
+  }
+
+  // The "if" wraps only the instruction before "and then"; a later chained instruction still
+  // runs unconditionally, since "and then" splits the whole click body before "if" ever sees it.
+  const chained = page(`Add a text input called n
+Add a paragraph called out
+Set the text of out to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of n is less than 10, set the text of out to low and then add 1 to the text of out`);
+  const chainedScript = /<script>(.+?)<\/script>/.exec(chained.html)![1]!;
+  assert.match(chainedScript, /if\(.+?\)\{document\.getElementById\("element-2"\)\.textContent="low";\}\(function/);
+
+  // The "if" can wrap an add-the-value-of instruction too, not just a plain set/add.
+  const nested = page(`Add a text input called amount
+Add a paragraph called total
+Set the text of total to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of amount is greater than 0, add the value of amount to the text of total`);
+  const nestedScript = /<script>(.+?)<\/script>/.exec(nested.html)![1]!;
+  assert.match(nestedScript, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>\(0\)\)\{\(function/);
+
+  invalid(`Add a paragraph called label
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of label is greater than 5, set the text of result to high`, /Only an input, a text box, or a dropdown has a value to read/);
+
+  invalid(`Add a text input called n
+Add a paragraph called out
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of n is around 5, set the text of out to hmm`, /is not one of the supported click instructions/);
+});
+
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
   const result = page(`Add an image called photo
 Set the source of photo to https://example.com/MyPhoto.png

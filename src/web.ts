@@ -158,75 +158,106 @@ export function compilePageSource(source: string): PageCompileResult {
     const parts = body.split(/\s+and\s+then\s+/i).map((part) => part.trim()).filter(Boolean);
     const statements: string[] = [];
     for (const part of parts) {
-      // Checked before the plainer "set the text of X to Y", since that one's own value half
-      // would otherwise happily swallow "the value of Y" as literal display text instead.
-      const setFromValue = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
-      // Same reason: checked before the plainer "set the text of X to Y", so its own value
-      // half doesn't swallow "a random number from A to B" as literal display text instead.
-      const setRandom = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+a\s+random\s+number\s+from\s+(-?\d+)\s+to\s+(-?\d+)$/i.exec(part);
-      const setText = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part);
-      // Checked before the plain "add/subtract <number>" forms below, for the same reason
-      // setFromValue is checked before setText: otherwise "the value of X" would be read as a
-      // (non-numeric) literal amount instead of a live input value.
-      const addFromValue = /^add\s+the\s+value\s+of\s+(.+?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
-      const subtractFromValue = /^subtract\s+the\s+value\s+of\s+(.+?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
-      const addText = /^add\s+(-?\d+(?:\.\d+)?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
-      const subtractText = /^subtract\s+(-?\d+(?:\.\d+)?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
-      if (setFromValue) {
-        const target = resolve(setFromValue[1]!, index);
-        const source = target ? resolve(setFromValue[2]!, index) : undefined;
-        if (!target || !source) return undefined;
-        if (!hasReadableValue(source.tag)) {
-          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
-            `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
-          return undefined;
-        }
-        statements.push(`document.getElementById(${JSON.stringify(target.id)}).textContent=document.getElementById(${JSON.stringify(source.id)}).value;`);
-      } else if (addFromValue || subtractFromValue) {
-        const match = addFromValue ?? subtractFromValue!;
-        const source = resolve(match[1]!, index);
-        const target = source ? resolve(match[2]!, index) : undefined;
-        if (!source || !target) return undefined;
-        if (!hasReadableValue(source.tag)) {
-          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
-            `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
-          return undefined;
-        }
-        const sign = addFromValue ? "" : "-";
-        statements.push(`(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
-          `e.textContent=String((Number(e.textContent)||0)+(${sign}(Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)));})();`);
-      } else if (setRandom) {
-        const target = resolve(setRandom[1]!, index);
-        if (!target) return undefined;
-        const min = Number(setRandom[2]);
-        const max = Number(setRandom[3]);
-        if (min > max) {
-          report(index, `A random range's low end (${min}) can't be greater than its high end (${max}).`,
-            `Try "a random number from ${max} to ${min}" instead.`);
-          return undefined;
-        }
-        statements.push(`document.getElementById(${JSON.stringify(target.id)}).textContent=String(Math.floor(Math.random()*(${JSON.stringify(max - min + 1)}))+(${JSON.stringify(min)}));`);
-      } else if (setText) {
-        const target = resolve(setText[1]!, index);
-        if (!target) return undefined;
-        statements.push(`document.getElementById(${JSON.stringify(target.id)}).textContent=${JSON.stringify(dequoteRuntime(setText[2]!))};`);
-      } else if (addText || subtractText) {
-        const match = addText ?? subtractText!;
-        const target = resolve(match[2]!, index);
-        if (!target) return undefined;
-        const amount = (addText ? 1 : -1) * Number(match[1]);
-        statements.push(`(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
-          `e.textContent=String((Number(e.textContent)||0)+(${JSON.stringify(amount)}));})();`);
-      } else {
-        report(index, `"${part}" is not one of the supported click instructions.`,
-          `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
-          `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
-          `"subtract ... from the text of ...", "add the value of ... to the text of ...", ` +
-          `or "subtract the value of ... from the text of ...".`);
-        return undefined;
-      }
+      const compiled = compileClickPart(part, index);
+      if (compiled === undefined) return undefined;
+      statements.push(compiled);
     }
     return statements.join("");
+  }
+  // Maps a plain-English comparison word to its JS operator; only these five are recognized,
+  // so a runtime "if" can never compile to an arbitrary/unsafe comparison.
+  const clickComparisons: Record<string, string> = {
+    "greater than": ">", "less than": "<", "at least": ">=", "at most": "<=", "equal to": "==="
+  };
+  /**
+   * Compiles a single click instruction (one "and then"-separated part, or the inner
+   * instruction of an "If ..., ..." conditional) into one JS statement, or undefined if a
+   * diagnostic was already reported. Recursive so "If ..." can wrap any other instruction.
+   */
+  function compileClickPart(part: string, index: number): string | undefined {
+    // Checked first: its own trailing instruction is compiled recursively, so it must not be
+    // shadowed by any of the plainer patterns below matching a prefix of the same text.
+    const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|equal to)\s+(-?\d+(?:\.\d+)?)\s*,\s*(.+)$/i.exec(part);
+    // Checked before the plainer "set the text of X to Y", since that one's own value half
+    // would otherwise happily swallow "the value of Y" as literal display text instead.
+    const setFromValue = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
+    // Same reason: checked before the plainer "set the text of X to Y", so its own value
+    // half doesn't swallow "a random number from A to B" as literal display text instead.
+    const setRandom = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+a\s+random\s+number\s+from\s+(-?\d+)\s+to\s+(-?\d+)$/i.exec(part);
+    const setText = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part);
+    // Checked before the plain "add/subtract <number>" forms below, for the same reason
+    // setFromValue is checked before setText: otherwise "the value of X" would be read as a
+    // (non-numeric) literal amount instead of a live input value.
+    const addFromValue = /^add\s+the\s+value\s+of\s+(.+?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+    const subtractFromValue = /^subtract\s+the\s+value\s+of\s+(.+?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+    const addText = /^add\s+(-?\d+(?:\.\d+)?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+    const subtractText = /^subtract\s+(-?\d+(?:\.\d+)?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+    if (ifValue) {
+      const source = resolve(ifValue[1]!, index);
+      if (!source) return undefined;
+      if (!hasReadableValue(source.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      const operator = clickComparisons[ifValue[2]!.toLowerCase()]!;
+      const threshold = Number(ifValue[3]);
+      const inner = compileClickPart(ifValue[4]!.trim(), index);
+      if (inner === undefined) return undefined;
+      return `if((Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)${operator}(${JSON.stringify(threshold)})){${inner}}`;
+    } else if (setFromValue) {
+      const target = resolve(setFromValue[1]!, index);
+      const source = target ? resolve(setFromValue[2]!, index) : undefined;
+      if (!target || !source) return undefined;
+      if (!hasReadableValue(source.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      return `document.getElementById(${JSON.stringify(target.id)}).textContent=document.getElementById(${JSON.stringify(source.id)}).value;`;
+    } else if (addFromValue || subtractFromValue) {
+      const match = addFromValue ?? subtractFromValue!;
+      const source = resolve(match[1]!, index);
+      const target = source ? resolve(match[2]!, index) : undefined;
+      if (!source || !target) return undefined;
+      if (!hasReadableValue(source.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      const sign = addFromValue ? "" : "-";
+      return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
+        `e.textContent=String((Number(e.textContent)||0)+(${sign}(Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)));})();`;
+    } else if (setRandom) {
+      const target = resolve(setRandom[1]!, index);
+      if (!target) return undefined;
+      const min = Number(setRandom[2]);
+      const max = Number(setRandom[3]);
+      if (min > max) {
+        report(index, `A random range's low end (${min}) can't be greater than its high end (${max}).`,
+          `Try "a random number from ${max} to ${min}" instead.`);
+        return undefined;
+      }
+      return `document.getElementById(${JSON.stringify(target.id)}).textContent=String(Math.floor(Math.random()*(${JSON.stringify(max - min + 1)}))+(${JSON.stringify(min)}));`;
+    } else if (setText) {
+      const target = resolve(setText[1]!, index);
+      if (!target) return undefined;
+      return `document.getElementById(${JSON.stringify(target.id)}).textContent=${JSON.stringify(dequoteRuntime(setText[2]!))};`;
+    } else if (addText || subtractText) {
+      const match = addText ?? subtractText!;
+      const target = resolve(match[2]!, index);
+      if (!target) return undefined;
+      const amount = (addText ? 1 : -1) * Number(match[1]);
+      return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
+        `e.textContent=String((Number(e.textContent)||0)+(${JSON.stringify(amount)}));})();`;
+    }
+    report(index, `"${part}" is not one of the supported click instructions.`,
+      `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
+      `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
+      `"subtract ... from the text of ...", "add the value of ... to the text of ...", ` +
+      `"subtract the value of ... from the text of ...", or "if the value of ... is greater than/less than/` +
+      `at least/at most/equal to ..., ...".`);
+    return undefined;
   }
   /** Which element tags have a live, readable ".value" in the DOM. */
   function hasReadableValue(tag: string): boolean {
