@@ -285,7 +285,12 @@ Repeat 3 times, the wins is wins plus 1.
   <text>`** resolves to that text's character count as a number, so it can
   be used anywhere a number is expected: an assignment, an arithmetic
   chain (`the length of name plus 1`), or an If condition (`If the length
-  of name is greater than 2, ...`).
+  of name is greater than 2, ...`). **`the rounded value of <number>`**
+  resolves to that number rounded to the nearest whole number (half rounds
+  up, the same rule `Math.round` uses), and works anywhere a number is
+  expected, the same as `the length of ...` does — including composing
+  with a list aggregate whose result often isn't a whole number, like
+  `the rounded value of the average of scores`.
 - **`If the <name> is <comparison> <value>, <one or more instructions>.`** keeps
   its instruction(s) only when the comparison is true. Comparisons are written
   as words: `greater than`, `less than`, `equal to`, `not equal to`, `at least`,
@@ -665,6 +670,14 @@ offered, never applied silently.
   empty list is `0`; `the average of`, `the highest of`, and `the lowest of`
   an empty list have no numeric result (there's nothing to divide by or
   compare), so each is also reported as a clear error.
+- `the rounded value of <number>` only accepts a single numeric operand —
+  a plain number, a numeric variable, `the length of ...`, or a list
+  aggregate (`the sum/average/highest/lowest of ...`) — not a whole
+  arithmetic chain of its own (`the rounded value of 10 divided by 3` isn't
+  supported; assign `10 divided by 3` to a variable first, then round that
+  variable). Rounding something that isn't a number at all — text, or a
+  variable that was never given a value — is a clear error, not a silent
+  fallback to literal text.
 - Inside a For each's own repeated instruction, the loop word is replaced
   with each item's literal text everywhere it's used to build a
   differently-named element (`For each opponent in ..., add a list item

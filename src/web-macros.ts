@@ -57,6 +57,12 @@ const LIST_AVERAGE_RE = /^average of\s+(.+)$/i;
 // of" above, with the same requirement that every item already be a number.
 const LIST_HIGHEST_RE = /^highest of\s+(.+)$/i;
 const LIST_LOWEST_RE = /^lowest of\s+(.+)$/i;
+// "the rounded value of <number>" resolves to that number rounded to the nearest whole number
+// (half-up, like Math.round) wherever a plain number could go. Its inner phrase is resolved the
+// same way any other numeric operand is, so it composes with everything above -- a plain
+// number, a numeric variable, "the length of ...", or any of the list aggregates -- e.g. "the
+// rounded value of the average of scores".
+const ROUNDED_RE = /^rounded value of\s+(.+)$/i;
 // "the length of <text>" resolves to a text value's character count wherever a plain number
 // could go -- the text sibling of "the number of items in <list>" above.
 const TEXT_LENGTH_RE = /^length of\s+(.+)$/i;
@@ -482,6 +488,27 @@ function resolveListAggregatePhrase(rawValue: string, variables: Map<string, Var
   return { value: aggregate };
 }
 
+/**
+ * Matches "the rounded value of <number>" as a whole assignment value or call argument (not
+ * just as a numeric operand, which `resolveNumericOperand` already handles on its own) and
+ * reports a clear error rather than silently falling through to literal text when the inner
+ * phrase doesn't resolve to a number at all. Returns undefined when the raw text isn't this
+ * phrase (so the caller can keep trying its own other checks); otherwise `{ value }` on success,
+ * or `{ value: undefined }` after already reporting the error.
+ */
+function resolveRoundedPhrase(rawValue: string, variables: Map<string, VarValue>, lineNumber: number,
+  text: string, diagnostics: VisualDiagnostic[]): { value: number | undefined } | undefined {
+  const match = ROUNDED_RE.exec(stripLeadingThe(rawValue.trim()).toLowerCase());
+  if (!match) return undefined;
+  const inner = resolveNumericOperand(stripLeadingThe(match[1]!), variables);
+  if (inner === undefined) {
+    report(diagnostics, lineNumber, text, "M002", `"${match[1]!.trim()}" isn't a number, so it can't be rounded.`,
+      `Round a plain number, a numeric variable, or a list aggregate like "the average of ...".`);
+    return { value: undefined };
+  }
+  return { value: Math.round(inner) };
+}
+
 function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): number | undefined {
   const token = raw.trim().toLowerCase();
   if (/^-?\d+(?:\.\d+)?$/.test(token)) return Number(token);
@@ -509,6 +536,11 @@ function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): n
   if (lowestOf) {
     const list = variables.get(stripLeadingThe(lowestOf[1]!).toLowerCase());
     return list?.type === "list" ? listAggregate(list.value, "lowest") : undefined;
+  }
+  const roundedOf = ROUNDED_RE.exec(token);
+  if (roundedOf) {
+    const inner = resolveNumericOperand(stripLeadingThe(roundedOf[1]!), variables);
+    return inner === undefined ? undefined : Math.round(inner);
   }
   const textLengthOf = TEXT_LENGTH_RE.exec(token);
   if (textLengthOf) return resolveTextOperand(textLengthOf[1]!, variables).length;
@@ -550,6 +582,11 @@ function resolveTextOperand(raw: string, variables: Map<string, VarValue>): stri
     const list = variables.get(stripLeadingThe(lowestOf[1]!).toLowerCase());
     const aggregate = list?.type === "list" ? listAggregate(list.value, "lowest") : undefined;
     if (aggregate !== undefined) return formatNumber(aggregate);
+  }
+  const roundedOf = ROUNDED_RE.exec(stripLeadingThe(raw).toLowerCase());
+  if (roundedOf) {
+    const inner = resolveNumericOperand(stripLeadingThe(roundedOf[1]!), variables);
+    if (inner !== undefined) return formatNumber(Math.round(inner));
   }
   const caseConvert = CASE_CONVERT_RE.exec(stripLeadingThe(raw).toLowerCase());
   if (caseConvert) {
@@ -816,12 +853,21 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
     const highestOf = lengthOf || sumOf || averageOf ? undefined : LIST_HIGHEST_RE.exec(rawSubject);
     const lowestOf = lengthOf || sumOf || averageOf || highestOf ? undefined : LIST_LOWEST_RE.exec(rawSubject);
     const listAgg = lengthOf ?? sumOf ?? averageOf ?? highestOf ?? lowestOf;
-    const textLengthOf = listAgg ? undefined : TEXT_LENGTH_RE.exec(rawSubject.toLowerCase());
-    const caseConvert = listAgg || textLengthOf ? undefined : CASE_CONVERT_RE.exec(rawSubject.toLowerCase());
-    const resultOf = listAgg || textLengthOf || caseConvert ? undefined : RESULT_OF_RE.exec(`the ${rawSubject}`);
+    const roundedOf = listAgg ? undefined : ROUNDED_RE.exec(rawSubject);
+    const textLengthOf = listAgg || roundedOf ? undefined : TEXT_LENGTH_RE.exec(rawSubject.toLowerCase());
+    const caseConvert = listAgg || roundedOf || textLengthOf ? undefined : CASE_CONVERT_RE.exec(rawSubject.toLowerCase());
+    const resultOf = listAgg || roundedOf || textLengthOf || caseConvert ? undefined : RESULT_OF_RE.exec(`the ${rawSubject}`);
     const displayName = listAgg ? stripLeadingThe(listAgg[1]!) : rawSubject;
     const name = displayName.toLowerCase();
-    if (textLengthOf) {
+    if (roundedOf) {
+      const inner = resolveNumericOperand(stripLeadingThe(roundedOf[1]!), variables);
+      if (inner === undefined) {
+        report(diagnostics, lineNumber, text, "M002", `"${roundedOf[1]!.trim()}" isn't a number, so it can't be rounded.`,
+          `Round a plain number, a numeric variable, or a list aggregate like "the average of ...".`);
+        return undefined;
+      }
+      subject = { type: "number", value: Math.round(inner) };
+    } else if (textLengthOf) {
       subject = { type: "number", value: resolveTextOperand(textLengthOf[1]!, variables).length };
     } else if (caseConvert) {
       const inner = resolveTextOperand(caseConvert[2]!, variables);
@@ -1057,6 +1103,12 @@ function resolveArgValue(rawValue: string, variables: Map<string, VarValue>, lin
       ? { type: "number", value: listAggregateResult.value }
       : { type: "text", value: "" }; // failure already reported its own diagnostic
   }
+  const roundedResult = resolveRoundedPhrase(trimmed, variables, lineNumber, callText, diagnostics);
+  if (roundedResult) {
+    return roundedResult.value !== undefined
+      ? { type: "number", value: roundedResult.value }
+      : { type: "text", value: "" }; // failure already reported its own diagnostic
+  }
   const caseConvert = TEXT_CHAIN_SPLIT_RE.test(trimmed) ? undefined : CASE_CONVERT_RE.exec(stripLeadingThe(trimmed).toLowerCase());
   if (caseConvert) {
     const inner = resolveTextOperand(caseConvert[2]!, variables);
@@ -1226,6 +1278,11 @@ function applyAssignment(name: string, rawValue: string, variables: Map<string, 
   const listAggregateResult = resolveListAggregatePhrase(rawValue, variables, lineNumber, rawValue, diagnostics);
   if (listAggregateResult) {
     if (listAggregateResult.value !== undefined) variables.set(name, { type: "number", value: listAggregateResult.value });
+    return true; // handled either way -- a failure already reported its own diagnostic
+  }
+  const roundedResult = resolveRoundedPhrase(rawValue, variables, lineNumber, rawValue, diagnostics);
+  if (roundedResult) {
+    if (roundedResult.value !== undefined) variables.set(name, { type: "number", value: roundedResult.value });
     return true; // handled either way -- a failure already reported its own diagnostic
   }
   if (TEXT_CHAIN_SPLIT_RE.test(rawValue)) {

@@ -1459,6 +1459,46 @@ The worst is the lowest of scores.
 Set the text of message to worst`, /scores.*lowest.*needs every item to be a number/);
 });
 
+test("'the rounded value of <number>' rounds a literal number, a plain variable, or a list aggregate", () => {
+  const { ir } = page(`Add a paragraph called literal display inside page
+Add a paragraph called variable display inside page
+Add a paragraph called aggregate display inside page
+The pi is 3.7.
+The scores is a list of 10, 3 and 4.
+The rounded literal is the rounded value of 3.456.
+The rounded pi is the rounded value of pi.
+The rounded mean is the rounded value of the average of scores.
+Set the text of literal display to rounded literal
+Set the text of variable display to rounded pi
+Set the text of aggregate display to rounded mean`);
+  assert.equal(textOf(ir, "literal display"), "3");
+  assert.equal(textOf(ir, "variable display"), "4");
+  assert.equal(textOf(ir, "aggregate display"), "6");
+});
+
+test("'the rounded value of ...' works inside an arithmetic chain, an If condition, and a joined-with chain", () => {
+  const { ir } = page(`Add a paragraph called chain display inside page
+Add a paragraph called condition display inside page
+Add a paragraph called joined display inside page
+The pi is 2.6.
+The next is the rounded value of pi plus 1.
+Set the text of chain display to next
+If the rounded value of pi is equal to 3, set the text of condition display to close enough
+Otherwise, set the text of condition display to not close
+The report is "about " joined with the rounded value of pi.
+Set the text of joined display to report`);
+  assert.equal(textOf(ir, "chain display"), "4");
+  assert.equal(textOf(ir, "condition display"), "close enough");
+  assert.equal(textOf(ir, "joined display"), "about 3");
+});
+
+test("'the rounded value of ...' a variable that isn't a number is a clear error, not silently copied as text", () => {
+  invalid(`Add a paragraph called message inside page
+The name is "Alex".
+The nearest is the rounded value of name.
+Set the text of message to nearest`, /name.*isn't a number.*rounded/);
+});
+
 test("'item N in <list>' reads one item out of a list by 1-based position", () => {
   const { ir } = page(`Add a paragraph called message inside page
 The favorite colors is a list of red, green and blue.
