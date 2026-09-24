@@ -65,11 +65,16 @@ const IF_HEAD_RE = /^if\s+(.+?)\s*,\s*(.+?)\.?$/i;
 // number) a plain number too, so "if the number is greater than 3" still works after "number"
 // is replaced by, say, "4".
 const CONDITION_RE = /^the\s+(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z0-9 ]*?)$/i;
+// A bare truthy/falsy condition, with no "is ...": "the <name>" (true when the variable itself
+// reads as true) or "not the <name>" (true when it reads as false). Lets an If read like plain
+// boolean logic ("If the ready, ...") instead of always spelling out "is equal to true".
+const BARE_CONDITION_RE = /^(not\s+)?the\s+([a-z][a-z0-9 ]*?)$/i;
 // Splits two or more conditions joined by "and" or "or" ("the a is equal to 1 and the b is
-// equal to 2"). Only splits right before a literal "the", which is what every condition must
-// start with -- so a text comparison's own value can still safely contain the bare word "and"
-// or "or" (e.g. "is equal to Alex and Sam") as long as the word right after it isn't "the".
-const CONDITION_SPLIT_RE = /\s+(and|or)\s+(?=the\s+)/i;
+// equal to 2"). Only splits right before a literal "the" (optionally preceded by "not", for a
+// bare falsy condition), which is what every condition must start with -- so a text comparison's
+// own value can still safely contain the bare word "and" or "or" (e.g. "is equal to Alex and
+// Sam") as long as the word right after it isn't "the" (or "not the").
+const CONDITION_SPLIT_RE = /\s+(and|or)\s+(?=(?:not\s+)?the\s+)/i;
 const OTHERWISE_RE = /^otherwise\s*,\s*(.+?)\.?$/i;
 // "Otherwise if <conditions>, <instruction>." chains a second (or third, etc.) condition onto
 // an If/Otherwise chain: it only runs when every earlier condition in the same chain was false,
@@ -212,7 +217,7 @@ function matchRepeat(trimmed: string): RepeatMatch | undefined {
   return { count: Number(match[1]), instruction };
 }
 
-type IfClause = { subject: string; comparator: string; target: string };
+type IfClause = { subject: string; comparator: string; target: string; negate?: boolean };
 type IfMatch = { clauses: IfClause[]; connectors: string[]; instruction: string };
 
 /**
@@ -232,9 +237,20 @@ function matchIf(trimmed: string): IfMatch | undefined {
   const clauses: IfClause[] = [];
   const connectors: string[] = [];
   for (let i = 0; i < segments.length; i += 2) {
-    const clauseMatch = CONDITION_RE.exec(segments[i]!.trim());
-    if (!clauseMatch) return undefined;
-    clauses.push({ subject: clauseMatch[1]!.trim(), comparator: clauseMatch[2]!.trim(), target: clauseMatch[3]!.trim() });
+    const segment = segments[i]!.trim();
+    const clauseMatch = CONDITION_RE.exec(segment);
+    if (clauseMatch) {
+      clauses.push({ subject: clauseMatch[1]!.trim(), comparator: clauseMatch[2]!.trim(), target: clauseMatch[3]!.trim() });
+    } else {
+      const bareMatch = BARE_CONDITION_RE.exec(segment);
+      // A name containing the bare word "is" is never a real bare condition -- it means the
+      // segment was meant to be a full "... is <comparator> ..." condition that didn't match
+      // CONDITION_RE (most likely a typo in the comparator, e.g. "is greater then"), and should
+      // fall through to the ordinary typo-correction path instead of being silently swallowed
+      // as a nonsensical variable name that happens to contain the word "is".
+      if (!bareMatch || /\bis\b/i.test(bareMatch[2]!)) return undefined;
+      clauses.push({ subject: bareMatch[2]!.trim(), comparator: "truthy", target: "", negate: !!bareMatch[1] });
+    }
     if (i + 1 < segments.length) connectors.push(segments[i + 1]!.trim().toLowerCase());
   }
   return { clauses, connectors, instruction };
@@ -469,6 +485,29 @@ function compareText(value: string, comparator: string, target: string): boolean
   }
 }
 
+/** Resolves a bare "If the <name>, ..." / "If not the <name>, ..." condition's truth value. A
+ * number is true when non-zero. Text must spell out "true" or "false" (case-insensitive) --
+ * unlike ordinary text equality, an arbitrary string has no obvious true/false reading, so
+ * anything else is reported as a clear error rather than guessed at. A list has no truth value
+ * of its own; compare "the number of items in ..." to 0 instead. */
+function resolveTruthy(subject: VarValue, rawSubject: string, lineNumber: number, text: string,
+  diagnostics: VisualDiagnostic[]): boolean | undefined {
+  if (subject.type === "number") return subject.value !== 0;
+  if (subject.type === "list") {
+    report(diagnostics, lineNumber, text, "M006",
+      `"${rawSubject}" is a list, so it has no plain true/false reading.`,
+      `Try "If the number of items in ${rawSubject} is equal to 0, ..." (or "is not equal to 0").`);
+    return undefined;
+  }
+  const value = subject.value.trim().toLowerCase();
+  if (value === "true") return true;
+  if (value === "false") return false;
+  report(diagnostics, lineNumber, text, "M006",
+    `"${rawSubject}" is "${subject.value}", not "true" or "false", so it has no plain true/false reading.`,
+    `Try "If the ${rawSubject} is equal to ...", or set it to "true"/"false" earlier.`);
+  return undefined;
+}
+
 function substituteWord(text: string, word: string, replacement: string): string {
   const escaped = word.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return text.replace(new RegExp(`\\b${escaped}\\b`, "gi"), replacement);
@@ -615,6 +654,11 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
     }
   }
   const comparator = clause.comparator.toLowerCase();
+  if (comparator === "truthy") {
+    const truthy = resolveTruthy(subject, rawSubject, lineNumber, text, diagnostics);
+    if (truthy === undefined) return undefined;
+    return clause.negate ? !truthy : truthy;
+  }
   if (subject.type === "list") {
     if (comparator !== "equal to" && comparator !== "not equal to") {
       report(diagnostics, lineNumber, text, "M006",

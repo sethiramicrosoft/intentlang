@@ -270,11 +270,25 @@ Repeat 3 times, the wins is wins plus 1.
   whole list); using another comparator on a list is reported as a clear
   error. The `<name>` can be a variable, or a plain number (useful when it's a
   For each counting loop's own variable, which is a number itself).
+- **`If the <name>, <one or more instructions>.`** (or **`If not the <name>,
+  ...`**) is a shorter, plain-boolean way to write a condition, without
+  spelling out "is equal to true" every time. A number is true when it's
+  non-zero. Text must literally be `true` or `false` (case-insensitive) —
+  comparing anything else this way is reported as a clear error, since an
+  arbitrary piece of text (like a name) has no obvious true/false reading; use
+  the ordinary `is equal to ...` form to compare it instead. A list has no
+  true/false reading of its own either — compare `the number of items in ...`
+  to `0` instead. `not` only negates this bare form; to negate an ordinary
+  comparison, flip the comparator instead (`is not equal to`, or swap
+  `greater than` for `at most`, etc.).
 - **`If the <name> is <comparison> <value> and the <name> is <comparison>
   <value>, ...`** (or joined with `or` instead of `and`) combines two or more
   conditions into one: `and` requires every one of them to be true, `or`
   requires at least one. Chain as many as you like, all joined the same way
-  (`... and the c is equal to 3 and the d is equal to 4, ...`). Mixing `and`
+  (`... and the c is equal to 3 and the d is equal to 4, ...`), and a bare
+  boolean clause (`the <name>` or `not the <name>`) can be mixed in among
+  them the same way (`the isReady and the score is greater than 3, ...`).
+  Mixing `and`
   and `or` in the same If sentence is ambiguous — there's no operator
   precedence in this language, on purpose — and is reported as a clear error;
   use only one connector per If sentence, or split it into two separate If
@@ -514,6 +528,13 @@ offered, never applied silently.
   concatenation, which is string-building only, not arithmetic. A list
   variable, unlike a plain text variable, can still only be compared with
   `equal to` or `not equal to` (ordering a whole list doesn't make sense).
+- There's no real boolean type: `true` and `false` are just literal text.
+  The bare `If the <name>, ...` / `If not the <name>, ...` shorthand only
+  reads a variable as true/false when it's a number (non-zero is true) or
+  its text is exactly `true` or `false` — any other text (e.g. a name) is
+  reported as a clear error rather than guessed at, since there's no
+  general notion of "truthy" text in this language. Compare it with the
+  ordinary `is equal to ...` form instead.
 - A list variable can be looped over, displayed, copied, measured with
   `the number of items in ...`, read one item at a time by position with
   `item N in ...` / `the first item in ...` / `the last item in ...`, and

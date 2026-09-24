@@ -302,6 +302,75 @@ The favorite colors is a list of red, green and blue.
 If the favorite colors is greater than red, set the text of message to champion`, /can only be compared with/);
 });
 
+test("a bare 'If the <name>, ...' condition reads a true text variable as true", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The isReady is true.
+If the isReady, set the text of message to yes
+Otherwise, set the text of message to no`);
+  assert.equal(textOf(ir, "message"), "yes");
+});
+
+test("a bare 'If the <name>, ...' condition reads a false text variable as false", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The isReady is false.
+If the isReady, set the text of message to yes
+Otherwise, set the text of message to no`);
+  assert.equal(textOf(ir, "message"), "no");
+});
+
+test("'If not the <name>, ...' negates a bare boolean condition", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The isReady is true.
+If not the isReady, set the text of message to skipped
+Otherwise, set the text of message to ran`);
+  assert.equal(textOf(ir, "message"), "ran");
+});
+
+test("a bare 'If the <name>, ...' condition reads a non-zero number as true and zero as false", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 5.
+If the score, set the text of message to nonzero
+Otherwise, set the text of message to zero`);
+  assert.equal(textOf(ir, "message"), "nonzero");
+});
+
+test("a bare boolean condition can combine with an ordinary comparison using the same connector", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The isReady is true.
+The score is 5.
+If the isReady and the score is greater than 3, set the text of message to both
+Otherwise, set the text of message to not both`);
+  assert.equal(textOf(ir, "message"), "both");
+});
+
+test("'and not the <name>' works inside a compound condition", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The isReady is true.
+The score is 5.
+If the score is greater than 3 and not the isReady, set the text of message to mismatch
+Otherwise, set the text of message to ok`);
+  assert.equal(textOf(ir, "message"), "ok");
+});
+
+test("a bare boolean condition on a list variable is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+The colors is a list of red, green and blue.
+If the colors, set the text of message to yes`, /has no plain true\/false reading/);
+});
+
+test("a bare boolean condition on text that isn't literally true or false is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+The winner is Alex.
+If the winner, set the text of message to yes`, /no plain true\/false reading/);
+});
+
+test("a mistyped comparator ('is greater then') still falls through to the ordinary typo-correction path, not a bare boolean condition", () => {
+  const suggestion = suggestionOf(`Add a paragraph called message inside page
+The score is 5.
+If the score is greater then 3, set the text of message to yes`);
+  assert.equal(suggestion.replacement, "If the score is greater than 3, set the text of message to yes");
+});
+
 test("text variables can also be compared with is not equal to", () => {
   const { ir } = page(`Add a paragraph called message inside page
 The winner is Alex Carter.
