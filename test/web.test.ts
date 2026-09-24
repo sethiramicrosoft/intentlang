@@ -504,6 +504,26 @@ Set the text of go to Go
 When the go is clicked, set the text of result to the selected label of n`, /Only a dropdown has a selected option's label/);
 });
 
+test("a click can select a dropdown option by its own displayed label with \"the option labeled ...\", even when its value differs", () => {
+  const selected = page(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Add an option called blue inside favorite color
+Set the text of red to Red
+Set the text of blue to Blue
+Set the value of red to r
+Set the value of blue to b
+Add a button called pick
+Set the text of pick to Pick blue
+When the pick is clicked, set the value of favorite color to the option labeled Blue`);
+  const script = /<script>(.+?)<\/script>/.exec(selected.html)![1]!;
+  assert.match(script, /var s=document\.getElementById\("element-1"\);for\(var i=0;i<s\.options\.length;i\+\+\)\{if\(s\.options\[i\]\.text==="Blue"\)\{s\.selectedIndex=i;break;\}\}/);
+
+  invalid(`Add a text input called n
+Add a button called go
+Set the text of go to Go
+When the go is clicked, set the value of n to the option labeled X`, /Only a dropdown has options with labels/);
+});
+
 test("a click can read a live character count with \"the number of characters in the value of ...\"", () => {
   const counter = page(`Add a text input called message
 Add a paragraph called counter

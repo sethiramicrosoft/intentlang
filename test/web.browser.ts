@@ -219,6 +219,32 @@ When the check is clicked, set the text of result to the selected label of favor
   } finally { await browser.close(); }
 });
 
+test("a click can select a real dropdown option by its own displayed label, even when its value differs, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Add an option called blue inside favorite color
+Set the text of red to Red
+Set the text of blue to Blue
+Set the value of red to r
+Set the value of blue to b
+Add a button called pick
+Set the text of pick to Pick blue
+When the pick is clicked, set the value of favorite color to the option labeled Blue`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    assert.equal(await page.locator("#element-1").inputValue(), "r"); // defaults to the first option
+    await page.locator("#element-4").click();
+    assert.equal(await page.locator("#element-1").inputValue(), "b"); // selected via its label "Blue", not "b" directly
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a live character count tracks real typed input length as it changes, in a real browser", async () => {
   const compiled = compilePageSource(`Add a text input called message
 Add a paragraph called counter

@@ -278,7 +278,14 @@ export function compilePageSource(source: string): PageCompileResult {
     // Checked before the plainer "set the value of X to Y" for the same reason setFromValue
     // is checked before setText: otherwise "the value of Y" would be read as literal text.
     const setValueFromValue = /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
-    const setValue = !setValueFromValue ? /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part) : null;
+    // A dropdown's own ".value" is its selected option's value attribute, which may not match
+    // what a visitor actually reads on screen once an option's value diverges from its label
+    // (the write-side sibling of "the selected label of ..."). This selects an option by its
+    // own displayed text directly, regardless of its value attribute -- checked before the
+    // plainer setValue below for the same shadowing reason as setValueFromValue: otherwise
+    // "the option labeled X" would be read as a literal, non-matching ".value" string instead.
+    const selectByLabel = !setValueFromValue ? /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+the\s+option\s+labeled\s+(.+)$/i.exec(part) : null;
+    const setValue = !setValueFromValue && !selectByLabel ? /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part) : null;
     const clearValue = /^clear\s+the\s+value\s+of\s+(.+)$/i.exec(part);
     // Sets a checkbox/radio button's own ".checked" state directly.
     const checkBox = /^check\s+(.+)$/i.exec(part);
@@ -559,6 +566,17 @@ export function compilePageSource(source: string): PageCompileResult {
         return undefined;
       }
       return `document.getElementById(${JSON.stringify(target.id)}).value=document.getElementById(${JSON.stringify(source.id)}).value;`;
+    } else if (selectByLabel) {
+      const target = resolve(selectByLabel[1]!, index);
+      if (!target) return undefined;
+      if (target.tag !== "select") {
+        report(index, `Only a dropdown has options with labels, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add a dropdown called ${target.name} instead, such as Add a dropdown called ${target.name}.`);
+        return undefined;
+      }
+      const label = dequoteRuntime(selectByLabel[2]!);
+      return `(function(){var s=document.getElementById(${JSON.stringify(target.id)});` +
+        `for(var i=0;i<s.options.length;i++){if(s.options[i].text===${JSON.stringify(label)}){s.selectedIndex=i;break;}}})();`;
     } else if (setValue) {
       const target = resolve(setValue[1]!, index);
       if (!target) return undefined;
@@ -621,7 +639,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"divide the text of ... by ...", "add the value of ... to the text of ...", ` +
       `"subtract the value of ... from the text of ...", "multiply the text of ... by the value of ...", ` +
       `"divide the text of ... by the value of ...", "set the value of ... to ...", ` +
-      `"set the value of ... to the value of ...", "clear the value of ...", ` +
+      `"set the value of ... to the value of ...", "set the value of ... to the option labeled ... (a dropdown)", "clear the value of ...", ` +
       `"check ..."/"uncheck ..." for a checkbox or radio button, ` +
       `"toggle whether ... is checked" for a checkbox or radio button, ` +
       `"hide ...", "show ...", "toggle the visibility of ...", "focus ...", ` +

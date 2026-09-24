@@ -222,7 +222,14 @@ A click can also write into a live input's own value (as opposed to
 name> to the value of <other input name>` (a live copy from one input to
 another) preset a field, and `clear the value of <input name>` resets it to
 empty — handy for clearing a form after its value has already been read
-into a result. The target of `set/clear the value of ...` must likewise be
+into a result. `set the value of <dropdown name> to the option labeled
+<text>` is the write-side sibling of `the selected label of ...`: it
+selects an option by its own displayed text directly (the target must be a
+dropdown specifically), regardless of that option's actual value attribute
+— handy once an option's value has been set to something other than its
+label (a short code, say), so a click can still pick an option the same
+way a visitor reads it, without needing to know the underlying code. The
+target of `set/clear the value of ...` must likewise be
 an input, a text box, or a dropdown. A checkbox or radio button doesn't have
 a meaningful `.value` (it's a fixed attribute, never reflecting whether it's
 actually ticked) — it has a `.checked` state instead, so it gets its own
@@ -513,6 +520,19 @@ Set the value of uk to UK
 Add a paragraph called result
 Set the text of result to Pick a country
 When the country changes, set the text of result to the selected label of country
+```
+
+```text
+Add a dropdown called country
+Add an option called us inside country
+Add an option called uk inside country
+Set the text of us to United States
+Set the text of uk to United Kingdom
+Set the value of us to US
+Set the value of uk to UK
+Add a button called pick uk
+Set the text of pick uk to Default to United Kingdom
+When the pick uk is clicked, set the value of country to the option labeled United Kingdom
 ```
 
 ```text
