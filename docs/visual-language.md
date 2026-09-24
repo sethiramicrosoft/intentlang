@@ -234,6 +234,9 @@ If the wins is at least 10 and the draws is at least 5, set the text of banner t
 
 For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list item called result opponent inside fixtures
 
+The rivals is a list of Ashford Town, Bellmoor United and Castlebridge.
+For each rival in rivals, add a list item called rival line rival inside rivals list
+
 For each round from 1 to 5, add a list item called round line round inside fixtures
 
 Repeat 3 times, the wins is wins plus 1.
@@ -299,7 +302,20 @@ Repeat 3 times, the wins is wins plus 1.
   repeats its instruction(s) once per item, replacing the loop word wherever
   it appears. When there's more than one instruction, every instruction runs
   for one item before moving to the next, so an element you add can be
-  referenced by a later instruction for that same item.
+  referenced by a later instruction for that same item. `<item, item and
+  item>` can be an inline list written right there, or the name of a list
+  variable defined earlier (see below) — either way reads the same.
+- **`The <name> is a list of <item, item and item>.`** defines a named list
+  variable, using the exact same item-list grammar as a For each's own inline
+  list. Once defined, it can be looped over by name (`For each color in
+  favorite colors, ...`), displayed directly (it reads back the same way it
+  was written, e.g. `"red, green and blue"`), copied to another name (`The
+  backup colors is favorite colors.`), and measured with **`the number of
+  items in <list>`**, which resolves to a plain number wherever a number
+  could go — an arithmetic operand, or an If condition's subject or target
+  (`If the number of items in favorite colors is equal to 3, ...`). Asking
+  for the number of items in something that isn't a list is reported as a
+  clear error rather than silently returning zero.
 - **`For each <name> from <start> to <end>, <one or more instructions>.`**
   counts through every whole number from `<start>` to `<end>`, inclusive of
   both ends, replacing the loop word with each number in turn. Counts upward
@@ -462,6 +478,17 @@ offered, never applied silently.
   there's no ordering (`greater than`, etc.) for text, and text can't be used
   in arithmetic. Text does have its own `joined with` chain for
   concatenation, but that's string-building only, not arithmetic.
+- A list variable can be looped over, displayed, copied, and measured with
+  `the number of items in ...`, but there's no way yet to read or change one
+  specific item by position (no "the first item in ..." or "item 3 in
+  ..."), and a `Do <procedure> with <list>` call can't yet pass a whole list
+  as one argument — a procedure only receives plain numbers and text.
+- A parenthesis-free `a list of ...` value is recognized by its exact
+  leading words, the same way `joined with` and the arithmetic operator
+  words are — so a piece of literal text that itself happens to start with
+  the words "a list of" (e.g. `The blurb is a list of chores I did.`) would
+  be misread as a list definition instead of literal text; quote it to force
+  literal text, the same workaround used for any other keyword collision.
 - A procedure's parameters can only be used the same way a variable can —
   a parameter can't be used to build a different element name per call (for
   example, a procedure can't add a differently-named element on each call

@@ -10,9 +10,10 @@ export type MacroExpandResult =
   | { ok: true; source: string }
   | { ok: false; diagnostics: VisualDiagnostic[] };
 
-/** A variable holds either a number (with arithmetic) or plain text (copied or compared, but
- * not computed). Both kinds are written the same way: "The <name> is <value>." */
-type VarValue = { type: "number"; value: number } | { type: "text"; value: string };
+/** A variable holds a number (with arithmetic), plain text (copied or compared, but not
+ * computed), or a named list of items (for a For each loop to run over, or to measure the
+ * length of). All three kinds are written the same way: "The <name> is <value>." */
+type VarValue = { type: "number"; value: number } | { type: "text"; value: string } | { type: "list"; value: string[] };
 
 /** A reusable procedure: its raw, not-yet-expanded body text, and the names of the zero or more
  * parameters a caller supplies with "with" (several are joined with "and", e.g. "with a and b").
@@ -36,6 +37,15 @@ const NUMERIC_INTENT_RE = /\d|\b(?:plus|minus|times|divided by)\b/i;
 // Kept as a separate word from numeric "plus" so a number chain and a text chain never look
 // alike, and so an ordinary piece of text can still safely contain the bare word "plus".
 const TEXT_CHAIN_SPLIT_RE = /\s+joined with\s+/i;
+// A named list variable's definition: "The <name> is a list of <item, item and item>." Reuses
+// the exact same item-list grammar as a For each's own inline list (comma-and-"and" separated),
+// so the two always read the same way.
+const LIST_OF_RE = /^a\s+list\s+of\s+(.+)$/i;
+// "the number of items in <list>" resolves to a list variable's length wherever a plain number
+// could go (an arithmetic operand, or an If condition's subject or target) -- it's matched as
+// one whole phrase before an ordinary variable lookup is tried, so a variable literally named
+// "number of items in x" is never possible to accidentally shadow it.
+const LIST_LENGTH_RE = /^number of items in\s+(.+)$/i;
 // An If sentence's head, up to its FIRST comma (no matter what follows -- this is what lets an
 // If's own instruction be another nested If/For each/Repeat/Do without confusing this boundary).
 // The captured text between "if " and that comma is one or more conditions, described below.
@@ -223,14 +233,21 @@ function formatNumber(value: number): string {
   return Number.isInteger(rounded) ? String(rounded) : String(rounded);
 }
 
-/**
- * Resolves a trailing "... to <variable name>" reference against the CURRENT variables map,
- * right when the instruction is produced. This must happen immediately rather than being
- * deferred to the very end of the file, because a procedure parameter is only bound to the
- * variables map for the duration of its own call: by the time the whole file has been
- * processed, a parameter's temporary binding has already been restored/removed, so resolving
- * it later would see the wrong value (or no value at all).
- */
+/** How a variable's value reads as plain text, whichever of the three kinds it holds -- a list
+ * reads back the same way it was written ("red, green and blue"), so displaying one directly
+ * looks natural rather than like raw, comma-joined data. */
+function formatVarValueText(value: VarValue): string {
+  if (value.type === "number") return formatNumber(value.value);
+  if (value.type === "list") return joinEnglishList(value.value);
+  return value.value;
+}
+
+function joinEnglishList(items: string[]): string {
+  if (items.length === 0) return "";
+  if (items.length === 1) return items[0]!;
+  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
+}
+
 /**
  * Resolves a trailing "... to <variable name>" or "... to <arithmetic expression>" reference
  * against the CURRENT variables map, right when the instruction is produced. This must happen
@@ -250,7 +267,7 @@ function resolveTrailingVariable(line: string, variables: Map<string, VarValue>)
   if (numericValue !== undefined) return `${trailing[1]}${formatNumber(numericValue)}`;
   const found = variables.get(name);
   if (!found) return line;
-  return `${trailing[1]}${found.type === "number" ? formatNumber(found.value) : found.value}`;
+  return `${trailing[1]}${formatVarValueText(found)}`;
 }
 
 function stripLeadingThe(text: string): string {
@@ -264,6 +281,11 @@ function dequote(text: string): string {
 function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): number | undefined {
   const token = raw.trim().toLowerCase();
   if (/^-?\d+(?:\.\d+)?$/.test(token)) return Number(token);
+  const lengthOf = LIST_LENGTH_RE.exec(token);
+  if (lengthOf) {
+    const list = variables.get(stripLeadingThe(lengthOf[1]!).toLowerCase());
+    return list?.type === "list" ? list.value.length : undefined;
+  }
   const found = variables.get(token);
   return found?.type === "number" ? found.value : undefined;
 }
@@ -273,7 +295,7 @@ function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): n
  * "defined first": "If the winner is equal to Alex" is valid even without an "Alex" variable. */
 function resolveTextOperand(raw: string, variables: Map<string, VarValue>): string {
   const found = variables.get(stripLeadingThe(raw).toLowerCase());
-  if (found) return found.type === "number" ? formatNumber(found.value) : found.value;
+  if (found) return formatVarValueText(found);
   return dequote(raw);
 }
 
@@ -448,19 +470,30 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
   if (/^-?\d+(?:\.\d+)?$/.test(rawSubject)) {
     subject = { type: "number", value: Number(rawSubject) };
   } else {
-    const name = rawSubject.toLowerCase();
+    const lengthOf = LIST_LENGTH_RE.exec(rawSubject);
+    const displayName = lengthOf ? stripLeadingThe(lengthOf[1]!) : rawSubject;
+    const name = displayName.toLowerCase();
     const found = variables.get(name);
     if (found === undefined) {
-      const closest = closestVariable(rawSubject, variables);
-      report(diagnostics, lineNumber, text, "M001", `"${rawSubject}" was never given a value.`,
-        closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${rawSubject} is 0." before this line.`,
-        closest ? [{ label: `Use "${closest}"`, replacement: text.replace(rawSubject, closest) }] : undefined);
+      const closest = closestVariable(name, variables);
+      report(diagnostics, lineNumber, text, "M001", `"${displayName}" was never given a value.`,
+        closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${displayName} is 0." before this line.`,
+        closest ? [{ label: `Use "${closest}"`, replacement: text.replace(displayName, closest) }] : undefined);
       return undefined;
     }
-    subject = found;
+    if (lengthOf) {
+      if (found.type !== "list") {
+        report(diagnostics, lineNumber, text, "M002", `"${displayName}" is not a list, so it has no "number of items".`,
+          `Compare "${rawSubject}" against a variable defined with "is a list of ...".`);
+        return undefined;
+      }
+      subject = { type: "number", value: found.value.length };
+    } else {
+      subject = found;
+    }
   }
   const comparator = clause.comparator.toLowerCase();
-  if (subject.type === "text") {
+  if (subject.type === "text" || subject.type === "list") {
     if (comparator !== "equal to" && comparator !== "not equal to") {
       report(diagnostics, lineNumber, text, "M006",
         `Text can only be compared with "is equal to" or "is not equal to", not "is ${comparator}".`,
@@ -469,7 +502,7 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
       return undefined;
     }
     const target = resolveTextOperand(clause.target, variables);
-    const isEqual = subject.value.trim().toLowerCase() === target.trim().toLowerCase();
+    const isEqual = formatVarValueText(subject).trim().toLowerCase() === target.trim().toLowerCase();
     return comparator === "equal to" ? isEqual : !isEqual;
   }
   const target = resolveNumericOperand(clause.target, variables);
@@ -522,7 +555,16 @@ function evaluateIfCondition(ifMatch: IfMatch, text: string, lineNumber: number,
  */
 function evaluateForEach(forEachMatch: ForEachMatch, lineNumber: number, variables: Map<string, VarValue>,
   diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): string[] {
-  const { loopVar, items, instruction } = forEachMatch;
+  const { loopVar, items: rawItems, instruction } = forEachMatch;
+  // A single "item" that names a known list variable is expanded into that list's own items,
+  // rather than being treated as one literal item -- this is how "For each color in favorite
+  // colors, ..." runs over a list defined earlier with "The favorite colors is a list of ...",
+  // instead of looping once over the literal words "favorite colors". A single item that is
+  // NOT a list variable (the overwhelmingly common case, e.g. "For each color in red, ...")
+  // is completely unaffected: this only ever intercepts the specific case of a list-typed
+  // variable, never a number/text variable or an unresolved name.
+  const asListVar = rawItems.length === 1 ? variables.get(stripLeadingThe(rawItems[0]!).toLowerCase()) : undefined;
+  const items = asListVar?.type === "list" ? asListVar.value : rawItems;
   if (items.length === 0) {
     report(diagnostics, lineNumber, `for each ${loopVar}`, "M004",
       `"For each ${loopVar} in ..." needs at least one item in its list.`,
@@ -632,11 +674,11 @@ function expandFunctionCall(name: string, argRaw: string | undefined, callText: 
 
 /**
  * Applies a "The X is Y." assignment: resolves Y as a number expression first, then as a text
- * "joined with" chain, falling back to copying an existing variable's value, and finally to
- * literal text (only when Y doesn't even look like an arithmetic attempt, so a genuine mistake
- * like dividing by zero isn't silently treated as text). Returns true once handled; false means
- * the caller should leave the line for the page compiler to report as an ordinary unrecognized
- * instruction.
+ * "joined with" chain, then as a list literal ("a list of ..."), falling back to copying an
+ * existing variable's value, and finally to literal text (only when Y doesn't even look like an
+ * arithmetic attempt, so a genuine mistake like dividing by zero isn't silently treated as
+ * text). Returns true once handled; false means the caller should leave the line for the page
+ * compiler to report as an ordinary unrecognized instruction.
  */
 function applyAssignment(name: string, rawValue: string, variables: Map<string, VarValue>): boolean {
   const numericValue = evaluateExpression(rawValue, variables);
@@ -646,6 +688,11 @@ function applyAssignment(name: string, rawValue: string, variables: Map<string, 
   }
   if (TEXT_CHAIN_SPLIT_RE.test(rawValue)) {
     variables.set(name, { type: "text", value: evaluateTextChain(rawValue, variables) });
+    return true;
+  }
+  const listOf = LIST_OF_RE.exec(rawValue.trim());
+  if (listOf) {
+    variables.set(name, { type: "list", value: splitEnglishList(listOf[1]!) });
     return true;
   }
   if (!NUMERIC_INTENT_RE.test(rawValue)) {

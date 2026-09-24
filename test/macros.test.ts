@@ -928,3 +928,66 @@ test("'Otherwise if' after an If whose own condition couldn't be resolved is a c
 If the missing is at least 90, set the text of message to A
 Otherwise if the missing is at least 60, set the text of message to B`, /Otherwise if.*must come right after/);
 });
+
+test("a list variable is defined with 'is a list of' and a For each can run over it by name", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The count is 0.
+For each color in favorite colors, the count is count plus 1.
+Set the text of message to count`);
+  assert.equal(textOf(ir, "message"), "3");
+});
+
+test("'the number of items in <list>' resolves to a list's length as a plain numeric operand", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The total is the number of items in favorite colors.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "3");
+});
+
+test("'the number of items in <list>' works inside a larger arithmetic chain", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The total is the number of items in favorite colors plus 10.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "13");
+});
+
+test("'the number of items in <list>' works as an If condition's subject", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+If the number of items in favorite colors is equal to 3, set the text of message to three colors
+Otherwise, set the text of message to not three`);
+  assert.equal(textOf(ir, "message"), "three colors");
+});
+
+test("a list variable displays as its items, comma-and-'and' joined, the same way it was written", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+Set the text of message to favorite colors`);
+  assert.equal(textOf(ir, "message"), "red, green and blue");
+});
+
+test("a For each with a single literal item (not a known list variable) is completely unaffected", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+For each color in red, set the text of message to color`);
+  assert.equal(textOf(ir, "message"), "red");
+});
+
+test("copying a list variable to a new name keeps it a list, so a For each still works over the copy", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The backup colors is favorite colors.
+The count is 0.
+For each color in backup colors, the count is count plus 1.
+Set the text of message to count`);
+  assert.equal(textOf(ir, "message"), "3");
+});
+
+test("'number of items in' a variable that isn't a list is a clear error, not a silent zero", () => {
+  invalid(`Add a paragraph called message inside page
+The score is 5.
+If the number of items in score is equal to 3, set the text of message to x
+Otherwise, set the text of message to not matched`, /is not a list.*number of items/);
+});
