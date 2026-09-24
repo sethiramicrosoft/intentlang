@@ -1295,6 +1295,65 @@ Set the text of go to Go
 When the go is clicked, uncheck n`, /Only a checkbox or a radio button has a checked state/);
 });
 
+test("a click's if-conditional can compare two checkboxes' checked states against each other with 'is checked the same as'", () => {
+  const matched = page(`Add a checkbox called a
+Add a checkbox called b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if a is checked the same as b, set the text of result to match otherwise set the text of result to mismatch`);
+  const matchedScript = /<script>(.+?)<\/script>/.exec(matched.html)![1]!;
+  assert.match(matchedScript, /if\(\(document\.getElementById\("element-1"\)\.checked===document\.getElementById\("element-2"\)\.checked\)\)\{document\.getElementById\("element-3"\)\.textContent="match";\}else\{document\.getElementById\("element-3"\)\.textContent="mismatch";\}/);
+
+  // "is not checked the same as" negates the whole comparison.
+  const negated = page(`Add a checkbox called a
+Add a checkbox called b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if a is not checked the same as b, set the text of result to mismatch`);
+  const negatedScript = /<script>(.+?)<\/script>/.exec(negated.html)![1]!;
+  assert.match(negatedScript, /if\(!\(document\.getElementById\("element-1"\)\.checked===document\.getElementById\("element-2"\)\.checked\)\)/);
+
+  // Radio buttons work the same way as checkboxes here.
+  const radios = page(`Add a radio button called a
+Add a radio button called b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if a is checked the same as b, set the text of result to match`);
+  const radiosScript = /<script>(.+?)<\/script>/.exec(radios.html)![1]!;
+  assert.match(radiosScript, /if\(\(document\.getElementById\("element-1"\)\.checked===document\.getElementById\("element-2"\)\.checked\)\)/);
+
+  // The plain fixed "is checked"/"is not checked" form still compiles as before (no regression
+  // -- the new form's regex doesn't shadow it, since the plain form requires a comma right
+  // after the word "checked"/"not checked").
+  const plain = page(`Add a checkbox called agree
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if agree is checked, set the text of result to yes`);
+  const plainScript = /<script>(.+?)<\/script>/.exec(plain.html)![1]!;
+  assert.match(plainScript, /if\(document\.getElementById\("element-1"\)\.checked\)/);
+
+  invalid(`Add a text input called a
+Add a checkbox called b
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if a is checked the same as b, set the text of result to match`, /Only a checkbox or a radio button has a checked state, and a is a input/);
+
+  invalid(`Add a checkbox called a
+Add a text input called b
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if a is checked the same as b, set the text of result to match`, /Only a checkbox or a radio button has a checked state, and b is a input/);
+});
+
 test("radio buttons under the same parent are auto-grouped by a shared HTML name, for real mutual exclusivity", () => {
   const grouped = page(`Add a radio button called option a
 Add a radio button called option b

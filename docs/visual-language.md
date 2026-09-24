@@ -283,7 +283,16 @@ instruction>`) branches on whether it's ticked, `if <checkbox name> is not
 checked, ...` branches on the opposite, and `check <checkbox name>` /
 `uncheck <checkbox name>` tick or untick it directly from a click, and
 `toggle whether <checkbox name> is checked` flips it without needing to
-know which way it currently is. The
+know which way it currently is. A checkbox's checked state can also be
+compared against *another* checkbox's or radio button's checked state
+directly, with `if <checkbox name> is checked the same as <other checkbox
+name>, <one instruction>` (also optionally followed by `otherwise <one
+instruction>`) — true only when both are ticked or both are unticked, handy
+for validating that two independent toggles agree (a "confirm you've read
+the terms" checkbox that must match a "confirm you're 18+" checkbox, say)
+without spelling out both fixed forms and an extra `and`. `if <checkbox
+name> is not checked the same as <other checkbox name>, ...` negates the
+whole comparison, true whenever they disagree instead. The
 target of any of these must be a checkbox or a radio button specifically —
 using them on a text input or any other element is a clear error. A radio
 button's whole point is mutual exclusivity, so every radio button added
@@ -538,6 +547,16 @@ Set the text of result to none
 Add a button called submit
 Set the text of submit to Submit
 When the submit is clicked, if agree is checked, set the text of result to thanks otherwise set the text of result to please agree first
+```
+
+```text
+Add a checkbox called accept terms
+Add a checkbox called confirm adult
+Add a paragraph called result
+Set the text of result to none
+Add a button called submit
+Set the text of submit to Submit
+When the submit is clicked, if accept terms is checked the same as confirm adult, set the text of result to consistent otherwise set the text of result to please check both boxes
 ```
 
 ```text

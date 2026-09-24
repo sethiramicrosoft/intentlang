@@ -243,7 +243,12 @@ export function compilePageSource(source: string): PageCompileResult {
     // of X is checked, ..." (which isn't valid there, since "checked" isn't a recognized
     // ifValue/ifText comparison word either, and would otherwise misread "the value of X"
     // itself as the checkbox's name).
-    const ifChecked = !ifValue && !ifBetween && !ifLength && !ifText && !ifLabel ?
+    // Checked before the plain "is checked"/"is not checked" form below: that one requires a
+    // comma immediately after the word "checked", so "is checked the same as ..." never
+    // actually matches it (there's a " the same as ..." in between), but this is placed first
+    // anyway for the same clarity reason every other live-vs-fixed pair in this function is.
+    const ifCheckedMatch = /^if\s+(?!the\s+value\s+of\s)(.+?)\s+is\s+(not\s+)?checked\s+the\s+same\s+as\s+(.+?)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
+    const ifChecked = !ifCheckedMatch && !ifValue && !ifBetween && !ifLength && !ifText && !ifLabel ?
       /^if\s+(?!the\s+value\s+of\s)(.+?)\s+is\s+(checked|not checked)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // "Repeat" needs no shadowing precaution of its own -- no other pattern starts with the
     // word "repeat" -- but like "if", its own trailing instruction is compiled recursively.
@@ -530,6 +535,31 @@ export function compilePageSource(source: string): PageCompileResult {
         elseClause = `else{${elseInner}}`;
       }
       return `if(${textComparisons[op]!(left, rightSide)}){${inner}}${elseClause}`;
+    } else if (ifCheckedMatch) {
+      const source = resolve(ifCheckedMatch[1]!, index);
+      if (!source) return undefined;
+      if (!hasCheckedState(source)) {
+        report(index, `Only a checkbox or a radio button has a checked state, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add a checkbox called ${source.name} instead, such as Add a checkbox called ${source.name}.`);
+        return undefined;
+      }
+      const other = resolve(ifCheckedMatch[3]!, index);
+      if (!other) return undefined;
+      if (!hasCheckedState(other)) {
+        report(index, `Only a checkbox or a radio button has a checked state, and ${other.name} is a ${englishName(other.tag)}.`,
+          `Add a checkbox called ${other.name} instead, such as Add a checkbox called ${other.name}.`);
+        return undefined;
+      }
+      const negate = ifCheckedMatch[2] ? "!" : "";
+      const inner = compileClickPart(ifCheckedMatch[4]!.trim(), index);
+      if (inner === undefined) return undefined;
+      let elseClause = "";
+      if (ifCheckedMatch[5]) {
+        const elseInner = compileClickPart(ifCheckedMatch[5].trim(), index);
+        if (elseInner === undefined) return undefined;
+        elseClause = `else{${elseInner}}`;
+      }
+      return `if(${negate}(document.getElementById(${JSON.stringify(source.id)}).checked===document.getElementById(${JSON.stringify(other.id)}).checked)){${inner}}${elseClause}`;
     } else if (ifChecked) {
       const source = resolve(ifChecked[1]!, index);
       if (!source) return undefined;
@@ -856,6 +886,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
       `"if the selected label of ... is/is not ... (a dropdown), ... otherwise ...", ` +
       `"if ... is/is not checked, ... otherwise ...", ` +
+      `"if ... is/is not checked the same as ... (another checkbox or radio button), ... otherwise ...", ` +
       `or "repeat ... times, ..." (a number, or the value of ...).`);
     return undefined;
   }

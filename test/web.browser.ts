@@ -801,6 +801,34 @@ When the turn on is clicked, check agree`);
   } finally { await browser.close(); }
 });
 
+test("a click's if-conditional can compare two real checkboxes' checked states against each other, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a checkbox called a
+Add a checkbox called b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if a is checked the same as b, set the text of result to match otherwise set the text of result to mismatch`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-4").click(); // both unchecked -> match
+    assert.equal(await page.locator("#element-3").textContent(), "match");
+    await page.locator("#element-1").check();
+    await page.locator("#element-4").click(); // a checked, b not -> mismatch
+    assert.equal(await page.locator("#element-3").textContent(), "mismatch");
+    await page.locator("#element-2").check();
+    await page.locator("#element-4").click(); // both checked -> match again
+    assert.equal(await page.locator("#element-3").textContent(), "match");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("radio buttons under the same parent are really mutually exclusive in a real browser (shared name)", async () => {
   const compiled = compilePageSource(`Add a radio button called option a
 Add a radio button called option b`);
