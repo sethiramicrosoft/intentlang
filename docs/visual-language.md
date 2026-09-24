@@ -156,9 +156,15 @@ as a table body. This is not a complete HTML conformance validator.
 
 Programs containing Add/Create or the property-of-target Set grammar use the page
 compiler. Existing scene programs retain their original output. A page can use
-`Show Hello world` to create a paragraph named `text`, but scene movement,
-placement, and word-layout commands cannot yet be combined with Add instructions;
-the compiler diagnoses them instead of silently dropping them.
+`Show Hello world` to create a paragraph named `text`, but scene placement and
+word-layout commands cannot yet be combined with Add instructions; the compiler
+diagnoses them instead of silently dropping them. Movement is the one exception:
+a click's own `move <name> from <edge> to <edge> over <seconds> seconds`
+(documented below, alongside every other click instruction) brings the scene's
+edge-to-edge sweep to any page element, animated with a relative transform so the
+element never leaves normal document flow -- unlike word-layout, which would
+require splitting an element's text into separate DOM nodes, a materially bigger
+change this doesn't attempt.
 
 ### Native behavior and current limits
 
@@ -362,6 +368,30 @@ paragraph or any other element has no sibling group to switch between, and
 using it on one is a clear error. Nothing is hidden automatically just by
 adding a section; combine this with `When the page loads, hide <name>` to
 choose which screen (if any) starts out of view.
+
+`move <name> from <edge> to <edge> over <seconds> seconds` animates any
+element across the screen — the Add-based page language's own version of
+the single-text scene's edge-to-edge movement, brought over as a click
+instruction rather than a separate rendering mode. The edges are `left`,
+`right`, `top`, and `bottom`; a move must run between two opposite edges
+(left↔right or top↔bottom), and the duration must be between 0.1 and 60
+seconds, matching the scene grammar's own movement rules exactly. Unlike
+the scene's absolute-position stage, the target element never leaves
+normal document flow: it's animated with a relative transform (via the
+browser's Web Animations API, generated as plain JS — no new inline style
+or stylesheet is ever added, so nothing here changes the page's existing
+CSP), sweeping from just off one edge of the viewport to just off the
+opposite edge and holding its final position there. A visitor who prefers
+reduced motion (an operating-system accessibility setting) sees no
+animation start at all — the element stays exactly where normal document
+flow already puts it, rather than ending up off-screen. `move` works on
+any element, the same universal target rule `hide`/`show`/`toggle the
+visibility of` already follow; it does not require an input, a checkbox, or
+any other specific kind of control. Word-layout ("put each word on a new
+line") and fixed placement are not yet available outside a single-text
+scene — bringing them over would mean splitting an element's own text
+into separate pieces, a materially bigger change than animating an
+existing element in place.
 
 **`When the page loads, <one or more instructions>.`** runs the exact same
 closed instruction set immediately, as soon as the page's markup exists,
@@ -792,6 +822,14 @@ Set the text of back home to Home
 When the page loads, hide settings screen
 When the open settings is clicked, go to settings screen
 When the back home is clicked, go to home screen
+```
+
+```text
+Add a paragraph called banner
+Set the text of banner to New sale starts today
+Add a button called announce
+Set the text of announce to Announce
+When the announce is clicked, move banner from left to right over 3 seconds
 ```
 
 ```text

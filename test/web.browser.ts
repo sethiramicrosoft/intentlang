@@ -1115,6 +1115,43 @@ When the show home is clicked, go to home screen`);
   } finally { await browser.close(); }
 });
 
+test("a click can animate a real element across the screen with \"move ... from ... to ... over ... seconds\", respecting reduced motion", async () => {
+  const compiled = compilePageSource(`Add a paragraph called banner
+Set the text of banner to Sale!
+Add a button called go
+Set the text of go to Go
+When the go is clicked, move banner from left to right over 5 seconds`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-2").click(); // "go" -- starts the real Web Animations API animation
+    const animationCount = await page.locator("#element-1").evaluate((el) => el.getAnimations().length);
+    assert.equal(animationCount, 1); // a real, running animation was actually created
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+
+  // A visitor who prefers reduced motion should see no animation start at all -- the element
+  // simply stays at its natural resting position.
+  const reducedBrowser = await chromium.launch();
+  try {
+    const page = await reducedBrowser.newPage();
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-2").click();
+    const animationCount = await page.locator("#element-1").evaluate((el) => el.getAnimations().length);
+    assert.equal(animationCount, 0); // reduced motion -- no animation was started at all
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await reducedBrowser.close(); }
+});
+
 test("When the <field> changes fires on a real dropdown selection or a committed text edit, in a real browser", async () => {
   const compiled = compilePageSource(`Add a dropdown called favorite color
 Add an option called red inside favorite color

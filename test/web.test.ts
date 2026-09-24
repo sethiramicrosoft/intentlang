@@ -517,6 +517,46 @@ Set the text of go to Go
 When the go is clicked, go to label`, /Only a section can be navigated to, and label is a p\./);
 });
 
+test("a click can animate any element across the screen with \"move ... from ... to ... over ... seconds\"", () => {
+  const moved = page(`Add a paragraph called banner
+Set the text of banner to Sale!
+Add a button called go
+Set the text of go to Go
+When the go is clicked, move banner from left to right over 3 seconds`);
+  const script = /<script>(.+?)<\/script>/.exec(moved.html)![1]!;
+  assert.match(script,
+    /if\(window\.matchMedia&&window\.matchMedia\("\(prefers-reduced-motion: reduce\)"\)\.matches\)\{return;\}e\.animate\(\[\{transform:"translateX\(-100vw\)"\},\{transform:"translateX\(100vw\)"\}\],\{duration:3000,fill:"forwards"\}\);/);
+  assert.match(script, /var e=document\.getElementById\("element-1"\);/);
+
+  // Works on any element, not just a scene's single text -- the target-kind universality
+  // matches hide/show/toggle the visibility of, not the value/checked-state restrictions.
+  const button = page(`Add a button called cta
+Set the text of cta to Buy now
+Add a button called go
+Set the text of go to Go
+When the go is clicked, move cta from top to bottom over 1 second`);
+  const buttonScript = /<script>(.+?)<\/script>/.exec(button.html)![1]!;
+  assert.match(buttonScript, /translateY\(-100vh\).+translateY\(100vh\).+duration:1000/);
+
+  // A non-opposite edge pair (e.g. left to top) is rejected, matching the scene grammar's
+  // own "movement must run between opposite edges" rule.
+  invalid(`Add a paragraph called banner
+Add a button called go
+Set the text of go to Go
+When the go is clicked, move banner from left to top over 3 seconds`, /A move must run between opposite edges, and left to top is not one of them/);
+
+  // Duration is clamped to the same 0.1-60 second range the scene grammar already enforces.
+  invalid(`Add a paragraph called banner
+Add a button called go
+Set the text of go to Go
+When the go is clicked, move banner from left to right over 0 seconds`, /Movement duration must be between 0\.1 and 60 seconds/);
+
+  invalid(`Add a paragraph called banner
+Add a button called go
+Set the text of go to Go
+When the go is clicked, move banner from left to right over 61 seconds`, /Movement duration must be between 0\.1 and 60 seconds/);
+});
+
 test("When the <field> changes reacts to a live edit or selection, not a click", () => {
   const dropdown = page(`Add a dropdown called favorite color
 Add an option called red inside favorite color

@@ -399,6 +399,21 @@ export function compilePageSource(source: string): PageCompileResult {
     // there's no separate "register this as a screen" step to remember, and a section declared
     // anywhere else in the file is still correctly hidden once this runs.
     const goToSection = /^go\s+to\s+(.+)$/i.exec(part);
+    // Brings the single-text scene grammar's own edge-to-edge movement primitive into the
+    // Add-based page language -- the first bridge between the two previously-separate
+    // rendering models (documented as a limitation up to now). Unlike the scene's absolute-
+    // position stage, a page element stays in ordinary document flow the whole time: it's
+    // animated with a relative transform (via the Web Animations API, not injected CSS or an
+    // inline style, so no new style-src hash is ever needed -- it's just more generated JS,
+    // the same security model every other action in this file already uses) sweeping from
+    // just off one edge of the viewport to just off the opposite edge, then holding its final
+    // position. "Center" is deliberately not offered as an edge here (matching the scene's own
+    // movement type, which also excludes it) since a moving element's natural flow position
+    // already serves as its own "center". Word-layout ("put each word on a new line") is not
+    // brought over by this change -- it requires splitting text into separate DOM nodes, a
+    // materially bigger and riskier change than animating an existing element in place, and
+    // remains a documented limitation.
+    const moveElement = /^move\s+(.+?)\s+from\s+(left|right|top|bottom)\s+to\s+(left|right|top|bottom)\s+over\s+(-?\d+(?:\.\d+)?)\s+seconds?$/i.exec(part);
     if (ifValue) {
       const source = resolve(ifValue[1]!, index);
       if (!source) return undefined;
@@ -984,6 +999,36 @@ export function compilePageSource(source: string): PageCompileResult {
       }
       return `(function(){var t=document.getElementById(${JSON.stringify(target.id)});var sibs=t.parentElement?t.parentElement.children:[];` +
         `for(var i=0;i<sibs.length;i++){if(sibs[i].tagName==="SECTION")sibs[i].hidden=sibs[i]!==t;}})();`;
+    } else if (moveElement) {
+      const target = resolve(moveElement[1]!, index);
+      if (!target) return undefined;
+      const from = moveElement[2]!.toLowerCase();
+      const to = moveElement[3]!.toLowerCase();
+      const opposite: Record<string, string> = { left: "right", right: "left", top: "bottom", bottom: "top" };
+      if (opposite[from] !== to) {
+        report(index, `A move must run between opposite edges, and ${from} to ${to} is not one of them.`,
+          "Use left to right, right to left, top to bottom, or bottom to top.");
+        return undefined;
+      }
+      const seconds = Number(moveElement[4]);
+      if (seconds < 0.1 || seconds > 60) {
+        report(index, "Movement duration must be between 0.1 and 60 seconds.",
+          `Try: move ${target.name} from ${from} to ${to} over 3 seconds.`);
+        return undefined;
+      }
+      // Each edge is a transform relative to the element's own natural document-flow position
+      // (not an absolute page position, unlike the single-text scene), so the element sweeps
+      // just off one side of the viewport to just off the opposite side without ever leaving
+      // normal document flow. Uses the Web Animations API, not injected CSS or an inline
+      // style, so no new CSP style-src hash is ever needed here -- purely more generated JS,
+      // the same security model every other action in this file already relies on.
+      const offset: Record<string, string> = {
+        left: "translateX(-100vw)", right: "translateX(100vw)", top: "translateY(-100vh)", bottom: "translateY(100vh)"
+      };
+      return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
+        `if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches){return;}` +
+        `e.animate([{transform:${JSON.stringify(offset[from]!)}},{transform:${JSON.stringify(offset[to]!)}}],` +
+        `{duration:${Math.round(seconds * 1000)},fill:"forwards"});})();`;
     }
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
@@ -1005,6 +1050,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"hide ...", "show ...", "toggle the visibility of ...", "focus ...", ` +
       `"disable ...", "enable ..." for a button, input, text box, dropdown, or field group, ` +
       `"go to ..." to switch to a section, hiding its sibling sections, ` +
+      `"move ... from left/right/top/bottom to the opposite edge over ... seconds" to animate any element across the screen, ` +
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to/not equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is between ... and ... (two numbers, or the value of ..., or a mix), ... otherwise ...", ` +
