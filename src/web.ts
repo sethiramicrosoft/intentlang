@@ -215,9 +215,13 @@ export function compilePageSource(source: string): PageCompileResult {
     // A live text's own length, for validation like a minimum/maximum password or username
     // length -- distinct from the value comparisons above, which compare the text/number
     // itself, not how long it is. Checked before ifText below for the same shadowing reason
-    // as ifBetween: "has more than 5 characters" must never be misread as literal text.
+    // as ifBetween: "has more than 5 characters" must never be misread as literal text. The
+    // bound can be a plain number of characters, or (naturally phrased to avoid a clunky
+    // "characters ... characters" repetition) "as many characters as the value of <input>",
+    // for comparing one field's length against another's live length -- e.g. confirming a
+    // "confirm password" field is exactly as long as "password" before even checking equality.
     const ifLength = !ifValue && !ifBetween ?
-      /^if\s+the\s+value\s+of\s+(.+?)\s+has\s+(more than|fewer than|at least|at most|exactly)\s+(\d+)\s+characters?\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
+      /^if\s+the\s+value\s+of\s+(.+?)\s+has\s+(more than|fewer than|at least|at most|exactly)\s+(?:as\s+many\s+characters\s+as\s+the\s+value\s+of\s+(.+?)|(\d+)\s+characters?)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // Only tried when the numeric form above doesn't match (e.g. "is red" rather than
     // "is greater than 5"), so a numeric comparison is never misread as a text one. "is not"
     // must come before the plain "is" in the alternation, or "is not red" would match "is"
@@ -434,15 +438,28 @@ export function compilePageSource(source: string): PageCompileResult {
         return undefined;
       }
       const operator = lengthComparisons[ifLength[2]!.toLowerCase()]!;
-      const inner = compileClickPart(ifLength[4]!.trim(), index);
+      let rightSide: string;
+      if (ifLength[3]) {
+        const other = resolve(ifLength[3]!, index);
+        if (!other) return undefined;
+        if (!hasReadableValue(other.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${other.name} is a ${englishName(other.tag)}.`,
+            `Add an input called ${other.name} instead, such as Add a text input called ${other.name}.`);
+          return undefined;
+        }
+        rightSide = `String(document.getElementById(${JSON.stringify(other.id)}).value).length`;
+      } else {
+        rightSide = JSON.stringify(Number(ifLength[4]));
+      }
+      const inner = compileClickPart(ifLength[5]!.trim(), index);
       if (inner === undefined) return undefined;
       let elseClause = "";
-      if (ifLength[5]) {
-        const elseInner = compileClickPart(ifLength[5].trim(), index);
+      if (ifLength[6]) {
+        const elseInner = compileClickPart(ifLength[6].trim(), index);
         if (elseInner === undefined) return undefined;
         elseClause = `else{${elseInner}}`;
       }
-      return `if(String(document.getElementById(${JSON.stringify(source.id)}).value).length${operator}${JSON.stringify(Number(ifLength[3]))}){${inner}}${elseClause}`;
+      return `if(String(document.getElementById(${JSON.stringify(source.id)}).value).length${operator}${rightSide}){${inner}}${elseClause}`;
     } else if (ifText) {
       const source = resolve(ifText[1]!, index);
       if (!source) return undefined;
@@ -756,7 +773,8 @@ export function compilePageSource(source: string): PageCompileResult {
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is between ... and ... (two numbers, or the value of ..., or a mix), ... otherwise ...", ` +
-      `"if the value of ... has more than/fewer than/at least/at most/exactly ... characters, ... otherwise ...", ` +
+      `"if the value of ... has more than/fewer than/at least/at most/exactly ... characters ` +
+      `(a number, or as many characters as the value of ...), ... otherwise ...", ` +
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
       `"if the selected label of ... is/is not ... (a dropdown), ... otherwise ...", ` +
       `"if ... is/is not checked, ... otherwise ...", ` +

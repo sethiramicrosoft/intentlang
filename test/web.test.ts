@@ -839,6 +839,41 @@ Set the text of go to Go
 When the go is clicked, if the value of label has more than 5 characters, set the text of label to long`, /Only an input, a text box, or a dropdown has a value to read/);
 });
 
+test("a click's if-conditional can compare a live text's length against another live input's length with \"as many characters as the value of ...\"", () => {
+  const exact = page(`Add a text input called password
+Add a text input called confirm password
+Add a paragraph called hint
+Set the text of hint to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of confirm password has exactly as many characters as the value of password, set the text of hint to same length otherwise set the text of hint to different length`);
+  const exactScript = /<script>(.+?)<\/script>/.exec(exact.html)![1]!;
+  assert.match(exactScript, /if\(String\(document\.getElementById\("element-2"\)\.value\)\.length===String\(document\.getElementById\("element-1"\)\.value\)\.length\)\{document\.getElementById\("element-3"\)\.textContent="same length";\}else\{document\.getElementById\("element-3"\)\.textContent="different length";\}/);
+
+  const atLeast = page(`Add a text input called password
+Add a text input called minimum
+Add a paragraph called hint
+Set the text of hint to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of password has at least as many characters as the value of minimum, set the text of hint to ok`);
+  const atLeastScript = /<script>(.+?)<\/script>/.exec(atLeast.html)![1]!;
+  assert.match(atLeastScript, />=String\(document\.getElementById\("element-2"\)\.value\)\.length/);
+
+  // Both the source and the comparison target must still be an input/text box/dropdown.
+  invalid(`Add a paragraph called password
+Add a text input called minimum
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of password has at least as many characters as the value of minimum, set the text of password to ok`, /Only an input, a text box, or a dropdown has a value to read/);
+
+  invalid(`Add a text input called password
+Add a paragraph called minimum
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of password has at least as many characters as the value of minimum, set the text of password to ok`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("a click's if-conditional can have an otherwise (else) branch, which itself can be any supported instruction", () => {
   const basic = page(`Add a text input called score field
 Add a paragraph called result

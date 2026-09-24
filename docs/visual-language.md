@@ -213,7 +213,13 @@ instead of its value: `if the value of <input name> has more than/fewer
 than/at least/at most/exactly <number> characters, <one instruction>`
 (also optionally followed by `otherwise <one instruction>`) — handy for a
 minimum password length or a maximum username length, without needing a
-separate word-count helper. The same `if` can
+separate word-count helper. The character count can also be another live
+input's own length instead of a fixed number, with `has more than/fewer
+than/at least/at most/exactly as many characters as the value of <other
+input name>, <one instruction>` — for comparing two fields' lengths
+directly, such as confirming a "confirm password" field is exactly as long
+as "password" before even checking whether their text actually matches.
+The same `if` can
 also compare live text instead of numbers, with `is`, `is not`, `contains`,
 `starts with`, or `ends with` (`if the value of message contains urgent,
 ...`) — the numeric comparisons (including `is between ... and ...` and
@@ -470,6 +476,16 @@ Set the text of hint to none
 Add a button called check
 Set the text of check to Check
 When the check is clicked, if the value of password has fewer than 8 characters, set the text of hint to too short otherwise set the text of hint to looks good
+```
+
+```text
+Add a text input called password
+Add a text input called confirm password
+Add a paragraph called hint
+Set the text of hint to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of confirm password has exactly as many characters as the value of password, set the text of hint to same length otherwise set the text of hint to different length
 ```
 
 ```text

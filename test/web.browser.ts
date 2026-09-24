@@ -578,6 +578,35 @@ When the check is clicked, if the value of password has fewer than 8 characters,
   } finally { await browser.close(); }
 });
 
+test("a click's if-conditional can compare a live text's length against another live input's length, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called password
+Add a text input called confirm password
+Add a paragraph called hint
+Set the text of hint to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of confirm password has exactly as many characters as the value of password, set the text of hint to same length otherwise set the text of hint to different length`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("hunter2");
+    await page.locator("#element-2").fill("hunter2");
+    await page.locator("#element-4").click();
+    assert.equal(await page.locator("#element-3").textContent(), "same length");
+    // Change only the length of the first field, proving the comparison is read live at
+    // click time from both fields rather than any length baked in at compile time.
+    await page.locator("#element-1").fill("hunter22");
+    await page.locator("#element-4").click();
+    assert.equal(await page.locator("#element-3").textContent(), "different length");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click's if-conditional otherwise (else) branch fires in a real browser exactly when the condition is false", async () => {
   const compiled = compilePageSource(`Add a text input called score field
 Add a paragraph called result
