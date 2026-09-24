@@ -341,7 +341,12 @@ ticked, or a field disabled until an earlier step is complete. The target
 must be a button, an input, a text box, a dropdown, an option group, or a
 field group specifically — the only elements whose `disabled` property the
 browser actually honors; using it on a paragraph or any other element is a
-clear error.
+clear error. The missing condition-side counterpart, `if <name> is
+disabled, ...` / `is not disabled, ...`, reads that same live `disabled`
+property back inside a click's own `if`, for acting only once some other
+control has actually become disabled or re-enabled — for example, a click
+that only fires once a prerequisite field it previously disabled is
+enabled again.
 
 **`When the page loads, <one or more instructions>.`** runs the exact same
 closed instruction set immediately, as soon as the page's markup exists,
@@ -748,6 +753,14 @@ Add a button called submit
 Set the text of submit to Submit
 When the page loads, disable submit
 When the agree changes, if agree is checked, enable submit otherwise disable submit
+```
+
+```text
+Add a text input called new password
+Add a button called check strength
+Add a paragraph called status
+Set the text of status to none
+When the check strength is clicked, if new password is disabled, set the text of status to locked otherwise set the text of status to open
 ```
 
 ```text

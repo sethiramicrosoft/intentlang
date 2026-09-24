@@ -1490,6 +1490,42 @@ Set the text of sync to Sync
 When the sync is clicked, check target the same as source`, /Only a checkbox or a radio button has a checked state, and target is a input/);
 });
 
+test("a click's if-conditional can read whether an element is disabled with 'is disabled'/'is not disabled'", () => {
+  const disabled = page(`Add a button called go
+Add a text input called locked
+Add a paragraph called result
+Set the text of result to none
+When the go is clicked, if locked is disabled, set the text of result to yes otherwise set the text of result to no`);
+  const disabledScript = /<script>(.+?)<\/script>/.exec(disabled.html)![1]!;
+  assert.match(disabledScript, /if\(document\.getElementById\("element-2"\)\.disabled\)\{document\.getElementById\("element-3"\)\.textContent="yes";\}else\{document\.getElementById\("element-3"\)\.textContent="no";\}/);
+
+  // "is not disabled" negates the check.
+  const enabled = page(`Add a button called go
+Add a text input called locked
+Add a paragraph called result
+Set the text of result to none
+When the go is clicked, if locked is not disabled, set the text of result to yes`);
+  const enabledScript = /<script>(.+?)<\/script>/.exec(enabled.html)![1]!;
+  assert.match(enabledScript, /if\(!document\.getElementById\("element-2"\)\.disabled\)\{document\.getElementById\("element-3"\)\.textContent="yes";\}/);
+
+  // Works on every kind of control "disable"/"enable" itself already supports: buttons,
+  // text boxes, and dropdowns (a field group is exercised separately below).
+  const dropdown = page(`Add a dropdown called pick
+Add an option called one inside pick
+Add a button called go
+Add a paragraph called result
+Set the text of result to none
+When the go is clicked, if pick is disabled, set the text of result to yes otherwise set the text of result to no`);
+  const dropdownScript = /<script>(.+?)<\/script>/.exec(dropdown.html)![1]!;
+  assert.match(dropdownScript, /if\(document\.getElementById\("element-1"\)\.disabled\)/);
+
+  // A non-form element (like a paragraph) has no ".disabled" property to read.
+  invalid(`Add a paragraph called note
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if note is disabled, set the text of go to yes`, /Only a button, an input, a text box, a dropdown, or a field group can be disabled, and note is a p\./);
+});
+
 test("radio buttons under the same parent are auto-grouped by a shared HTML name, for real mutual exclusivity", () => {
   const grouped = page(`Add a radio button called option a
 Add a radio button called option b

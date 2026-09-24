@@ -253,6 +253,14 @@ export function compilePageSource(source: string): PageCompileResult {
     const ifCheckedMatch = /^if\s+(?!the\s+value\s+of\s)(.+?)\s+is\s+(not\s+)?checked\s+the\s+same\s+as\s+(.+?)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
     const ifChecked = !ifCheckedMatch && !ifValue && !ifBetween && !ifLength && !ifText && !ifLabel ?
       /^if\s+(?!the\s+value\s+of\s)(.+?)\s+is\s+(checked|not checked)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
+    // The missing condition-side counterpart to "disable"/"enable": reads a form control's
+    // own live ".disabled" property, the same native browser flag those two actions already
+    // set. Useful for a click that only acts once some other control has actually become
+    // disabled/enabled first (e.g. a submit button that only fires once a prerequisite field
+    // it previously disabled is re-enabled again). No shadowing precaution is needed against
+    // ifChecked/ifValue/etc.: none of their own comparison words are "disabled"/"not disabled",
+    // so this can never be misread as (or misread) any of those forms.
+    const ifDisabled = /^if\s+(?!the\s+value\s+of\s)(.+?)\s+is\s+(disabled|not disabled)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
     // "Repeat" needs no shadowing precaution of its own -- no other pattern starts with the
     // word "repeat" -- but like "if", its own trailing instruction is compiled recursively.
     // The count can be a plain number known at compile time, or (matching how every other
@@ -609,6 +617,24 @@ export function compilePageSource(source: string): PageCompileResult {
         elseClause = `else{${elseInner}}`;
       }
       return `if(${negate}document.getElementById(${JSON.stringify(source.id)}).checked){${inner}}${elseClause}`;
+    } else if (ifDisabled) {
+      const source = resolve(ifDisabled[1]!, index);
+      if (!source) return undefined;
+      if (!hasDisabledSupport(source.tag)) {
+        report(index, `Only a button, an input, a text box, a dropdown, or a field group can be disabled, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      const negate = ifDisabled[2]!.toLowerCase() === "not disabled" ? "!" : "";
+      const inner = compileClickPart(ifDisabled[3]!.trim(), index);
+      if (inner === undefined) return undefined;
+      let elseClause = "";
+      if (ifDisabled[4]) {
+        const elseInner = compileClickPart(ifDisabled[4].trim(), index);
+        if (elseInner === undefined) return undefined;
+        elseClause = `else{${elseInner}}`;
+      }
+      return `if(${negate}document.getElementById(${JSON.stringify(source.id)}).disabled){${inner}}${elseClause}`;
     } else if (repeat) {
       if (repeat[1]) {
         const source = resolve(repeat[1]!, index);
@@ -969,6 +995,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"if the selected label of ... is/is not ... (a dropdown, comparing text or the selected label of another dropdown), ... otherwise ...", ` +
       `"if ... is/is not checked, ... otherwise ...", ` +
       `"if ... is/is not checked the same as ... (another checkbox or radio button), ... otherwise ...", ` +
+      `"if ... is/is not disabled, ... otherwise ..." for a button, input, text box, dropdown, or field group, ` +
       `or "repeat ... times, ..." (a number, or the value of ...).`);
     return undefined;
   }
