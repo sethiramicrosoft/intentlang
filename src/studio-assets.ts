@@ -1346,6 +1346,24 @@ export const STUDIO_JS = `
     'set the text of  to the selected label of '
   ];
 
+  var BLOCK_SNIPPETS = [
+    {
+      trigger: 'app',
+      label: 'application + entity + action starter',
+      insertText: 'application TaskBoard\\n\\na Task has a required title as text length between 1 and 200\\na Task has a status as text default "open"\\n\\naction close a Task\\n  require status is not "closed" otherwise "Task is already closed"\\n  set status to "closed"'
+    },
+    {
+      trigger: 'auth',
+      label: 'authenticated CRUD app starter',
+      insertText: 'application IssueTracker\\nauthentication uses User identified by email\\n\\nrole Administrator\\nrole Member\\n\\na User has a required name as text\\na User has a required unique email as text length between 1 and 320\\na Project has a required name as text\\na Ticket has a required title as text length between 1 and 200\\na Ticket has a status as text default "open"\\n\\neach Ticket belongs to a Project as project on delete cascade\\neach Ticket belongs to a User as owner on delete restrict\\n\\nallow Administrator to provision accounts\\nallow Administrator to create User\\nallow Administrator to read User\\nallow Administrator to update User\\nallow Administrator to create Project\\nallow Administrator to read Project\\nallow Administrator to update Project\\nallow Administrator to create Ticket\\nallow Administrator to read Ticket\\nallow Administrator to update Ticket\\nallow Member to read Project\\nallow Member to create Ticket with owner as self\\nallow Member to read Ticket where owner is self\\nallow Member to update Ticket where owner is self'
+    },
+    {
+      trigger: 'page',
+      label: 'interactive page starter',
+      insertText: 'Add a paragraph called status line\\nSet the text of status line to Ready\\nAdd a text input called name field\\nAdd a button called submit\\nSet the text of submit to Save\\nWhen the submit is clicked, set the text of status line to the value of name field'
+    }
+  ];
+
   var COMPLETION_ANCHORS = [
     ' the visibility of ', ' the value of ', ' the text of ', ' the min of ', ' the max of ',
     ' the style width of ', ' the accent color of ', ' the color of ', ' the background color of ',
@@ -1400,13 +1418,24 @@ export const STUDIO_JS = `
     // 1) Whole-instruction template matches, from the start of the line's own text.
     if (trimmedLeft.length >= 2) {
       var lowerTrimmed = trimmedLeft.toLowerCase();
+      for (var b = 0; b < BLOCK_SNIPPETS.length && items.length < 3; b++) {
+        var block = BLOCK_SNIPPETS[b];
+        if (block.trigger.indexOf(lowerTrimmed) === 0 || block.label.toLowerCase().indexOf(lowerTrimmed) === 0) {
+          items.push({
+            kind: 'template',
+            label: block.label,
+            insertText: block.insertText,
+            replaceFrom: lineStart + indentLen
+          });
+        }
+      }
       for (var t = 0; t < INSTRUCTION_TEMPLATES.length && items.length < 6; t++) {
         var template = INSTRUCTION_TEMPLATES[t];
         if (template.toLowerCase().indexOf(lowerTrimmed) === 0 && template.length > trimmedLeft.length) {
           items.push({
             kind: 'template',
             label: template,
-            insertText: template.slice(trimmedLeft.length),
+            insertText: template,
             replaceFrom: lineStart + indentLen
           });
         }
@@ -1435,7 +1464,7 @@ export const STUDIO_JS = `
             items.push({
               kind: 'name',
               label: name,
-              insertText: name.slice(tail.length),
+              insertText: name,
               replaceFrom: caretPos - tail.length
             });
           }
@@ -1540,8 +1569,9 @@ export const STUDIO_JS = `
     var textarea = el('editor');
     var caret = textarea.selectionEnd;
     var value = textarea.value;
-    var newValue = value.slice(0, item.replaceFrom) + item.label + value.slice(caret);
-    var newCaret = item.replaceFrom + item.label.length;
+    var insertText = item.insertText || item.label;
+    var newValue = value.slice(0, item.replaceFrom) + insertText + value.slice(caret);
+    var newCaret = item.replaceFrom + insertText.length;
     textarea.value = newValue;
     textarea.selectionStart = textarea.selectionEnd = newCaret;
     closeCompletions();

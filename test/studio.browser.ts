@@ -22,6 +22,17 @@ test("Studio editor autocompletes instruction snippets and declared names", asyn
     await editor.waitFor({ state: "visible" });
     await editor.fill("");
 
+    await page.keyboard.type("app", { delay: 5 });
+    await page.locator(".completion-popup").waitFor({ state: "visible" });
+    assert.equal(await page.locator(".completion-item").first().textContent(), "application + entity + action startersnippet");
+    await page.keyboard.press("Tab");
+    assert.equal(
+      await editor.inputValue(),
+      'application TaskBoard\n\na Task has a required title as text length between 1 and 200\na Task has a status as text default "open"\n\naction close a Task\n  require status is not "closed" otherwise "Task is already closed"\n  set status to "closed"'
+    );
+    await page.locator("#panel-problems").filter({ hasText: "No problems detected." }).waitFor();
+
+    await editor.fill("");
     await page.keyboard.type("Add a but", { delay: 5 });
     await page.locator(".completion-popup").waitFor({ state: "visible" });
     assert.deepEqual(await page.locator(".completion-item").allTextContents(), ["Add a button called snippet"]);
