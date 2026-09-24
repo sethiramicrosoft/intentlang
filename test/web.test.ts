@@ -332,6 +332,19 @@ Set the text of go to Go
 When the go is clicked, hide missing`, /There is no earlier element called missing/);
 });
 
+test("a click can move keyboard focus to any element with \"focus <name>\"", () => {
+  const result = page(`Add a text input called search field
+Add a button called open search
+Set the text of open search to Search
+When the open search is clicked, show search field and then focus search field`);
+  const scriptBody = /<script>(.+?)<\/script>/.exec(result.html)![1]!;
+  assert.match(scriptBody, /document\.getElementById\("element-1"\)\.hidden=false;document\.getElementById\("element-1"\)\.focus\(\);/);
+
+  invalid(`Add a button called go
+Set the text of go to Go
+When the go is clicked, focus missing`, /There is no earlier element called missing/);
+});
+
 test("When the <field> changes reacts to a live edit or selection, not a click", () => {
   const dropdown = page(`Add a dropdown called favorite color
 Add an option called red inside favorite color

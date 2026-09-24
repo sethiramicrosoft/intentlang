@@ -457,6 +457,26 @@ When the toggle is clicked, toggle the visibility of details`);
   } finally { await browser.close(); }
 });
 
+test("a click can move real keyboard focus to a just-revealed element in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called search field
+Add a button called open search
+Set the text of open search to Search
+When the open search is clicked, show search field and then focus search field`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-2").click();
+    const focusedId = await page.evaluate(() => document.activeElement?.id);
+    assert.equal(focusedId, "element-1");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("When the <field> changes fires on a real dropdown selection or a committed text edit, in a real browser", async () => {
   const compiled = compilePageSource(`Add a dropdown called favorite color
 Add an option called red inside favorite color

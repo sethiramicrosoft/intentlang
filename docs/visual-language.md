@@ -213,7 +213,10 @@ CSS-only trick that would still leave a "hidden" element focusable and
 readable by assistive technology. Unlike the value/checked-state
 instructions above, there's no type restriction here — any element on the
 page, from a paragraph to the whole page body, can be hidden, shown, or
-toggled.
+toggled. `focus <name>` moves keyboard focus to any element directly — most
+useful right after a `show`, so a keyboard or screen-reader user lands
+inside newly-revealed content (a search box, a details panel) instead of
+being left behind on the button that triggered it.
 
 **`When the page loads, <one or more instructions>.`** runs the exact same
 closed instruction set immediately, as soon as the page's markup exists,
@@ -375,6 +378,13 @@ Set the text of blue to Blue
 Add a paragraph called result
 Set the text of result to Pick a color
 When the favorite color changes, set the text of result to the value of favorite color
+```
+
+```text
+Add a text input called search field
+Add a button called open search
+Set the text of open search to Search
+When the open search is clicked, show search field and then focus search field
 ```
 
 ```text
