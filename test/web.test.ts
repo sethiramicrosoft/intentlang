@@ -287,6 +287,32 @@ Add a button called submit
 When the submit is clicked, set the text of greeting to the value of label`, /Only an input, a text box, or a dropdown has a value to read/);
 });
 
+test("a click can add or subtract a live input's value into the text of a target, and reject a non-readable source", () => {
+  const addResult = page(`Add a text input called amount field
+Add a paragraph called total
+Set the text of total to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, add the value of amount field to the text of total`);
+  const addScript = /<script>(.+?)<\/script>/.exec(addResult.html)![1]!;
+  assert.match(addScript, /Number\(e\.textContent\)\|\|0\)\+\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)\)/);
+
+  const subtractResult = page(`Add a text input called amount field
+Add a paragraph called total
+Set the text of total to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, subtract the value of amount field from the text of total`);
+  const subtractScript = /<script>(.+?)<\/script>/.exec(subtractResult.html)![1]!;
+  assert.match(subtractScript, /Number\(e\.textContent\)\|\|0\)\+\(-\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)\)/);
+
+  invalid(`Add a paragraph called source
+Add a paragraph called total
+Add a button called go
+Set the text of go to Go
+When the go is clicked, add the value of source to the text of total`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
   const result = page(`Add an image called photo
 Set the source of photo to https://example.com/MyPhoto.png

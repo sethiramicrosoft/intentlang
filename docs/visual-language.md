@@ -165,18 +165,23 @@ still a fixed, closed set (chained with `and then` the same way everywhere
 else in the language is): `set the text of <name> to <value>`,
 `set the text of <name> to the value of <input name>`,
 `set the text of <name> to a random number from <min> to <max>`,
-`add <number> to the text of <name>`, and `subtract <number> from the text of
-<name>`. The compiler turns every `When ... is clicked` sentence in a page into
-ONE small, entirely compiler-generated script (never containing any
-user-authored markup, attribute, or script tag — only compiler-fixed code with
-your text safely embedded as a JSON string), and pins that exact script into
-the page's Content-Security-Policy by its SHA-256 hash. A page that doesn't use
-`When ... is clicked` stays exactly as script-free as before, byte for byte.
-The target of "is clicked" must be a button (a native, keyboard-operable
-control), so this never creates a click-only trap for people who use a
-keyboard or assistive technology instead of a mouse. The source of
-"the value of ..." must be an input, a text box, or a dropdown (anything with
-a live value to read) — using anything else there is a clear error. A random
+`add <number> to the text of <name>`, `subtract <number> from the text of
+<name>`, `add the value of <input name> to the text of <name>`, and
+`subtract the value of <input name> from the text of <name>` (the live-input
+siblings of the plain-number add/subtract, for totaling up whatever a visitor
+actually typed rather than a fixed amount). The compiler turns every `When
+... is clicked` sentence in a page into ONE small, entirely compiler-generated
+script (never containing any user-authored markup, attribute, or script tag —
+only compiler-fixed code with your text safely embedded as a JSON string), and
+pins that exact script into the page's Content-Security-Policy by its SHA-256
+hash. A page that doesn't use `When ... is clicked` stays exactly as
+script-free as before, byte for byte. The target of "is clicked" must be a
+button (a native, keyboard-operable control), so this never creates a
+click-only trap for people who use a keyboard or assistive technology instead
+of a mouse. The source of "the value of ..." must be an input, a text box, or
+a dropdown (anything with a live value to read) — using anything else there
+is a clear error, whether it's the direct source of a `set ... to the value
+of ...` or the source of an `add/subtract the value of ...` amount. A random
 range's low end can't be greater than its high end (`from 6 to 1` is a clear
 error, not a silently reversed or empty range) — both ends are whole numbers,
 and the roll is inclusive of both.
@@ -204,11 +209,23 @@ Set the text of dice to Roll
 When the dice is clicked, set the text of roll to a random number from 1 to 6
 ```
 
+```text
+Add a text input called amount field
+Add a paragraph called total
+Set the text of total to 0
+Add a button called add
+Set the text of add to Add
+When the add is clicked, add the value of amount field to the text of total
+```
+
 The second example is real user input, not compile-time data: whatever a
 visitor actually types into the box is read live, the moment the button is
 clicked. The third rolls a genuine new random number in the browser on every
 click, unlike everything else on this page, which is computed once at compile
-time.
+time. The fourth combines both ideas — it reads whatever number a visitor
+actually typed into the input, live, and adds it into the running total shown
+elsewhere on the page, the same way `add 1 to the text of ...` would with a
+fixed amount, except the amount itself is real user input.
 
 User-authored `<script>` elements, `onclick`-style inline event-handler
 attributes, arbitrary stylesheets, embedded documents, templates, shadow-DOM,

@@ -192,6 +192,34 @@ When the dice is clicked, set the text of roll to a random number from 1 to 6`);
   } finally { await browser.close(); }
 });
 
+test("a click can add or subtract a live input's value into a running total in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called amount field
+Add a paragraph called total
+Set the text of total to 10
+Add a button called add
+Set the text of add to Add
+Add a button called subtract
+Set the text of subtract to Subtract
+When the add is clicked, add the value of amount field to the text of total
+When the subtract is clicked, subtract the value of amount field from the text of total`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("5");
+    await page.locator("#element-3").click(); // add button
+    assert.equal(await page.locator("#element-2").textContent(), "15");
+    await page.locator("#element-1").fill("3");
+    await page.locator("#element-4").click(); // subtract button
+    assert.equal(await page.locator("#element-2").textContent(), "12");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("all advertised element types survive real browser parsing with their requested parentage", async () => {
   const source = webElements.filter((element) => element.status === "available")
     .map((element) => elementExample(element).replace(/\b(called|inside) sample /g, `$1 sample ${element.name} `)).join("\n");

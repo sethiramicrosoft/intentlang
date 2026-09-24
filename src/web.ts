@@ -165,6 +165,11 @@ export function compilePageSource(source: string): PageCompileResult {
       // half doesn't swallow "a random number from A to B" as literal display text instead.
       const setRandom = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+a\s+random\s+number\s+from\s+(-?\d+)\s+to\s+(-?\d+)$/i.exec(part);
       const setText = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part);
+      // Checked before the plain "add/subtract <number>" forms below, for the same reason
+      // setFromValue is checked before setText: otherwise "the value of X" would be read as a
+      // (non-numeric) literal amount instead of a live input value.
+      const addFromValue = /^add\s+the\s+value\s+of\s+(.+?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+      const subtractFromValue = /^subtract\s+the\s+value\s+of\s+(.+?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
       const addText = /^add\s+(-?\d+(?:\.\d+)?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
       const subtractText = /^subtract\s+(-?\d+(?:\.\d+)?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
       if (setFromValue) {
@@ -177,6 +182,19 @@ export function compilePageSource(source: string): PageCompileResult {
           return undefined;
         }
         statements.push(`document.getElementById(${JSON.stringify(target.id)}).textContent=document.getElementById(${JSON.stringify(source.id)}).value;`);
+      } else if (addFromValue || subtractFromValue) {
+        const match = addFromValue ?? subtractFromValue!;
+        const source = resolve(match[1]!, index);
+        const target = source ? resolve(match[2]!, index) : undefined;
+        if (!source || !target) return undefined;
+        if (!hasReadableValue(source.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+            `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+          return undefined;
+        }
+        const sign = addFromValue ? "" : "-";
+        statements.push(`(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
+          `e.textContent=String((Number(e.textContent)||0)+(${sign}(Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)));})();`);
       } else if (setRandom) {
         const target = resolve(setRandom[1]!, index);
         if (!target) return undefined;
@@ -203,7 +221,8 @@ export function compilePageSource(source: string): PageCompileResult {
         report(index, `"${part}" is not one of the supported click instructions.`,
           `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
           `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
-          `or "subtract ... from the text of ...".`);
+          `"subtract ... from the text of ...", "add the value of ... to the text of ...", ` +
+          `or "subtract the value of ... from the text of ...".`);
         return undefined;
       }
     }
