@@ -263,6 +263,15 @@ export function compilePageSource(source: string): PageCompileResult {
     // live-input multiplier yet), same clamp-to-a-real-number semantics via Number(...)||0.
     const multiplyText = /^multiply\s+the\s+text\s+of\s+(.+?)\s+by\s+(-?\d+(?:\.\d+)?)$/i.exec(part);
     const divideText = /^divide\s+the\s+text\s+of\s+(.+?)\s+by\s+(-?\d+(?:\.\d+)?)$/i.exec(part);
+    // The live-input counterparts of multiplyText/divideText, matching how addFromValue/
+    // subtractFromValue already let a live input's value (rather than only a fixed number)
+    // drive the running total. Checked before multiplyText/divideText for the same shadowing
+    // reason as every other "the value of ..." form: otherwise "the value of Y" would be read
+    // as a (non-numeric, so effectively zero) literal factor instead of a live input's value.
+    // Unlike divideText, a zero divisor here can only be caught at runtime (the input's value
+    // isn't known until the click actually happens), so the generated code itself guards it.
+    const multiplyFromValue = /^multiply\s+the\s+text\s+of\s+(.+?)\s+by\s+the\s+value\s+of\s+(.+)$/i.exec(part);
+    const divideFromValue = !multiplyFromValue ? /^divide\s+the\s+text\s+of\s+(.+?)\s+by\s+the\s+value\s+of\s+(.+)$/i.exec(part) : null;
     // Writes into a live input/textarea/select's own ".value" (as opposed to "set the text
     // of ...", which writes an element's displayed textContent) -- for clearing or presetting
     // a form field from a click, e.g. resetting an input after its value has been used.
@@ -481,6 +490,25 @@ export function compilePageSource(source: string): PageCompileResult {
       const sign = addFromValue ? "" : "-";
       return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
         `e.textContent=String((Number(e.textContent)||0)+(${sign}(Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)));})();`;
+    } else if (multiplyFromValue || divideFromValue) {
+      const match = multiplyFromValue ?? divideFromValue!;
+      const target = resolve(match[1]!, index);
+      const source = target ? resolve(match[2]!, index) : undefined;
+      if (!target || !source) return undefined;
+      if (!hasReadableValue(source.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      const operator = multiplyFromValue ? "*" : "/";
+      const zeroGuard = divideFromValue ? "if(f===0)return;" : "";
+      // Unlike the fixed-number divideText, a zero divisor can't be caught at compile time
+      // here -- the input's value isn't known until the click happens -- so the generated
+      // code itself guards against it at runtime, leaving the running total unchanged rather
+      // than producing NaN/Infinity.
+      return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
+        `var f=Number(document.getElementById(${JSON.stringify(source.id)}).value)||0;${zeroGuard}` +
+        `e.textContent=String((Number(e.textContent)||0)${operator}f);})();`;
     } else if (setRandom) {
       const target = resolve(setRandom[1]!, index);
       if (!target) return undefined;
@@ -591,7 +619,8 @@ export function compilePageSource(source: string): PageCompileResult {
       `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
       `"subtract ... from the text of ...", "multiply the text of ... by ...", ` +
       `"divide the text of ... by ...", "add the value of ... to the text of ...", ` +
-      `"subtract the value of ... from the text of ...", "set the value of ... to ...", ` +
+      `"subtract the value of ... from the text of ...", "multiply the text of ... by the value of ...", ` +
+      `"divide the text of ... by the value of ...", "set the value of ... to ...", ` +
       `"set the value of ... to the value of ...", "clear the value of ...", ` +
       `"check ..."/"uncheck ..." for a checkbox or radio button, ` +
       `"toggle whether ... is checked" for a checkbox or radio button, ` +

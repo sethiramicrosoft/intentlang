@@ -178,10 +178,16 @@ else in the language is): `set the text of <name> to <value>`,
 <name>`, `multiply the text of <name> by <number>`, `divide the text of
 <name> by <number>` (dividing by exactly 0 is a clear compile-time error,
 not an undefined/NaN result), `add the value of <input name> to the text of
-<name>`, and
+<name>`,
 `subtract the value of <input name> from the text of <name>` (the live-input
 siblings of the plain-number add/subtract, for totaling up whatever a visitor
-actually typed rather than a fixed amount), and `if the value of <input
+actually typed rather than a fixed amount), `multiply the text of <name> by
+the value of <input name>`, and `divide the text of <name> by the value of
+<input name>` (the same live-input siblings for multiply/divide — since a
+live input's value isn't known until the click actually happens, a zero
+divisor can't be caught at compile time here, so the generated code itself
+guards it at runtime, leaving the running total unchanged rather than
+producing NaN/Infinity), and `if the value of <input
 name> is greater than/less than/at least/at most/equal to <number>, <one
 instruction>` optionally followed by `otherwise <one instruction>` (a real
 runtime conditional, with an optional else branch, so a click can behave
@@ -381,6 +387,18 @@ Add a button called halve
 Set the text of halve to Halve
 When the double is clicked, multiply the text of total by 2
 When the halve is clicked, divide the text of total by 2
+```
+
+```text
+Add a text input called factor
+Add a paragraph called total
+Set the text of total to 5
+Add a button called scale
+Set the text of scale to Scale
+Add a button called shrink
+Set the text of shrink to Shrink
+When the scale is clicked, multiply the text of total by the value of factor
+When the shrink is clicked, divide the text of total by the value of factor
 ```
 
 ```text

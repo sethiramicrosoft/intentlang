@@ -314,6 +314,37 @@ Set the text of go to Go
 When the go is clicked, divide the text of total by 0`, /would produce an undefined result/);
 });
 
+test("a click can multiply or divide the text of a target by a live input's value, matching add/subtract the value of", () => {
+  const multiplied = page(`Add a text input called factor
+Add a paragraph called total
+Set the text of total to 5
+Add a button called go
+Set the text of go to Go
+When the go is clicked, multiply the text of total by the value of factor`);
+  const multipliedScript = /<script>(.+?)<\/script>/.exec(multiplied.html)![1]!;
+  assert.match(multipliedScript, /var f=Number\(document\.getElementById\("element-1"\)\.value\)\|\|0;e\.textContent=String\(\(Number\(e\.textContent\)\|\|0\)\*f\);/);
+
+  // Dividing by a live input's value can't be checked at compile time (its value isn't known
+  // until the click happens), so the generated code itself guards a zero divisor at runtime,
+  // leaving the running total unchanged instead of producing NaN/Infinity.
+  const divided = page(`Add a text input called factor
+Add a paragraph called total
+Set the text of total to 10
+Add a button called go
+Set the text of go to Go
+When the go is clicked, divide the text of total by the value of factor`);
+  const dividedScript = /<script>(.+?)<\/script>/.exec(divided.html)![1]!;
+  assert.match(dividedScript, /if\(f===0\)return;e\.textContent=String\(\(Number\(e\.textContent\)\|\|0\)\/f\);/);
+
+  invalid(`Add a button called factor
+Set the text of factor to Go
+Add a paragraph called total
+Set the text of total to 5
+Add a button called go
+Set the text of go to Go
+When the go is clicked, multiply the text of total by the value of factor`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("a click can hide, show, or toggle the visibility of any element", () => {
   const hidden = page(`Add a paragraph called details
 Set the text of details to Secret info

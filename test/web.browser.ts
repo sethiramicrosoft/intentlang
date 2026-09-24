@@ -320,6 +320,38 @@ When the halve is clicked, divide the text of total by 2`);
   } finally { await browser.close(); }
 });
 
+test("a click can multiply or divide a running total by a live input's value in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called factor
+Add a paragraph called total
+Set the text of total to 5
+Add a button called go
+Set the text of go to Go
+Add a button called shrink
+Set the text of shrink to Shrink
+When the go is clicked, multiply the text of total by the value of factor
+When the shrink is clicked, divide the text of total by the value of factor`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("3");
+    await page.locator("#element-3").click(); // multiply: 5 -> 15
+    assert.equal(await page.locator("#element-2").textContent(), "15");
+    await page.locator("#element-4").click(); // divide by the same live value: 15 -> 5
+    assert.equal(await page.locator("#element-2").textContent(), "5");
+    // A live divisor of 0 is guarded at runtime -- the total is left unchanged rather than
+    // becoming NaN/Infinity, exactly like the fixed-number "divide ... by 0" compile-time error.
+    await page.locator("#element-1").fill("0");
+    await page.locator("#element-4").click();
+    assert.equal(await page.locator("#element-2").textContent(), "5");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can run a real runtime if-conditional over a live input's value in a real browser", async () => {
   const compiled = compilePageSource(`Add a text input called score field
 Add a paragraph called result
