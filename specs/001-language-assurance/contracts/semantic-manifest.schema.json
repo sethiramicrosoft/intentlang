@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentlang.dev/schemas/semantic-manifest.schema.json",
+  "title": "IntentLang Semantic Manifest",
+  "type": "object",
+  "required": [
+    "languageVersion",
+    "irVersion",
+    "compilerVersion",
+    "sourceFingerprint",
+    "semanticFingerprint",
+    "generatorVersions"
+  ],
+  "properties": {
+    "languageVersion": { "type": "string" },
+    "irVersion": { "type": "string" },
+    "compilerVersion": { "type": "string" },
+    "sourceFingerprint": { "type": "string" },
+    "semanticFingerprint": { "type": "string" },
+    "dependencyFingerprint": { "type": "string" },
+    "generatorVersions": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  },
+  "additionalProperties": true
+}

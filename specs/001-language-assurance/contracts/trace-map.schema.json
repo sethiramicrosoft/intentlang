@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentlang.dev/schemas/trace-map.schema.json",
+  "title": "IntentLang Trace Map",
+  "type": "object",
+  "required": ["sourceFingerprint", "links"],
+  "properties": {
+    "sourceFingerprint": { "type": "string" },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["source", "ruleIds", "irNodeId", "artifacts"],
+        "properties": {
+          "source": {
+            "type": "object",
+            "required": ["file", "startLine", "endLine"],
+            "properties": {
+              "file": { "type": "string" },
+              "startLine": { "type": "integer", "minimum": 1 },
+              "endLine": { "type": "integer", "minimum": 1 }
+            }
+          },
+          "ruleIds": { "type": "array", "items": { "type": "string" } },
+          "irNodeId": { "type": "string" },
+          "artifacts": { "type": "array", "items": { "type": "object" } },
+          "tests": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

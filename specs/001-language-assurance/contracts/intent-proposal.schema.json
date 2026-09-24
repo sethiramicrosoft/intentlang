@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentlang.dev/schemas/intent-proposal.schema.json",
+  "title": "IntentLang Intent Proposal",
+  "type": "object",
+  "required": [
+    "input",
+    "questions",
+    "canonicalSource",
+    "explanations",
+    "validation",
+    "reviewState"
+  ],
+  "properties": {
+    "input": { "type": "string" },
+    "questions": { "type": "array", "items": { "type": "object" } },
+    "canonicalSource": { "type": "string" },
+    "explanations": {
+      "type": "object",
+      "required": ["data", "workflow", "security", "sideEffects"],
+      "properties": {
+        "data": { "type": "array", "items": { "type": "string" } },
+        "workflow": { "type": "array", "items": { "type": "string" } },
+        "security": { "type": "array", "items": { "type": "string" } },
+        "sideEffects": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "required": ["ok", "diagnostics"],
+      "properties": {
+        "ok": { "type": "boolean" },
+        "diagnostics": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    "reviewState": {
+      "type": "string",
+      "enum": ["draft", "needs-clarification", "ready-for-review", "confirmed", "rejected"]
+    }
+  }
+}

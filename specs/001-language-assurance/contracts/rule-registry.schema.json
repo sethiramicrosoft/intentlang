@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://intentlang.dev/schemas/rule-registry.schema.json",
+  "title": "IntentLang Normative Rule Registry",
+  "type": "object",
+  "required": ["languageVersion", "rules"],
+  "properties": {
+    "languageVersion": { "type": "string" },
+    "rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "status",
+          "title",
+          "canonicalForm",
+          "compatibilityClass",
+          "evidence"
+        ],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[A-Z]+(?:-[A-Z]+)*-[0-9]{3}$" },
+          "status": {
+            "type": "string",
+            "enum": ["experimental", "stable", "deprecated", "removed"]
+          },
+          "title": { "type": "string", "minLength": 1 },
+          "canonicalForm": { "type": "string", "minLength": 1 },
+          "compatibilityClass": {
+            "type": "string",
+            "enum": ["patch-stable", "minor-additive", "major-breaking"]
+          },
+          "evidence": {
+            "type": "object",
+            "required": ["positive", "negative"],
+            "properties": {
+              "positive": { "type": "array", "items": { "type": "string" } },
+              "negative": { "type": "array", "items": { "type": "string" } },
+              "canonical": { "type": "array", "items": { "type": "string" } },
+              "runtime": { "type": "array", "items": { "type": "string" } }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}
