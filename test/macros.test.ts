@@ -991,3 +991,77 @@ The score is 5.
 If the number of items in score is equal to 3, set the text of message to x
 Otherwise, set the text of message to not matched`, /is not a list.*number of items/);
 });
+
+test("'item N in <list>' reads one item out of a list by 1-based position", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The chosen color is item 2 in favorite colors.
+Set the text of message to chosen color`);
+  assert.equal(textOf(ir, "message"), "green");
+});
+
+test("'the first item in' and 'the last item in' a list are convenience words for position 1 and the end", () => {
+  const { ir } = page(`Add a paragraph called first display inside page
+Add a paragraph called last display inside page
+The favorite colors is a list of red, green and blue.
+Set the text of first display to the first item in favorite colors
+Set the text of last display to the last item in favorite colors`);
+  assert.equal(textOf(ir, "first display"), "red");
+  assert.equal(textOf(ir, "last display"), "blue");
+});
+
+test("an item read out of a list of numbers is itself a number, usable in arithmetic", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The scores is a list of 10, 20 and 30.
+The picked is item 2 in scores.
+The doubled is picked plus picked.
+Set the text of message to doubled`);
+  assert.equal(textOf(ir, "message"), "40");
+});
+
+test("'item N in <list>' works as an If condition's comparison target", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The color is red.
+If the color is equal to item 1 in favorite colors, set the text of message to matched
+Otherwise, set the text of message to no match`);
+  assert.equal(textOf(ir, "message"), "matched");
+});
+
+test("'item N in <list>' works directly as a 'Set the text of ... to' trailing reference", () => {
+  const { ir } = page(`Add a paragraph called note inside page
+The favorite colors is a list of red, green and blue.
+Set the text of note to item 3 in favorite colors`);
+  assert.equal(textOf(ir, "note"), "blue");
+});
+
+test("an out-of-range list item position is a clear error, not a silent blank", () => {
+  invalid(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The chosen color is item 9 in favorite colors.
+Set the text of message to chosen color`, /out of range.*only has 3 items/);
+});
+
+test("a non-positive or non-integer list item position is also reported as out of range", () => {
+  invalid(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The chosen color is item -1 in favorite colors.
+Set the text of message to chosen color`, /out of range/);
+});
+
+test("'item N in' a variable that isn't a list is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+The score is 5.
+The chosen color is item 1 in score.
+Set the text of message to chosen color`, /is not a list, so it has no items to access by position/);
+});
+
+test("'item N in <list>' does not interfere with an ordinary For each over the same list", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The count is 0.
+For each color in favorite colors, the count is count plus 1.
+The first color is item 1 in favorite colors.
+Set the text of message to count`);
+  assert.equal(textOf(ir, "message"), "3");
+});

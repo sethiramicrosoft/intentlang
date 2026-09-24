@@ -310,12 +310,20 @@ Repeat 3 times, the wins is wins plus 1.
   list. Once defined, it can be looped over by name (`For each color in
   favorite colors, ...`), displayed directly (it reads back the same way it
   was written, e.g. `"red, green and blue"`), copied to another name (`The
-  backup colors is favorite colors.`), and measured with **`the number of
+  backup colors is favorite colors.`), measured with **`the number of
   items in <list>`**, which resolves to a plain number wherever a number
   could go — an arithmetic operand, or an If condition's subject or target
-  (`If the number of items in favorite colors is equal to 3, ...`). Asking
-  for the number of items in something that isn't a list is reported as a
-  clear error rather than silently returning zero.
+  (`If the number of items in favorite colors is equal to 3, ...`), and read
+  one item at a time by position with **`item <N> in <list>`** (1-based:
+  `item 1 in favorite colors` is the first color) or the convenience words
+  **`the first item in <list>`** / **`the last item in <list>`**. A read item
+  works anywhere a number or piece of text could go — an assignment's value,
+  an If condition's target, or a `Set the text of ... to ...` — and comes
+  back as a number if it looks like one (so a list of numbers can be indexed
+  into and used in arithmetic directly). Asking for the number of items in,
+  or an item in, something that isn't a list — or a position that's out of
+  range — is reported as a clear error rather than silently returning zero
+  or blank text.
 - **`For each <name> from <start> to <end>, <one or more instructions>.`**
   counts through every whole number from `<start>` to `<end>`, inclusive of
   both ends, replacing the loop word with each number in turn. Counts upward
@@ -478,11 +486,13 @@ offered, never applied silently.
   there's no ordering (`greater than`, etc.) for text, and text can't be used
   in arithmetic. Text does have its own `joined with` chain for
   concatenation, but that's string-building only, not arithmetic.
-- A list variable can be looped over, displayed, copied, and measured with
-  `the number of items in ...`, but there's no way yet to read or change one
-  specific item by position (no "the first item in ..." or "item 3 in
-  ..."), and a `Do <procedure> with <list>` call can't yet pass a whole list
-  as one argument — a procedure only receives plain numbers and text.
+- A list variable can be looped over, displayed, copied, measured with
+  `the number of items in ...`, and read one item at a time by position with
+  `item N in ...` / `the first item in ...` / `the last item in ...`, but
+  there's still no way to *change* one specific item in place (e.g. no "set
+  item 2 in favorite colors to purple"), and a `Do <procedure> with <list>`
+  call can't yet pass a whole list as one argument — a procedure only
+  receives plain numbers and text.
 - A parenthesis-free `a list of ...` value is recognized by its exact
   leading words, the same way `joined with` and the arithmetic operator
   words are — so a piece of literal text that itself happens to start with

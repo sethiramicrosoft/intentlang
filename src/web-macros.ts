@@ -46,6 +46,10 @@ const LIST_OF_RE = /^a\s+list\s+of\s+(.+)$/i;
 // one whole phrase before an ordinary variable lookup is tried, so a variable literally named
 // "number of items in x" is never possible to accidentally shadow it.
 const LIST_LENGTH_RE = /^number of items in\s+(.+)$/i;
+// "item <N> in <list>" (1-based) or "the first/last item in <list>" reads one item out of a
+// named list by position, wherever a value could go (an assignment's value, an If condition's
+// text target, or a "Set ... to" trailing reference).
+const LIST_ITEM_RE = /^(?:item\s+(-?\d+)|the\s+(first|last)\s+item)\s+in\s+(.+)$/i;
 // An If sentence's head, up to its FIRST comma (no matter what follows -- this is what lets an
 // If's own instruction be another nested If/For each/Repeat/Do without confusing this boundary).
 // The captured text between "if " and that comma is one or more conditions, described below.
@@ -54,7 +58,7 @@ const IF_HEAD_RE = /^if\s+(.+?)\s*,\s*(.+?)\.?$/i;
 // a variable name, or (since a For each counting loop's variable literally substitutes to a
 // number) a plain number too, so "if the number is greater than 3" still works after "number"
 // is replaced by, say, "4".
-const CONDITION_RE = /^the\s+(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)$/i;
+const CONDITION_RE = /^the\s+(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z0-9 ]*?)$/i;
 // Splits two or more conditions joined by "and" or "or" ("the a is equal to 1 and the b is
 // equal to 2"). Only splits right before a literal "the", which is what every condition must
 // start with -- so a text comparison's own value can still safely contain the bare word "and"
@@ -260,9 +264,11 @@ function joinEnglishList(items: string[]): string {
  * ..." assignment.
  */
 function resolveTrailingVariable(line: string, variables: Map<string, VarValue>): string {
-  const trailing = /^(.*\bto\s+)([a-z][a-z ]*)$/i.exec(line.trimEnd());
+  const trailing = /^(.*\bto\s+)([a-z][a-z0-9 ]*)$/i.exec(line.trimEnd());
   if (!trailing) return line;
   const name = trailing[2]!.trim().toLowerCase();
+  const itemLookup = resolveListItem(name, variables);
+  if (itemLookup.kind === "ok") return `${trailing[1]}${itemLookup.value}`;
   const numericValue = evaluateExpression(name, variables);
   if (numericValue !== undefined) return `${trailing[1]}${formatNumber(numericValue)}`;
   const found = variables.get(name);
@@ -276,6 +282,44 @@ function stripLeadingThe(text: string): string {
 
 function dequote(text: string): string {
   return /^"([\s\S]*)"$/.exec(text.trim())?.[1] ?? text.trim();
+}
+
+/** Result of trying to read one item out of a named list by position. "no-match" means the raw
+ * text isn't an item-access phrase at all (so the caller should try something else); the other
+ * two failure kinds carry enough detail to report a friendly diagnostic when the caller has one
+ * to report to (e.g. an explicit "The ... is item 5 in x." assignment), while callers with no
+ * diagnostics available (e.g. resolving an If condition's text target) can just as easily treat
+ * them the same as "no-match" and fall back to their own default behavior. */
+type ListItemLookup =
+  | { kind: "no-match" }
+  | { kind: "not-a-list"; name: string }
+  | { kind: "out-of-range"; name: string; index: number; length: number }
+  | { kind: "ok"; value: string };
+
+function resolveListItem(raw: string, variables: Map<string, VarValue>): ListItemLookup {
+  const match = LIST_ITEM_RE.exec(raw.trim());
+  if (!match) return { kind: "no-match" };
+  const name = stripLeadingThe(match[3]!).toLowerCase();
+  const list = variables.get(name);
+  if (list?.type !== "list") return { kind: "not-a-list", name };
+  const index = match[1] !== undefined ? Number(match[1]) : (match[2]!.toLowerCase() === "first" ? 1 : list.value.length);
+  if (!Number.isInteger(index) || index < 1 || index > list.value.length) {
+    return { kind: "out-of-range", name, index, length: list.value.length };
+  }
+  return { kind: "ok", value: list.value[index - 1]! };
+}
+
+function reportListItemError(lookup: { kind: "not-a-list"; name: string } | { kind: "out-of-range"; name: string; index: number; length: number },
+  lineNumber: number, text: string, diagnostics: VisualDiagnostic[]) {
+  if (lookup.kind === "not-a-list") {
+    report(diagnostics, lineNumber, text, "M016",
+      `"${lookup.name}" is not a list, so it has no items to access by position.`,
+      `Access an item on a variable defined with "is a list of ...".`);
+  } else {
+    report(diagnostics, lineNumber, text, "M017",
+      `Item ${lookup.index} in "${lookup.name}" is out of range: it only has ${lookup.length} item${lookup.length === 1 ? "" : "s"}.`,
+      `Use a position from 1 to ${lookup.length}, or "the first item"/"the last item".`);
+  }
 }
 
 function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): number | undefined {
@@ -294,6 +338,8 @@ function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): n
  * or, failing that, the raw words themselves. Unlike numbers, plain text never needs to be
  * "defined first": "If the winner is equal to Alex" is valid even without an "Alex" variable. */
 function resolveTextOperand(raw: string, variables: Map<string, VarValue>): string {
+  const itemLookup = resolveListItem(raw, variables);
+  if (itemLookup.kind === "ok") return itemLookup.value;
   const found = variables.get(stripLeadingThe(raw).toLowerCase());
   if (found) return formatVarValueText(found);
   return dequote(raw);
@@ -674,13 +720,17 @@ function expandFunctionCall(name: string, argRaw: string | undefined, callText: 
 
 /**
  * Applies a "The X is Y." assignment: resolves Y as a number expression first, then as a text
- * "joined with" chain, then as a list literal ("a list of ..."), falling back to copying an
- * existing variable's value, and finally to literal text (only when Y doesn't even look like an
+ * "joined with" chain, then as a list literal ("a list of ..."), then as a list-item-by-position
+ * read ("item N in ..." / "the first/last item in ..."), falling back to copying an existing
+ * variable's value, and finally to literal text (only when Y doesn't even look like an
  * arithmetic attempt, so a genuine mistake like dividing by zero isn't silently treated as
- * text). Returns true once handled; false means the caller should leave the line for the page
+ * text). Returns true once handled (this includes a recognized-but-invalid list-item access,
+ * where a diagnostic is reported instead of silently falling through to a confusing generic
+ * "unrecognized instruction" error); false means the caller should leave the line for the page
  * compiler to report as an ordinary unrecognized instruction.
  */
-function applyAssignment(name: string, rawValue: string, variables: Map<string, VarValue>): boolean {
+function applyAssignment(name: string, rawValue: string, variables: Map<string, VarValue>, lineNumber: number,
+  diagnostics: VisualDiagnostic[]): boolean {
   const numericValue = evaluateExpression(rawValue, variables);
   if (numericValue !== undefined) {
     variables.set(name, { type: "number", value: numericValue });
@@ -693,6 +743,16 @@ function applyAssignment(name: string, rawValue: string, variables: Map<string, 
   const listOf = LIST_OF_RE.exec(rawValue.trim());
   if (listOf) {
     variables.set(name, { type: "list", value: splitEnglishList(listOf[1]!) });
+    return true;
+  }
+  const itemLookup = resolveListItem(rawValue, variables);
+  if (itemLookup.kind === "ok") {
+    const item = itemLookup.value;
+    variables.set(name, /^-?\d+(?:\.\d+)?$/.test(item) ? { type: "number", value: Number(item) } : { type: "text", value: item });
+    return true;
+  }
+  if (itemLookup.kind === "not-a-list" || itemLookup.kind === "out-of-range") {
+    reportListItemError(itemLookup, lineNumber, rawValue, diagnostics);
     return true;
   }
   if (!NUMERIC_INTENT_RE.test(rawValue)) {
@@ -715,7 +775,7 @@ function expandInstruction(instr: string, lineNumber: number, variables: Map<str
   diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): string[] {
   const trimmedInstr = instr.trim();
   const assign = ASSIGN_RE.exec(trimmedInstr);
-  if (assign && applyAssignment(assign[1]!.trim().toLowerCase(), assign[2]!.trim(), variables)) return [];
+  if (assign && applyAssignment(assign[1]!.trim().toLowerCase(), assign[2]!.trim(), variables, lineNumber, diagnostics)) return [];
   const nestedIf = matchIf(trimmedInstr);
   if (nestedIf) {
     const condition = evaluateIfCondition(nestedIf, trimmedInstr, lineNumber, variables, diagnostics);
@@ -817,7 +877,7 @@ export function expandMacros(source: string): MacroExpandResult {
     if (assign) {
       const name = assign[1]!.trim().toLowerCase();
       const rawValue = assign[2]!.trim();
-      if (applyAssignment(name, rawValue, variables)) return; // a variable sentence does not render anything by itself
+      if (applyAssignment(name, rawValue, variables, lineNumber, diagnostics)) return; // a variable sentence does not render anything by itself
       // Doesn't resolve to a known number or variable expression: leave it for the
       // page compiler to report as an ordinary unrecognized instruction.
       output.push(resolveTrailingVariable(rawLine, variables));
