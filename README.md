@@ -15,8 +15,7 @@ even start?
 IntentLang is an early, evolving programming language built around English
 instructions. Start by describing what to show, how it should look, and where
 things belong. The examples below already work: an animated poster, a coaching
-dashboard, and a playable story. A separate app-building grammar also supports
-simple database-backed apps.
+dashboard, a playable story, and an authenticated multi-role business app.
 
 **The English is the code. No AI model required.**
 
@@ -29,15 +28,57 @@ developed; the examples show what works today, not a promise of what works next.
 > [!WARNING]
 > IntentLang v0.8.0-alpha.0 is experimental software. It is not production-ready, not security-audited by an independent third party, and intentionally rejects many inputs.
 
+## From controlled English to a complete application
+
+Write supported business requirements in controlled English. IntentLang
+deterministically compiles them into a working application—including the
+browser UI, Node.js backend, REST API, authentication, authorization, workflow
+logic, SQLite schema, and audit controls. No AI model is required.
+
+```text
+Controlled English source
+        ↓
+Parser + validation
+        ↓
+Typed application model
+        ↓
+HTML + CSS + browser JavaScript
+Node.js backend + REST API
+SQLite schema + security controls
+```
+
+This does **not** mean arbitrary English becomes arbitrary software. IntentLang
+accepts a published, finite grammar. Supported statements compile predictably;
+unsupported or ambiguous statements produce diagnostics instead of being
+silently guessed.
+
+### Flagship example: LaunchOps Mission Control
+
+[`examples/launch-ops.intent`](examples/launch-ops.intent) is one controlled
+English source file that generates an authenticated program-launch system:
+
+- **7 entities** and **31 business fields**
+- **10 relationships**
+- **14 guarded workflow actions**
+- **4 roles** and **95 explicit permissions**
+- Account provisioning, owner isolation, CSRF protection, idempotency,
+  optimistic concurrency, audit logging, REST routes, and a permission-aware UI
+
+[![LaunchOps Administrator view showing a generated program workflow](examples/launch-ops-admin.png)](docs/launch-ops-full-stack.md)
+
+**[Read the LaunchOps case study](docs/launch-ops-full-stack.md)** ·
+**[Browse the English source](examples/launch-ops.intent)** ·
+**[Inspect every generated file](examples/launch-ops-generated/)**
+
 ## See what English can build
 
 [![The Last Signal: a branching sci-fi story compiled from English](examples/last-signal.png)](examples/README.md#the-last-signal)
 
-**[Browse the example gallery](examples/README.md)** for a playable sci-fi story,
-a responsive coaching dashboard, and an animated typography poster.
-Each includes its English source, a screenshot of the actual output, and standalone
-HTML you can download and open locally. No model is called during compilation or
-when these pages run.
+**[Browse the example gallery](examples/README.md)** for the LaunchOps full-stack
+application, a playable sci-fi story, a responsive coaching dashboard, and an
+animated typography poster. Each includes its English source and real output
+screenshots; static examples also include standalone HTML you can download and
+open locally. No model is called during compilation or when these examples run.
 
 ## Start with Hello World: the visual language
 
@@ -153,29 +194,30 @@ The wizard is always shown first. The full Studio editor now lives under the col
 2. [Why this exists](#why-this-exists)
 3. [How it works (pipeline)](#how-it-works-pipeline)
 4. [IntentLang Studio alpha](#intentlang-studio-alpha)
-5. [**Proof: a complete full-stack app generated without AI**](#proof-a-complete-full-stack-app-generated-without-ai)
-6. [Optional AI assistance](#optional-ai-assistance)
-7. [What v0.8.0-alpha can do](#what-v080-alpha-can-do)
-8. [Current limitations](#current-limitations)
-9. [Prerequisites (beginner-friendly)](#prerequisites-beginner-friendly)
-10. [Install from GitHub](#install-from-github)
-11. [Five-minute quick start](#five-minute-quick-start)
-12. [Safe bootstrap and run (no credential literals)](#safe-bootstrap-and-run-no-credential-literals)
-13. [Browser walkthrough](#browser-walkthrough)
-14. [Language tutorial](#language-tutorial)
-15. [Additional example: issue tracker](#additional-example-issue-tracker)
-16. [CLI reference](#cli-reference)
-17. [Generated artifacts reference](#generated-artifacts-reference)
-18. [Safety model deep dive](#safety-model-deep-dive)
-19. [Data and migration guidance](#data-and-migration-guidance)
-20. [Project structure](#project-structure)
-21. [Development guide](#development-guide)
-22. [Troubleshooting](#troubleshooting)
-23. [Security and privacy](#security-and-privacy)
-24. [Roadmap (non-binding)](#roadmap-non-binding)
-25. [FAQ](#faq)
-26. [Contributing and governance](#contributing-and-governance)
-26. [Repository topics](#repository-topics)
+5. [**Flagship example: LaunchOps Mission Control**](#flagship-example-launchops-mission-control)
+6. [**Proof: a complete full-stack app generated without AI**](#proof-a-complete-full-stack-app-generated-without-ai)
+7. [Optional AI assistance](#optional-ai-assistance)
+8. [What v0.8.0-alpha can do](#what-v080-alpha-can-do)
+9. [Current limitations](#current-limitations)
+10. [Prerequisites (beginner-friendly)](#prerequisites-beginner-friendly)
+11. [Install from GitHub](#install-from-github)
+12. [Five-minute quick start](#five-minute-quick-start)
+13. [Safe bootstrap and run (no credential literals)](#safe-bootstrap-and-run-no-credential-literals)
+14. [Browser walkthrough](#browser-walkthrough)
+15. [Language tutorial](#language-tutorial)
+16. [Additional example: issue tracker](#additional-example-issue-tracker)
+17. [CLI reference](#cli-reference)
+18. [Generated artifacts reference](#generated-artifacts-reference)
+19. [Safety model deep dive](#safety-model-deep-dive)
+20. [Data and migration guidance](#data-and-migration-guidance)
+21. [Project structure](#project-structure)
+22. [Development guide](#development-guide)
+23. [Troubleshooting](#troubleshooting)
+24. [Security and privacy](#security-and-privacy)
+25. [Roadmap (non-binding)](#roadmap-non-binding)
+26. [FAQ](#faq)
+27. [Contributing and governance](#contributing-and-governance)
+28. [Repository topics](#repository-topics)
 
 ## What this project is
 

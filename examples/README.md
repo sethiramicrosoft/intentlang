@@ -123,7 +123,8 @@ status updates, users, ownership, and workflow transitions.
 **[IntentLang source](launch-ops.intent)** ·
 **[Generated application](launch-ops-generated/)** ·
 **[SQL schema](launch-ops-generated/migration.sql)** ·
-**[Typed manifest](launch-ops-generated/intentlang.manifest.json)**
+**[Typed manifest](launch-ops-generated/intentlang.manifest.json)** ·
+**[Full case study](../docs/launch-ops-full-stack.md)**
 
 The source compiles to:
 

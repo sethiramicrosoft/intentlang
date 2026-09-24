@@ -65,3 +65,10 @@ The preserved screenshots show a real browser walkthrough:
    launch decision through a generated confirmation dialog.
 
 The walkthrough completed with zero browser errors.
+
+## Further reading
+
+Read the complete case study for source excerpts, architecture, role matrix,
+screenshots, generated-layer explanations, and safe reproduction steps:
+
+→ [`../../docs/launch-ops-full-stack.md`](../../docs/launch-ops-full-stack.md)
