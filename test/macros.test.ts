@@ -150,6 +150,27 @@ The colors is a list of red, green and blue.
 If the colors is greater than green, set the text of message to yes.`, /A list can only be compared/);
 });
 
+test("'does not contain', 'does not start with', and 'does not end with' negate the corresponding substring comparators for text, and 'does not contain' works for a list too", () => {
+  const { ir } = page(`Add a paragraph called a inside page
+Add a paragraph called b inside page
+Add a paragraph called c inside page
+Add a paragraph called d inside page
+The name is Bob Carter.
+The colors is a list of red, green and blue.
+If the name does not contain Smith, set the text of a to yes.
+Otherwise, set the text of a to no.
+If the name does not start with Bob, set the text of b to yes.
+Otherwise, set the text of b to no.
+If the name does not end with Smith, set the text of c to yes.
+Otherwise, set the text of c to no.
+If the colors does not contain purple, set the text of d to yes.
+Otherwise, set the text of d to no.`);
+  assert.equal(textOf(ir, "a"), "yes");
+  assert.equal(textOf(ir, "b"), "no");
+  assert.equal(textOf(ir, "c"), "yes");
+  assert.equal(textOf(ir, "d"), "yes");
+});
+
 test("an If sentence keeps its instruction only when the condition is true", () => {
   const { ir } = page(`Add a paragraph called message inside page
 The score is 42.

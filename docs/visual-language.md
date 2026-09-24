@@ -301,12 +301,16 @@ Repeat 3 times, the wins is wins plus 1.
   case-insensitive) — and, since these already read like ordinary verbs,
   the leading `is` before them is optional: `If the name contains Carter,
   ...` and `If the name is contains Carter, ...` both work, whichever reads
-  more naturally to you. A list variable can use `contains` too, but with a
-  different meaning: it checks whether any one item in the list equals the
-  given value exactly (`If the favorite colors contains green, ...`), rather
-  than a substring check. Comparing a plain number with `contains`, `starts
-  with`, or `ends with` is a clear error, since those only make sense for
-  text and lists.
+  more naturally to you. Each has a negated counterpart, written with
+  `does not` instead of `is` (or nothing at all): **`does not contain`**,
+  **`does not start with`**, and **`does not end with`** (`If the name does
+  not contain Smith, ...`). A list variable can use `contains` or `does not
+  contain` too, but with a different meaning from text: it checks whether
+  any one item in the list equals the given value exactly (`If the favorite
+  colors contains green, ...`), rather than a substring check — `starts
+  with`/`ends with` (and their negations) don't apply to a whole list, only
+  to text. Comparing a plain number with any of these six comparators is a
+  clear error, since they only make sense for text and lists.
 - **`If the <name>, <one or more instructions>.`** (or **`If not the <name>,
   ...`**) is a shorter, plain-boolean way to write a condition, without
   spelling out "is equal to true" every time. A number is true when it's
@@ -601,13 +605,16 @@ offered, never applied silently.
   `equal to`, `not equal to`, `greater than`, `less than`, `at least`,
   `at most` — with the ordering ones comparing alphabetically (plain
   code-point order, not locale-aware alphabetization, and case-insensitive)
-  — plus three substring comparators, `contains`, `starts with`, and `ends
-  with`. Text still can't be used in arithmetic, though; it has its own
-  `joined with` chain for concatenation, which is string-building only, not
-  arithmetic. A list variable, unlike a plain text variable, can still only
-  be compared with `equal to`, `not equal to`, or `contains` (ordering a
-  whole list doesn't make sense, and `contains` on a list checks item
-  membership, not a substring, since a list has no single string to search).
+  — plus three substring comparators and their negations, `contains`/`does
+  not contain`, `starts with`/`does not start with`, and `ends with`/`does
+  not end with`. Text still can't be used in arithmetic, though; it has its
+  own `joined with` chain for concatenation, which is string-building only,
+  not arithmetic. A list variable, unlike a plain text variable, can still
+  only be compared with `equal to`, `not equal to`, `contains`, or `does
+  not contain` (ordering a whole list doesn't make sense, `starts with`/
+  `ends with` don't apply to a whole list, and `contains` on a list checks
+  item membership, not a substring, since a list has no single string to
+  search).
 - There's no real boolean type: `true` and `false` are just literal text.
   The bare `If the <name>, ...` / `If not the <name>, ...` shorthand only
   reads a variable as true/false when it's a number (non-zero is true) or

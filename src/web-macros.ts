@@ -73,7 +73,7 @@ const IF_HEAD_RE = /^if\s+(.+?)\s*,\s*(.+?)\.?$/i;
 // a variable name, or (since a For each counting loop's variable literally substitutes to a
 // number) a plain number too, so "if the number is greater than 3" still works after "number"
 // is replaced by, say, "4".
-const CONDITION_RE = /^the\s+(-?\d+(?:\.\d+)?|[a-z][a-z0-9 ]*?)\s+(?:is\s+)?(greater than|less than|not equal to|equal to|at least|at most|starts with|ends with|contains)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z0-9 ]*?)$/i;
+const CONDITION_RE = /^the\s+(-?\d+(?:\.\d+)?|[a-z][a-z0-9 ]*?)\s+(?:is\s+)?(greater than|less than|not equal to|equal to|at least|at most|does not contain|does not start with|does not end with|starts with|ends with|contains)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z0-9 ]*?)$/i;
 // A bare truthy/falsy condition, with no "is ...": "the <name>" (true when the variable itself
 // reads as true) or "not the <name>" (true when it reads as false). Lets an If read like plain
 // boolean logic ("If the ready, ...") instead of always spelling out "is equal to true".
@@ -127,7 +127,7 @@ const FUNCTION_CALL_RE = /^do\s+([a-z][a-z ]*?)(?:\s+with\s+(.+?))?\s*\.?$/i;
 // argument -- e.g. "The doubled is the result of double with 5." -- instead of needing a
 // separate "Do ... with ..." sentence followed by reading "result" afterward as its own step.
 const RESULT_OF_RE = /^the\s+result\s+of\s+([a-z][a-z ]*?)(?:\s+with\s+(.+))?$/i;
-const COMPARATORS = ["greater than", "less than", "not equal to", "equal to", "at least", "at most", "starts with", "ends with", "contains"];
+const COMPARATORS = ["greater than", "less than", "not equal to", "equal to", "at least", "at most", "starts with", "ends with", "contains", "does not contain", "does not start with", "does not end with"];
 // Multiple instructions in one If/Otherwise/For each sentence are chained with "and then",
 // a phrase that reads naturally and never collides with ordinary instruction text (unlike a
 // bare "and", which can legitimately appear inside a list or a piece of display text).
@@ -643,7 +643,7 @@ function suggestMacroFix(trimmed: string): VisualSuggestion | undefined {
       if (matchRepeat(corrected)) return { label: `Change "${repeatWord[1]}" to "repeat"`, replacement: corrected };
     }
   }
-  const comparatorPhrase = /^(if\s+the\s+[a-z][a-z ]*?\s+is\s+)([a-z]+(?:\s+[a-z]+){0,2})(\s+(?:the\s+)?(?:-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*.+)$/i
+  const comparatorPhrase = /^(if\s+the\s+[a-z][a-z ]*?\s+is\s+)([a-z]+(?:\s+[a-z]+){0,3})(\s+(?:the\s+)?(?:-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*.+)$/i
     .exec(trimmed);
   if (comparatorPhrase) {
     const fixed = closestKeyword(comparatorPhrase[2]!, COMPARATORS);
@@ -737,9 +737,9 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
     return clause.negate ? !truthy : truthy;
   }
   if (subject.type === "list") {
-    if (comparator !== "equal to" && comparator !== "not equal to" && comparator !== "contains") {
+    if (comparator !== "equal to" && comparator !== "not equal to" && comparator !== "contains" && comparator !== "does not contain") {
       report(diagnostics, lineNumber, text, "M006",
-        `A list can only be compared with "is equal to", "is not equal to", or "contains", not "${comparator}".`,
+        `A list can only be compared with "is equal to", "is not equal to", "contains", or "does not contain", not "${comparator}".`,
         `Try "If the ${rawSubject} is equal to ...", or "If the ${rawSubject} contains ...".`,
         [{ label: `Change "${comparator}" to "equal to"`, replacement: text.replace(clause.comparator, "equal to") }]);
       return undefined;
@@ -747,8 +747,9 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
     const target = resolveConditionTargetText(clause.target, lineNumber, text, variables, diagnostics, functions, callStack);
     if (target === undefined) return undefined;
     const normalizedTarget = target.trim().toLowerCase();
-    if (comparator === "contains") {
-      return subject.value.some((item) => item.trim().toLowerCase() === normalizedTarget);
+    if (comparator === "contains" || comparator === "does not contain") {
+      const has = subject.value.some((item) => item.trim().toLowerCase() === normalizedTarget);
+      return comparator === "contains" ? has : !has;
     }
     const isEqual = formatVarValueText(subject).trim().toLowerCase() === normalizedTarget;
     return comparator === "equal to" ? isEqual : !isEqual;
@@ -761,11 +762,15 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
     if (comparator === "equal to") return a === b;
     if (comparator === "not equal to") return a !== b;
     if (comparator === "contains") return a.includes(b);
+    if (comparator === "does not contain") return !a.includes(b);
     if (comparator === "starts with") return a.startsWith(b);
+    if (comparator === "does not start with") return !a.startsWith(b);
     if (comparator === "ends with") return a.endsWith(b);
+    if (comparator === "does not end with") return !a.endsWith(b);
     return compareText(a, comparator, b);
   }
-  if (comparator === "contains" || comparator === "starts with" || comparator === "ends with") {
+  if (comparator === "contains" || comparator === "starts with" || comparator === "ends with" ||
+      comparator === "does not contain" || comparator === "does not start with" || comparator === "does not end with") {
     report(diagnostics, lineNumber, text, "M006",
       `A number can only be compared with the ordering or equality comparators, not "${comparator}".`,
       `"${rawSubject}" is a number here -- compare it with "equal to", "greater than", etc., or compare a text/list variable with "${comparator}" instead.`);
