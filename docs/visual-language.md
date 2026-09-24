@@ -166,7 +166,10 @@ else in the language is): `set the text of <name> to <value>`,
 `set the text of <name> to the value of <input name>`,
 `set the text of <name> to a random number from <min> to <max>`,
 `add <number> to the text of <name>`, `subtract <number> from the text of
-<name>`, `add the value of <input name> to the text of <name>`, and
+<name>`, `multiply the text of <name> by <number>`, `divide the text of
+<name> by <number>` (dividing by exactly 0 is a clear compile-time error,
+not an undefined/NaN result), `add the value of <input name> to the text of
+<name>`, and
 `subtract the value of <input name> from the text of <name>` (the live-input
 siblings of the plain-number add/subtract, for totaling up whatever a visitor
 actually typed rather than a fixed amount), and `if the value of <input
@@ -273,6 +276,17 @@ Set the text of total to 0
 Add a button called add
 Set the text of add to Add
 When the add is clicked, add the value of amount field to the text of total
+```
+
+```text
+Add a paragraph called total
+Set the text of total to 5
+Add a button called double
+Set the text of double to Double
+Add a button called halve
+Set the text of halve to Halve
+When the double is clicked, multiply the text of total by 2
+When the halve is clicked, divide the text of total by 2
 ```
 
 ```text

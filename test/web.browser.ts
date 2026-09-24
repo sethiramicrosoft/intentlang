@@ -243,6 +243,31 @@ When the subtract is clicked, subtract the value of amount field from the text o
   } finally { await browser.close(); }
 });
 
+test("a click can multiply or divide a running total by a fixed number in a real browser", async () => {
+  const compiled = compilePageSource(`Add a paragraph called total
+Set the text of total to 5
+Add a button called double
+Set the text of double to Double
+Add a button called halve
+Set the text of halve to Halve
+When the double is clicked, multiply the text of total by 2
+When the halve is clicked, divide the text of total by 2`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-2").click(); // double: 5 -> 10
+    assert.equal(await page.locator("#element-1").textContent(), "10");
+    await page.locator("#element-3").click(); // halve: 10 -> 5
+    assert.equal(await page.locator("#element-1").textContent(), "5");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can run a real runtime if-conditional over a live input's value in a real browser", async () => {
   const compiled = compilePageSource(`Add a text input called score field
 Add a paragraph called result

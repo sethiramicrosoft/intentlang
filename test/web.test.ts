@@ -257,6 +257,40 @@ When the decrement is clicked, subtract 1 from the text of counter`);
   assert.match(scriptBody, /Number\(e\.textContent\)\|\|0\)\+\(-1\)/);
 });
 
+test("a click can multiply or divide the text of a target by a fixed number, and dividing by zero is a clear error", () => {
+  const multiplied = page(`Add a paragraph called total
+Set the text of total to 5
+Add a button called go
+Set the text of go to Go
+When the go is clicked, multiply the text of total by 3`);
+  const multipliedScript = /<script>(.+?)<\/script>/.exec(multiplied.html)![1]!;
+  assert.match(multipliedScript, /Number\(e\.textContent\)\|\|0\)\*\(3\)/);
+
+  const divided = page(`Add a paragraph called total
+Set the text of total to 10
+Add a button called go
+Set the text of go to Go
+When the go is clicked, divide the text of total by 4`);
+  const dividedScript = /<script>(.+?)<\/script>/.exec(divided.html)![1]!;
+  assert.match(dividedScript, /Number\(e\.textContent\)\|\|0\)\/\(4\)/);
+
+  // A negative multiplier is fine (it's just another fixed number), only dividing by
+  // exactly zero is rejected, since that would produce an undefined result.
+  const negative = page(`Add a paragraph called total
+Set the text of total to 5
+Add a button called go
+Set the text of go to Go
+When the go is clicked, multiply the text of total by -2`);
+  const negativeScript = /<script>(.+?)<\/script>/.exec(negative.html)![1]!;
+  assert.match(negativeScript, /Number\(e\.textContent\)\|\|0\)\*\(-2\)/);
+
+  invalid(`Add a paragraph called total
+Set the text of total to 10
+Add a button called go
+Set the text of go to Go
+When the go is clicked, divide the text of total by 0`, /would produce an undefined result/);
+});
+
 test("a click can read a text input's live value into another element's text", () => {
   const result = page(`Add a text input called name field
 Add a paragraph called greeting

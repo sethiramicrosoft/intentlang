@@ -228,6 +228,10 @@ export function compilePageSource(source: string): PageCompileResult {
     const subtractFromValue = /^subtract\s+the\s+value\s+of\s+(.+?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
     const addText = /^add\s+(-?\d+(?:\.\d+)?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
     const subtractText = /^subtract\s+(-?\d+(?:\.\d+)?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+    // The multiplicative siblings of add/subtract -- same fixed-number-only shape (no
+    // live-input multiplier yet), same clamp-to-a-real-number semantics via Number(...)||0.
+    const multiplyText = /^multiply\s+the\s+text\s+of\s+(.+?)\s+by\s+(-?\d+(?:\.\d+)?)$/i.exec(part);
+    const divideText = /^divide\s+the\s+text\s+of\s+(.+?)\s+by\s+(-?\d+(?:\.\d+)?)$/i.exec(part);
     // Writes into a live input/textarea/select's own ".value" (as opposed to "set the text
     // of ...", which writes an element's displayed textContent) -- for clearing or presetting
     // a form field from a click, e.g. resetting an input after its value has been used.
@@ -383,6 +387,19 @@ export function compilePageSource(source: string): PageCompileResult {
       const amount = (addText ? 1 : -1) * Number(match[1]);
       return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
         `e.textContent=String((Number(e.textContent)||0)+(${JSON.stringify(amount)}));})();`;
+    } else if (multiplyText || divideText) {
+      const match = multiplyText ?? divideText!;
+      const target = resolve(match[1]!, index);
+      if (!target) return undefined;
+      const factor = Number(match[2]);
+      if (divideText && factor === 0) {
+        report(index, `"Divide ... by 0" would produce an undefined result.`,
+          "Use a non-zero number to divide by.");
+        return undefined;
+      }
+      const operator = multiplyText ? "*" : "/";
+      return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
+        `e.textContent=String((Number(e.textContent)||0)${operator}(${JSON.stringify(factor)}));})();`;
     } else if (setValueFromValue) {
       const target = resolve(setValueFromValue[1]!, index);
       const source = target ? resolve(setValueFromValue[2]!, index) : undefined;
@@ -430,7 +447,8 @@ export function compilePageSource(source: string): PageCompileResult {
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
       `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
-      `"subtract ... from the text of ...", "add the value of ... to the text of ...", ` +
+      `"subtract ... from the text of ...", "multiply the text of ... by ...", ` +
+      `"divide the text of ... by ...", "add the value of ... to the text of ...", ` +
       `"subtract the value of ... from the text of ...", "set the value of ... to ...", ` +
       `"set the value of ... to the value of ...", "clear the value of ...", ` +
       `"check ..."/"uncheck ..." for a checkbox or radio button, ` +
