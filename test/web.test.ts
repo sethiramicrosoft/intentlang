@@ -410,6 +410,35 @@ When the go is clicked, if the value of n is greater than 5, add 1 to the text o
   assert.doesNotMatch(plainScript, /else/);
 });
 
+test("a click's if-conditional can compare one live input's value against another live input's value", () => {
+  const compared = page(`Add a text input called a
+Add a text input called b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of a is greater than the value of b, set the text of result to a wins otherwise set the text of result to b wins`);
+  const comparedScript = /<script>(.+?)<\/script>/.exec(compared.html)![1]!;
+  assert.match(comparedScript, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>\(Number\(document\.getElementById\("element-2"\)\.value\)\|\|0\)\)\{document\.getElementById\("element-3"\)\.textContent="a wins";\}else\{document\.getElementById\("element-3"\)\.textContent="b wins";\}/);
+
+  // Comparing against a plain number literal still compiles exactly as before (no regression).
+  const literal = page(`Add a text input called score
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score is greater than 50, set the text of result to high otherwise set the text of result to low`);
+  const literalScript = /<script>(.+?)<\/script>/.exec(literal.html)![1]!;
+  assert.match(literalScript, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>\(50\)\)/);
+
+  invalid(`Add a text input called a
+Add a paragraph called b
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of a is greater than the value of b, set the text of result to high`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
   const result = page(`Add an image called photo
 Set the source of photo to https://example.com/MyPhoto.png

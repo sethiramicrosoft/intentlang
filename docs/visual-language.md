@@ -173,7 +173,10 @@ actually typed rather than a fixed amount), and `if the value of <input
 name> is greater than/less than/at least/at most/equal to <number>, <one
 instruction>` optionally followed by `otherwise <one instruction>` (a real
 runtime conditional, with an optional else branch, so a click can behave
-differently depending on what a visitor actually typed). The compiler turns
+differently depending on what a visitor actually typed) — the right-hand
+side of that comparison can be a plain number or another live input's value
+(`if the value of a is greater than the value of b, ...`), for comparing
+two things a visitor actually typed against each other. The compiler turns
 every `When ... is clicked` sentence in a page into ONE small, entirely
 compiler-generated script (never containing any user-authored markup,
 attribute, or script tag — only compiler-fixed code with your text safely
@@ -186,7 +189,7 @@ keyboard or assistive technology instead of a mouse. The source of
 "the value of ..." must be an input, a text box, or a dropdown (anything with
 a live value to read) — using anything else there is a clear error, whether
 it's the direct source of a `set ... to the value of ...`, the source of an
-`add/subtract the value of ...` amount, or the subject of an `if the value
+`add/subtract the value of ...` amount, or either side of an `if the value
 of ...` comparison. A random range's low end can't be greater than its high
 end (`from 6 to 1` is a clear error, not a silently reversed or empty range)
 — both ends are whole numbers, and the roll is inclusive of both. Both the
@@ -238,6 +241,16 @@ Set the text of check to Check
 When the check is clicked, if the value of score field is greater than 50, set the text of result to high otherwise set the text of result to low
 ```
 
+```text
+Add a text input called a
+Add a text input called b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of a is greater than the value of b, set the text of result to a wins otherwise set the text of result to b wins
+```
+
 The second example is real user input, not compile-time data: whatever a
 visitor actually types into the box is read live, the moment the button is
 clicked. The third rolls a genuine new random number in the browser on every
@@ -248,6 +261,8 @@ elsewhere on the page, the same way `add 1 to the text of ...` would with a
 fixed amount, except the amount itself is real user input. The fifth branches
 on that live input at click time: it shows "high" or "low" depending on what a
 visitor actually typed, entirely in the browser, with no server involved.
+The sixth compares two visitors' inputs (well, one visitor typing into two
+boxes) directly against each other, rather than against a fixed number.
 
 User-authored `<script>` elements, `onclick`-style inline event-handler
 attributes, arbitrary stylesheets, embedded documents, templates, shadow-DOM,

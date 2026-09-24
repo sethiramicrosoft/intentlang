@@ -180,8 +180,10 @@ export function compilePageSource(source: string): PageCompileResult {
     // Group 5 (the optional "otherwise" clause) is greedy, so a lone " otherwise " literal
     // inside the "then" instruction's own text would be misread as the else-branch split;
     // documented as a reserved word in this position, matching how "otherwise" is already
-    // reserved after "If" everywhere else in the language.
-    const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|equal to)\s+(-?\d+(?:\.\d+)?)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
+    // reserved after "If" everywhere else in the language. The right-hand side of the
+    // comparison (group 3 or group 4) is either a literal number or another live input's
+    // value, checked as alternatives in the same capture position.
+    const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|equal to)\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+(?:\.\d+)?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
     // Checked before the plainer "set the text of X to Y", since that one's own value half
     // would otherwise happily swallow "the value of Y" as literal display text instead.
     const setFromValue = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
@@ -205,16 +207,28 @@ export function compilePageSource(source: string): PageCompileResult {
         return undefined;
       }
       const operator = clickComparisons[ifValue[2]!.toLowerCase()]!;
-      const threshold = Number(ifValue[3]);
-      const inner = compileClickPart(ifValue[4]!.trim(), index);
+      let rightSide: string;
+      if (ifValue[3]) {
+        const other = resolve(ifValue[3]!, index);
+        if (!other) return undefined;
+        if (!hasReadableValue(other.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${other.name} is a ${englishName(other.tag)}.`,
+            `Add an input called ${other.name} instead, such as Add a text input called ${other.name}.`);
+          return undefined;
+        }
+        rightSide = `(Number(document.getElementById(${JSON.stringify(other.id)}).value)||0)`;
+      } else {
+        rightSide = `(${JSON.stringify(Number(ifValue[4]))})`;
+      }
+      const inner = compileClickPart(ifValue[5]!.trim(), index);
       if (inner === undefined) return undefined;
       let elseClause = "";
-      if (ifValue[5]) {
-        const elseInner = compileClickPart(ifValue[5].trim(), index);
+      if (ifValue[6]) {
+        const elseInner = compileClickPart(ifValue[6].trim(), index);
         if (elseInner === undefined) return undefined;
         elseClause = `else{${elseInner}}`;
       }
-      return `if((Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)${operator}(${JSON.stringify(threshold)})){${inner}}${elseClause}`;
+      return `if((Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)${operator}${rightSide}){${inner}}${elseClause}`;
     } else if (setFromValue) {
       const target = resolve(setFromValue[1]!, index);
       const source = target ? resolve(setFromValue[2]!, index) : undefined;
@@ -266,7 +280,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
       `"subtract ... from the text of ...", "add the value of ... to the text of ...", ` +
       `"subtract the value of ... from the text of ...", or "if the value of ... is greater than/less than/` +
-      `at least/at most/equal to ..., ... otherwise ...".`);
+      `at least/at most/equal to (a number or the value of ...), ... otherwise ...".`);
     return undefined;
   }
   /** Which element tags have a live, readable ".value" in the DOM. */

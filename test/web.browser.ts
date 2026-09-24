@@ -270,6 +270,34 @@ When the check is clicked, if the value of score field is greater than 50, set t
   } finally { await browser.close(); }
 });
 
+test("a click's if-conditional can compare two live inputs against each other in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called a
+Add a text input called b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of a is greater than the value of b, set the text of result to a wins otherwise set the text of result to b wins`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("10");
+    await page.locator("#element-2").fill("3");
+    await page.locator("#element-4").click();
+    assert.equal(await page.locator("#element-3").textContent(), "a wins");
+    await page.locator("#element-1").fill("1");
+    await page.locator("#element-2").fill("9");
+    await page.locator("#element-4").click();
+    assert.equal(await page.locator("#element-3").textContent(), "b wins");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("all advertised element types survive real browser parsing with their requested parentage", async () => {
   const source = webElements.filter((element) => element.status === "available")
     .map((element) => elementExample(element).replace(/\b(called|inside) sample /g, `$1 sample ${element.name} `)).join("\n");
