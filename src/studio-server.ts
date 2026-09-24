@@ -21,6 +21,7 @@ import { compileEnglishSource } from "./english.js";
 import { getWebCatalogue } from "./web-catalogue.js";
 import { VISUAL_HTML, VISUAL_CSS, VISUAL_JS } from "./visual-assets.js";
 import { buildTraceMap } from "./language/trace.js";
+import { expandPolicySource } from "./language/policies.js";
 
 const BODY_LIMIT_BYTES = 1_048_576; // 1 MB
 const PLAN_TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -286,6 +287,7 @@ function compileAndBuildState(source: string): {
   canonical: string;
   ir: unknown;
   trace: unknown;
+  policyExpansions: unknown[];
 } {
   const result = compileSource(source);
 
@@ -296,12 +298,14 @@ function compileAndBuildState(source: string): {
       model: null,
       canonical: "",
       ir: null,
-      trace: null
+      trace: null,
+      policyExpansions: []
     };
   }
 
   const model = buildStudioViewModel(result.ir);
   const canonical = formatSource(result.ir);
+  const expanded = expandPolicySource(source);
 
   return {
     ok: true,
@@ -309,7 +313,8 @@ function compileAndBuildState(source: string): {
     model,
     canonical,
     ir: result.ir,
-    trace: buildTraceMap(source, result.ir, "<studio>")
+    trace: buildTraceMap(source, result.ir, "<studio>"),
+    policyExpansions: expanded.ok ? expanded.expansions : []
   };
 }
 

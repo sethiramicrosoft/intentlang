@@ -1,0 +1,10 @@
+{
+  "id": "policy-unknown-invalid",
+  "category": "invalid",
+  "ruleIds": ["PERMISSION-DECL-001"],
+  "source": "application Unknown\nauthentication uses User identified by email\nrole Member\na User has a required unique email as text\ngrant MissingPolicy to Member\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E055"]
+  }
+}

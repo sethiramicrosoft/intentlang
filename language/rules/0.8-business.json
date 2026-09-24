@@ -133,6 +133,21 @@
       }
     },
     {
+      "id": "POLICY-EXPANSION-001",
+      "status": "experimental",
+      "title": "Role inheritance and named policies expand to explicit permissions",
+      "canonicalForm": "Canonical formatting emits expanded allow statements",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-SYNTAX-025", "BUS-SYNTAX-026", "BUS-SYNTAX-027", "E051", "E052", "E053", "E054", "E055", "E056"],
+      "specification": "docs/spec/security-workflows.md#policy-expansion-001",
+      "evidence": {
+        "positive": ["conformance/valid/policy-expansion.json"],
+        "negative": ["conformance/invalid/policy-cycle.json", "conformance/invalid/policy-unknown.json", "conformance/invalid/policy-duplicate-grant.json"],
+        "canonical": ["test/policies.test.ts"],
+        "runtime": ["test/policies.test.ts"]
+      }
+    },
+    {
       "id": "RUNTIME-GENERATION-001",
       "status": "stable",
       "title": "Business IR generates synchronized persistence, UI, API, security, workflow, concurrency, idempotency, and audit behavior",

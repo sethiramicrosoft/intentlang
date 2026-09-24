@@ -69,3 +69,31 @@ authenticated identity. Duplicate rules are rejected.
 Blank lines and lines whose first non-whitespace character is `#` have no
 semantic effect. Any other sentence must match a defined grammar rule or the
 compiler emits `E001`; unknown English is never guessed.
+
+## POLICY-EXPANSION-001
+
+Named policies and role inheritance are experimental compile-time
+abstractions. They expand into the existing explicit permission language before
+parsing, validation, IR construction, generation, or runtime authorization:
+
+```intentlang
+role Contributor
+role Manager extends Contributor
+
+policy OwnedTasks
+  allow to read Task
+  allow to create and update own Task
+  allow to run all actions on own Task
+
+grant OwnedTasks to Contributor
+```
+
+Policy macros may group entity lists, expand `manage` into create/read/update,
+expand owner-scoped create/update, and enumerate every declared action for an
+entity. A run-all macro naming an entity with no actions is rejected rather
+than silently granting nothing.
+
+Unknown policies or roles, duplicate policies or effective permissions, empty
+policies, unknown parents, and inheritance cycles are errors. Canonical
+formatting emits only the exact expanded `allow` statements. Runtime authority
+continues to come exclusively from those explicit permissions.

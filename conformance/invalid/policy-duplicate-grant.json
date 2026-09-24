@@ -1,0 +1,10 @@
+{
+  "id": "policy-duplicate-grant-invalid",
+  "category": "invalid",
+  "ruleIds": ["POLICY-EXPANSION-001"],
+  "source": "application DuplicateGrant\na User has a required unique email as text\na Task has a required title as text\nauthentication uses User identified by email\nrole Member\npolicy TaskRead\n  allow to read Task\ngrant TaskRead to Member\ngrant TaskRead to Member\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E046"]
+  }
+}

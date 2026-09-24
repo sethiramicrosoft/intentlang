@@ -174,13 +174,13 @@ a normative rule and applicable fixtures.
 
 ### Role inheritance and policies
 
-- [ ] T048 [P] [US3] Write normative proposals for role inheritance and named
+- [x] T048 [P] [US3] Write normative proposals for role inheritance and named
   policies under `docs/spec/proposals/`.
-- [ ] T049 [P] [US3] Add invalid-cycle, duplicate-grant, and conflict fixtures.
-- [ ] T050 [US3] Add role inheritance and policy AST/IR nodes.
-- [ ] T051 [US3] Implement exact policy expansion before validation/generation.
-- [ ] T052 [US3] Add canonical formatting and expanded-policy explanations.
-- [ ] T053 [US3] Add Studio “Show expanded permissions” view.
+- [x] T049 [P] [US3] Add invalid-cycle, duplicate-grant, and conflict fixtures.
+- [x] T050 [US3] Add role inheritance and policy AST/IR nodes.
+- [x] T051 [US3] Implement exact policy expansion before validation/generation.
+- [x] T052 [US3] Add canonical formatting and expanded-policy explanations.
+- [x] T053 [US3] Add Studio “Show expanded permissions” view.
 
 ### Reusable declarations and workflows
 
@@ -189,9 +189,9 @@ a normative rule and applicable fixtures.
 - [ ] T055 [US3] Implement reusable declaration expansion with source trace
   preservation.
 - [ ] T056 [US3] Implement explicit state-machine syntax and invariant checks.
-- [ ] T057 [US3] Rewrite LaunchOps using abstractions and prove equivalent
+- [x] T057 [US3] Rewrite LaunchOps using abstractions and prove equivalent
   expanded semantics.
-- [ ] T058 [US3] Measure authored lines, repetition ratio, and policy expansion.
+- [x] T058 [US3] Measure authored lines, repetition ratio, and policy expansion.
 
 **Checkpoint**: SC-008 achieved without hidden security effects.
 

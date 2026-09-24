@@ -25,6 +25,9 @@
     { "id": "BUS-SYNTAX-021", "category": "syntax", "status": "stable", "title": "Forced-owner create permission", "implementation": ["src/parser.ts:allowForceOwnerCreatePattern"] },
     { "id": "BUS-SYNTAX-022", "category": "syntax", "status": "stable", "title": "Action execution permission", "implementation": ["src/parser.ts:allowRunPattern"] },
     { "id": "BUS-SYNTAX-023", "category": "syntax", "status": "stable", "title": "Account provisioning permission", "implementation": ["src/parser.ts:allowProvisionPattern"] },
-    { "id": "BUS-SYNTAX-024", "category": "syntax", "status": "stable", "title": "Comments and blank lines", "implementation": ["src/parser.ts:parseSource"] }
+    { "id": "BUS-SYNTAX-024", "category": "syntax", "status": "stable", "title": "Comments and blank lines", "implementation": ["src/parser.ts:parseSource"] },
+    { "id": "BUS-SYNTAX-025", "category": "syntax", "status": "experimental", "title": "Role inheritance declaration", "implementation": ["src/language/policies.ts:expandPolicySource"] },
+    { "id": "BUS-SYNTAX-026", "category": "syntax", "status": "experimental", "title": "Named policy declaration and grant", "implementation": ["src/language/policies.ts:expandPolicySource"] },
+    { "id": "BUS-SYNTAX-027", "category": "syntax", "status": "experimental", "title": "Concise permission policy macros", "implementation": ["src/language/policies.ts:expandPolicyStatement"] }
   ]
 }

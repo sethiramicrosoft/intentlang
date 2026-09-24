@@ -1,0 +1,4084 @@
+{
+  "links": [
+    {
+      "artifacts": [
+        {
+          "kind": "manifest",
+          "path": "intentlang.manifest.json",
+          "symbol": "launchops"
+        },
+        {
+          "kind": "database",
+          "path": "migration.sql"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js"
+        },
+        {
+          "kind": "ui",
+          "path": "index.html"
+        }
+      ],
+      "irNodeId": "launchops",
+      "ruleIds": [
+        "APP-DECL-001"
+      ],
+      "source": {
+        "endLine": 1,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 1
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "authentication"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "authentication"
+        }
+      ],
+      "irNodeId": "authentication",
+      "ruleIds": [
+        "AUTH-DECL-001"
+      ],
+      "source": {
+        "endLine": 2,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 2
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "administrator"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "administrator"
+        }
+      ],
+      "irNodeId": "administrator",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 4,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 4
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "programmanager"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "programmanager"
+        }
+      ],
+      "irNodeId": "programmanager",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 5,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 5
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "contributor"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "contributor"
+        }
+      ],
+      "irNodeId": "contributor",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 6,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 6
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "executive"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "executive"
+        }
+      ],
+      "irNodeId": "executive",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 7,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 7
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "user"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "user"
+        }
+      ],
+      "irNodeId": "user",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 9,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 9
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "user-name"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "user-name"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "user-name"
+        }
+      ],
+      "irNodeId": "user-name",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 9,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 9
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "user-email"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "user-email"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "user-email"
+        }
+      ],
+      "irNodeId": "user-email",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 10,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 10
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "program"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program"
+        }
+      ],
+      "irNodeId": "program",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 12,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 12
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "program-code"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "program-code"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-code"
+        }
+      ],
+      "irNodeId": "program-code",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 12,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 12
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "program-name"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "program-name"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-name"
+        }
+      ],
+      "irNodeId": "program-name",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 13,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 13
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "program-summary"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "program-summary"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-summary"
+        }
+      ],
+      "irNodeId": "program-summary",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 14,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 14
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "program-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "program-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-status"
+        }
+      ],
+      "irNodeId": "program-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 15,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 15
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "program-healthscore"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "program-healthscore"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-healthscore"
+        }
+      ],
+      "irNodeId": "program-healthscore",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 16,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 16
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "milestone"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/milestone"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "milestone"
+        }
+      ],
+      "irNodeId": "milestone",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 18,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 18
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "milestone-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "milestone-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "milestone-title"
+        }
+      ],
+      "irNodeId": "milestone-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 18,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 18
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "milestone-targetdate"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "milestone-targetdate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "milestone-targetdate"
+        }
+      ],
+      "irNodeId": "milestone-targetdate",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 19,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 19
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "milestone-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "milestone-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "milestone-status"
+        }
+      ],
+      "irNodeId": "milestone-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 20,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 20
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "milestone-progress"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "milestone-progress"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "milestone-progress"
+        }
+      ],
+      "irNodeId": "milestone-progress",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 21,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 21
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workitem"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem"
+        }
+      ],
+      "irNodeId": "workitem",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 23,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 23
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workitem-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workitem-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-title"
+        }
+      ],
+      "irNodeId": "workitem-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 23,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 23
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workitem-details"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workitem-details"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-details"
+        }
+      ],
+      "irNodeId": "workitem-details",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 24,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 24
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workitem-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workitem-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-status"
+        }
+      ],
+      "irNodeId": "workitem-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 25,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 25
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workitem-priority"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workitem-priority"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-priority"
+        }
+      ],
+      "irNodeId": "workitem-priority",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 26,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 26
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workitem-estimate"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workitem-estimate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-estimate"
+        }
+      ],
+      "irNodeId": "workitem-estimate",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 27,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 27
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workitem-done"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workitem-done"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-done"
+        }
+      ],
+      "irNodeId": "workitem-done",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 28,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 28
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "risk"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk"
+        }
+      ],
+      "irNodeId": "risk",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 30,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 30
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "risk-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "risk-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-title"
+        }
+      ],
+      "irNodeId": "risk-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 30,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 30
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "risk-impact"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "risk-impact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-impact"
+        }
+      ],
+      "irNodeId": "risk-impact",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 31,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 31
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "risk-probability"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "risk-probability"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-probability"
+        }
+      ],
+      "irNodeId": "risk-probability",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 32,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 32
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "risk-mitigation"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "risk-mitigation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-mitigation"
+        }
+      ],
+      "irNodeId": "risk-mitigation",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 33,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 33
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "risk-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "risk-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-status"
+        }
+      ],
+      "irNodeId": "risk-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 34,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 34
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "risk-escalated"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "risk-escalated"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-escalated"
+        }
+      ],
+      "irNodeId": "risk-escalated",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 35,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 35
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision"
+        }
+      ],
+      "irNodeId": "decision",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 37,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 37
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-title"
+        }
+      ],
+      "irNodeId": "decision-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 37,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 37
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-context"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-context"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-context"
+        }
+      ],
+      "irNodeId": "decision-context",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 38,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 38
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-outcome"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-outcome"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-outcome"
+        }
+      ],
+      "irNodeId": "decision-outcome",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 39,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 39
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-status"
+        }
+      ],
+      "irNodeId": "decision-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 40,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 40
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update"
+        }
+      ],
+      "irNodeId": "update",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 42,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 42
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-headline"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-headline"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-headline"
+        }
+      ],
+      "irNodeId": "update-headline",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 42,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 42
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-details"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-details"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-details"
+        }
+      ],
+      "irNodeId": "update-details",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 43,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 43
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-health"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-health"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-health"
+        }
+      ],
+      "irNodeId": "update-health",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 44,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 44
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-status"
+        }
+      ],
+      "irNodeId": "update-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 45,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 45
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "milestone-program"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "milestone-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "milestone-program"
+        }
+      ],
+      "irNodeId": "milestone-program",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 47,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 47
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workitem-program"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workitem-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-program"
+        }
+      ],
+      "irNodeId": "workitem-program",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 48,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 48
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workitem-milestone"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workitem-milestone"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-milestone"
+        }
+      ],
+      "irNodeId": "workitem-milestone",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 49,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 49
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workitem-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workitem-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-owner"
+        }
+      ],
+      "irNodeId": "workitem-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 50,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 50
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "risk-program"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "risk-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-program"
+        }
+      ],
+      "irNodeId": "risk-program",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 51,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 51
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "risk-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "risk-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-owner"
+        }
+      ],
+      "irNodeId": "risk-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 52,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 52
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-program"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-program"
+        }
+      ],
+      "irNodeId": "decision-program",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 53,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 53
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-owner"
+        }
+      ],
+      "irNodeId": "decision-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 54,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 54
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-program"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-program"
+        }
+      ],
+      "irNodeId": "update-program",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 55,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 55
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-owner"
+        }
+      ],
+      "irNodeId": "update-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 56,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 56
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-activate"
+        }
+      ],
+      "irNodeId": "program-activate",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 60,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 58
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/pause"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-pause"
+        }
+      ],
+      "irNodeId": "program-pause",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 64,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 62
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-complete"
+        }
+      ],
+      "irNodeId": "program-complete",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 68,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 66
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "milestone-start"
+        }
+      ],
+      "irNodeId": "milestone-start",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 72,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 70
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "milestone-complete"
+        }
+      ],
+      "irNodeId": "milestone-complete",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 77,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 74
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-start"
+        }
+      ],
+      "irNodeId": "workitem-start",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 81,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 79
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/block"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-block"
+        }
+      ],
+      "irNodeId": "workitem-block",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 85,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 83
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-complete"
+        }
+      ],
+      "irNodeId": "workitem-complete",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 90,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 87
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/reopen"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-reopen"
+        }
+      ],
+      "irNodeId": "workitem-reopen",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 95,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 92
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-escalate"
+        }
+      ],
+      "irNodeId": "risk-escalate",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 100,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 97
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/mitigate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-mitigate"
+        }
+      ],
+      "irNodeId": "risk-mitigate",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 105,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 102
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-approve"
+        }
+      ],
+      "irNodeId": "decision-approve",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 109,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 107
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/reject"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-reject"
+        }
+      ],
+      "irNodeId": "decision-reject",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 113,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 111
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-publish"
+        }
+      ],
+      "irNodeId": "update-publish",
+      "ruleIds": [
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 117,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 115
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-provision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-provision"
+        }
+      ],
+      "irNodeId": "perm-administrator-provision",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 120,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 120
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-user"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-user",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 121,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 121
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-user"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-user",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 122,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 122
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-user"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-user",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 125,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 125
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-program"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-program",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 126,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 126
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-program"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-program",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 127,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 127
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-program"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-program",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 130,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 130
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-milestone"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-milestone"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-milestone",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 131,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 131
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-milestone"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-milestone"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-milestone",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 132,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 132
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-milestone"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-milestone"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-milestone",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 133,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 133
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-workitem"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-workitem",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 134,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 134
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-workitem"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-workitem",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 135,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 135
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-workitem"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-workitem",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 136,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 136
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-risk"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-risk",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 137,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 137
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-risk"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-risk",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 140,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 140
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-risk"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-risk",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 141,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 141
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-decision"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-decision"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-decision"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-update"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-update"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-update"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-program-activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-program-activate"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-program-activate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-program-pause"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-program-pause"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-program-pause",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-program-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-program-complete"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-program-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-milestone-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-milestone-start"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-milestone-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-milestone-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-milestone-complete"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-milestone-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-workitem-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-workitem-start"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-workitem-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-workitem-block"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-workitem-block"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-workitem-block",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-workitem-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-workitem-complete"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-workitem-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-workitem-reopen"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-workitem-reopen"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-workitem-reopen",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-risk-escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-risk-escalate"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-risk-escalate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-risk-mitigate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-risk-mitigate"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-risk-mitigate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-decision-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-decision-approve"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-decision-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-decision-reject"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-decision-reject"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-decision-reject",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-update-publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-update-publish"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-update-publish",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-read-user"
+        }
+      ],
+      "irNodeId": "perm-programmanager-read-user",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-create-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-create-program"
+        }
+      ],
+      "irNodeId": "perm-programmanager-create-program",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-read-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-read-program"
+        }
+      ],
+      "irNodeId": "perm-programmanager-read-program",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-update-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-update-program"
+        }
+      ],
+      "irNodeId": "perm-programmanager-update-program",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-create-milestone"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-create-milestone"
+        }
+      ],
+      "irNodeId": "perm-programmanager-create-milestone",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-read-milestone"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-read-milestone"
+        }
+      ],
+      "irNodeId": "perm-programmanager-read-milestone",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-update-milestone"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-update-milestone"
+        }
+      ],
+      "irNodeId": "perm-programmanager-update-milestone",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-create-workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-create-workitem"
+        }
+      ],
+      "irNodeId": "perm-programmanager-create-workitem",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-read-workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-read-workitem"
+        }
+      ],
+      "irNodeId": "perm-programmanager-read-workitem",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-update-workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-update-workitem"
+        }
+      ],
+      "irNodeId": "perm-programmanager-update-workitem",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-create-risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-create-risk"
+        }
+      ],
+      "irNodeId": "perm-programmanager-create-risk",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-read-risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-read-risk"
+        }
+      ],
+      "irNodeId": "perm-programmanager-read-risk",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-update-risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-update-risk"
+        }
+      ],
+      "irNodeId": "perm-programmanager-update-risk",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-create-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-create-decision"
+        }
+      ],
+      "irNodeId": "perm-programmanager-create-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-read-decision"
+        }
+      ],
+      "irNodeId": "perm-programmanager-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-update-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-update-decision"
+        }
+      ],
+      "irNodeId": "perm-programmanager-update-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-create-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-create-update"
+        }
+      ],
+      "irNodeId": "perm-programmanager-create-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-read-update"
+        }
+      ],
+      "irNodeId": "perm-programmanager-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-update-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-update-update"
+        }
+      ],
+      "irNodeId": "perm-programmanager-update-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-program-activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-program-activate"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-program-activate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-program-pause"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-program-pause"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-program-pause",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-program-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-program-complete"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-program-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-milestone-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-milestone-start"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-milestone-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-milestone-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-milestone-complete"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-milestone-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-workitem-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-workitem-start"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-workitem-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-workitem-block"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-workitem-block"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-workitem-block",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-workitem-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-workitem-complete"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-workitem-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-workitem-reopen"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-workitem-reopen"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-workitem-reopen",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-risk-escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-risk-escalate"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-risk-escalate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-risk-mitigate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-risk-mitigate"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-risk-mitigate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-programmanager-run-update-publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-programmanager-run-update-publish"
+        }
+      ],
+      "irNodeId": "perm-programmanager-run-update-publish",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-read-user"
+        }
+      ],
+      "irNodeId": "perm-contributor-read-user",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-read-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-read-program"
+        }
+      ],
+      "irNodeId": "perm-contributor-read-program",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-read-milestone"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-read-milestone"
+        }
+      ],
+      "irNodeId": "perm-contributor-read-milestone",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-read-workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-read-workitem"
+        }
+      ],
+      "irNodeId": "perm-contributor-read-workitem",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-create-workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-create-workitem"
+        }
+      ],
+      "irNodeId": "perm-contributor-create-workitem",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-update-workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-update-workitem"
+        }
+      ],
+      "irNodeId": "perm-contributor-update-workitem",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-read-risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-read-risk"
+        }
+      ],
+      "irNodeId": "perm-contributor-read-risk",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-create-risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-create-risk"
+        }
+      ],
+      "irNodeId": "perm-contributor-create-risk",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-update-risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-update-risk"
+        }
+      ],
+      "irNodeId": "perm-contributor-update-risk",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-read-decision"
+        }
+      ],
+      "irNodeId": "perm-contributor-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-read-update"
+        }
+      ],
+      "irNodeId": "perm-contributor-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-create-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-create-update"
+        }
+      ],
+      "irNodeId": "perm-contributor-create-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-update-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-update-update"
+        }
+      ],
+      "irNodeId": "perm-contributor-update-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-run-workitem-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-run-workitem-start"
+        }
+      ],
+      "irNodeId": "perm-contributor-run-workitem-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-run-workitem-block"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-run-workitem-block"
+        }
+      ],
+      "irNodeId": "perm-contributor-run-workitem-block",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-run-workitem-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-run-workitem-complete"
+        }
+      ],
+      "irNodeId": "perm-contributor-run-workitem-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 144,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 144
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-run-workitem-reopen"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-run-workitem-reopen"
+        }
+      ],
+      "irNodeId": "perm-contributor-run-workitem-reopen",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-run-risk-escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-run-risk-escalate"
+        }
+      ],
+      "irNodeId": "perm-contributor-run-risk-escalate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-run-risk-mitigate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-run-risk-mitigate"
+        }
+      ],
+      "irNodeId": "perm-contributor-run-risk-mitigate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-contributor-run-update-publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-contributor-run-update-publish"
+        }
+      ],
+      "irNodeId": "perm-contributor-run-update-publish",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-program"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-program"
+        }
+      ],
+      "irNodeId": "perm-executive-read-program",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-milestone"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-milestone"
+        }
+      ],
+      "irNodeId": "perm-executive-read-milestone",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-workitem"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-workitem"
+        }
+      ],
+      "irNodeId": "perm-executive-read-workitem",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-risk"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-risk"
+        }
+      ],
+      "irNodeId": "perm-executive-read-risk",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-decision"
+        }
+      ],
+      "irNodeId": "perm-executive-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-update"
+        }
+      ],
+      "irNodeId": "perm-executive-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-run-decision-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-run-decision-approve"
+        }
+      ],
+      "irNodeId": "perm-executive-run-decision-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-run-decision-reject"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-run-decision-reject"
+        }
+      ],
+      "irNodeId": "perm-executive-run-decision-reject",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 145,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 145
+      }
+    }
+  ],
+  "sourceFingerprint": "sha256:252564330b7dcbcef981dbd0bd71fe43bec8ae284f486d5d8bd62ed820f4a68a"
+}

@@ -36,7 +36,7 @@ The complete source compiles with:
 - 10 foreign-key relationships
 - 14 guarded workflow actions
 - 4 roles
-- 95 explicit permissions
+- 95 expanded explicit permissions from 24 policy, grant, and policy-body lines
 - 0 compiler diagnostics
 
 ## The English is executable
@@ -91,17 +91,23 @@ generates:
 - Idempotent replay handling
 - An audit-log record
 
-A permission declaration:
+A concise policy:
 
 ```text
-allow Contributor to create Risk with owner as self
-allow Contributor to update Risk where owner is self
-allow Executive to run approve on Decision
+policy ContributorAccess
+  allow to create and update own Risk
+  allow to run all actions on own Risk
+
+grant ContributorAccess to Contributor
 ```
 
-controls both the browser experience and backend authorization. Hiding a button
-is not the security boundary: the generated server independently rejects
-unauthorized requests and filters owner-scoped records.
+expands before validation into the same explicit permissions that control both
+the browser experience and backend authorization. LaunchOps authors 24
+abstraction lines instead of 95 repeated permission lines, a 74.7% reduction,
+while an executable equivalence test proves that the canonical `ProgramIr` and
+semantic fingerprint are unchanged. Hiding a button is not the security
+boundary: the generated server independently rejects unauthorized requests and
+filters owner-scoped records.
 
 ## Role model
 

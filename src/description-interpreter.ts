@@ -61,6 +61,8 @@ const TOP_LEVEL_KEYWORDS = [
   "each ",
   "action ",
   "allow ",
+  "policy ",
+  "grant ",
   "entity ",
   "--",
   "#",

@@ -1,0 +1,12 @@
+{
+  "id": "policy-expansion-valid",
+  "category": "valid",
+  "ruleIds": ["POLICY-EXPANSION-001"],
+  "source": "application PolicyExample\na User has a required unique email as text\na Task has a required title as text\neach Task belongs to a User as owner on delete restrict\nauthentication uses User identified by email\nrole Contributor\nrole Manager extends Contributor\naction complete a Task\n  require title is not \"done\" otherwise \"Already done\"\n  set title to \"done\"\npolicy OwnedTasks\n  allow to read Task\n  allow to create and update own Task\n  allow to run all actions on own Task\ngrant OwnedTasks to Contributor\n",
+  "expected": {
+    "ok": true,
+    "ir": {
+      "application": "PolicyExample"
+    }
+  }
+}

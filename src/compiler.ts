@@ -1,10 +1,15 @@
 import type { CompileResult } from "./model.js";
 import { parseSource } from "./parser.js";
+import { expandPolicySource } from "./language/policies.js";
 
 export { formatSource } from "./formatter.js";
 
 export function compileSource(source: string): CompileResult {
-  const parsed = parseSource(source);
+  const expanded = expandPolicySource(source);
+  if (!expanded.ok) {
+    return { ok: false, diagnostics: expanded.diagnostics };
+  }
+  const parsed = parseSource(expanded.source);
 
   if (!parsed.ir) {
     return {

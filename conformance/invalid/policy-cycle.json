@@ -1,0 +1,10 @@
+{
+  "id": "policy-role-cycle-invalid",
+  "category": "invalid",
+  "ruleIds": ["PERMISSION-DECL-001"],
+  "source": "application Cyclic\nrole First extends Second\nrole Second extends First\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E054", "E054"]
+  }
+}

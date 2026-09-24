@@ -116,101 +116,31 @@ action publish an Update
   require status is "draft" otherwise "Only a draft update can be published"
   set status to "published"
 
-allow Administrator to provision accounts
-allow Administrator to create User
-allow Administrator to read User
-allow Administrator to update User
-allow Administrator to create Program
-allow Administrator to read Program
-allow Administrator to update Program
-allow Administrator to create Milestone
-allow Administrator to read Milestone
-allow Administrator to update Milestone
-allow Administrator to create WorkItem
-allow Administrator to read WorkItem
-allow Administrator to update WorkItem
-allow Administrator to create Risk
-allow Administrator to read Risk
-allow Administrator to update Risk
-allow Administrator to create Decision
-allow Administrator to read Decision
-allow Administrator to update Decision
-allow Administrator to create Update
-allow Administrator to read Update
-allow Administrator to update Update
-allow Administrator to run activate on Program
-allow Administrator to run pause on Program
-allow Administrator to run complete on Program
-allow Administrator to run start on Milestone
-allow Administrator to run complete on Milestone
-allow Administrator to run start on WorkItem
-allow Administrator to run block on WorkItem
-allow Administrator to run complete on WorkItem
-allow Administrator to run reopen on WorkItem
-allow Administrator to run escalate on Risk
-allow Administrator to run mitigate on Risk
-allow Administrator to run approve on Decision
-allow Administrator to run reject on Decision
-allow Administrator to run publish on Update
+policy AdministratorAccess
+  allow to provision accounts
+  allow to manage User, Program, Milestone, WorkItem, Risk, Decision and Update
+  allow to run all actions on Program, Milestone, WorkItem, Risk, Decision and Update
 
-allow ProgramManager to read User
-allow ProgramManager to create Program
-allow ProgramManager to read Program
-allow ProgramManager to update Program
-allow ProgramManager to create Milestone
-allow ProgramManager to read Milestone
-allow ProgramManager to update Milestone
-allow ProgramManager to create WorkItem
-allow ProgramManager to read WorkItem
-allow ProgramManager to update WorkItem
-allow ProgramManager to create Risk
-allow ProgramManager to read Risk
-allow ProgramManager to update Risk
-allow ProgramManager to create Decision
-allow ProgramManager to read Decision
-allow ProgramManager to update Decision
-allow ProgramManager to create Update
-allow ProgramManager to read Update
-allow ProgramManager to update Update
-allow ProgramManager to run activate on Program
-allow ProgramManager to run pause on Program
-allow ProgramManager to run complete on Program
-allow ProgramManager to run start on Milestone
-allow ProgramManager to run complete on Milestone
-allow ProgramManager to run start on WorkItem
-allow ProgramManager to run block on WorkItem
-allow ProgramManager to run complete on WorkItem
-allow ProgramManager to run reopen on WorkItem
-allow ProgramManager to run escalate on Risk
-allow ProgramManager to run mitigate on Risk
-allow ProgramManager to run publish on Update
+policy ProgramManagerAccess
+  allow to read User
+  allow to manage Program, Milestone, WorkItem, Risk, Decision and Update
+  allow to run all actions on Program, Milestone, WorkItem, Risk and Update
 
-allow Contributor to read User where self
-allow Contributor to read Program
-allow Contributor to read Milestone
-allow Contributor to read WorkItem
-allow Contributor to create WorkItem with owner as self
-allow Contributor to update WorkItem where owner is self
-allow Contributor to read Risk
-allow Contributor to create Risk with owner as self
-allow Contributor to update Risk where owner is self
-allow Contributor to read Decision
-allow Contributor to read Update
-allow Contributor to create Update with owner as self
-allow Contributor to update Update where owner is self
-allow Contributor to run start on WorkItem where owner is self
-allow Contributor to run block on WorkItem where owner is self
-allow Contributor to run complete on WorkItem where owner is self
-allow Contributor to run reopen on WorkItem where owner is self
-allow Contributor to run escalate on Risk where owner is self
-allow Contributor to run mitigate on Risk where owner is self
-allow Contributor to run publish on Update where owner is self
+policy ContributorAccess
+  allow to read self User
+  allow to read Program, Milestone and WorkItem
+  allow to create and update own WorkItem
+  allow to read Risk
+  allow to create and update own Risk
+  allow to read Decision and Update
+  allow to create and update own Update
+  allow to run all actions on own WorkItem, Risk and Update
 
-allow Executive to read Program
-allow Executive to read Milestone
-allow Executive to read WorkItem
-allow Executive to read Risk
-allow Executive to read Decision
-allow Executive to read Update
-allow Executive to run approve on Decision
-allow Executive to run reject on Decision
+policy ExecutiveAccess
+  allow to read Program, Milestone, WorkItem, Risk, Decision and Update
+  allow to run all actions on Decision
+
+grant AdministratorAccess to Administrator
+grant ProgramManagerAccess to ProgramManager
+grant ContributorAccess to Contributor
+grant ExecutiveAccess to Executive

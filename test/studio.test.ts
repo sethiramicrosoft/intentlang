@@ -56,6 +56,12 @@ test("Studio model panel exposes trace links with source navigation", () => {
   assert.ok(STUDIO_JS.includes("item.artifacts"));
 });
 
+test("Studio model panel explains expanded policy permissions", () => {
+  assert.ok(STUDIO_JS.includes("Expanded Policies"));
+  assert.ok(STUDIO_JS.includes("renderPolicyExpansions"));
+  assert.ok(STUDIO_JS.includes("expansion.statements"));
+});
+
 const issueTrackerSource = `application IssueTracker
 authentication uses User identified by email
 

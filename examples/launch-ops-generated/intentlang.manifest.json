@@ -1,5 +1,11 @@
 {
   "compilerVersion": "0.8.0-alpha.0",
+  "dependencyFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+  "generatorVersions": {
+    "database": "0.8.0-alpha.0",
+    "runtime": "0.8.0-alpha.0",
+    "ui": "0.8.0-alpha.0"
+  },
   "ir": {
     "actions": [
       {
@@ -1361,5 +1367,9 @@
     "schemaVersion": "0.5.0"
   },
   "irFingerprint": "sha256:aa3eef978c496d6b2032dfa6fc5b0f2d031e33fe051680b83c2cde42630db6a5",
-  "schemaVersion": "0.5.0"
+  "irVersion": "0.5.0",
+  "languageVersion": "0.8.0-alpha.0",
+  "schemaVersion": "0.5.0",
+  "semanticFingerprint": "sha256:aa3eef978c496d6b2032dfa6fc5b0f2d031e33fe051680b83c2cde42630db6a5",
+  "sourceFingerprint": "sha256:252564330b7dcbcef981dbd0bd71fe43bec8ae284f486d5d8bd62ed820f4a68a"
 }

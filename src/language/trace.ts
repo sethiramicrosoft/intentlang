@@ -1,6 +1,7 @@
 import type { ProgramIr } from "../model.js";
 import type { TraceArtifact, TraceLink, TraceMap } from "./contracts.js";
 import { sourceFingerprint } from "./semantic-fingerprint.js";
+import { expandPolicySource } from "./policies.js";
 
 function artifacts(kind: string, id: string, name: string): TraceArtifact[] {
   if (kind === "application") {
@@ -211,6 +212,26 @@ export function buildTraceMap(
         );
       }
       currentEntityName = undefined;
+    }
+  }
+
+  const expanded = expandPolicySource(source);
+  if (expanded.ok) {
+    for (const expansion of expanded.expansions) {
+      for (const _statement of expansion.statements) {
+        const permission = ir.permissions[permissionIndex++];
+        if (!permission) break;
+        links.push(
+          link(
+            file,
+            expansion.sourceLine,
+            expansion.sourceLine,
+            ["POLICY-EXPANSION-001", "PERMISSION-DECL-001"],
+            permission.id,
+            "permission"
+          )
+        );
+      }
     }
   }
 

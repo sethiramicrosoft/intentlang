@@ -1206,6 +1206,7 @@ export const STUDIO_JS = `
     canonical: '',
     ir: null,
     trace: null,
+    policyExpansions: [],
     activeTab: 'problems',
     planToken: null,
     planItems: [],
@@ -1630,6 +1631,7 @@ export const STUDIO_JS = `
     state.canonical = data.canonical || '';
     state.ir = data.ir || null;
     state.trace = data.trace || null;
+    state.policyExpansions = data.policyExpansions || [];
   }
 
   function showFatal(msg) {
@@ -1795,7 +1797,7 @@ export const STUDIO_JS = `
 
   // ── Prose detection ──────────────────────────────────────────────────────────
 
-  var TOP_LEVEL_KW = ['application ', 'authentication ', 'role ', 'a ', 'an ', 'each ', 'action ', 'allow ', 'entity ', '--', '#'];
+  var TOP_LEVEL_KW = ['application ', 'authentication ', 'role ', 'policy ', 'grant ', 'a ', 'an ', 'each ', 'action ', 'allow ', 'entity ', '--', '#'];
 
   function isProseInput(source) {
     var lines = source.split('\\n');
@@ -2290,6 +2292,34 @@ export const STUDIO_JS = `
     if (state.trace && state.trace.links && state.trace.links.length) {
       appendModelSection(panel, 'Source to Generated Trace', renderTraceCards(state.trace.links));
     }
+    if (state.policyExpansions && state.policyExpansions.length) {
+      appendModelSection(panel, 'Expanded Policies', renderPolicyExpansions(state.policyExpansions));
+    }
+  }
+
+  function renderPolicyExpansions(expansions) {
+    var container = document.createElement('div');
+    expansions.forEach(function (expansion) {
+      var card = document.createElement('div');
+      card.className = 'model-card';
+      var name = document.createElement('div');
+      name.className = 'model-card-name';
+      name.textContent = expansion.targetRole + ' ← ' + expansion.source;
+      var meta = document.createElement('div');
+      meta.className = 'model-card-meta';
+      meta.textContent = expansion.kind + ' · ' + expansion.statements.length + ' explicit permission' +
+        (expansion.statements.length === 1 ? '' : 's');
+      card.appendChild(name);
+      card.appendChild(meta);
+      expansion.statements.forEach(function (statement) {
+        var line = document.createElement('div');
+        line.className = 'model-field';
+        line.textContent = statement;
+        card.appendChild(line);
+      });
+      container.appendChild(card);
+    });
+    return container;
   }
 
   function renderTraceCards(links) {
