@@ -439,6 +439,27 @@ function expandFunctionCall(name: string, argRaw: string | undefined, callText: 
 }
 
 /**
+ * Applies a "The X is Y." assignment: resolves Y as a number expression first, falling back to
+ * copying an existing variable's value, and finally to literal text (only when Y doesn't even
+ * look like an arithmetic attempt, so a genuine mistake like dividing by zero isn't silently
+ * treated as text). Returns true once handled; false means the caller should leave the line for
+ * the page compiler to report as an ordinary unrecognized instruction.
+ */
+function applyAssignment(name: string, rawValue: string, variables: Map<string, VarValue>): boolean {
+  const numericValue = evaluateExpression(rawValue, variables);
+  if (numericValue !== undefined) {
+    variables.set(name, { type: "number", value: numericValue });
+    return true;
+  }
+  if (!NUMERIC_INTENT_RE.test(rawValue)) {
+    const copied = variables.get(stripLeadingThe(rawValue).toLowerCase());
+    variables.set(name, copied ?? { type: "text", value: dequote(rawValue) });
+    return true;
+  }
+  return false;
+}
+
+/**
  * Expands one instruction, recognizing that the instruction can itself be a whole nested If,
  * For each, or Do sentence, e.g. "If the score is at least 40, if the wins is at least 10, set
  * the text of message to double win." Nesting works for If because its own parsing always stops
@@ -449,6 +470,8 @@ function expandFunctionCall(name: string, argRaw: string | undefined, callText: 
 function expandInstruction(instr: string, lineNumber: number, variables: Map<string, VarValue>,
   diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): string[] {
   const trimmedInstr = instr.trim();
+  const assign = ASSIGN_RE.exec(trimmedInstr);
+  if (assign && applyAssignment(assign[1]!.trim().toLowerCase(), assign[2]!.trim(), variables)) return [];
   const nestedIf = IF_RE.exec(trimmedInstr);
   if (nestedIf) {
     const condition = evaluateIfCondition(nestedIf, trimmedInstr, lineNumber, variables, diagnostics);
@@ -540,19 +563,7 @@ export function expandMacros(source: string): MacroExpandResult {
     if (assign) {
       const name = assign[1]!.trim().toLowerCase();
       const rawValue = assign[2]!.trim();
-      const numericValue = evaluateExpression(rawValue, variables);
-      if (numericValue !== undefined) {
-        variables.set(name, { type: "number", value: numericValue });
-        return; // a variable sentence does not render anything by itself
-      }
-      // Only fall back to plain text when the value doesn't even look like an arithmetic
-      // attempt (no digits, no "plus"/"minus"/"times"/"divided by"). That keeps a genuine
-      // arithmetic mistake, such as dividing by zero, from silently becoming literal text.
-      if (!NUMERIC_INTENT_RE.test(rawValue)) {
-        const copied = variables.get(stripLeadingThe(rawValue).toLowerCase());
-        variables.set(name, copied ?? { type: "text", value: dequote(rawValue) });
-        return;
-      }
+      if (applyAssignment(name, rawValue, variables)) return; // a variable sentence does not render anything by itself
       // Doesn't resolve to a known number or variable expression: leave it for the
       // page compiler to report as an ordinary unrecognized instruction.
       output.push(resolveTrailingVariable(rawLine, variables));

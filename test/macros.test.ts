@@ -604,3 +604,30 @@ test("calling a parameterless procedure with a value is a clear error", () => {
 To greet, set the text of message to hello
 Do greet with Alex.`, /doesn't take a value/);
 });
+
+test("a variable sentence works as a For each's own repeated instruction, accumulating across iterations", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The total is 0.
+For each amount in 1, 2 and 3, the total is total plus amount.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "6");
+});
+
+test("a variable sentence works inside a procedure's body, mutating a variable that outlives the call", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The total is 0.
+To add with amount, the total is total plus amount.
+Do add with 5.
+Do add with 7.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "12");
+});
+
+test("a variable sentence works as an If's own instruction, and only runs when the condition is true", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 3.
+If the score is at least 1, the score is score plus 100.
+If the score is less than 0, the score is score plus 1000.
+Set the text of message to score`);
+  assert.equal(textOf(ir, "message"), "103");
+});

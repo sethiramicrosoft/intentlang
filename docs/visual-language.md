@@ -340,6 +340,20 @@ over "deal with problems") so the name and parameter can't be confused.
 A variable's value, number or text, can be used anywhere a plain instruction ends
 with `to <name>`, such as `Set the text of points line to total points`.
 
+A `The ... is ...` variable sentence can also be used as the instruction
+inside an If, a For each, or a procedure's own body — not just on its own
+line at the top level. This is what lets a loop keep a running total across
+its iterations, or a procedure update a variable that outlives the call:
+
+```text
+The total is 0.
+For each amount in 1, 2 and 3, the total is total plus amount.
+Set the text of message to total
+```
+
+That runs the assignment once per item, in order, leaving `total` at `6`
+once the loop finishes.
+
 Like the rest of the language, none of this is case sensitive: keywords
 (`the`, `is`, `if`, `otherwise`, `for each`, `in`, `and then`, `to`, `do`),
 comparators, variable names, procedure names, and text comparisons all match
@@ -363,8 +377,6 @@ offered, never applied silently.
   element on each call just from its parameter). Combine a procedure with the
   loop's own instruction — which *can* vary per item — for the parts that
   need to change each time.
-- A procedure's own instructions can't yet contain a `The ... is ...`
-  variable sentence.
 - Chaining two *independent* If sentences with `and then` (where the second
   doesn't depend on the first) is currently parsed as the second being nested
   inside the first's own instruction, so if the first condition is false, the
