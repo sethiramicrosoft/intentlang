@@ -1,0 +1,10 @@
+{
+  "id": "visual-motion-path-invalid",
+  "category": "invalid",
+  "ruleIds": ["VIS-MOTION-001"],
+  "source": "Show Hello\nMove the text from left to top over 3 seconds\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["V005"]
+  }
+}

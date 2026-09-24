@@ -1,0 +1,11 @@
+{
+  "id": "secured-workflow-runtime",
+  "category": "runtime",
+  "ruleIds": ["REL-DECL-001", "ACTION-DECL-001", "AUTH-DECL-001", "ROLE-DECL-001", "PERMISSION-DECL-001", "RUNTIME-GENERATION-001"],
+  "source": "application Work with id work\nauthentication uses User identified by email\nrole Administrator with id administrator\nrole Member with id member\n\nentity User with id user\n  name is required text with id user-name\n  email is required unique text with id user-email\n\nentity Task with id task\n  title is required text with id task-title\n  done is boolean with id task-done default false\n\nTask belongs to User as owner with id task-owner on delete restrict\n\naction complete a Task with id task-complete\n  require done is false otherwise \"Task is already complete\"\n  set done to true\n\nallow Administrator to provision accounts\nallow Administrator to create User\nallow Administrator to read User\nallow Administrator to create Task\nallow Administrator to read Task\nallow Administrator to update Task\nallow Administrator to run complete on Task\nallow Member to read User where self\nallow Member to create Task with owner as self\nallow Member to read Task where owner is self\nallow Member to update Task where owner is self\nallow Member to run complete on Task where owner is self\n",
+  "expected": {
+    "schemaContains": ["CREATE TABLE \"users\"", "CREATE TABLE \"tasks\"", "FOREIGN KEY(\"owner_id\")", "ON DELETE RESTRICT"],
+    "runtimeContains": ["__intentlang_sessions", "__intentlang_idempotency", "__intentlang_audit", "SECURITY_SCHEMA.authentication && !session", "forceOwner", "PRECONDITION_FAILED", "VERSION_CONFLICT", "db.exec('BEGIN')", "db.exec('COMMIT')", "db.exec('ROLLBACK')"],
+    "uiContains": ["/auth/login", "/actions/", "Idempotency-Key", "openEntityDialog", "openActionDialog"]
+  }
+}

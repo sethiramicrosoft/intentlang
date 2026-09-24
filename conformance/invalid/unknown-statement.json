@@ -1,0 +1,10 @@
+{
+  "id": "unknown-statement-invalid",
+  "category": "invalid",
+  "ruleIds": ["SOURCE-STRUCTURE-001"],
+  "source": "application Work with id work\nplease invent the rest\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E001"]
+  }
+}

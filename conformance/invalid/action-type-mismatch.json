@@ -1,0 +1,10 @@
+{
+  "id": "action-type-mismatch-invalid",
+  "category": "invalid",
+  "ruleIds": ["ACTION-DECL-001"],
+  "source": "application Work with id work\nentity Task with id task\n  done is boolean with id task-done default false\naction complete a Task with id task-complete\n  require done is 42 otherwise \"Wrong type\"\n  set done to true\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E024"]
+  }
+}

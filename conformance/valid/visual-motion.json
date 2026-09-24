@@ -1,0 +1,14 @@
+{
+  "id": "visual-motion-valid",
+  "category": "valid",
+  "ruleIds": ["VIS-MOTION-001"],
+  "source": "Show Moving\nMove the text from left to right over 3 seconds\n",
+  "expected": {
+    "ok": true,
+    "movement": {
+      "from": "left",
+      "to": "right",
+      "seconds": 3
+    }
+  }
+}

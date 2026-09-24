@@ -1,0 +1,11 @@
+{
+  "id": "page-property-ambiguous",
+  "category": "ambiguous",
+  "ruleIds": ["PAGE-EVENT-001"],
+  "source": "Add an image called portrait\nSet the width of portrait to 120\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["W002"],
+    "silentGuess": false
+  }
+}

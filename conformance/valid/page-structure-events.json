@@ -1,0 +1,12 @@
+{
+  "id": "page-structure-events-valid",
+  "category": "valid",
+  "ruleIds": ["PAGE-STRUCTURE-001", "PAGE-EVENT-001"],
+  "source": "Add a section called panel\nAdd a paragraph called status\nSet the text of status to Waiting\nPut status inside panel\nMake status bold\nUnderline status\nAdd a text input called name inside panel\nAdd a button called go inside panel\nSet the text of go to Go\nWhen the page loads, set the text of status to Ready\nWhen the go is clicked, set the text of status to Clicked\nWhen the name changes, set the text of status to Changed\nWhen enter is pressed in name, set the text of status to Submitted\n",
+  "expected": {
+    "ok": true,
+    "kind": "page",
+    "elements": 5,
+    "hasRuntimeScript": true
+  }
+}

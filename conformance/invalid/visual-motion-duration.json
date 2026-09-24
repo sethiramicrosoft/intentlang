@@ -1,0 +1,10 @@
+{
+  "id": "visual-motion-duration-invalid",
+  "category": "invalid",
+  "ruleIds": ["VIS-MOTION-001"],
+  "source": "Show Hello\nMove the text from left to right over 0 seconds\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["V006"]
+  }
+}

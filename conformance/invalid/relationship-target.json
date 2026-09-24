@@ -1,0 +1,10 @@
+{
+  "id": "relationship-target-invalid",
+  "category": "invalid",
+  "ruleIds": ["REL-DECL-001"],
+  "source": "application Work with id work\nentity Task with id task\n  title is required text with id task-title\nTask belongs to Missing as owner with id task-owner on delete restrict\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E011"]
+  }
+}

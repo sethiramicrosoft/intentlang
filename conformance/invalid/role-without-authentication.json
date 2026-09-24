@@ -1,0 +1,10 @@
+{
+  "id": "role-without-authentication-invalid",
+  "category": "invalid",
+  "ruleIds": ["ROLE-DECL-001", "AUTH-DECL-001"],
+  "source": "application Work with id work\nrole Member with id member\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E049"]
+  }
+}

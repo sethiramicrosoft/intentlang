@@ -1,0 +1,10 @@
+{
+  "id": "comments-and-blanks-valid",
+  "category": "valid",
+  "ruleIds": ["SOURCE-STRUCTURE-001"],
+  "source": "# application declaration follows\n\napplication Notes with id notes\n\n# entity declaration follows\nentity Note with id note\n  body is required text with id note-body\n",
+  "expected": {
+    "ok": true,
+    "entities": 1
+  }
+}

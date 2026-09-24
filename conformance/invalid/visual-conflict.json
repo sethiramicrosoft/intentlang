@@ -1,0 +1,10 @@
+{
+  "id": "visual-conflict-invalid",
+  "category": "invalid",
+  "ruleIds": ["VIS-LAYOUT-001", "VIS-STYLE-001"],
+  "source": "Show Hello\nMake the text large\nMake the text small\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["V002"]
+  }
+}

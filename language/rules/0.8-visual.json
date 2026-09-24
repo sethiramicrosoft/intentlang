@@ -26,6 +26,73 @@
         "positive": ["conformance/valid/visual-show.json"],
         "negative": ["conformance/ambiguous/visual-it.json"]
       }
+    },
+    {
+      "id": "VIS-LAYOUT-001",
+      "status": "stable",
+      "title": "Visual text layout is explicit and conflict-free",
+      "canonicalForm": "Put each word on a new line | Put all the text on one line",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["VIS-SYNTAX-002"],
+      "specification": "docs/spec/visual-core.md#vis-layout-001",
+      "evidence": {
+        "positive": ["conformance/valid/visual-layout-style.json"],
+        "negative": ["conformance/invalid/visual-conflict.json"]
+      }
+    },
+    {
+      "id": "VIS-STYLE-001",
+      "status": "stable",
+      "title": "Visual styles have validated targets and values",
+      "canonicalForm": "Make the <text|background> <modifier> [and <modifier>...]",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["VIS-SYNTAX-003", "V002", "V004"],
+      "specification": "docs/spec/visual-core.md#vis-style-001",
+      "evidence": {
+        "positive": ["conformance/valid/visual-layout-style.json"],
+        "negative": ["conformance/invalid/visual-conflict.json", "conformance/invalid/visual-style.json"]
+      }
+    },
+    {
+      "id": "VIS-MOTION-001",
+      "status": "stable",
+      "title": "Visual placement and motion use valid positions, paths, and durations",
+      "canonicalForm": "Move the text from <edge> to <opposite-edge> over <seconds> seconds",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["VIS-SYNTAX-004", "VIS-SYNTAX-005", "V005", "V006"],
+      "specification": "docs/spec/visual-core.md#vis-motion-001",
+      "evidence": {
+        "positive": ["conformance/valid/visual-motion.json"],
+        "negative": ["conformance/invalid/visual-motion-path.json", "conformance/invalid/visual-motion-duration.json"]
+      }
+    },
+    {
+      "id": "PAGE-STRUCTURE-001",
+      "status": "stable",
+      "title": "Page programs create, configure, style, and nest named elements",
+      "canonicalForm": "Add a <element> called <name> [inside <parent>]",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["PAGE-SYNTAX-001", "PAGE-SYNTAX-002", "PAGE-SYNTAX-003", "PAGE-SYNTAX-004", "IR-NODE-008", "W001"],
+      "specification": "docs/spec/page-core.md#page-structure-001",
+      "evidence": {
+        "positive": ["conformance/valid/page-structure-events.json"],
+        "negative": ["conformance/invalid/page-unknown.json"],
+        "runtime": ["conformance/runtime/page-events.json"]
+      }
+    },
+    {
+      "id": "PAGE-EVENT-001",
+      "status": "stable",
+      "title": "Page events bind validated targets to a closed set of runtime actions",
+      "canonicalForm": "When <target> <event>, <supported-action>",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["PAGE-SYNTAX-005", "PAGE-SYNTAX-006", "PAGE-SYNTAX-007", "PAGE-SYNTAX-008", "W002"],
+      "specification": "docs/spec/page-core.md#page-event-001",
+      "evidence": {
+        "positive": ["conformance/valid/page-structure-events.json"],
+        "negative": ["conformance/ambiguous/page-property.json"],
+        "runtime": ["conformance/runtime/page-events.json"]
+      }
     }
   ]
 }

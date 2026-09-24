@@ -1,0 +1,10 @@
+{
+  "id": "permission-owner-scope-invalid",
+  "category": "invalid",
+  "ruleIds": ["PERMISSION-DECL-001"],
+  "source": "application Work with id work\nauthentication uses User identified by email\nrole Member with id member\nentity User with id user\n  email is required unique text with id user-email\nentity Task with id task\n  title is required text with id task-title\nallow Member to read Task where owner is self\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E045"]
+  }
+}

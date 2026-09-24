@@ -1,0 +1,10 @@
+{
+  "id": "page-unknown-invalid",
+  "category": "invalid",
+  "ruleIds": ["PAGE-STRUCTURE-001"],
+  "source": "Add a paragraph called status\nDance status\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["W001"]
+  }
+}

@@ -44,6 +44,107 @@
         "canonical": ["conformance/canonical/natural-application.json"],
         "runtime": ["test/compiler.test.ts"]
       }
+    },
+    {
+      "id": "REL-DECL-001",
+      "status": "stable",
+      "title": "Belongs-to relationships resolve declared entities and explicit delete behavior",
+      "canonicalForm": "<Child> belongs to <Parent> as <name> with id <stable-id> on delete <restrict|cascade>",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["BUS-SYNTAX-010", "BUS-SYNTAX-011", "E011", "E012", "IR-NODE-003"],
+      "specification": "docs/spec/security-workflows.md#rel-decl-001",
+      "evidence": {
+        "positive": ["conformance/valid/secured-workflow.json"],
+        "negative": ["conformance/invalid/relationship-target.json"],
+        "canonical": ["test/compiler.test.ts"],
+        "runtime": ["conformance/runtime/secured-workflow.json"]
+      }
+    },
+    {
+      "id": "ACTION-DECL-001",
+      "status": "stable",
+      "title": "Actions have typed preconditions and assignments",
+      "canonicalForm": "action <verb> a <Entity> with id <stable-id>",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["BUS-SYNTAX-012", "BUS-SYNTAX-013", "BUS-SYNTAX-014", "BUS-SYNTAX-015", "E020", "E021", "E022", "E023", "E024", "E025", "E026", "E028", "E029", "IR-NODE-004"],
+      "specification": "docs/spec/security-workflows.md#action-decl-001",
+      "evidence": {
+        "positive": ["conformance/valid/secured-workflow.json"],
+        "negative": ["conformance/invalid/action-type-mismatch.json"],
+        "canonical": ["test/compiler.test.ts"],
+        "runtime": ["conformance/runtime/secured-workflow.json"]
+      }
+    },
+    {
+      "id": "AUTH-DECL-001",
+      "status": "stable",
+      "title": "Authentication uses one required unique text identity field",
+      "canonicalForm": "authentication uses <Entity> identified by <field>",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["BUS-SYNTAX-016", "E047", "E048", "E049", "E050", "IR-NODE-005"],
+      "specification": "docs/spec/security-workflows.md#auth-decl-001",
+      "evidence": {
+        "positive": ["conformance/valid/secured-workflow.json"],
+        "negative": ["conformance/invalid/authentication-identity.json"],
+        "runtime": ["conformance/runtime/secured-workflow.json"]
+      }
+    },
+    {
+      "id": "ROLE-DECL-001",
+      "status": "stable",
+      "title": "Roles have unique canonical identifiers and require authentication",
+      "canonicalForm": "role <Name> with id <stable-id>",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["BUS-SYNTAX-017", "E040"],
+      "specification": "docs/spec/security-workflows.md#role-decl-001",
+      "evidence": {
+        "positive": ["conformance/valid/secured-workflow.json"],
+        "negative": ["conformance/invalid/role-without-authentication.json"],
+        "canonical": ["test/compiler.test.ts"],
+        "runtime": ["conformance/runtime/secured-workflow.json"]
+      }
+    },
+    {
+      "id": "PERMISSION-DECL-001",
+      "status": "stable",
+      "title": "Permissions resolve declared targets and explicit scopes",
+      "canonicalForm": "allow <Role> to <operation> <target> [where owner is self|with owner as self]",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["BUS-SYNTAX-018", "BUS-SYNTAX-019", "BUS-SYNTAX-020", "BUS-SYNTAX-021", "BUS-SYNTAX-022", "BUS-SYNTAX-023", "E041", "E042", "E043", "E044", "E045", "E046", "IR-NODE-006"],
+      "specification": "docs/spec/security-workflows.md#permission-decl-001",
+      "evidence": {
+        "positive": ["conformance/valid/secured-workflow.json"],
+        "negative": ["conformance/invalid/permission-owner-scope.json"],
+        "canonical": ["test/compiler.test.ts"],
+        "runtime": ["conformance/runtime/secured-workflow.json"]
+      }
+    },
+    {
+      "id": "SOURCE-STRUCTURE-001",
+      "status": "stable",
+      "title": "Blank lines and comments are inert and unknown statements are rejected",
+      "canonicalForm": "# <comment>",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["BUS-SYNTAX-024", "E001"],
+      "specification": "docs/spec/security-workflows.md#source-structure-001",
+      "evidence": {
+        "positive": ["conformance/valid/comments-and-blanks.json"],
+        "negative": ["conformance/invalid/unknown-statement.json"]
+      }
+    },
+    {
+      "id": "RUNTIME-GENERATION-001",
+      "status": "stable",
+      "title": "Business IR generates synchronized persistence, UI, API, security, workflow, concurrency, idempotency, and audit behavior",
+      "canonicalForm": "Generation is a deterministic function of canonical ProgramIr and generator version",
+      "compatibilityClass": "patch-stable",
+      "inventoryIds": ["GEN-OBL-001", "GEN-OBL-002", "GEN-OBL-003", "GEN-OBL-004", "GEN-OBL-005", "GEN-OBL-006", "GEN-OBL-007", "GEN-OBL-008", "GEN-OBL-009"],
+      "specification": "docs/spec/generated-runtime.md#runtime-generation-001",
+      "evidence": {
+        "positive": ["conformance/valid/secured-workflow.json"],
+        "negative": ["test/compiler.test.ts"],
+        "runtime": ["conformance/runtime/secured-workflow.json"]
+      }
     }
   ]
 }

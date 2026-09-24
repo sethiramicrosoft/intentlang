@@ -1,0 +1,10 @@
+{
+  "id": "page-events-runtime",
+  "category": "runtime",
+  "ruleIds": ["PAGE-STRUCTURE-001", "PAGE-EVENT-001"],
+  "source": "Add a paragraph called status\nSet the text of status to Waiting\nAdd a text input called name\nAdd a button called go\nSet the text of go to Go\nWhen the page loads, set the text of status to Ready\nWhen the go is clicked, set the text of status to Clicked\nWhen the name changes, set the text of status to Changed\nWhen enter is pressed in name, set the text of status to Submitted\n",
+  "expected": {
+    "htmlContains": ["addEventListener(\"click\"", "addEventListener(\"change\"", "addEventListener(\"keydown\"", "textContent"],
+    "htmlExcludes": ["onclick=", "onchange=", "onkeydown="]
+  }
+}

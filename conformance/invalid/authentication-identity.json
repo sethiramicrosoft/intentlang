@@ -1,0 +1,10 @@
+{
+  "id": "authentication-identity-invalid",
+  "category": "invalid",
+  "ruleIds": ["AUTH-DECL-001"],
+  "source": "application Work with id work\nauthentication uses User identified by email\nentity User with id user\n  email is text with id user-email\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E048"]
+  }
+}

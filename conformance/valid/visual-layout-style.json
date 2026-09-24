@@ -1,0 +1,13 @@
+{
+  "id": "visual-layout-style-valid",
+  "category": "valid",
+  "ruleIds": ["VIS-LAYOUT-001", "VIS-STYLE-001"],
+  "source": "Show THINK BUILD MOVE\nPut each word on a new line\nMake the text large and bold and blue\nMake the background white\n",
+  "expected": {
+    "ok": true,
+    "text": "THINK BUILD MOVE",
+    "textLayout": "words",
+    "fontSize": 64,
+    "fontWeight": 700
+  }
+}

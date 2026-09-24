@@ -1,0 +1,10 @@
+{
+  "id": "visual-style-invalid",
+  "category": "invalid",
+  "ruleIds": ["VIS-STYLE-001"],
+  "source": "Show Hello\nMake the text sparkling\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["V004"]
+  }
+}
