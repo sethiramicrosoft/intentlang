@@ -34,17 +34,17 @@ changing current language semantics.
 **Goal**: Inventory every current stable business-app and visual/page construct
 before defining new syntax.
 
-- [ ] T006 [US1] Inventory business-app lexical and grammar constructs in
+- [x] T006 [US1] Inventory business-app lexical and grammar constructs in
   `language/versions/0.8-business-inventory.json`.
-- [ ] T007 [P] [US1] Inventory visual/page constructs in
+- [x] T007 [P] [US1] Inventory visual/page constructs in
   `language/versions/0.8-visual-inventory.json`.
-- [ ] T008 [P] [US1] Inventory current diagnostic codes and meanings in
+- [x] T008 [P] [US1] Inventory current diagnostic codes and meanings in
   `language/versions/0.8-diagnostics-inventory.json`.
-- [ ] T009 [P] [US1] Inventory current IR node kinds and generator obligations
+- [x] T009 [P] [US1] Inventory current IR node kinds and generator obligations
   in `language/versions/0.8-ir-inventory.json`.
-- [ ] T010 [US1] Implement inventory validation/reporting in
+- [x] T010 [US1] Implement inventory validation/reporting in
   `src/language/inventory.ts`.
-- [ ] T011 [US1] Add inventory completeness tests in
+- [x] T011 [US1] Add inventory completeness tests in
   `test/language-inventory.test.ts`.
 
 **Checkpoint**: Every current accepted construct is represented by an inventory

@@ -1,0 +1,30 @@
+{
+  "languageVersion": "0.8.0-alpha.0",
+  "surface": "business",
+  "entries": [
+    { "id": "BUS-SYNTAX-001", "category": "syntax", "status": "stable", "title": "Explicit application declaration", "implementation": ["src/parser.ts:applicationPattern"] },
+    { "id": "BUS-SYNTAX-002", "category": "syntax", "status": "stable", "title": "Derived-ID application declaration", "implementation": ["src/parser.ts:naturalApplicationPattern"] },
+    { "id": "BUS-SYNTAX-003", "category": "syntax", "status": "stable", "title": "Explicit entity declaration", "implementation": ["src/parser.ts:entityPattern"] },
+    { "id": "BUS-SYNTAX-004", "category": "syntax", "status": "stable", "title": "Explicit field declaration", "implementation": ["src/parser.ts:explicitFieldPattern"] },
+    { "id": "BUS-SYNTAX-005", "category": "syntax", "status": "stable", "title": "Natural entity and field declaration", "implementation": ["src/parser.ts:naturalFieldPattern"] },
+    { "id": "BUS-SYNTAX-006", "category": "syntax", "status": "stable", "title": "Text, integer, and boolean field types", "implementation": ["src/model.ts:fieldTypes"] },
+    { "id": "BUS-SYNTAX-007", "category": "syntax", "status": "stable", "title": "Required and unique field modifiers", "implementation": ["src/parser.ts:parseField"] },
+    { "id": "BUS-SYNTAX-008", "category": "syntax", "status": "stable", "title": "Text length constraints", "implementation": ["src/parser.ts:parseField"] },
+    { "id": "BUS-SYNTAX-009", "category": "syntax", "status": "stable", "title": "Typed field defaults", "implementation": ["src/parser.ts:parseDefault"] },
+    { "id": "BUS-SYNTAX-010", "category": "syntax", "status": "stable", "title": "Explicit belongs-to relationship", "implementation": ["src/parser.ts:relationshipPattern"] },
+    { "id": "BUS-SYNTAX-011", "category": "syntax", "status": "stable", "title": "Natural belongs-to relationship", "implementation": ["src/parser.ts:naturalRelationshipPattern"] },
+    { "id": "BUS-SYNTAX-012", "category": "syntax", "status": "stable", "title": "Action declaration with stable ID", "implementation": ["src/parser.ts:explicitActionPattern"] },
+    { "id": "BUS-SYNTAX-013", "category": "syntax", "status": "stable", "title": "Action declaration with derived ID", "implementation": ["src/parser.ts:naturalActionPattern"] },
+    { "id": "BUS-SYNTAX-014", "category": "syntax", "status": "stable", "title": "Typed action preconditions", "implementation": ["src/parser.ts:actionPreconditionPattern"] },
+    { "id": "BUS-SYNTAX-015", "category": "syntax", "status": "stable", "title": "Typed action assignments", "implementation": ["src/parser.ts:actionAssignmentPattern"] },
+    { "id": "BUS-SYNTAX-016", "category": "syntax", "status": "stable", "title": "Authentication identity declaration", "implementation": ["src/parser.ts:authenticationPattern"] },
+    { "id": "BUS-SYNTAX-017", "category": "syntax", "status": "stable", "title": "Role declaration", "implementation": ["src/parser.ts:rolePattern"] },
+    { "id": "BUS-SYNTAX-018", "category": "syntax", "status": "stable", "title": "Entity create, read, and update permission", "implementation": ["src/parser.ts:allowBasicPattern"] },
+    { "id": "BUS-SYNTAX-019", "category": "syntax", "status": "stable", "title": "Identity self-read permission", "implementation": ["src/parser.ts:allowSelfReadPattern"] },
+    { "id": "BUS-SYNTAX-020", "category": "syntax", "status": "stable", "title": "Owner-scoped read and update permission", "implementation": ["src/parser.ts:allowOwnerPattern"] },
+    { "id": "BUS-SYNTAX-021", "category": "syntax", "status": "stable", "title": "Forced-owner create permission", "implementation": ["src/parser.ts:allowForceOwnerCreatePattern"] },
+    { "id": "BUS-SYNTAX-022", "category": "syntax", "status": "stable", "title": "Action execution permission", "implementation": ["src/parser.ts:allowRunPattern"] },
+    { "id": "BUS-SYNTAX-023", "category": "syntax", "status": "stable", "title": "Account provisioning permission", "implementation": ["src/parser.ts:allowProvisionPattern"] },
+    { "id": "BUS-SYNTAX-024", "category": "syntax", "status": "stable", "title": "Comments and blank lines", "implementation": ["src/parser.ts:parseSource"] }
+  ]
+}

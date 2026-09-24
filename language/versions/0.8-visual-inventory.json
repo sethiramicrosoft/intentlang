@@ -1,0 +1,29 @@
+{
+  "languageVersion": "0.8.0-alpha.0",
+  "surface": "visual-page",
+  "entries": [
+    { "id": "VIS-SYNTAX-001", "category": "syntax", "status": "stable", "title": "Show or display text", "implementation": ["src/visual-syntax.ts:parseVisualStatement"] },
+    { "id": "VIS-SYNTAX-002", "category": "syntax", "status": "stable", "title": "Separate-line and single-line text layout", "implementation": ["src/visual-syntax.ts:SentenceParser"] },
+    { "id": "VIS-SYNTAX-003", "category": "syntax", "status": "stable", "title": "Text and background styling", "implementation": ["src/visual-syntax.ts:SentenceParser", "src/visual.ts:compileVisualSource"] },
+    { "id": "VIS-SYNTAX-004", "category": "syntax", "status": "stable", "title": "Text placement", "implementation": ["src/visual-syntax.ts:SentenceParser"] },
+    { "id": "VIS-SYNTAX-005", "category": "syntax", "status": "stable", "title": "Directional text movement", "implementation": ["src/visual-syntax.ts:SentenceParser"] },
+    { "id": "PAGE-SYNTAX-001", "category": "syntax", "status": "stable", "title": "Add or create named element", "implementation": ["src/web-syntax.ts:parsePageStatement"] },
+    { "id": "PAGE-SYNTAX-002", "category": "syntax", "status": "stable", "title": "Set element property, style, or attribute", "implementation": ["src/web-syntax.ts:parsePageStatement"] },
+    { "id": "PAGE-SYNTAX-003", "category": "syntax", "status": "stable", "title": "Put element inside parent", "implementation": ["src/web-syntax.ts:parsePageStatement"] },
+    { "id": "PAGE-SYNTAX-004", "category": "syntax", "status": "stable", "title": "Make and underline shorthand", "implementation": ["src/web-syntax.ts:parsePageStatement"] },
+    { "id": "PAGE-SYNTAX-005", "category": "syntax", "status": "stable", "title": "Click event instruction", "implementation": ["src/web-syntax.ts:parsePageStatement"] },
+    { "id": "PAGE-SYNTAX-006", "category": "syntax", "status": "stable", "title": "Page-load event instruction", "implementation": ["src/web-syntax.ts:parsePageStatement"] },
+    { "id": "PAGE-SYNTAX-007", "category": "syntax", "status": "stable", "title": "Change event instruction", "implementation": ["src/web-syntax.ts:parsePageStatement"] },
+    { "id": "PAGE-SYNTAX-008", "category": "syntax", "status": "stable", "title": "Enter-key event instruction", "implementation": ["src/web-syntax.ts:parsePageStatement"] },
+    { "id": "MACRO-SYNTAX-001", "category": "syntax", "status": "experimental", "title": "Number, text, and list variables", "implementation": ["src/web-macros.ts:ASSIGN_RE"] },
+    { "id": "MACRO-SYNTAX-002", "category": "syntax", "status": "experimental", "title": "Arithmetic and text expression chains", "implementation": ["src/web-macros.ts:CHAIN_SPLIT_RE", "src/web-macros.ts:TEXT_CHAIN_SPLIT_RE"] },
+    { "id": "MACRO-SYNTAX-003", "category": "syntax", "status": "experimental", "title": "List measurements, aggregates, item reads, and item writes", "implementation": ["src/web-macros.ts:LIST_LENGTH_RE", "src/web-macros.ts:SET_LIST_ITEM_RE"] },
+    { "id": "MACRO-SYNTAX-004", "category": "syntax", "status": "experimental", "title": "Text length and case conversion", "implementation": ["src/web-macros.ts:TEXT_LENGTH_RE", "src/web-macros.ts:CASE_CONVERT_RE"] },
+    { "id": "MACRO-SYNTAX-005", "category": "syntax", "status": "experimental", "title": "If, otherwise-if, and otherwise branching", "implementation": ["src/web-macros.ts:IF_HEAD_RE", "src/web-macros.ts:OTHERWISE_RE"] },
+    { "id": "MACRO-SYNTAX-006", "category": "syntax", "status": "experimental", "title": "Boolean and comparison conditions", "implementation": ["src/web-macros.ts:CONDITION_RE", "src/web-macros.ts:BARE_CONDITION_RE"] },
+    { "id": "MACRO-SYNTAX-007", "category": "syntax", "status": "experimental", "title": "List and range iteration", "implementation": ["src/web-macros.ts:FOR_EACH_HEAD_RE", "src/web-macros.ts:FOR_EACH_RANGE_RE"] },
+    { "id": "MACRO-SYNTAX-008", "category": "syntax", "status": "experimental", "title": "Fixed repetition", "implementation": ["src/web-macros.ts:REPEAT_RE"] },
+    { "id": "MACRO-SYNTAX-009", "category": "syntax", "status": "experimental", "title": "Procedures, parameters, calls, and results", "implementation": ["src/web-macros.ts:FUNCTION_DEF_RE", "src/web-macros.ts:FUNCTION_CALL_RE", "src/web-macros.ts:RESULT_OF_RE"] },
+    { "id": "MACRO-SYNTAX-010", "category": "syntax", "status": "experimental", "title": "Sequential instruction chains", "implementation": ["src/web-macros.ts:AND_THEN_RE"] }
+  ]
+}

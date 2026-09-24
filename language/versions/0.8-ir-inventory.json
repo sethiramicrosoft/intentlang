@@ -1,0 +1,23 @@
+{
+  "languageVersion": "0.8.0-alpha.0",
+  "surface": "ir-and-generation",
+  "entries": [
+    { "id": "IR-NODE-001", "category": "ir", "status": "stable", "title": "Program and application", "implementation": ["src/model.ts:ProgramIr"] },
+    { "id": "IR-NODE-002", "category": "ir", "status": "stable", "title": "Entity and field", "implementation": ["src/model.ts:EntityIr", "src/model.ts:FieldIr"] },
+    { "id": "IR-NODE-003", "category": "ir", "status": "stable", "title": "Relationship", "implementation": ["src/model.ts:RelationshipIr"] },
+    { "id": "IR-NODE-004", "category": "ir", "status": "stable", "title": "Action, precondition, and assignment", "implementation": ["src/model.ts:ActionIr", "src/model.ts:PreconditionIr", "src/model.ts:AssignmentIr"] },
+    { "id": "IR-NODE-005", "category": "ir", "status": "stable", "title": "Authentication and role", "implementation": ["src/model.ts:AuthenticationIr", "src/model.ts:RoleIr"] },
+    { "id": "IR-NODE-006", "category": "ir", "status": "stable", "title": "Permission and ownership scope", "implementation": ["src/model.ts:PermissionIr", "src/model.ts:OwnershipScope"] },
+    { "id": "IR-NODE-007", "category": "ir", "status": "stable", "title": "Visual program", "implementation": ["src/visual.ts:VisualProgram"] },
+    { "id": "IR-NODE-008", "category": "ir", "status": "stable", "title": "Page program and element", "implementation": ["src/web.ts:PageProgram", "src/web.ts:PageElement"] },
+    { "id": "GEN-OBL-001", "category": "obligation", "status": "stable", "title": "Database tables, typed columns, uniqueness, and foreign keys", "implementation": ["src/generator.ts:generateSchema"] },
+    { "id": "GEN-OBL-002", "category": "obligation", "status": "stable", "title": "CRUD frontend and backend", "implementation": ["src/ui-codegen.ts:generateUi", "src/runtime-codegen.ts:generateRuntime"] },
+    { "id": "GEN-OBL-003", "category": "obligation", "status": "stable", "title": "Authentication, sessions, and account provisioning", "implementation": ["src/runtime-codegen.ts:generateRuntime"] },
+    { "id": "GEN-OBL-004", "category": "obligation", "status": "stable", "title": "Backend authorization and ownership enforcement", "implementation": ["src/runtime-codegen.ts:generateRuntime"] },
+    { "id": "GEN-OBL-005", "category": "obligation", "status": "stable", "title": "Atomic action preconditions and assignments", "implementation": ["src/runtime-codegen.ts:generateRuntime"] },
+    { "id": "GEN-OBL-006", "category": "obligation", "status": "stable", "title": "Optimistic concurrency", "implementation": ["src/runtime-codegen.ts:generateRuntime"] },
+    { "id": "GEN-OBL-007", "category": "obligation", "status": "stable", "title": "Idempotent mutations", "implementation": ["src/runtime-codegen.ts:generateRuntime"] },
+    { "id": "GEN-OBL-008", "category": "obligation", "status": "stable", "title": "Audit logging", "implementation": ["src/runtime-codegen.ts:generateRuntime"] },
+    { "id": "GEN-OBL-009", "category": "obligation", "status": "stable", "title": "Content security policy and safe generated output", "implementation": ["src/runtime-codegen.ts:generateRuntime", "src/web.ts:compilePageSource"] }
+  ]
+}
