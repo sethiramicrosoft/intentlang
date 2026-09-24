@@ -184,7 +184,14 @@ also compare live text instead of numbers, with `is`, `is not`, `contains`,
 `is`/`is not` (including a whole phrase) is compared as literal text; the
 right-hand side of a text comparison can likewise be a plain word/phrase or
 another live input's value (`if the value of a is the value of b, ...`).
-The compiler turns
+A click can also write into a live input's own value (as opposed to
+`set the text of ...`, which only changes what's displayed elsewhere):
+`set the value of <input name> to <text>` and `set the value of <input
+name> to the value of <other input name>` (a live copy from one input to
+another) preset a field, and `clear the value of <input name>` resets it to
+empty — handy for clearing a form after its value has already been read
+into a result. The target of `set/clear the value of ...` must likewise be
+an input, a text box, or a dropdown. The compiler turns
 every `When ... is clicked` sentence in a page into ONE small, entirely
 compiler-generated script (never containing any user-authored markup,
 attribute, or script tag — only compiler-fixed code with your text safely
@@ -273,6 +280,15 @@ Set the text of result to none
 Add a button called check
 Set the text of check to Check
 When the check is clicked, if the value of message contains urgent, set the text of result to flagged otherwise set the text of result to normal
+```
+
+```text
+Add a text input called message
+Add a paragraph called result
+Set the text of result to none
+Add a button called send
+Set the text of send to Send
+When the send is clicked, set the text of result to the value of message and then clear the value of message
 ```
 
 ```text

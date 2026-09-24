@@ -323,6 +323,29 @@ When the check is clicked, if the value of message contains urgent, set the text
   } finally { await browser.close(); }
 });
 
+test("a click can set/clear a real input's value, including copying another live input's value, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called message
+Add a paragraph called result
+Set the text of result to none
+Add a button called send
+Set the text of send to Send
+When the send is clicked, set the text of result to the value of message and then clear the value of message`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("hello there");
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").textContent(), "hello there");
+    assert.equal(await page.locator("#element-1").inputValue(), "");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can repeat an instruction the correct number of times, including nested repeats, in a real browser", async () => {
   const compiled = compilePageSource(`Add a paragraph called counter
 Set the text of counter to 0

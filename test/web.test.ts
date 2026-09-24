@@ -563,6 +563,59 @@ Set the text of check to Check
 When the check is clicked, if the value of label contains hi, set the text of result to yes`, /Only an input, a text box, or a dropdown has a value to read/);
 });
 
+test("a click can set or clear a live input's own value, including copying another input's value", () => {
+  const setLiteral = page(`Add a text input called name field
+Add a button called reset
+Set the text of reset to Reset
+When the reset is clicked, set the value of name field to guest`);
+  const setLiteralScript = /<script>(.+?)<\/script>/.exec(setLiteral.html)![1]!;
+  assert.match(setLiteralScript, /document\.getElementById\("element-1"\)\.value="guest";/);
+
+  const cleared = page(`Add a text input called name field
+Add a button called clear
+Set the text of clear to Clear
+When the clear is clicked, clear the value of name field`);
+  const clearedScript = /<script>(.+?)<\/script>/.exec(cleared.html)![1]!;
+  assert.match(clearedScript, /document\.getElementById\("element-1"\)\.value="";/);
+
+  // The right-hand side of "set the value of ..." can be another live input's value (a
+  // copy), checked before the plainer literal-text form for the same reason "set the text
+  // of ... to the value of ..." is checked before "set the text of ... to ...".
+  const copied = page(`Add a text input called a
+Add a text input called b
+Add a button called copy
+Set the text of copy to Copy
+When the copy is clicked, set the value of b to the value of a`);
+  const copiedScript = /<script>(.+?)<\/script>/.exec(copied.html)![1]!;
+  assert.match(copiedScript, /document\.getElementById\("element-2"\)\.value=document\.getElementById\("element-1"\)\.value;/);
+
+  // Setting/clearing/copying can all chain with "and then" alongside any other instruction.
+  const chained = page(`Add a text input called message
+Add a paragraph called result
+Set the text of result to none
+Add a button called send
+Set the text of send to Send
+When the send is clicked, set the text of result to the value of message and then clear the value of message`);
+  const chainedScript = /<script>(.+?)<\/script>/.exec(chained.html)![1]!;
+  assert.match(chainedScript, /document\.getElementById\("element-2"\)\.textContent=document\.getElementById\("element-1"\)\.value;document\.getElementById\("element-1"\)\.value="";/);
+
+  invalid(`Add a paragraph called label
+Add a button called reset
+Set the text of reset to Reset
+When the reset is clicked, set the value of label to guest`, /Only an input, a text box, or a dropdown has a value to set/);
+
+  invalid(`Add a paragraph called label
+Add a button called reset
+Set the text of reset to Reset
+When the reset is clicked, clear the value of label`, /Only an input, a text box, or a dropdown has a value to clear/);
+
+  invalid(`Add a text input called a
+Add a text input called b
+Add a button called copy
+Set the text of copy to Copy
+When the copy is clicked, set the value of b to the value of missing`, /There is no earlier element called missing/);
+});
+
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
   const result = page(`Add an image called photo
 Set the source of photo to https://example.com/MyPhoto.png

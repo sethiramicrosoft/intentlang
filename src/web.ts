@@ -215,6 +215,14 @@ export function compilePageSource(source: string): PageCompileResult {
     const subtractFromValue = /^subtract\s+the\s+value\s+of\s+(.+?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
     const addText = /^add\s+(-?\d+(?:\.\d+)?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
     const subtractText = /^subtract\s+(-?\d+(?:\.\d+)?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+    // Writes into a live input/textarea/select's own ".value" (as opposed to "set the text
+    // of ...", which writes an element's displayed textContent) -- for clearing or presetting
+    // a form field from a click, e.g. resetting an input after its value has been used.
+    // Checked before the plainer "set the value of X to Y" for the same reason setFromValue
+    // is checked before setText: otherwise "the value of Y" would be read as literal text.
+    const setValueFromValue = /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
+    const setValue = !setValueFromValue ? /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part) : null;
+    const clearValue = /^clear\s+the\s+value\s+of\s+(.+)$/i.exec(part);
     if (ifValue) {
       const source = resolve(ifValue[1]!, index);
       if (!source) return undefined;
@@ -341,12 +349,47 @@ export function compilePageSource(source: string): PageCompileResult {
       const amount = (addText ? 1 : -1) * Number(match[1]);
       return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
         `e.textContent=String((Number(e.textContent)||0)+(${JSON.stringify(amount)}));})();`;
+    } else if (setValueFromValue) {
+      const target = resolve(setValueFromValue[1]!, index);
+      const source = target ? resolve(setValueFromValue[2]!, index) : undefined;
+      if (!target || !source) return undefined;
+      if (!hasReadableValue(target.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to set, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add an input called ${target.name} instead, such as Add a text input called ${target.name}.`);
+        return undefined;
+      }
+      if (!hasReadableValue(source.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      return `document.getElementById(${JSON.stringify(target.id)}).value=document.getElementById(${JSON.stringify(source.id)}).value;`;
+    } else if (setValue) {
+      const target = resolve(setValue[1]!, index);
+      if (!target) return undefined;
+      if (!hasReadableValue(target.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to set, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add an input called ${target.name} instead, such as Add a text input called ${target.name}.`);
+        return undefined;
+      }
+      return `document.getElementById(${JSON.stringify(target.id)}).value=${JSON.stringify(dequoteRuntime(setValue[2]!))};`;
+    } else if (clearValue) {
+      const target = resolve(clearValue[1]!, index);
+      if (!target) return undefined;
+      if (!hasReadableValue(target.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to clear, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add an input called ${target.name} instead, such as Add a text input called ${target.name}.`);
+        return undefined;
+      }
+      return `document.getElementById(${JSON.stringify(target.id)}).value="";`;
     }
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
       `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
       `"subtract ... from the text of ...", "add the value of ... to the text of ...", ` +
-      `"subtract the value of ... from the text of ...", "if the value of ... is greater than/less than/` +
+      `"subtract the value of ... from the text of ...", "set the value of ... to ...", ` +
+      `"set the value of ... to the value of ...", "clear the value of ...", ` +
+      `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
       `or "repeat ... times, ...".`);
