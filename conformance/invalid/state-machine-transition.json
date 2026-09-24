@@ -1,0 +1,10 @@
+{
+  "id": "state-machine-transition-invalid",
+  "category": "invalid",
+  "ruleIds": ["DECLARATION-EXPANSION-001"],
+  "source": "application InvalidMachine\na Task has a status as text\nstate machine TaskLifecycle for Task using status\n  transition complete\n    require status is \"open\" otherwise \"Task must be open\"\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E062"]
+  }
+}

@@ -62,6 +62,11 @@ test("Studio model panel explains expanded policy permissions", () => {
   assert.ok(STUDIO_JS.includes("expansion.statements"));
 });
 
+test("Studio model panel explains expanded declarations", () => {
+  assert.ok(STUDIO_JS.includes("Expanded Declarations"));
+  assert.ok(STUDIO_JS.includes("renderDeclarationExpansions"));
+});
+
 const issueTrackerSource = `application IssueTracker
 authentication uses User identified by email
 

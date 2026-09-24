@@ -22,6 +22,7 @@ import { getWebCatalogue } from "./web-catalogue.js";
 import { VISUAL_HTML, VISUAL_CSS, VISUAL_JS } from "./visual-assets.js";
 import { buildTraceMap } from "./language/trace.js";
 import { expandPolicySource } from "./language/policies.js";
+import { expandDeclarationSource } from "./language/abstractions.js";
 
 const BODY_LIMIT_BYTES = 1_048_576; // 1 MB
 const PLAN_TOKEN_TTL_MS = 5 * 60 * 1000; // 5 minutes
@@ -288,6 +289,7 @@ function compileAndBuildState(source: string): {
   ir: unknown;
   trace: unknown;
   policyExpansions: unknown[];
+  declarationExpansions: unknown[];
 } {
   const result = compileSource(source);
 
@@ -299,13 +301,17 @@ function compileAndBuildState(source: string): {
       canonical: "",
       ir: null,
       trace: null,
-      policyExpansions: []
+      policyExpansions: [],
+      declarationExpansions: []
     };
   }
 
   const model = buildStudioViewModel(result.ir);
   const canonical = formatSource(result.ir);
-  const expanded = expandPolicySource(source);
+  const declarations = expandDeclarationSource(source);
+  const expanded = declarations.ok
+    ? expandPolicySource(declarations.source)
+    : null;
 
   return {
     ok: true,
@@ -314,7 +320,8 @@ function compileAndBuildState(source: string): {
     canonical,
     ir: result.ir,
     trace: buildTraceMap(source, result.ir, "<studio>"),
-    policyExpansions: expanded.ok ? expanded.expansions : []
+    policyExpansions: expanded?.ok ? expanded.expansions : [],
+    declarationExpansions: declarations.ok ? declarations.expansions : []
   };
 }
 

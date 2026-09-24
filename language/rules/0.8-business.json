@@ -148,6 +148,21 @@
       }
     },
     {
+      "id": "DECLARATION-EXPANSION-001",
+      "status": "experimental",
+      "title": "Reusable fields and state machines expand to existing declarations",
+      "canonicalForm": "Canonical formatting emits expanded fields and actions",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-SYNTAX-028", "BUS-SYNTAX-029", "BUS-SYNTAX-030", "E057", "E058", "E059", "E060", "E061", "E062", "E063"],
+      "specification": "docs/spec/security-workflows.md#declaration-expansion-001",
+      "evidence": {
+        "positive": ["conformance/valid/declaration-expansion.json"],
+        "negative": ["conformance/invalid/state-machine-transition.json"],
+        "canonical": ["test/abstractions.test.ts"],
+        "runtime": ["test/abstractions.test.ts"]
+      }
+    },
+    {
       "id": "RUNTIME-GENERATION-001",
       "status": "stable",
       "title": "Business IR generates synchronized persistence, UI, API, security, workflow, concurrency, idempotency, and audit behavior",

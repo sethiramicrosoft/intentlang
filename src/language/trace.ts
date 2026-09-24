@@ -2,6 +2,7 @@ import type { ProgramIr } from "../model.js";
 import type { TraceArtifact, TraceLink, TraceMap } from "./contracts.js";
 import { sourceFingerprint } from "./semantic-fingerprint.js";
 import { expandPolicySource } from "./policies.js";
+import { expandDeclarationSource } from "./abstractions.js";
 
 function artifacts(kind: string, id: string, name: string): TraceArtifact[] {
   if (kind === "application") {
@@ -215,7 +216,67 @@ export function buildTraceMap(
     }
   }
 
-  const expanded = expandPolicySource(source);
+  const declarations = expandDeclarationSource(source);
+  if (declarations.ok) {
+    for (const expansion of declarations.expansions) {
+      if (expansion.kind === "field-group") {
+        for (const statement of expansion.statements) {
+          const match =
+            /^(?:a|an) ([A-Z][A-Za-z0-9]*) has (?:a|an) (?:required )?(?:unique )?([a-z][A-Za-z0-9]*) as /.exec(
+              statement
+            );
+          if (!match) continue;
+          const entity = entityByName.get(match[1]!);
+          const field = entity?.fields.find(
+            (candidate) => candidate.name === match[2]
+          );
+          if (field) {
+            links.push(
+              link(
+                file,
+                expansion.sourceLine,
+                expansion.sourceLine,
+                ["DECLARATION-EXPANSION-001", "FIELD-DECL-001"],
+                field.id,
+                "field",
+                field.name
+              )
+            );
+          }
+        }
+      } else {
+        for (const statement of expansion.statements) {
+          const match =
+            /^action ([a-z][a-z0-9]*) (?:a|an) ([A-Z][A-Za-z0-9]*)$/.exec(
+              statement
+            );
+          if (!match) continue;
+          const entity = entityByName.get(match[2]!);
+          const action = ir.actions.find(
+            (candidate) =>
+              candidate.entityId === entity?.id && candidate.name === match[1]
+          );
+          if (action) {
+            links.push(
+              link(
+                file,
+                expansion.sourceLine,
+                expansion.sourceLine,
+                ["DECLARATION-EXPANSION-001", "ACTION-DECL-001"],
+                action.id,
+                "action",
+                action.name
+              )
+            );
+          }
+        }
+      }
+    }
+  }
+
+  const expanded = declarations.ok
+    ? expandPolicySource(declarations.source)
+    : expandPolicySource(source);
   if (expanded.ok) {
     for (const expansion of expanded.expansions) {
       for (const _statement of expansion.statements) {

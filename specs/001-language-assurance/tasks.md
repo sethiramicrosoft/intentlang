@@ -184,11 +184,11 @@ a normative rule and applicable fixtures.
 
 ### Reusable declarations and workflows
 
-- [ ] T054 [P] [US3] Specify reusable field groups and workflow/state-machine
+- [x] T054 [P] [US3] Specify reusable field groups and workflow/state-machine
   patterns.
-- [ ] T055 [US3] Implement reusable declaration expansion with source trace
+- [x] T055 [US3] Implement reusable declaration expansion with source trace
   preservation.
-- [ ] T056 [US3] Implement explicit state-machine syntax and invariant checks.
+- [x] T056 [US3] Implement explicit state-machine syntax and invariant checks.
 - [x] T057 [US3] Rewrite LaunchOps using abstractions and prove equivalent
   expanded semantics.
 - [x] T058 [US3] Measure authored lines, repetition ratio, and policy expansion.

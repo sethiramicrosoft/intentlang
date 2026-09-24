@@ -28,6 +28,9 @@
     { "id": "BUS-SYNTAX-024", "category": "syntax", "status": "stable", "title": "Comments and blank lines", "implementation": ["src/parser.ts:parseSource"] },
     { "id": "BUS-SYNTAX-025", "category": "syntax", "status": "experimental", "title": "Role inheritance declaration", "implementation": ["src/language/policies.ts:expandPolicySource"] },
     { "id": "BUS-SYNTAX-026", "category": "syntax", "status": "experimental", "title": "Named policy declaration and grant", "implementation": ["src/language/policies.ts:expandPolicySource"] },
-    { "id": "BUS-SYNTAX-027", "category": "syntax", "status": "experimental", "title": "Concise permission policy macros", "implementation": ["src/language/policies.ts:expandPolicyStatement"] }
+    { "id": "BUS-SYNTAX-027", "category": "syntax", "status": "experimental", "title": "Concise permission policy macros", "implementation": ["src/language/policies.ts:expandPolicyStatement"] },
+    { "id": "BUS-SYNTAX-028", "category": "syntax", "status": "experimental", "title": "Reusable field group declaration", "implementation": ["src/language/abstractions.ts:expandDeclarationSource"] },
+    { "id": "BUS-SYNTAX-029", "category": "syntax", "status": "experimental", "title": "Field group application", "implementation": ["src/language/abstractions.ts:expandDeclarationSource"] },
+    { "id": "BUS-SYNTAX-030", "category": "syntax", "status": "experimental", "title": "Explicit state machine and transition declaration", "implementation": ["src/language/abstractions.ts:expandDeclarationSource"] }
   ]
 }

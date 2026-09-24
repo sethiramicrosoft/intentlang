@@ -97,3 +97,26 @@ Unknown policies or roles, duplicate policies or effective permissions, empty
 policies, unknown parents, and inheritance cycles are errors. Canonical
 formatting emits only the exact expanded `allow` statements. Runtime authority
 continues to come exclusively from those explicit permissions.
+
+## DECLARATION-EXPANSION-001
+
+Reusable field groups and state machines are experimental compile-time
+abstractions:
+
+```intentlang
+field group Titled
+  title as required text length between 2 and 200
+
+apply fields Titled to WorkItem
+
+state machine WorkItemLifecycle for WorkItem using status
+  transition start
+    require status is "open" otherwise "Only an open work item can be started"
+    set status to "in-progress"
+```
+
+Field applications expand to ordinary field declarations. Transitions expand
+to ordinary actions in declaration order. Every transition must have a
+precondition and must assign its machine's declared state field. Duplicate or
+empty groups, machines, and transitions are errors. Canonical formatting and
+all downstream generators see only the expanded stable language.

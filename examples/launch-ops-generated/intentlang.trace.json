@@ -1498,328 +1498,6 @@
         {
           "kind": "runtime",
           "path": "app.mjs",
-          "symbol": "/actions/activate"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "program-activate"
-        }
-      ],
-      "irNodeId": "program-activate",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 60,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 58
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/pause"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "program-pause"
-        }
-      ],
-      "irNodeId": "program-pause",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 64,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 62
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/complete"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "program-complete"
-        }
-      ],
-      "irNodeId": "program-complete",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 68,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 66
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/start"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "milestone-start"
-        }
-      ],
-      "irNodeId": "milestone-start",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 72,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 70
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/complete"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "milestone-complete"
-        }
-      ],
-      "irNodeId": "milestone-complete",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 77,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 74
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/start"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "workitem-start"
-        }
-      ],
-      "irNodeId": "workitem-start",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 81,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 79
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/block"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "workitem-block"
-        }
-      ],
-      "irNodeId": "workitem-block",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 85,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 83
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/complete"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "workitem-complete"
-        }
-      ],
-      "irNodeId": "workitem-complete",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 90,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 87
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/reopen"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "workitem-reopen"
-        }
-      ],
-      "irNodeId": "workitem-reopen",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 95,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 92
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/escalate"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "risk-escalate"
-        }
-      ],
-      "irNodeId": "risk-escalate",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 100,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 97
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/mitigate"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "risk-mitigate"
-        }
-      ],
-      "irNodeId": "risk-mitigate",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 105,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 102
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/approve"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "decision-approve"
-        }
-      ],
-      "irNodeId": "decision-approve",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 109,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 107
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/reject"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "decision-reject"
-        }
-      ],
-      "irNodeId": "decision-reject",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 113,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 111
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
-          "symbol": "/actions/publish"
-        },
-        {
-          "kind": "ui",
-          "path": "app.js",
-          "symbol": "update-publish"
-        }
-      ],
-      "irNodeId": "update-publish",
-      "ruleIds": [
-        "ACTION-DECL-001"
-      ],
-      "source": {
-        "endLine": 117,
-        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 115
-      }
-    },
-    {
-      "artifacts": [
-        {
-          "kind": "runtime",
-          "path": "app.mjs",
           "symbol": "perm-administrator-provision"
         },
         {
@@ -1833,9 +1511,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 120,
+        "endLine": 118,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 120
+        "startLine": 118
       }
     },
     {
@@ -1856,9 +1534,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 121,
+        "endLine": 119,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 121
+        "startLine": 119
       }
     },
     {
@@ -1879,9 +1557,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 122,
+        "endLine": 120,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 122
+        "startLine": 120
       }
     },
     {
@@ -1902,9 +1580,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 125,
+        "endLine": 123,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 125
+        "startLine": 123
       }
     },
     {
@@ -1925,9 +1603,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 126,
+        "endLine": 124,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 126
+        "startLine": 124
       }
     },
     {
@@ -1948,9 +1626,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 127,
+        "endLine": 125,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 127
+        "startLine": 125
       }
     },
     {
@@ -1971,9 +1649,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 130,
+        "endLine": 128,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 130
+        "startLine": 128
       }
     },
     {
@@ -1994,9 +1672,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 131,
+        "endLine": 129,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 131
+        "startLine": 129
       }
     },
     {
@@ -2017,9 +1695,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 132,
+        "endLine": 130,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 132
+        "startLine": 130
       }
     },
     {
@@ -2040,9 +1718,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 133,
+        "endLine": 131,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 133
+        "startLine": 131
       }
     },
     {
@@ -2063,9 +1741,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 134,
+        "endLine": 132,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 134
+        "startLine": 132
       }
     },
     {
@@ -2086,9 +1764,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 135,
+        "endLine": 133,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 135
+        "startLine": 133
       }
     },
     {
@@ -2109,9 +1787,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 136,
+        "endLine": 134,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 136
+        "startLine": 134
       }
     },
     {
@@ -2132,9 +1810,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 137,
+        "endLine": 135,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 137
+        "startLine": 135
       }
     },
     {
@@ -2155,9 +1833,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 140,
+        "endLine": 138,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 140
+        "startLine": 138
       }
     },
     {
@@ -2178,9 +1856,345 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 141,
+        "endLine": 139,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 141
+        "startLine": 139
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-activate"
+        }
+      ],
+      "irNodeId": "program-activate",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 58,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 58
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/pause"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-pause"
+        }
+      ],
+      "irNodeId": "program-pause",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 58,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 58
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "program-complete"
+        }
+      ],
+      "irNodeId": "program-complete",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 58,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 58
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "milestone-start"
+        }
+      ],
+      "irNodeId": "milestone-start",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 69,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 69
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "milestone-complete"
+        }
+      ],
+      "irNodeId": "milestone-complete",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 69,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 69
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-start"
+        }
+      ],
+      "irNodeId": "workitem-start",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 78,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 78
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/block"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-block"
+        }
+      ],
+      "irNodeId": "workitem-block",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 78,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 78
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-complete"
+        }
+      ],
+      "irNodeId": "workitem-complete",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 78,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 78
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/reopen"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workitem-reopen"
+        }
+      ],
+      "irNodeId": "workitem-reopen",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 78,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 78
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-escalate"
+        }
+      ],
+      "irNodeId": "risk-escalate",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 94,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 94
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/mitigate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "risk-mitigate"
+        }
+      ],
+      "irNodeId": "risk-mitigate",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 94,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 94
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-approve"
+        }
+      ],
+      "irNodeId": "decision-approve",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 104,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 104
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/reject"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-reject"
+        }
+      ],
+      "irNodeId": "decision-reject",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 104,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 104
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-publish"
+        }
+      ],
+      "irNodeId": "update-publish",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 112,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
+        "startLine": 112
       }
     },
     {
@@ -2202,9 +2216,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2226,9 +2240,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2250,9 +2264,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2274,9 +2288,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2298,9 +2312,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2322,9 +2336,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2346,9 +2360,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2370,9 +2384,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2394,9 +2408,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2418,9 +2432,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2442,9 +2456,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2466,9 +2480,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2490,9 +2504,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2514,9 +2528,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2538,9 +2552,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2562,9 +2576,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2586,9 +2600,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2610,9 +2624,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2634,9 +2648,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2658,9 +2672,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2682,9 +2696,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2706,9 +2720,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2730,9 +2744,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2754,9 +2768,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2778,9 +2792,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2802,9 +2816,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2826,9 +2840,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2850,9 +2864,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2874,9 +2888,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2898,9 +2912,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2922,9 +2936,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2946,9 +2960,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2970,9 +2984,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -2994,9 +3008,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -3018,9 +3032,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -3042,9 +3056,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 143,
+        "endLine": 141,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 143
+        "startLine": 141
       }
     },
     {
@@ -3066,9 +3080,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3090,9 +3104,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3114,9 +3128,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3138,9 +3152,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3162,9 +3176,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3186,9 +3200,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3210,9 +3224,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3234,9 +3248,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3258,9 +3272,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3282,9 +3296,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3306,9 +3320,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3330,9 +3344,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3354,9 +3368,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3378,9 +3392,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3402,9 +3416,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3426,9 +3440,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3450,9 +3464,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3474,9 +3488,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3498,9 +3512,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3522,9 +3536,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3546,9 +3560,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3570,9 +3584,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3594,9 +3608,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3618,9 +3632,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3642,9 +3656,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3666,9 +3680,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3690,9 +3704,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3714,9 +3728,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3738,9 +3752,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3762,9 +3776,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3786,9 +3800,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 144,
+        "endLine": 142,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 144
+        "startLine": 142
       }
     },
     {
@@ -3810,9 +3824,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -3834,9 +3848,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -3858,9 +3872,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -3882,9 +3896,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -3906,9 +3920,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -3930,9 +3944,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -3954,9 +3968,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -3978,9 +3992,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -4002,9 +4016,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -4026,9 +4040,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -4050,9 +4064,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     },
     {
@@ -4074,9 +4088,9 @@
         "PERMISSION-DECL-001"
       ],
       "source": {
-        "endLine": 145,
+        "endLine": 143,
         "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\launch-ops.intent",
-        "startLine": 145
+        "startLine": 143
       }
     }
   ],

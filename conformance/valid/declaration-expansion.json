@@ -1,0 +1,12 @@
+{
+  "id": "declaration-expansion-valid",
+  "category": "valid",
+  "ruleIds": ["DECLARATION-EXPANSION-001"],
+  "source": "application Reusable\nfield group Titled\n  title as required text length between 2 and 100\napply fields Titled to Task\na Task has a status as text default \"open\"\nstate machine TaskLifecycle for Task using status\n  transition complete\n    require status is \"open\" otherwise \"Task must be open\"\n    set status to \"done\"\n",
+  "expected": {
+    "ok": true,
+    "ir": {
+      "application": "Reusable"
+    }
+  }
+}

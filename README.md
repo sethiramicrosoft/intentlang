@@ -64,7 +64,7 @@ English source file that generates an authenticated program-launch system:
 
 - **7 entities** and **31 business fields**
 - **10 relationships**
-- **14 guarded workflow actions**
+- **14 guarded workflow actions** organized into **6 explicit state machines**
 - **4 roles** and **95 expanded explicit permissions**, authored through 24
   inspectable policy lines
 - Account provisioning, owner isolation, CSRF protection, idempotency,

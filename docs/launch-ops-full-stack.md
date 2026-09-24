@@ -39,6 +39,10 @@ The complete source compiles with:
 - 95 expanded explicit permissions from 24 policy, grant, and policy-body lines
 - 0 compiler diagnostics
 
+The 14 actions are organized into six explicit state machines. Each transition
+still expands to the same guarded action IR, including multi-field assignments
+such as completing a milestone or mitigating a risk.
+
 ## The English is executable
 
 An entity declaration:

@@ -1207,6 +1207,7 @@ export const STUDIO_JS = `
     ir: null,
     trace: null,
     policyExpansions: [],
+    declarationExpansions: [],
     activeTab: 'problems',
     planToken: null,
     planItems: [],
@@ -1632,6 +1633,7 @@ export const STUDIO_JS = `
     state.ir = data.ir || null;
     state.trace = data.trace || null;
     state.policyExpansions = data.policyExpansions || [];
+    state.declarationExpansions = data.declarationExpansions || [];
   }
 
   function showFatal(msg) {
@@ -2295,6 +2297,33 @@ export const STUDIO_JS = `
     if (state.policyExpansions && state.policyExpansions.length) {
       appendModelSection(panel, 'Expanded Policies', renderPolicyExpansions(state.policyExpansions));
     }
+    if (state.declarationExpansions && state.declarationExpansions.length) {
+      appendModelSection(panel, 'Expanded Declarations', renderDeclarationExpansions(state.declarationExpansions));
+    }
+  }
+
+  function renderDeclarationExpansions(expansions) {
+    var container = document.createElement('div');
+    expansions.forEach(function (expansion) {
+      var card = document.createElement('div');
+      card.className = 'model-card';
+      var name = document.createElement('div');
+      name.className = 'model-card-name';
+      name.textContent = expansion.source + ' → ' + expansion.target;
+      var meta = document.createElement('div');
+      meta.className = 'model-card-meta';
+      meta.textContent = expansion.kind + ' · ' + expansion.statements.length + ' expanded lines';
+      card.appendChild(name);
+      card.appendChild(meta);
+      expansion.statements.forEach(function (statement) {
+        var line = document.createElement('div');
+        line.className = 'model-field';
+        line.textContent = statement;
+        card.appendChild(line);
+      });
+      container.appendChild(card);
+    });
+    return container;
   }
 
   function renderPolicyExpansions(expansions) {

@@ -1,11 +1,16 @@
 import type { CompileResult } from "./model.js";
 import { parseSource } from "./parser.js";
 import { expandPolicySource } from "./language/policies.js";
+import { expandDeclarationSource } from "./language/abstractions.js";
 
 export { formatSource } from "./formatter.js";
 
 export function compileSource(source: string): CompileResult {
-  const expanded = expandPolicySource(source);
+  const declarations = expandDeclarationSource(source);
+  if (!declarations.ok) {
+    return { ok: false, diagnostics: declarations.diagnostics };
+  }
+  const expanded = expandPolicySource(declarations.source);
   if (!expanded.ok) {
     return { ok: false, diagnostics: expanded.diagnostics };
   }
