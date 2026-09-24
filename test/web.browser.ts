@@ -351,6 +351,33 @@ When the subtract is clicked, subtract the value of amount field from the text o
   } finally { await browser.close(); }
 });
 
+test("a click can step a real number input's own value up/down, for a quantity stepper, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a number input called quantity
+Set the value of quantity to 1
+Add a button called increase
+Set the text of increase to Plus
+Add a button called decrease
+Set the text of decrease to Minus
+When the increase is clicked, add 1 to the value of quantity
+When the decrease is clicked, subtract 1 from the value of quantity`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    assert.equal(await page.locator("#element-1").inputValue(), "1");
+    await page.locator("#element-2").click(); // increase: 1 -> 2
+    await page.locator("#element-2").click(); // increase: 2 -> 3
+    assert.equal(await page.locator("#element-1").inputValue(), "3");
+    await page.locator("#element-3").click(); // decrease: 3 -> 2
+    assert.equal(await page.locator("#element-1").inputValue(), "2");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can multiply or divide a running total by a fixed number in a real browser", async () => {
   const compiled = compilePageSource(`Add a paragraph called total
 Set the text of total to 5

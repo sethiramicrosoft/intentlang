@@ -266,6 +266,13 @@ export function compilePageSource(source: string): PageCompileResult {
     const subtractFromValue = /^subtract\s+the\s+value\s+of\s+(.+?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
     const addText = /^add\s+(-?\d+(?:\.\d+)?)\s+to\s+the\s+text\s+of\s+(.+)$/i.exec(part);
     const subtractText = /^subtract\s+(-?\d+(?:\.\d+)?)\s+from\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+    // Increments/decrements a live input's own ".value" directly (as opposed to addText/
+    // subtractText, which only ever change what's displayed elsewhere) -- the natural shape
+    // for a quantity stepper's "+"/"-" buttons next to a number input. Same fixed-number-only
+    // shape and clamp-to-a-real-number semantics as addText/subtractText; the target must have
+    // a live value (an input, a text box, or a dropdown), validated the same way setValue is.
+    const addToValue = /^add\s+(-?\d+(?:\.\d+)?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
+    const subtractFromValueAmount = /^subtract\s+(-?\d+(?:\.\d+)?)\s+from\s+the\s+value\s+of\s+(.+)$/i.exec(part);
     // The multiplicative siblings of add/subtract -- same fixed-number-only shape (no
     // live-input multiplier yet), same clamp-to-a-real-number semantics via Number(...)||0.
     const multiplyText = /^multiply\s+the\s+text\s+of\s+(.+?)\s+by\s+(-?\d+(?:\.\d+)?)$/i.exec(part);
@@ -565,6 +572,18 @@ export function compilePageSource(source: string): PageCompileResult {
       const amount = (addText ? 1 : -1) * Number(match[1]);
       return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
         `e.textContent=String((Number(e.textContent)||0)+(${JSON.stringify(amount)}));})();`;
+    } else if (addToValue || subtractFromValueAmount) {
+      const match = addToValue ?? subtractFromValueAmount!;
+      const target = resolve(match[2]!, index);
+      if (!target) return undefined;
+      if (!hasReadableValue(target.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to set, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add an input called ${target.name} instead, such as Add a text input called ${target.name}.`);
+        return undefined;
+      }
+      const amount = (addToValue ? 1 : -1) * Number(match[1]);
+      return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
+        `e.value=String((Number(e.value)||0)+(${JSON.stringify(amount)}));})();`;
     } else if (multiplyText || divideText) {
       const match = multiplyText ?? divideText!;
       const target = resolve(match[1]!, index);
@@ -665,7 +684,8 @@ export function compilePageSource(source: string): PageCompileResult {
       `"subtract ... from the text of ...", "multiply the text of ... by ...", ` +
       `"divide the text of ... by ...", "add the value of ... to the text of ...", ` +
       `"subtract the value of ... from the text of ...", "multiply the text of ... by the value of ...", ` +
-      `"divide the text of ... by the value of ...", "set the value of ... to ...", ` +
+      `"divide the text of ... by the value of ...", "add ... to the value of ...", ` +
+      `"subtract ... from the value of ...", "set the value of ... to ...", ` +
       `"set the value of ... to the value of ...", "set the value of ... to the option labeled ... (a dropdown)", "clear the value of ...", ` +
       `"check ..."/"uncheck ..." for a checkbox or radio button, ` +
       `"toggle whether ... is checked" for a checkbox or radio button, ` +

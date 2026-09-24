@@ -628,6 +628,28 @@ Set the text of go to Go
 When the go is clicked, add the value of source to the text of total`, /Only an input, a text box, or a dropdown has a value to read/);
 });
 
+test("a click can add or subtract a fixed number into an input's own value, for a quantity stepper", () => {
+  const increased = page(`Add a number input called quantity
+Set the value of quantity to 1
+Add a button called increase
+Set the text of increase to Plus
+When the increase is clicked, add 1 to the value of quantity`);
+  const increasedScript = /<script>(.+?)<\/script>/.exec(increased.html)![1]!;
+  assert.match(increasedScript, /var e=document\.getElementById\("element-1"\);e\.value=String\(\(Number\(e\.value\)\|\|0\)\+\(1\)\);/);
+
+  const decreased = page(`Add a number input called quantity
+Set the value of quantity to 5
+Add a button called decrease
+Set the text of decrease to Minus
+When the decrease is clicked, subtract 1 from the value of quantity`);
+  const decreasedScript = /<script>(.+?)<\/script>/.exec(decreased.html)![1]!;
+  assert.match(decreasedScript, /e\.value=String\(\(Number\(e\.value\)\|\|0\)\+\(-1\)\);/);
+
+  invalid(`Add a button called go
+Set the text of go to Go
+When the go is clicked, add 1 to the value of go`, /Only an input, a text box, or a dropdown has a value to set/);
+});
+
 test("a click can run a runtime if-conditional over a live input's value, with all five comparisons and wrapping any other instruction", () => {
   const greater = page(`Add a text input called score field
 Add a paragraph called result

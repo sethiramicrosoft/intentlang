@@ -229,7 +229,13 @@ A click can also write into a live input's own value (as opposed to
 name> to the value of <other input name>` (a live copy from one input to
 another) preset a field, and `clear the value of <input name>` resets it to
 empty — handy for clearing a form after its value has already been read
-into a result. `set the value of <dropdown name> to the option labeled
+into a result. `add <number> to the value of <input name>` and `subtract
+<number> from the value of <input name>` step a live input's own value up
+or down by a fixed amount in place — the value-target sibling of `add
+<number> to the text of <name>`, for a "+"/"-" quantity-stepper button
+pair sitting right next to a number input, rather than only being able to
+total a fixed amount into some other displayed text. `set the value of
+<dropdown name> to the option labeled
 <text>` is the write-side sibling of `the selected label of ...`: it
 selects an option by its own displayed text directly (the target must be a
 dropdown specifically), regardless of that option's actual value attribute
@@ -562,6 +568,17 @@ Add a text input called message
 Add a paragraph called counter
 Set the text of counter to 0
 When the message changes, set the text of counter to the number of characters in the value of message
+```
+
+```text
+Add a number input called quantity
+Set the value of quantity to 1
+Add a button called increase
+Set the text of increase to +
+Add a button called decrease
+Set the text of decrease to -
+When the increase is clicked, add 1 to the value of quantity
+When the decrease is clicked, subtract 1 from the value of quantity
 ```
 
 ```text
