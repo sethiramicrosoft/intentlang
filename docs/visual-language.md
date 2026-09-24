@@ -277,7 +277,14 @@ keyboard or assistive technology instead of a mouse. The source of
 a live value to read) — using anything else there is a clear error, whether
 it's the direct source of a `set ... to the value of ...`, the source of an
 `add/subtract the value of ...` amount, or either side of an `if the value
-of ...` comparison. A random range's low end can't be greater than its high
+of ...` comparison. A dropdown's own `.value` is its selected option's value
+attribute, or that option's own displayed text when it has no explicit value
+attribute set — but once an option's value diverges from its label (`Set the
+value of red to r`), reading `the value of ...` no longer reflects what the
+visitor actually saw and picked. `set the text of <target> to the selected
+label of <dropdown name>` reads the selected option's own displayed text
+directly, regardless of its value attribute; the source must be a dropdown
+specifically. A random range's low end can't be greater than its high
 end (`from 6 to 1` is a clear error, not a silently reversed or empty range)
 — both ends are whole numbers, and the roll is inclusive of both. Both the
 `if`'s own instruction and its optional `otherwise` instruction can be any of
@@ -437,6 +444,19 @@ Set the text of blue to Blue
 Add a paragraph called result
 Set the text of result to Pick a color
 When the favorite color changes, set the text of result to the value of favorite color
+```
+
+```text
+Add a dropdown called country
+Add an option called us inside country
+Add an option called uk inside country
+Set the text of us to United States
+Set the text of uk to United Kingdom
+Set the value of us to US
+Set the value of uk to UK
+Add a paragraph called result
+Set the text of result to Pick a country
+When the country changes, set the text of result to the selected label of country
 ```
 
 ```text

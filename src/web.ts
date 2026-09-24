@@ -235,6 +235,13 @@ export function compilePageSource(source: string): PageCompileResult {
     // Checked before the plainer "set the text of X to Y", since that one's own value half
     // would otherwise happily swallow "the value of Y" as literal display text instead.
     const setFromValue = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
+    // A dropdown's own ".value" is its selected option's value attribute (or, if that option
+    // has none, its own displayed text -- the HTML default) -- but once an option's value is
+    // set explicitly to something other than its label (e.g. a short code), ".value" no
+    // longer matches what the visitor actually saw and picked. This reads the selected
+    // option's own displayed text instead, regardless of its value attribute. Checked before
+    // setText for the same shadowing reason as setFromValue/setRandom.
+    const setFromLabel = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+selected\s+label\s+of\s+(.+)$/i.exec(part);
     // Same reason: checked before the plainer "set the text of X to Y", so its own value
     // half doesn't swallow "a random number from A to B" as literal display text instead.
     const setRandom = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+a\s+random\s+number\s+from\s+(-?\d+)\s+to\s+(-?\d+)$/i.exec(part);
@@ -435,6 +442,16 @@ export function compilePageSource(source: string): PageCompileResult {
         return undefined;
       }
       return `document.getElementById(${JSON.stringify(target.id)}).textContent=document.getElementById(${JSON.stringify(source.id)}).value;`;
+    } else if (setFromLabel) {
+      const target = resolve(setFromLabel[1]!, index);
+      const source = target ? resolve(setFromLabel[2]!, index) : undefined;
+      if (!target || !source) return undefined;
+      if (source.tag !== "select") {
+        report(index, `Only a dropdown has a selected option's label, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add a dropdown called ${source.name} instead, such as Add a dropdown called ${source.name}.`);
+        return undefined;
+      }
+      return `document.getElementById(${JSON.stringify(target.id)}).textContent=(function(){var s=document.getElementById(${JSON.stringify(source.id)});return s.options[s.selectedIndex]?s.options[s.selectedIndex].text:"";})();`;
     } else if (addFromValue || subtractFromValue) {
       const match = addFromValue ?? subtractFromValue!;
       const source = resolve(match[1]!, index);
@@ -553,6 +570,7 @@ export function compilePageSource(source: string): PageCompileResult {
     }
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
+      `"set the text of ... to the selected label of ... (a dropdown)", ` +
       `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
       `"subtract ... from the text of ...", "multiply the text of ... by ...", ` +
       `"divide the text of ... by ...", "add the value of ... to the text of ...", ` +

@@ -428,6 +428,29 @@ When the submit is clicked, set the text of greeting to the value of name field`
   assert.match(scriptBody, /textContent=document\.getElementById\("element-1"\)\.value/);
 });
 
+test("a click can read a dropdown's selected option's own displayed label, even when its value differs", () => {
+  const withDivergentValues = page(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Add an option called blue inside favorite color
+Set the text of red to Red
+Set the text of blue to Blue
+Set the value of red to r
+Set the value of blue to b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, set the text of result to the selected label of favorite color`);
+  const script = /<script>(.+?)<\/script>/.exec(withDivergentValues.html)![1]!;
+  assert.match(script, /var s=document\.getElementById\("element-1"\);return s\.options\[s\.selectedIndex\]\?s\.options\[s\.selectedIndex\]\.text:"";/);
+
+  invalid(`Add a text input called n
+Add a paragraph called result
+Add a button called go
+Set the text of go to Go
+When the go is clicked, set the text of result to the selected label of n`, /Only a dropdown has a selected option's label/);
+});
+
 test("a click can set a target's text to a random number in a range, and a backwards range is a clear error", () => {
   const result = page(`Add a paragraph called roll
 Add a button called dice

@@ -191,6 +191,34 @@ When the submit is clicked, set the text of greeting to the value of name field`
   } finally { await browser.close(); }
 });
 
+test("a click can read a real dropdown's selected option label, even when its value differs, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Add an option called blue inside favorite color
+Set the text of red to Red
+Set the text of blue to Blue
+Set the value of red to r
+Set the value of blue to b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, set the text of result to the selected label of favorite color`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").selectOption("b");
+    await page.locator("#element-5").click();
+    assert.equal(await page.locator("#element-4").textContent(), "Blue");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can set a target's text to a real random number in a live browser, within the requested range", async () => {
   const compiled = compilePageSource(`Add a paragraph called roll
 Add a button called dice
