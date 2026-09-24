@@ -514,6 +514,18 @@ are not added, since there's nowhere for them to go inside an expression;
 its effects on other variables (including list mutations) still apply
 normally.
 
+`the result of <name>` can also be used directly on either side of an If
+condition, with any comparator that already applies to the value it returns
+— a number result supports all six comparators, a text result the same six
+(with ordering ones alphabetical), and both sides of the comparison can use
+it at once:
+
+```text
+To double with n, the result is n times 2
+
+If the result of double with 5 is greater than 5, display the text "bigger".
+```
+
 A variable's value, number or text, can be used anywhere a plain instruction ends
 with `to <name>`, such as `Set the text of points line to total points`. That
 same trailing spot also accepts an arithmetic chain, such as
@@ -563,16 +575,15 @@ offered, never applied silently.
   reported as a clear error rather than guessed at, since there's no
   general notion of "truthy" text in this language. Compare it with the
   ordinary `is equal to ...` form instead.
-- `the result of <name>` / `the result of <name> with <args>` can only be
-  used as a whole assignment value (`The x is the result of ...`) or a
-  whole call argument (`Do y with the result of ...`) — it can't be used
-  inside an If condition, or combined with an arithmetic/text `joined with`
-  chain in the same phrase (`the result of double with 5 plus 1` reads as
-  one call, `double with "5 plus 1"` evaluated as one number, not `(the
-  result of double with 5) plus 1`), for the same reason a call's own
-  single-parameter argument already reads to the end of the line: assign
-  the result to a variable first, then use that variable in the condition
-  or chain.
+- `the result of <name>` / `the result of <name> with <args>` can be used
+  as a whole assignment value, a whole call argument, or on either side of
+  an If condition — but it still can't be combined with an arithmetic/text
+  `joined with` chain in the same phrase (`the result of double with 5 plus
+  1` reads as one call, `double with "5 plus 1"` evaluated as one number,
+  not `(the result of double with 5) plus 1`), for the same reason a call's
+  own single-parameter argument already reads to the end of the line:
+  assign the result to a variable first, then use that variable in the
+  chain.
 - A list variable can be looped over, displayed, copied, measured with
   `the number of items in ...`, read one item at a time by position with
   `item N in ...` / `the first item in ...` / `the last item in ...`, and

@@ -64,7 +64,7 @@ const IF_HEAD_RE = /^if\s+(.+?)\s*,\s*(.+?)\.?$/i;
 // a variable name, or (since a For each counting loop's variable literally substitutes to a
 // number) a plain number too, so "if the number is greater than 3" still works after "number"
 // is replaced by, say, "4".
-const CONDITION_RE = /^the\s+(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z0-9 ]*?)$/i;
+const CONDITION_RE = /^the\s+(-?\d+(?:\.\d+)?|[a-z][a-z0-9 ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z0-9 ]*?)$/i;
 // A bare truthy/falsy condition, with no "is ...": "the <name>" (true when the variable itself
 // reads as true) or "not the <name>" (true when it reads as false). Lets an If read like plain
 // boolean logic ("If the ready, ...") instead of always spelling out "is equal to true".
@@ -626,36 +626,63 @@ function report(diagnostics: VisualDiagnostic[], lineNumber: number, trimmed: st
 }
 
 /**
+ * Resolves an If condition's target when the subject side is text or a list: tries "the result
+ * of <name> with <args>" first (so a procedure call can appear on either side of a comparison,
+ * not just the subject), then falls back to the ordinary literal/variable text resolution.
+ */
+function resolveConditionTargetText(target: string, lineNumber: number, text: string,
+  variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[], functions: FunctionMap,
+  callStack: Set<string>): string | undefined {
+  const resultOf = RESULT_OF_RE.exec(`the ${target}`);
+  if (resultOf) {
+    const value = evaluateProcedureResult(resultOf[1]!.trim().toLowerCase(), resultOf[2], target, lineNumber,
+      variables, diagnostics, functions, callStack);
+    if (value === undefined) return undefined;
+    return formatVarValueText(value);
+  }
+  return resolveTextOperand(target, variables);
+}
+
+/**
  * Evaluates one clause's condition ("the <subject> is <comparator> <target>"). Returns undefined
  * when it couldn't be evaluated (a diagnostic has already been recorded in that case).
  */
 function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: number,
-  variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[]): boolean | undefined {
+  variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[], functions: FunctionMap,
+  callStack: Set<string>): boolean | undefined {
   const rawSubject = clause.subject;
   let subject: VarValue;
   if (/^-?\d+(?:\.\d+)?$/.test(rawSubject)) {
     subject = { type: "number", value: Number(rawSubject) };
   } else {
     const lengthOf = LIST_LENGTH_RE.exec(rawSubject);
+    const resultOf = lengthOf ? undefined : RESULT_OF_RE.exec(`the ${rawSubject}`);
     const displayName = lengthOf ? stripLeadingThe(lengthOf[1]!) : rawSubject;
     const name = displayName.toLowerCase();
-    const found = variables.get(name);
-    if (found === undefined) {
-      const closest = closestVariable(name, variables);
-      report(diagnostics, lineNumber, text, "M001", `"${displayName}" was never given a value.`,
-        closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${displayName} is 0." before this line.`,
-        closest ? [{ label: `Use "${closest}"`, replacement: text.replace(displayName, closest) }] : undefined);
-      return undefined;
-    }
-    if (lengthOf) {
-      if (found.type !== "list") {
-        report(diagnostics, lineNumber, text, "M002", `"${displayName}" is not a list, so it has no "number of items".`,
-          `Compare "${rawSubject}" against a variable defined with "is a list of ...".`);
+    if (resultOf) {
+      const value = evaluateProcedureResult(resultOf[1]!.trim().toLowerCase(), resultOf[2], rawSubject, lineNumber,
+        variables, diagnostics, functions, callStack);
+      if (value === undefined) return undefined;
+      subject = value;
+    } else {
+      const found = variables.get(name);
+      if (found === undefined) {
+        const closest = closestVariable(name, variables);
+        report(diagnostics, lineNumber, text, "M001", `"${displayName}" was never given a value.`,
+          closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${displayName} is 0." before this line.`,
+          closest ? [{ label: `Use "${closest}"`, replacement: text.replace(displayName, closest) }] : undefined);
         return undefined;
       }
-      subject = { type: "number", value: found.value.length };
-    } else {
-      subject = found;
+      if (lengthOf) {
+        if (found.type !== "list") {
+          report(diagnostics, lineNumber, text, "M002", `"${displayName}" is not a list, so it has no "number of items".`,
+            `Compare "${rawSubject}" against a variable defined with "is a list of ...".`);
+          return undefined;
+        }
+        subject = { type: "number", value: found.value.length };
+      } else {
+        subject = found;
+      }
     }
   }
   const comparator = clause.comparator.toLowerCase();
@@ -672,19 +699,28 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
         [{ label: `Change "${comparator}" to "equal to"`, replacement: text.replace(clause.comparator, "equal to") }]);
       return undefined;
     }
-    const target = resolveTextOperand(clause.target, variables);
+    const target = resolveConditionTargetText(clause.target, lineNumber, text, variables, diagnostics, functions, callStack);
+    if (target === undefined) return undefined;
     const isEqual = formatVarValueText(subject).trim().toLowerCase() === target.trim().toLowerCase();
     return comparator === "equal to" ? isEqual : !isEqual;
   }
   if (subject.type === "text") {
-    const target = resolveTextOperand(clause.target, variables);
+    const target = resolveConditionTargetText(clause.target, lineNumber, text, variables, diagnostics, functions, callStack);
+    if (target === undefined) return undefined;
     const a = formatVarValueText(subject).trim().toLowerCase();
     const b = target.trim().toLowerCase();
     if (comparator === "equal to") return a === b;
     if (comparator === "not equal to") return a !== b;
     return compareText(a, comparator, b);
   }
-  const target = resolveNumericOperand(clause.target, variables);
+  const targetResultOf = RESULT_OF_RE.exec(`the ${clause.target}`);
+  const target = targetResultOf
+    ? (() => {
+        const value = evaluateProcedureResult(targetResultOf[1]!.trim().toLowerCase(), targetResultOf[2], clause.target,
+          lineNumber, variables, diagnostics, functions, callStack);
+        return value?.type === "number" ? value.value : undefined;
+      })()
+    : resolveNumericOperand(clause.target, variables);
   if (target === undefined) {
     const closest = closestVariable(clause.target, variables);
     report(diagnostics, lineNumber, text, "M002", `"${clause.target}" is not a number or a known variable.`,
@@ -708,7 +744,8 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
  * couldn't be evaluated (a diagnostic has already been recorded in that case).
  */
 function evaluateIfCondition(ifMatch: IfMatch, text: string, lineNumber: number,
-  variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[]): boolean | undefined {
+  variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[], functions: FunctionMap,
+  callStack: Set<string>): boolean | undefined {
   const uniqueConnectors = new Set(ifMatch.connectors);
   if (uniqueConnectors.size > 1) {
     report(diagnostics, lineNumber, text, "M015",
@@ -718,7 +755,7 @@ function evaluateIfCondition(ifMatch: IfMatch, text: string, lineNumber: number,
   }
   const results: boolean[] = [];
   for (const clause of ifMatch.clauses) {
-    const result = evaluateSingleCondition(clause, text, lineNumber, variables, diagnostics);
+    const result = evaluateSingleCondition(clause, text, lineNumber, variables, diagnostics, functions, callStack);
     if (result === undefined) return undefined;
     results.push(result);
   }
@@ -1007,7 +1044,7 @@ function expandInstruction(instr: string, lineNumber: number, variables: Map<str
   }
   const nestedIf = matchIf(trimmedInstr);
   if (nestedIf) {
-    const condition = evaluateIfCondition(nestedIf, trimmedInstr, lineNumber, variables, diagnostics);
+    const condition = evaluateIfCondition(nestedIf, trimmedInstr, lineNumber, variables, diagnostics, functions, callStack);
     if (condition === undefined) return [];
     return condition ? expandChain(nestedIf.instruction, lineNumber, variables, diagnostics, functions, callStack) : [];
   }
@@ -1121,7 +1158,7 @@ export function expandMacros(source: string): MacroExpandResult {
 
     const ifMatch = matchIf(trimmed);
     if (ifMatch) {
-      const condition = evaluateIfCondition(ifMatch, trimmed, lineNumber, variables, diagnostics);
+      const condition = evaluateIfCondition(ifMatch, trimmed, lineNumber, variables, diagnostics, functions, new Set());
       // An unresolved condition (a diagnostic was already recorded) breaks the chain, the same
       // as if no If had started it at all -- so a later Otherwise can't silently pair itself
       // with an unrelated, earlier If just because this one failed to evaluate.
@@ -1143,7 +1180,7 @@ export function expandMacros(source: string): MacroExpandResult {
       // languages -- but the chain stays open for a further "Otherwise if" or "Otherwise" to
       // follow, so the chain isn't reported as broken just because it was already resolved.
       if (lastCondition) return;
-      const condition = evaluateIfCondition(otherwiseIf, trimmed, lineNumber, variables, diagnostics);
+      const condition = evaluateIfCondition(otherwiseIf, trimmed, lineNumber, variables, diagnostics, functions, new Set());
       lastCondition = condition;
       if (condition) for (const instr of expandChain(otherwiseIf.instruction, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
       return;

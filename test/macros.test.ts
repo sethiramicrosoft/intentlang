@@ -673,6 +673,46 @@ Set the text of message to result`);
   assert.equal(textOf(ir, "message"), "untouched");
 });
 
+test("'the result of ...' can be used as an If condition's subject, compared against a number", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To double with n, the result is n times 2.
+If the result of double with 5 is equal to 10, set the text of message to yes.`);
+  assert.equal(textOf(ir, "message"), "yes");
+});
+
+test("'the result of ...' can be used as an If condition's target, compared against a variable", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To double with n, the result is n times 2.
+The doubled is 10.
+If the doubled is equal to the result of double with 5, set the text of message to yes.`);
+  assert.equal(textOf(ir, "message"), "yes");
+});
+
+test("'the result of ...' works with ordering comparators inside an If condition", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To double with n, the result is n times 2.
+If the result of double with 5 is greater than 5, set the text of message to bigger.`);
+  assert.equal(textOf(ir, "message"), "bigger");
+});
+
+test("'the result of ...' works on text values inside an If condition, both sides", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The name is bob.
+The other is alice.
+To greet with n, the result is n joined with " hi".
+The greeting is the result of greet with the name.
+If the greeting is not equal to the result of greet with the other, set the text of message to yes.`);
+  assert.equal(textOf(ir, "message"), "yes");
+});
+
+test("a false 'the result of ...' If condition does not run its instruction", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To double with n, the result is n times 2.
+If the result of double with 5 is equal to 9, set the text of message to should-not-run
+Otherwise, set the text of message to did-not-match`);
+  assert.equal(textOf(ir, "message"), "did-not-match");
+});
+
 test("'the result of <name>' on a procedure that never sets 'the result' is a clear error", () => {
   invalid(`Add a paragraph called message inside page
 To sayHi, set the text of message to hi.
