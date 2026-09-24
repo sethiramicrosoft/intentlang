@@ -52,6 +52,11 @@ accepts a published, finite grammar. Supported statements compile predictably;
 unsupported or ambiguous statements produce diagnostics instead of being
 silently guessed.
 
+The stable language surface is linked to a
+[normative specification](docs/spec/index.md), machine-readable rule registry,
+and executable conformance fixtures. Run `npm run assurance:complete` to verify
+that every stable construct has rule and test evidence.
+
 ### Flagship example: LaunchOps Mission Control
 
 [`examples/launch-ops.intent`](examples/launch-ops.intent) is one controlled

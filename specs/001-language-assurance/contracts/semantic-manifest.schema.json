@@ -18,6 +18,7 @@
     "sourceFingerprint": { "type": "string" },
     "semanticFingerprint": { "type": "string" },
     "dependencyFingerprint": { "type": "string" },
+    "artifactFingerprint": { "type": "string" },
     "generatorVersions": {
       "type": "object",
       "additionalProperties": { "type": "string" }

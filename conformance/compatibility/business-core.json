@@ -1,0 +1,11 @@
+{
+  "id": "business-core-compatibility",
+  "category": "compatibility",
+  "ruleIds": ["APP-DECL-001", "ENTITY-DECL-001", "FIELD-DECL-001", "RUNTIME-GENERATION-001"],
+  "source": "application Todo\na Task has a required title as text\na Task has a done as boolean default false\n",
+  "expected": {
+    "canonicalSource": "application Todo with id todo\n\nentity Task with id task\n  title is required text with id task-title\n  done is boolean with id task-done default false\n",
+    "equivalentSource": "application Todo with id todo\nentity Task with id task\n  title is required text with id task-title\n  done is boolean with id task-done default false\n",
+    "changedSource": "application Todo with id todo\nentity Task with id task\n  title is required text with id task-title\n  done is boolean with id task-done default true\n"
+  }
+}

@@ -66,6 +66,7 @@ export interface SemanticManifest {
   sourceFingerprint: string;
   semanticFingerprint: string;
   dependencyFingerprint?: string;
+  artifactFingerprint?: string;
   generatorVersions: Record<string, string>;
 }
 

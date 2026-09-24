@@ -97,26 +97,26 @@ a normative rule and applicable fixtures.
 
 ### Tests first
 
-- [ ] T023 [P] [US1] Add formatter idempotence property tests in
+- [x] T023 [P] [US1] Add formatter idempotence property tests in
   `test/canonical-properties.test.ts`.
-- [ ] T024 [P] [US4] Add semantic-fingerprint stability and sensitivity tests
+- [x] T024 [P] [US4] Add semantic-fingerprint stability and sensitivity tests
   in `test/semantic-fingerprint.test.ts`.
-- [ ] T025 [P] [US4] Add historical fixture comparison tests in
+- [x] T025 [P] [US4] Add historical fixture comparison tests in
   `test/compatibility.test.ts`.
 
 ### Implementation
 
-- [ ] T026 [US1] Implement canonical semantic normalization in
+- [x] T026 [US1] Implement canonical semantic normalization in
   `src/language/canonical.ts`.
-- [ ] T027 [US4] Implement source, semantic, dependency, generator, and artifact
+- [x] T027 [US4] Implement source, semantic, dependency, generator, and artifact
   fingerprints in `src/language/semantic-fingerprint.ts`.
-- [ ] T028 [US4] Extend manifests with version/fingerprint fields in
+- [x] T028 [US4] Extend manifests with version/fingerprint fields in
   `src/manifest.ts`.
-- [ ] T029 [US4] Implement semantic diff and compatibility classification in
+- [x] T029 [US4] Implement semantic diff and compatibility classification in
   `src/language/compatibility.ts`.
-- [ ] T030 [US4] Add historical baselines under `conformance/compatibility/`.
-- [ ] T031 [US4] Add CI/package scripts that fail on unapproved semantic drift.
-- [ ] T032 [US4] Publish `docs/spec/canonicalization.md` and
+- [x] T030 [US4] Add historical baselines under `conformance/compatibility/`.
+- [x] T031 [US4] Add CI/package scripts that fail on unapproved semantic drift.
+- [x] T032 [US4] Publish `docs/spec/canonicalization.md` and
   `docs/spec/compatibility.md`.
 
 **Checkpoint**: SC-003, SC-004, and initial SC-005 achieved.

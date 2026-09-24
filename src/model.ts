@@ -133,8 +133,14 @@ export type CompileResult =
     };
 
 export interface BuildManifest {
+  languageVersion: string;
+  irVersion: string;
   compilerVersion: string;
   schemaVersion: string;
   ir: ProgramIr;
   irFingerprint: string;
+  sourceFingerprint: string;
+  semanticFingerprint: string;
+  dependencyFingerprint: string;
+  generatorVersions: Record<string, string>;
 }

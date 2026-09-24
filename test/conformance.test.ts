@@ -11,7 +11,7 @@ import { compilePageSource } from "../src/web.js";
 
 test("conformance loader discovers categorized fixtures with unique IDs", async () => {
   const fixtures = await loadConformanceFixtures();
-  assert.equal(fixtures.length, 25);
+  assert.equal(fixtures.length, 26);
   assert.equal(
     new Set(fixtures.map(({ fixture }) => fixture.id)).size,
     fixtures.length
