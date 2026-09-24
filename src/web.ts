@@ -177,7 +177,11 @@ export function compilePageSource(source: string): PageCompileResult {
   function compileClickPart(part: string, index: number): string | undefined {
     // Checked first: its own trailing instruction is compiled recursively, so it must not be
     // shadowed by any of the plainer patterns below matching a prefix of the same text.
-    const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|equal to)\s+(-?\d+(?:\.\d+)?)\s*,\s*(.+)$/i.exec(part);
+    // Group 5 (the optional "otherwise" clause) is greedy, so a lone " otherwise " literal
+    // inside the "then" instruction's own text would be misread as the else-branch split;
+    // documented as a reserved word in this position, matching how "otherwise" is already
+    // reserved after "If" everywhere else in the language.
+    const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|equal to)\s+(-?\d+(?:\.\d+)?)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
     // Checked before the plainer "set the text of X to Y", since that one's own value half
     // would otherwise happily swallow "the value of Y" as literal display text instead.
     const setFromValue = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
@@ -204,7 +208,13 @@ export function compilePageSource(source: string): PageCompileResult {
       const threshold = Number(ifValue[3]);
       const inner = compileClickPart(ifValue[4]!.trim(), index);
       if (inner === undefined) return undefined;
-      return `if((Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)${operator}(${JSON.stringify(threshold)})){${inner}}`;
+      let elseClause = "";
+      if (ifValue[5]) {
+        const elseInner = compileClickPart(ifValue[5].trim(), index);
+        if (elseInner === undefined) return undefined;
+        elseClause = `else{${elseInner}}`;
+      }
+      return `if((Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)${operator}(${JSON.stringify(threshold)})){${inner}}${elseClause}`;
     } else if (setFromValue) {
       const target = resolve(setFromValue[1]!, index);
       const source = target ? resolve(setFromValue[2]!, index) : undefined;
@@ -256,7 +266,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
       `"subtract ... from the text of ...", "add the value of ... to the text of ...", ` +
       `"subtract the value of ... from the text of ...", or "if the value of ... is greater than/less than/` +
-      `at least/at most/equal to ..., ...".`);
+      `at least/at most/equal to ..., ... otherwise ...".`);
     return undefined;
   }
   /** Which element tags have a live, readable ".value" in the DOM. */

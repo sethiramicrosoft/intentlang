@@ -171,28 +171,31 @@ else in the language is): `set the text of <name> to <value>`,
 siblings of the plain-number add/subtract, for totaling up whatever a visitor
 actually typed rather than a fixed amount), and `if the value of <input
 name> is greater than/less than/at least/at most/equal to <number>, <one
-instruction>` (a real runtime conditional, so a click can behave differently
-depending on what a visitor actually typed). The compiler turns every `When
-... is clicked` sentence in a page into ONE small, entirely compiler-generated
-script (never containing any user-authored markup, attribute, or script tag —
-only compiler-fixed code with your text safely embedded as a JSON string), and
-pins that exact script into the page's Content-Security-Policy by its SHA-256
-hash. A page that doesn't use `When ... is clicked` stays exactly as
-script-free as before, byte for byte. The target of "is clicked" must be a
-button (a native, keyboard-operable control), so this never creates a
-click-only trap for people who use a keyboard or assistive technology instead
-of a mouse. The source of "the value of ..." must be an input, a text box, or
-a dropdown (anything with a live value to read) — using anything else there
-is a clear error, whether it's the direct source of a `set ... to the value
-of ...`, the source of an `add/subtract the value of ...` amount, or the
-subject of an `if the value of ...` comparison. A random range's low end
-can't be greater than its high end (`from 6 to 1` is a clear error, not a
-silently reversed or empty range) — both ends are whole numbers, and the roll
-is inclusive of both. The `if`'s own instruction can be any of the other
-supported instructions (including another `add the value of ...`), but it is
-exactly one instruction, not its own `and then` chain — chain further
-instructions after the `if` at the top level instead, and they'll run every
-time the button is clicked, regardless of whether the condition was true.
+instruction>` optionally followed by `otherwise <one instruction>` (a real
+runtime conditional, with an optional else branch, so a click can behave
+differently depending on what a visitor actually typed). The compiler turns
+every `When ... is clicked` sentence in a page into ONE small, entirely
+compiler-generated script (never containing any user-authored markup,
+attribute, or script tag — only compiler-fixed code with your text safely
+embedded as a JSON string), and pins that exact script into the page's
+Content-Security-Policy by its SHA-256 hash. A page that doesn't use `When
+... is clicked` stays exactly as script-free as before, byte for byte. The
+target of "is clicked" must be a button (a native, keyboard-operable
+control), so this never creates a click-only trap for people who use a
+keyboard or assistive technology instead of a mouse. The source of
+"the value of ..." must be an input, a text box, or a dropdown (anything with
+a live value to read) — using anything else there is a clear error, whether
+it's the direct source of a `set ... to the value of ...`, the source of an
+`add/subtract the value of ...` amount, or the subject of an `if the value
+of ...` comparison. A random range's low end can't be greater than its high
+end (`from 6 to 1` is a clear error, not a silently reversed or empty range)
+— both ends are whole numbers, and the roll is inclusive of both. Both the
+`if`'s own instruction and its optional `otherwise` instruction can be any of
+the other supported instructions (including another `add the value of ...`),
+but each is exactly one instruction, not its own `and then` chain — chain
+further instructions after the whole `if ... otherwise ...` at the top level
+instead, and they'll run every time the button is clicked, regardless of
+which branch (or neither, if there's no `otherwise`) actually ran.
 
 ```text
 Add a paragraph called counter
@@ -232,7 +235,7 @@ Add a paragraph called result
 Set the text of result to none
 Add a button called check
 Set the text of check to Check
-When the check is clicked, if the value of score field is greater than 50, set the text of result to high and then if the value of score field is at most 50, set the text of result to low
+When the check is clicked, if the value of score field is greater than 50, set the text of result to high otherwise set the text of result to low
 ```
 
 The second example is real user input, not compile-time data: whatever a

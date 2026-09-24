@@ -368,6 +368,48 @@ Set the text of go to Go
 When the go is clicked, if the value of n is around 5, set the text of out to hmm`, /is not one of the supported click instructions/);
 });
 
+test("a click's if-conditional can have an otherwise (else) branch, which itself can be any supported instruction", () => {
+  const basic = page(`Add a text input called score field
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is greater than 50, set the text of result to high otherwise set the text of result to low`);
+  const basicScript = /<script>(.+?)<\/script>/.exec(basic.html)![1]!;
+  assert.match(basicScript, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>\(50\)\)\{document\.getElementById\("element-2"\)\.textContent="high";\}else\{document\.getElementById\("element-2"\)\.textContent="low";\}/);
+
+  // An "and then" after the whole if/otherwise still runs unconditionally, same as after a
+  // plain if with no otherwise: "and then" splits the click body before "if" ever sees it.
+  const chained = page(`Add a text input called n
+Add a paragraph called out
+Set the text of out to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of n is greater than 5, set the text of out to big otherwise set the text of out to small and then add 1 to the text of out`);
+  const chainedScript = /<script>(.+?)<\/script>/.exec(chained.html)![1]!;
+  assert.match(chainedScript, /\}else\{document\.getElementById\("element-2"\)\.textContent="small";\}\(function/);
+
+  // The otherwise branch can wrap a non-trivial instruction too, not just a plain set.
+  const nested = page(`Add a text input called amount
+Add a paragraph called total
+Set the text of total to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of amount is greater than 0, add the value of amount to the text of total otherwise set the text of total to zero`);
+  const nestedScript = /<script>(.+?)<\/script>/.exec(nested.html)![1]!;
+  assert.match(nestedScript, /\}else\{document\.getElementById\("element-2"\)\.textContent="zero";\}/);
+
+  // A plain if with no otherwise still compiles exactly as before (no regression).
+  const plain = page(`Add a text input called n
+Add a paragraph called out
+Set the text of out to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of n is greater than 5, add 1 to the text of out`);
+  const plainScript = /<script>(.+?)<\/script>/.exec(plain.html)![1]!;
+  assert.doesNotMatch(plainScript, /else/);
+});
+
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
   const result = page(`Add an image called photo
 Set the source of photo to https://example.com/MyPhoto.png
