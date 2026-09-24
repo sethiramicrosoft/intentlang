@@ -234,7 +234,13 @@ into a result. `add <number> to the value of <input name>` and `subtract
 or down by a fixed amount in place — the value-target sibling of `add
 <number> to the text of <name>`, for a "+"/"-" quantity-stepper button
 pair sitting right next to a number input, rather than only being able to
-total a fixed amount into some other displayed text. `set the value of
+total a fixed amount into some other displayed text. `add the value of
+<input name> to the value of <other input name>` and `subtract the value
+of <input name> from the value of <other input name>` do the same thing
+but with a live amount instead of a fixed one — the value-target sibling
+of `add the value of ... to the text of ...` — so a stepper's own step
+size can itself come from another field instead of always being the same
+fixed number. `set the value of
 <dropdown name> to the option labeled
 <text>` is the write-side sibling of `the selected label of ...`: it
 selects an option by its own displayed text directly (the target must be a
@@ -579,6 +585,16 @@ Add a button called decrease
 Set the text of decrease to -
 When the increase is clicked, add 1 to the value of quantity
 When the decrease is clicked, subtract 1 from the value of quantity
+```
+
+```text
+Add a number input called step size
+Set the value of step size to 5
+Add a number input called quantity
+Set the value of quantity to 0
+Add a button called increase
+Set the text of increase to +
+When the increase is clicked, add the value of step size to the value of quantity
 ```
 
 ```text

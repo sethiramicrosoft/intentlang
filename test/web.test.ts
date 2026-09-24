@@ -650,6 +650,42 @@ Set the text of go to Go
 When the go is clicked, add 1 to the value of go`, /Only an input, a text box, or a dropdown has a value to set/);
 });
 
+test("a click can add or subtract one live input's value into another live input's own value, and reject non-value source/target", () => {
+  const added = page(`Add a number input called step
+Set the value of step to 1
+Add a number input called quantity
+Set the value of quantity to 1
+Add a button called go
+Set the text of go to Go
+When the go is clicked, add the value of step to the value of quantity`);
+  const addedScript = /<script>(.+?)<\/script>/.exec(added.html)![1]!;
+  assert.match(addedScript, /var e=document\.getElementById\("element-2"\);e\.value=String\(\(Number\(e\.value\)\|\|0\)\+\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)\)\);/);
+
+  const subtracted = page(`Add a number input called step
+Set the value of step to 1
+Add a number input called quantity
+Set the value of quantity to 5
+Add a button called go
+Set the text of go to Go
+When the go is clicked, subtract the value of step from the value of quantity`);
+  const subtractedScript = /<script>(.+?)<\/script>/.exec(subtracted.html)![1]!;
+  assert.match(subtractedScript, /e\.value=String\(\(Number\(e\.value\)\|\|0\)\+\(-\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)\)\);/);
+
+  invalid(`Add a paragraph called step
+Add a number input called quantity
+Set the value of quantity to 1
+Add a button called go
+Set the text of go to Go
+When the go is clicked, add the value of step to the value of quantity`, /Only an input, a text box, or a dropdown has a value to read/);
+
+  invalid(`Add a number input called step
+Set the value of step to 1
+Add a paragraph called quantity
+Add a button called go
+Set the text of go to Go
+When the go is clicked, add the value of step to the value of quantity`, /Only an input, a text box, or a dropdown has a value to set/);
+});
+
 test("a click can run a runtime if-conditional over a live input's value, with all five comparisons and wrapping any other instruction", () => {
   const greater = page(`Add a text input called score field
 Add a paragraph called result
