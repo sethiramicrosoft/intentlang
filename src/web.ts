@@ -183,6 +183,12 @@ export function compilePageSource(source: string): PageCompileResult {
     "starts with": (left, right) => `${left}.startsWith(${right})`,
     "ends with": (left, right) => `${left}.endsWith(${right})`
   };
+  // Maps a plain-English length comparison word to its JS operator; distinct from
+  // clickComparisons' vocabulary ("more than"/"fewer than"/"exactly" instead of "greater
+  // than"/"less than"/"equal to"), since "how many characters" reads more naturally that way.
+  const lengthComparisons: Record<string, string> = {
+    "more than": ">", "fewer than": "<", "at least": ">=", "at most": "<=", "exactly": "==="
+  };
   /**
    * Compiles a single click instruction (one "and then"-separated part, or the inner
    * instruction of an "If ..., ..." conditional) into one JS statement, or undefined if a
@@ -204,18 +210,24 @@ export function compilePageSource(source: string): PageCompileResult {
     // misread as a literal-text comparison against the whole phrase "between 1 and 10".
     const ifBetween = !ifValue ?
       /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+between\s+(-?\d+(?:\.\d+)?)\s+and\s+(-?\d+(?:\.\d+)?)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
+    // A live text's own length, for validation like a minimum/maximum password or username
+    // length -- distinct from the value comparisons above, which compare the text/number
+    // itself, not how long it is. Checked before ifText below for the same shadowing reason
+    // as ifBetween: "has more than 5 characters" must never be misread as literal text.
+    const ifLength = !ifValue && !ifBetween ?
+      /^if\s+the\s+value\s+of\s+(.+?)\s+has\s+(more than|fewer than|at least|at most|exactly)\s+(\d+)\s+characters?\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // Only tried when the numeric form above doesn't match (e.g. "is red" rather than
     // "is greater than 5"), so a numeric comparison is never misread as a text one. "is not"
     // must come before the plain "is" in the alternation, or "is not red" would match "is"
     // with a leftover "not red" as the compared text instead of matching "is not" whole.
-    const ifText = !ifValue && !ifBetween ? /^if\s+the\s+value\s+of\s+(.+?)\s+(is not|is|contains|starts with|ends with)\s+(?:the\s+value\s+of\s+(.+?)|(.+?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
+    const ifText = !ifValue && !ifBetween && !ifLength ? /^if\s+the\s+value\s+of\s+(.+?)\s+(is not|is|contains|starts with|ends with)\s+(?:the\s+value\s+of\s+(.+?)|(.+?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // A checkbox/radio button's state lives in ".checked", not ".value" (its ".value" is a
     // fixed attribute, never reflecting whether it's ticked) -- this is a separate condition
     // form for that reason. The negative lookahead keeps it from ever matching "if the value
     // of X is checked, ..." (which isn't valid there, since "checked" isn't a recognized
     // ifValue/ifText comparison word either, and would otherwise misread "the value of X"
     // itself as the checkbox's name).
-    const ifChecked = !ifValue && !ifBetween && !ifText ?
+    const ifChecked = !ifValue && !ifBetween && !ifLength && !ifText ?
       /^if\s+(?!the\s+value\s+of\s)(.+?)\s+is\s+(checked|not checked)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // "Repeat" needs no shadowing precaution of its own -- no other pattern starts with the
     // word "repeat" -- but like "if", its own trailing instruction is compiled recursively.
@@ -321,6 +333,24 @@ export function compilePageSource(source: string): PageCompileResult {
       }
       const value = `(Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)`;
       return `if(${value}>=${JSON.stringify(low)}&&${value}<=${JSON.stringify(high)}){${inner}}${elseClause}`;
+    } else if (ifLength) {
+      const source = resolve(ifLength[1]!, index);
+      if (!source) return undefined;
+      if (!hasReadableValue(source.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      const operator = lengthComparisons[ifLength[2]!.toLowerCase()]!;
+      const inner = compileClickPart(ifLength[4]!.trim(), index);
+      if (inner === undefined) return undefined;
+      let elseClause = "";
+      if (ifLength[5]) {
+        const elseInner = compileClickPart(ifLength[5].trim(), index);
+        if (elseInner === undefined) return undefined;
+        elseClause = `else{${elseInner}}`;
+      }
+      return `if(String(document.getElementById(${JSON.stringify(source.id)}).value).length${operator}${JSON.stringify(Number(ifLength[3]))}){${inner}}${elseClause}`;
     } else if (ifText) {
       const source = resolve(ifText[1]!, index);
       if (!source) return undefined;
@@ -527,6 +557,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is between ... and ... (two numbers), ... otherwise ...", ` +
+      `"if the value of ... has more than/fewer than/at least/at most/exactly ... characters, ... otherwise ...", ` +
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
       `"if ... is/is not checked, ... otherwise ...", ` +
       `or "repeat ... times, ...".`);

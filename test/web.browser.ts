@@ -324,6 +324,31 @@ When the check is clicked, if the value of score field is between 1 and 10, set 
   } finally { await browser.close(); }
 });
 
+test("a click's if-conditional can check a live text's own length in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called password
+Add a paragraph called hint
+Set the text of hint to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of password has fewer than 8 characters, set the text of hint to too short otherwise set the text of hint to looks good`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("short");
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").textContent(), "too short");
+    await page.locator("#element-1").fill("longenough");
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").textContent(), "looks good");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click's if-conditional otherwise (else) branch fires in a real browser exactly when the condition is false", async () => {
   const compiled = compilePageSource(`Add a text input called score field
 Add a paragraph called result

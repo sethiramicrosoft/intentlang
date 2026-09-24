@@ -533,6 +533,35 @@ Set the text of check to Check
 When the check is clicked, if the value of label is between 1 and 10, set the text of result to valid`, /Only an input, a text box, or a dropdown has a value to read/);
 });
 
+test("a click's if-conditional can check a live text's own length with \"has ... characters\"", () => {
+  const fewer = page(`Add a text input called password
+Add a paragraph called hint
+Set the text of hint to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of password has fewer than 8 characters, set the text of hint to too short otherwise set the text of hint to looks good`);
+  const fewerScript = /<script>(.+?)<\/script>/.exec(fewer.html)![1]!;
+  assert.match(fewerScript, /if\(String\(document\.getElementById\("element-1"\)\.value\)\.length<8\)\{document\.getElementById\("element-2"\)\.textContent="too short";\}else\{document\.getElementById\("element-2"\)\.textContent="looks good";\}/);
+
+  for (const [word, operator] of Object.entries({ "more than": ">", "fewer than": "<", "at least": ">=", "at most": "<=", "exactly": "===" })) {
+    const result = page(`Add a text input called code
+Add a paragraph called out
+Set the text of out to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of code has ${word} 6 characters, add 1 to the text of out`);
+    const script = /<script>(.+?)<\/script>/.exec(result.html)![1]!;
+    assert.match(script, new RegExp(`if\\(String\\(document\\.getElementById\\("element-1"\\)\\.value\\)\\.length${operator.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}6\\)`));
+  }
+
+  // The target must still be an input/text box/dropdown, same as every other "the value
+  // of ..." reference.
+  invalid(`Add a paragraph called label
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the value of label has more than 5 characters, set the text of label to long`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("a click's if-conditional can have an otherwise (else) branch, which itself can be any supported instruction", () => {
   const basic = page(`Add a text input called score field
 Add a paragraph called result

@@ -186,10 +186,16 @@ checks a fixed, inclusive range in one step instead of writing two separate
 comparisons — both ends must be plain numbers known at compile time (not
 another live input's value), and a backwards range (a low end greater than
 the high end) is a clear compile-time error rather than a condition that's
-silently always false. The same `if` can
+silently always false. A related form checks a live text's own length
+instead of its value: `if the value of <input name> has more than/fewer
+than/at least/at most/exactly <number> characters, <one instruction>`
+(also optionally followed by `otherwise <one instruction>`) — handy for a
+minimum password length or a maximum username length, without needing a
+separate word-count helper. The same `if` can
 also compare live text instead of numbers, with `is`, `is not`, `contains`,
 `starts with`, or `ends with` (`if the value of message contains urgent,
-...`) — the numeric comparisons (including `is between ... and ...`) are
+...`) — the numeric comparisons (including `is between ... and ...` and
+`has ... characters`) are
 always tried first, so a phrase like
 `is greater than 50` still runs the numeric check, while anything else after
 `is`/`is not` (including a whole phrase) is compared as literal text; the
@@ -349,6 +355,15 @@ Set the text of result to none
 Add a button called check
 Set the text of check to Check
 When the check is clicked, if the value of score field is between 1 and 10, set the text of result to valid otherwise set the text of result to out of range
+```
+
+```text
+Add a text input called password
+Add a paragraph called hint
+Set the text of hint to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of password has fewer than 8 characters, set the text of hint to too short otherwise set the text of hint to looks good
 ```
 
 ```text
