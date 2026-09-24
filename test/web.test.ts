@@ -593,6 +593,113 @@ When the go is clicked, fetch the text at //example.com/status into the text of 
     /must be a same-origin address, starting with a single/);
 });
 
+test("a click can render a real backend's JSON records with \"list ... of each record at ... into ...\"", () => {
+  const listed = page(`Add a bullet list called player list
+Add a button called go
+Set the text of go to Go
+When the go is clicked, list name and score of each record at /players into player list`);
+  const script = /<script>(.+?)<\/script>/.exec(listed.html)![1]!;
+  assert.match(script, /fetch\("\/players"\)\.then\(function\(r\)\{return r\.json\(\);\}\)/);
+  assert.match(script, /var items=\(j&&j\.data\)\|\|\[\];var c=document\.getElementById\("element-1"\);c\.innerHTML="";/);
+  assert.match(script,
+    /items\.forEach\(function\(item\)\{var li=document\.createElement\("li"\);li\.textContent=\(item\.name==null\?"":item\.name\)\+", "\+\(item\.score==null\?"":item\.score\);c\.appendChild\(li\);\}\);\}\)\.catch\(function\(\)\{\}\);/);
+  assert.match(listed.html, /connect-src 'self'/);
+
+  // A single field needs no separator at all.
+  const single = page(`Add a numbered list called player list
+Add a button called go
+Set the text of go to Go
+When the go is clicked, list name of each record at /players into player list`);
+  const singleScript = /<script>(.+?)<\/script>/.exec(single.html)![1]!;
+  assert.match(singleScript, /li\.textContent=\(item\.name==null\?"":item\.name\);/);
+
+  // Comma-separated field lists (with or without a trailing "and") are both accepted.
+  const commaSeparated = page(`Add a bullet list called player list
+Add a button called go
+Set the text of go to Go
+When the go is clicked, list name, email, and score of each record at /players into player list`);
+  const commaScript = /<script>(.+?)<\/script>/.exec(commaSeparated.html)![1]!;
+  assert.match(commaScript, /item\.name==null\?"":item\.name\)\+", "\+\(item\.email==null\?"":item\.email\)\+", "\+\(item\.score/);
+
+  // Only a bullet list or numbered list can receive rendered records -- a plain container
+  // has no matching real HTML child element the same way "Add a list item inside ..." would.
+  invalid(`Add a paragraph called player list
+Add a button called go
+Set the text of go to Go
+When the go is clicked, list name of each record at /players into player list`,
+    /Only a bullet list or a numbered list can show a list of records, and player list is a p\./);
+
+  // A field name must be a plain identifier -- it's read directly as a JS property, so
+  // anything else (spaces, punctuation) is rejected before it can ever reach generated code.
+  invalid(`Add a bullet list called player list
+Add a button called go
+Set the text of go to Go
+When the go is clicked, list first-name of each record at /players into player list`,
+    /first-name[\s\S]*is not a plain field name/);
+
+  invalid(`Add a bullet list called player list
+Add a button called go
+Set the text of go to Go
+When the go is clicked, list name of each record at https://example.com/players into player list`,
+    /must be a same-origin address, starting with a single/);
+});
+
+test("a click can POST a new backend record with \"create a record at ... with ... set to the value of ...\"", () => {
+  const created = page(`Add a text input called name input
+Add a text input called score input
+Add a button called go
+Set the text of go to Go
+When the go is clicked, create a record at /players with name set to the value of name input and score set to the value of score input`);
+  const script = /<script>(.+?)<\/script>/.exec(created.html)![1]!;
+  assert.match(script, /fetch\("\/players",\{method:"POST",headers:\{"Content-Type":"application\/json","Idempotency-Key":String\(Date\.now\(\)\)\+"-"\+Math\.random\(\)\.toString\(36\)\.slice\(2\)\},/);
+  assert.match(script,
+    /body:JSON\.stringify\(\{"name":document\.getElementById\("element-1"\)\.value,"score":document\.getElementById\("element-2"\)\.value\}\)\}\)\.catch\(function\(\)\{\}\);/);
+  assert.match(created.html, /connect-src 'self'/);
+
+  // The comma+"and" separated form is equally accepted, matching the same lookahead-based
+  // splitting "list" itself uses for its own field names.
+  const commaForm = page(`Add a text input called name input
+Add a text input called score input
+Add a button called go
+Set the text of go to Go
+When the go is clicked, create a record at /players with name set to the value of name input, and score set to the value of score input`);
+  const commaScript = /<script>(.+?)<\/script>/.exec(commaForm.html)![1]!;
+  assert.match(commaScript, /"name":document\.getElementById\("element-1"\)\.value,"score":document\.getElementById\("element-2"\)\.value/);
+
+  // Combined with "and then", a single click can both create a record and immediately
+  // refresh a rendered list of them -- the two new instructions compose exactly like every
+  // other click instruction already does.
+  const combined = page(`Add a text input called name input
+Add a bullet list called player list
+Add a button called go
+Set the text of go to Go
+When the go is clicked, create a record at /players with name set to the value of name input and then list name of each record at /players into player list`);
+  const combinedScript = /<script>(.+?)<\/script>/.exec(combined.html)![1]!;
+  assert.match(combinedScript, /"method":"POST"|method:"POST"/);
+  assert.match(combinedScript, /fetch\("\/players"\)\.then\(function\(r\)\{return r\.json\(\);\}\)/);
+
+  // Only a real input/text box/dropdown has a live ".value" to read -- the same rule
+  // "if the value of ..." already enforces.
+  invalid(`Add a paragraph called name label
+Add a button called go
+Set the text of go to Go
+When the go is clicked, create a record at /players with name set to the value of name label`,
+    /Only an input, a text box, or a dropdown has a value to read, and name label is a p\./);
+
+  // Setting the same field twice in one create is a clear, explicit error.
+  invalid(`Add a text input called name input
+Add a button called go
+Set the text of go to Go
+When the go is clicked, create a record at /players with name set to the value of name input and name set to the value of name input`,
+    /More than one field sets name/);
+
+  invalid(`Add a text input called name input
+Add a button called go
+Set the text of go to Go
+When the go is clicked, create a record at //example.com/players with name set to the value of name input`,
+    /must be a same-origin address, starting with a single/);
+});
+
 test("When the <field> changes reacts to a live edit or selection, not a click", () => {
   const dropdown = page(`Add a dropdown called favorite color
 Add an option called red inside favorite color

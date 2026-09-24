@@ -415,6 +415,49 @@ language below) is one natural thing to point this at, but the instruction
 itself doesn't know anything about that generator's specific routes; it
 will read any same-origin path that returns plain text.
 
+`list <field>, <field> and <field> of each record at <same-origin address>
+into <name (a bullet or numbered list)>` goes one step further: it treats
+the response as JSON shaped like a generated CRUD backend's own list reply
+(`{ "data": [ { ... }, { ... } ] }`), and renders one list item per record,
+its text built from exactly the named fields, joined with `, ` — for
+example, `list name and score of each record at /players into player list`
+shows `Alex, 10` and `Sam, 7` as two separate list items. Existing items in
+the target list are replaced each time, so the same instruction can be
+reused to refresh the list later. A field name must be a plain word made
+only of letters, digits and underscores — it's read directly as that
+record's own property, so nothing else can appear there — and the target
+must actually be a bullet list or a numbered list, the same real elements
+`Add a bullet list called ...`/`Add a numbered list called ...` already
+produce, since a list item can only ever live inside one of those two. Like
+`fetch`, this is GET-only, same-origin-only, and opts a page in to the same
+`connect-src 'self'` policy clause; a failed request or bad response simply
+leaves the list unchanged.
+
+`create a record at <same-origin address> with <field> set to the value of
+<name>, and <field> set to the value of <name>` is the write-side
+counterpart: on click, it POSTs one JSON object built only from the exact
+fields named here, each one read live from another element's own value
+(never arbitrary text) — for example, `create a record at /players with
+name set to the value of name input` reads whatever a visitor actually
+typed into `name input` and sends `{ "name": "..." }`. A generated CRUD
+backend always requires a non-empty `Idempotency-Key` header on every
+create, so one is generated fresh on every click (a plain unique string,
+not required to be a strict UUID — the backend only checks that the header
+is present and non-empty). Each value source must be a real input, text
+box, or dropdown, the same rule every other value-reading instruction
+already enforces, and no field may be set twice in one instruction. This
+instruction composes with `and then` exactly like every other click
+instruction, so one click can create a record and immediately refresh a
+rendered list of them: `create a record at /players with name set to the
+value of name input and then list name of each record at /players into
+player list`. It cannot yet drive an authenticated backend's
+CSRF-protected create or update, since there is no runtime-variable storage
+in this language to remember a fetched CSRF token between requests — nor
+is there yet a `PUT`-based update or a `DELETE`, or any way to show a
+visitor that a create failed — all of that remains a documented, unscoped
+follow-up; this first slice targets a backend running with authentication
+turned off, or any other same-origin JSON API shaped like `{ "data": ... }`.
+
 **`When the page loads, <one or more instructions>.`** runs the exact same
 closed instruction set immediately, as soon as the page's markup exists,
 instead of waiting for a click — for setting up a default, rolling an
@@ -860,6 +903,15 @@ Set the text of status to unknown
 Add a button called check status
 Set the text of check status to Check status
 When the check status is clicked, fetch the text at /status into the text of status
+```
+
+```text
+Add a text input called new player name
+Add a bullet list called player list
+Add a button called add player
+Set the text of add player to Add player
+When the page loads, list name of each record at /players into player list
+When the add player is clicked, create a record at /players with name set to the value of new player name and then list name of each record at /players into player list
 ```
 
 ```text

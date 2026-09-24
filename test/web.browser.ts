@@ -1179,6 +1179,65 @@ When the go is clicked, fetch the text at /status into the text of result`);
   } finally { await browser.close(); }
 });
 
+test("a click can render a real backend's JSON records with \"list ... of each record at ... into ...\", in a real browser", async () => {
+  const compiled = compilePageSource(`Add a bullet list called player list
+Add a button called go
+Set the text of go to Go
+When the go is clicked, list name and score of each record at /players into player list`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    // Same routed-same-origin approach as fetchText's own test above; "/players" stands in
+    // for a real generated CRUD backend's own "{ data: [...] }" list response shape.
+    await page.route("**/page", (route) => route.fulfill({ status: 200, contentType: "text/html", body: compiled.html }));
+    await page.route("**/players", (route) => route.fulfill({
+      status: 200, contentType: "application/json",
+      body: JSON.stringify({ data: [{ name: "Alex", score: 10 }, { name: "Sam", score: 7 }] })
+    }));
+    await page.goto("https://intentlang.test/page");
+    await page.locator("#element-2").click(); // "go" -- fires the real fetch() + JSON parse
+    await page.locator("#element-1 li").nth(1).waitFor();
+    const rows = await page.locator("#element-1 li").allTextContents();
+    assert.deepEqual(rows, ["Alex, 10", "Sam, 7"]);
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
+test("a click can POST a real new backend record with \"create a record at ... with ... set to the value of ...\", in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called name input
+Add a button called go
+Set the text of go to Go
+When the go is clicked, create a record at /players with name set to the value of name input`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    let capturedBody: string | null = null;
+    let capturedIdempotencyKey: string | null = null;
+    await page.route("**/page", (route) => route.fulfill({ status: 200, contentType: "text/html", body: compiled.html }));
+    await page.route("**/players", (route) => {
+      const request = route.request();
+      capturedBody = request.postData();
+      capturedIdempotencyKey = request.headers()["idempotency-key"] ?? null;
+      return route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ data: { id: "1" } }) });
+    });
+    await page.goto("https://intentlang.test/page");
+    await page.locator("#element-1").fill("Riley");
+    await page.locator("#element-2").click(); // "go" -- fires the real POST fetch()
+    await page.waitForTimeout(200); // let the fire-and-forget fetch actually reach the route
+    assert.equal(capturedBody, JSON.stringify({ name: "Riley" }));
+    assert.ok(capturedIdempotencyKey && capturedIdempotencyKey.length > 0); // a real, non-empty key was generated
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("When the <field> changes fires on a real dropdown selection or a committed text edit, in a real browser", async () => {
   const compiled = compilePageSource(`Add a dropdown called favorite color
 Add an option called red inside favorite color

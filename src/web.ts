@@ -434,6 +434,23 @@ export function compilePageSource(source: string): PageCompileResult {
     // this can only ever read from a backend, never mutate one, keeping the smallest useful
     // slice of "talk to a backend" as small as it can be.
     const fetchText = /^fetch\s+the\s+text\s+at\s+(\S+)\s+into\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+    // The next bridge past fetchText's single plain-text read: a generated CRUD backend
+    // (see the entity/auth spec language) always replies to a list with JSON shaped
+    // {"data":[...]} -- "list" fetches that same-origin address, reads each record's own
+    // named fields (its actual column names, sanitized to a plain identifier so nothing but
+    // a dotted property read is ever generated), and renders one <li> per record inside a
+    // bullet or numbered list, replacing whatever the list held before. It is deliberately
+    // read-only and GET-only, the same as fetchText.
+    const listRecords = /^list\s+(.+?)\s+of\s+each\s+record\s+at\s+(\S+)\s+into\s+(.+)$/i.exec(part);
+    // The write-side counterpart: POSTs one JSON object, built only from the exact fields
+    // named here and only from other elements' own live ".value" (never arbitrary text), to a
+    // same-origin address. A generated CRUD backend always requires a non-empty
+    // "Idempotency-Key" header on every create, so one is generated fresh on every click
+    // (a plain unique string, not a strict UUID -- the backend only checks it is present and
+    // non-empty). This cannot yet drive an authenticated backend's CSRF-protected create,
+    // since there is no runtime-variable storage in this language to remember a fetched CSRF
+    // token between requests -- that remains a documented follow-up.
+    const createRecord = /^create\s+a\s+record\s+at\s+(\S+)\s+with\s+(.+)$/i.exec(part);
     if (ifValue) {
       const source = resolve(ifValue[1]!, index);
       if (!source) return undefined;
@@ -1051,7 +1068,7 @@ export function compilePageSource(source: string): PageCompileResult {
         `{duration:${Math.round(seconds * 1000)},fill:"forwards"});})();`;
     } else if (fetchText) {
       const path = fetchText[1]!;
-      if (!path.startsWith("/") || path.startsWith("//")) {
+      if (!isSameOriginPath(path)) {
         report(index, `"${path}" must be a same-origin address, starting with a single "/" and not "//".`,
           "Try fetch the text at /status into the text of result -- an external or protocol-relative address is not allowed.");
         return undefined;
@@ -1061,6 +1078,77 @@ export function compilePageSource(source: string): PageCompileResult {
       usesFetch = true;
       return `fetch(${JSON.stringify(path)}).then(function(r){return r.text();})` +
         `.then(function(t){document.getElementById(${JSON.stringify(target.id)}).textContent=t;}).catch(function(){});`;
+    } else if (listRecords) {
+      const path = listRecords[2]!;
+      if (!isSameOriginPath(path)) {
+        report(index, `"${path}" must be a same-origin address, starting with a single "/" and not "//".`,
+          "Try list name of each record at /players into player list -- an external or protocol-relative address is not allowed.");
+        return undefined;
+      }
+      const container = resolve(listRecords[3]!, index);
+      if (!container) return undefined;
+      if (container.tag !== "ul" && container.tag !== "ol") {
+        report(index, `Only a bullet list or a numbered list can show a list of records, and ${container.name} is a ${englishName(container.tag)}.`,
+          `Add a bullet list called ${container.name} instead, such as Add a bullet list called ${container.name}.`);
+        return undefined;
+      }
+      const fields = splitFieldNames(listRecords[1]!);
+      if (!fields.length) {
+        report(index, "List at least one field, such as name.", "Try list name of each record at /players into player list.");
+        return undefined;
+      }
+      const badField = fields.find((field) => !isPlainFieldName(field));
+      if (badField) {
+        report(index, `"${badField}" is not a plain field name (letters, digits, and underscores only).`,
+          "Field names come from the backend record's own keys, such as name or email.");
+        return undefined;
+      }
+      usesFetch = true;
+      const rowText = fields.map((field) => `(item.${field}==null?"":item.${field})`).join('+", "+');
+      return `fetch(${JSON.stringify(path)}).then(function(r){return r.json();})` +
+        `.then(function(j){var items=(j&&j.data)||[];var c=document.getElementById(${JSON.stringify(container.id)});c.innerHTML="";` +
+        `items.forEach(function(item){var li=document.createElement("li");li.textContent=${rowText};c.appendChild(li);});}).catch(function(){});`;
+    } else if (createRecord) {
+      const path = createRecord[1]!;
+      if (!isSameOriginPath(path)) {
+        report(index, `"${path}" must be a same-origin address, starting with a single "/" and not "//".`,
+          "Try create a record at /players with name set to the value of name input -- an external or protocol-relative address is not allowed.");
+        return undefined;
+      }
+      const pairs = splitFieldValuePairs(createRecord[2]!);
+      if (!pairs.length) {
+        report(index, "Set at least one field, such as name set to the value of name input.",
+          "Try create a record at /players with name set to the value of name input.");
+        return undefined;
+      }
+      const seen = new Set<string>();
+      const fieldExprs: string[] = [];
+      for (const pair of pairs) {
+        const match = /^([a-zA-Z_][a-zA-Z0-9_]*)\s+set\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(pair);
+        if (!match) {
+          report(index, `"${pair}" is not a plain field, such as name set to the value of name input.`,
+            "Try create a record at /players with name set to the value of name input.");
+          return undefined;
+        }
+        const field = match[1]!;
+        if (seen.has(field)) {
+          report(index, `More than one field sets ${field}.`, "Set each field only once.");
+          return undefined;
+        }
+        seen.add(field);
+        const valueSource = resolve(match[2]!, index);
+        if (!valueSource) return undefined;
+        if (!hasReadableValue(valueSource.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${valueSource.name} is a ${englishName(valueSource.tag)}.`,
+            `Add an input called ${valueSource.name} instead, such as Add a text input called ${valueSource.name}.`);
+          return undefined;
+        }
+        fieldExprs.push(`${JSON.stringify(field)}:document.getElementById(${JSON.stringify(valueSource.id)}).value`);
+      }
+      usesFetch = true;
+      return `fetch(${JSON.stringify(path)},{method:"POST",headers:{"Content-Type":"application/json",` +
+        `"Idempotency-Key":String(Date.now())+"-"+Math.random().toString(36).slice(2)},` +
+        `body:JSON.stringify({${fieldExprs.join(",")}})}).catch(function(){});`;
     }
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
@@ -1084,6 +1172,8 @@ export function compilePageSource(source: string): PageCompileResult {
       `"go to ..." to switch to a section, hiding its sibling sections, ` +
       `"move ... from left/right/top/bottom to the opposite edge over ... seconds" to animate any element across the screen, ` +
       `"fetch the text at /a-same-origin-address into the text of ..." to read from a backend, ` +
+      `"list <field>, <field> and <field> of each record at /a-same-origin-address into ... (a bullet or numbered list)" to render backend records, ` +
+      `"create a record at /a-same-origin-address with <field> set to the value of ..., and <field> set to the value of ..." to POST a new record, ` +
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to/not equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is between ... and ... (two numbers, or the value of ..., or a mix), ... otherwise ...", ` +
@@ -1109,6 +1199,30 @@ export function compilePageSource(source: string): PageCompileResult {
   function hasDisabledSupport(tag: string): boolean {
     return tag === "button" || tag === "input" || tag === "textarea" || tag === "select" ||
       tag === "optgroup" || tag === "fieldset";
+  }
+  // Shared by fetchText, listRecords and createRecord: a relative path starting with a
+  // single "/" (never "//", a protocol-relative URL that could reach a different origin,
+  // and never a scheme like "https:", which can't appear here anyway since a leading "/"
+  // already rules out "scheme:" syntax).
+  function isSameOriginPath(path: string): boolean {
+    return path.startsWith("/") && !path.startsWith("//");
+  }
+  /** A plain field/column name: letters, digits and underscores only, never starting with a digit. */
+  function isPlainFieldName(name: string): boolean {
+    return /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(name);
+  }
+  /** Splits "name, email and score" into ["name", "email", "score"]. */
+  function splitFieldNames(text: string): string[] {
+    return text.split(/\s*,\s*and\s+|\s*,\s*|\s+and\s+/i).map((entry) => entry.trim()).filter(Boolean);
+  }
+  // Splits "name set to the value of a, email set to the value of b" into its own
+  // per-field pairs -- the lookahead only splits at a "," or "and" that is actually
+  // followed by another "<field> set to the value of ..." pair, so an element name that
+  // happens to contain the word "and" (e.g. "name and address input") is never split apart.
+  function splitFieldValuePairs(text: string): string[] {
+    const boundary = "(?=[a-zA-Z_][a-zA-Z0-9_]*\\s+set\\s+to\\s+the\\s+value\\s+of\\s)";
+    return text.split(new RegExp(`\\s*,\\s*and\\s+${boundary}|\\s*,\\s*${boundary}|\\s+and\\s+${boundary}`, "i"))
+      .map((entry) => entry.trim()).filter(Boolean);
   }
   function dequoteRuntime(text: string): string {
     return /^"([\s\S]*)"$/.exec(text.trim())?.[1] ?? text.trim();
