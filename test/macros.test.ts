@@ -1409,6 +1409,56 @@ The mean is the average of scores.
 Set the text of message to mean`, /scores.*average.*needs every item to be a number/);
 });
 
+test("'the highest of <list>' and 'the lowest of <list>' resolve as plain numeric operands", () => {
+  const { ir } = page(`Add a paragraph called high display inside page
+Add a paragraph called low display inside page
+The scores is a list of 7, 2, 9 and 4.
+The best is the highest of scores.
+The worst is the lowest of scores.
+Set the text of high display to best
+Set the text of low display to worst`);
+  assert.equal(textOf(ir, "high display"), "9");
+  assert.equal(textOf(ir, "low display"), "2");
+});
+
+test("'the highest of <list>' works inside a larger arithmetic chain", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The scores is a list of 7, 2, 9 and 4.
+The bonus is the highest of scores plus 1.
+Set the text of message to bonus`);
+  assert.equal(textOf(ir, "message"), "10");
+});
+
+test("'the lowest of <list>' works as an If condition's subject", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The scores is a list of 7, 2, 9 and 4.
+If the lowest of scores is less than 3, set the text of message to very low
+Otherwise, set the text of message to not that low`);
+  assert.equal(textOf(ir, "message"), "very low");
+});
+
+test("'the highest of <list>' resolves inside a 'joined with' text chain, not just plain arithmetic", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The scores is a list of 7, 2, 9 and 4.
+The report is "top score is " joined with the highest of scores.
+Set the text of message to report`);
+  assert.equal(textOf(ir, "message"), "top score is 9");
+});
+
+test("'highest of'/'lowest of' a variable that isn't a list is a clear error, not silently copied as text", () => {
+  invalid(`Add a paragraph called message inside page
+The name is "Alex".
+The best is the highest of name.
+Set the text of message to best`, /name.*is not a list.*highest/);
+});
+
+test("'highest of'/'lowest of' a list with a non-numeric item is a clear error, not a silent zero", () => {
+  invalid(`Add a paragraph called message inside page
+The scores is a list of 7, two and 4.
+The worst is the lowest of scores.
+Set the text of message to worst`, /scores.*lowest.*needs every item to be a number/);
+});
+
 test("'item N in <list>' reads one item out of a list by 1-based position", () => {
   const { ir } = page(`Add a paragraph called message inside page
 The favorite colors is a list of red, green and blue.

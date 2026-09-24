@@ -383,16 +383,18 @@ Repeat 3 times, the wins is wins plus 1.
   variable, with every other item unchanged — and resolves its value the
   same way an assignment does (a number expression, or otherwise plain
   text). When every item in a list is a number, it can also be totaled with
-  **`the sum of <list>`** or averaged with **`the average of <list>`** —
-  both resolve to a plain number wherever a number could go, the same as
-  `the number of items in <list>` does: an arithmetic operand (`the sum of
-  scores plus 10`), an If condition's subject (`If the average of scores is
-  greater than 50, ...`), or a `joined with` text chain operand. Asking for
-  the number of items in, reading an item from, or setting an item in
-  something that isn't a list — or a position that's out of range — is
-  reported as a clear error rather than silently returning zero or blank
-  text; the same is true of asking for the sum or average of something
-  that isn't a list, or a list that has even one non-numeric item.
+  **`the sum of <list>`** or averaged with **`the average of <list>`**, and
+  its largest and smallest items found with **`the highest of <list>`** and
+  **`the lowest of <list>`** — all four resolve to a plain number wherever a
+  number could go, the same as `the number of items in <list>` does: an
+  arithmetic operand (`the sum of scores plus 10`), an If condition's
+  subject (`If the average of scores is greater than 50, ...`), or a
+  `joined with` text chain operand. Asking for the number of items in,
+  reading an item from, or setting an item in something that isn't a list —
+  or a position that's out of range — is reported as a clear error rather
+  than silently returning zero or blank text; the same is true of asking for
+  the sum, average, highest or lowest of something that isn't a list, or a
+  list that has even one non-numeric item.
 - **`For each <name> from <start> to <end>, <one or more instructions>.`**
   counts through every whole number from `<start>` to `<end>`, inclusive of
   both ends, replacing the loop word with each number in turn. Counts upward
@@ -654,13 +656,15 @@ offered, never applied silently.
   take a list as any one of them too, as long as the argument list's other
   values don't themselves need commas or "and" to separate them (the same
   word-splitting rule a For each's own inline list already follows).
-- `the sum of <list>` and `the average of <list>` only work when every item
-  in the list is a plain number — a list with even one non-numeric item
-  reports a clear error rather than silently treating that item as zero, and
-  asking for the sum or average of a variable that isn't a list at all is
-  likewise a clear error, not a silent fallback to literal text. `the sum of`
-  an empty list is `0`; `the average of` an empty list has no numeric result
-  (there's nothing to divide by), so it's also reported as a clear error.
+- `the sum of <list>`, `the average of <list>`, `the highest of <list>` and
+  `the lowest of <list>` only work when every item in the list is a plain
+  number — a list with even one non-numeric item reports a clear error
+  rather than silently treating that item as zero (or skipping it), and
+  asking for any of these on a variable that isn't a list at all is likewise
+  a clear error, not a silent fallback to literal text. `the sum of` an
+  empty list is `0`; `the average of`, `the highest of`, and `the lowest of`
+  an empty list have no numeric result (there's nothing to divide by or
+  compare), so each is also reported as a clear error.
 - Inside a For each's own repeated instruction, the loop word is replaced
   with each item's literal text everywhere it's used to build a
   differently-named element (`For each opponent in ..., add a list item

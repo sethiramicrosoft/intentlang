@@ -52,6 +52,11 @@ const LIST_LENGTH_RE = /^number of items in\s+(.+)$/i;
 // any non-numeric item is a clear error rather than silently treating it as zero.
 const LIST_SUM_RE = /^sum of\s+(.+)$/i;
 const LIST_AVERAGE_RE = /^average of\s+(.+)$/i;
+// "the highest of <list>" and "the lowest of <list>" resolve a numeric list variable's largest
+// or smallest item wherever a plain number could go -- siblings of "the sum of"/"the average
+// of" above, with the same requirement that every item already be a number.
+const LIST_HIGHEST_RE = /^highest of\s+(.+)$/i;
+const LIST_LOWEST_RE = /^lowest of\s+(.+)$/i;
 // "the length of <text>" resolves to a text value's character count wherever a plain number
 // could go -- the text sibling of "the number of items in <list>" above.
 const TEXT_LENGTH_RE = /^length of\s+(.+)$/i;
@@ -416,9 +421,11 @@ function applySetListItem(numGroup: string | undefined, firstLastGroup: string |
 
 
 /** Parses every item of a list as a plain number, or returns undefined if any item isn't one --
- * used by "the sum of <list>" and "the average of <list>", which only make sense when every
- * item genuinely is a number (silently treating a non-numeric item as 0 would hide a mistake). */
-function listAggregate(list: string[], kind: "sum" | "average"): number | undefined {
+ * used by "the sum of <list>", "the average of <list>", "the highest of <list>" and "the lowest
+ * of <list>", which only make sense when every item genuinely is a number (silently treating a
+ * non-numeric item as 0, or ignoring it for highest/lowest, would hide a mistake). An empty
+ * list has a sum of 0, but no highest/lowest/average (there's nothing to compare or divide by). */
+function listAggregate(list: string[], kind: "sum" | "average" | "highest" | "lowest"): number | undefined {
   const numbers: number[] = [];
   for (const item of list) {
     const trimmed = item.trim();
@@ -426,27 +433,31 @@ function listAggregate(list: string[], kind: "sum" | "average"): number | undefi
     numbers.push(Number(trimmed));
   }
   if (numbers.length === 0) return kind === "sum" ? 0 : undefined;
+  if (kind === "highest") return Math.max(...numbers);
+  if (kind === "lowest") return Math.min(...numbers);
   const total = numbers.reduce((a, b) => a + b, 0);
   return kind === "sum" ? total : total / numbers.length;
 }
 
 /**
- * Matches "the sum of <list>" / "the average of <list>" as a whole assignment value or call
- * argument (not just as an arithmetic operand, which `resolveNumericOperand` already handles on
- * its own) and reports a clear error rather than silently falling through to literal text when
- * the named variable isn't a list, or is a list but contains a non-numeric item. Returns
- * undefined when the raw text isn't this phrase at all (so the caller can keep trying its own
- * other checks); otherwise `{ value }` on success, or `{ value: undefined }` after already
- * reporting the error.
+ * Matches "the sum of <list>" / "the average of <list>" / "the highest of <list>" / "the lowest
+ * of <list>" as a whole assignment value or call argument (not just as an arithmetic operand,
+ * which `resolveNumericOperand` already handles on its own) and reports a clear error rather
+ * than silently falling through to literal text when the named variable isn't a list, or is a
+ * list but contains a non-numeric item. Returns undefined when the raw text isn't this phrase at
+ * all (so the caller can keep trying its own other checks); otherwise `{ value }` on success, or
+ * `{ value: undefined }` after already reporting the error.
  */
 function resolveListAggregatePhrase(rawValue: string, variables: Map<string, VarValue>, lineNumber: number,
   text: string, diagnostics: VisualDiagnostic[]): { value: number | undefined } | undefined {
   const stripped = stripLeadingThe(rawValue.trim()).toLowerCase();
   const sumOf = LIST_SUM_RE.exec(stripped);
   const averageOf = sumOf ? undefined : LIST_AVERAGE_RE.exec(stripped);
-  const match = sumOf ?? averageOf;
+  const highestOf = sumOf || averageOf ? undefined : LIST_HIGHEST_RE.exec(stripped);
+  const lowestOf = sumOf || averageOf || highestOf ? undefined : LIST_LOWEST_RE.exec(stripped);
+  const match = sumOf ?? averageOf ?? highestOf ?? lowestOf;
   if (!match) return undefined;
-  const kind = sumOf ? "sum" : "average";
+  const kind = sumOf ? "sum" : averageOf ? "average" : highestOf ? "highest" : "lowest";
   const listName = stripLeadingThe(match[1]!);
   const found = variables.get(listName.toLowerCase());
   if (found === undefined) {
@@ -489,6 +500,16 @@ function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): n
     const list = variables.get(stripLeadingThe(averageOf[1]!).toLowerCase());
     return list?.type === "list" ? listAggregate(list.value, "average") : undefined;
   }
+  const highestOf = LIST_HIGHEST_RE.exec(token);
+  if (highestOf) {
+    const list = variables.get(stripLeadingThe(highestOf[1]!).toLowerCase());
+    return list?.type === "list" ? listAggregate(list.value, "highest") : undefined;
+  }
+  const lowestOf = LIST_LOWEST_RE.exec(token);
+  if (lowestOf) {
+    const list = variables.get(stripLeadingThe(lowestOf[1]!).toLowerCase());
+    return list?.type === "list" ? listAggregate(list.value, "lowest") : undefined;
+  }
   const textLengthOf = TEXT_LENGTH_RE.exec(token);
   if (textLengthOf) return resolveTextOperand(textLengthOf[1]!, variables).length;
   const found = variables.get(token);
@@ -516,6 +537,18 @@ function resolveTextOperand(raw: string, variables: Map<string, VarValue>): stri
   if (averageOf) {
     const list = variables.get(stripLeadingThe(averageOf[1]!).toLowerCase());
     const aggregate = list?.type === "list" ? listAggregate(list.value, "average") : undefined;
+    if (aggregate !== undefined) return formatNumber(aggregate);
+  }
+  const highestOf = LIST_HIGHEST_RE.exec(stripLeadingThe(raw).toLowerCase());
+  if (highestOf) {
+    const list = variables.get(stripLeadingThe(highestOf[1]!).toLowerCase());
+    const aggregate = list?.type === "list" ? listAggregate(list.value, "highest") : undefined;
+    if (aggregate !== undefined) return formatNumber(aggregate);
+  }
+  const lowestOf = LIST_LOWEST_RE.exec(stripLeadingThe(raw).toLowerCase());
+  if (lowestOf) {
+    const list = variables.get(stripLeadingThe(lowestOf[1]!).toLowerCase());
+    const aggregate = list?.type === "list" ? listAggregate(list.value, "lowest") : undefined;
     if (aggregate !== undefined) return formatNumber(aggregate);
   }
   const caseConvert = CASE_CONVERT_RE.exec(stripLeadingThe(raw).toLowerCase());
@@ -780,7 +813,9 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
     const lengthOf = LIST_LENGTH_RE.exec(rawSubject);
     const sumOf = lengthOf ? undefined : LIST_SUM_RE.exec(rawSubject);
     const averageOf = lengthOf || sumOf ? undefined : LIST_AVERAGE_RE.exec(rawSubject);
-    const listAgg = lengthOf ?? sumOf ?? averageOf;
+    const highestOf = lengthOf || sumOf || averageOf ? undefined : LIST_HIGHEST_RE.exec(rawSubject);
+    const lowestOf = lengthOf || sumOf || averageOf || highestOf ? undefined : LIST_LOWEST_RE.exec(rawSubject);
+    const listAgg = lengthOf ?? sumOf ?? averageOf ?? highestOf ?? lowestOf;
     const textLengthOf = listAgg ? undefined : TEXT_LENGTH_RE.exec(rawSubject.toLowerCase());
     const caseConvert = listAgg || textLengthOf ? undefined : CASE_CONVERT_RE.exec(rawSubject.toLowerCase());
     const resultOf = listAgg || textLengthOf || caseConvert ? undefined : RESULT_OF_RE.exec(`the ${rawSubject}`);
@@ -812,8 +847,8 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
           return undefined;
         }
         subject = { type: "number", value: found.value.length };
-      } else if (sumOf || averageOf) {
-        const kind = sumOf ? "sum" : "average";
+      } else if (sumOf || averageOf || highestOf || lowestOf) {
+        const kind = sumOf ? "sum" : averageOf ? "average" : highestOf ? "highest" : "lowest";
         if (found.type !== "list") {
           report(diagnostics, lineNumber, text, "M002", `"${displayName}" is not a list, so it has no "${kind}".`,
             `Compare "${rawSubject}" against a variable defined with "is a list of ...".`);
