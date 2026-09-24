@@ -1233,8 +1233,62 @@ When the go is clicked, create a record at /players with name set to the value o
     await page.locator("#element-2").click(); // "go" -- fires the real POST fetch()
     await page.waitForTimeout(200); // let the fire-and-forget fetch actually reach the route
     assert.equal(capturedBody, JSON.stringify({ name: "Riley" }));
-    assert.ok(capturedIdempotencyKey && capturedIdempotencyKey.length > 0); // a real, non-empty key was generated
+    assert.ok((capturedIdempotencyKey ?? "").length > 0); // a real, non-empty key was generated
     assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
+test("fetch/list/create's \"otherwise ...\" fallback really fires on a non-2xx response, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a paragraph called result
+Add a paragraph called error
+Add a button called go
+Set the text of go to Go
+When the go is clicked, fetch the text at /status into the text of result otherwise set the text of error to Could not reach the server`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const pageErrors: string[] = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    await page.route("**/page", (route) => route.fulfill({ status: 200, contentType: "text/html", body: compiled.html }));
+    // A real 500 response -- not a network failure -- must still trip the fallback, since
+    // the generated code now checks "r.ok" itself before treating a response as a success.
+    await page.route("**/status", (route) => route.fulfill({ status: 500, contentType: "text/plain", body: "boom" }));
+    await page.goto("https://intentlang.test/page");
+    await page.locator("#element-3").click(); // "go" -- fires the real fetch(), which 500s
+    await page.locator("#element-2").filter({ hasText: "Could not reach the server" }).waitFor();
+    assert.equal(await page.locator("#element-2").textContent(), "Could not reach the server");
+    assert.equal(await page.locator("#element-1").textContent(), ""); // the success path never ran
+    // Only real unhandled JS errors are asserted here -- the browser's own "Failed to load
+    // resource: 500" console message is an expected side effect of the intentional failure
+    // response above, not a bug in the generated code, so it isn't treated as a test failure.
+    assert.deepEqual(pageErrors, []);
+  } finally { await browser.close(); }
+});
+
+test("list's \"otherwise ...\" fallback really fires on a network-level fetch failure, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a bullet list called player list
+Add a paragraph called error
+Add a button called go
+Set the text of go to Go
+When the go is clicked, list name of each record at /players into player list otherwise set the text of error to Could not load players`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const pageErrors: string[] = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    await page.route("**/page", (route) => route.fulfill({ status: 200, contentType: "text/html", body: compiled.html }));
+    // A genuine network-level failure (aborted request), not just a bad status code.
+    await page.route("**/players", (route) => route.abort("failed"));
+    await page.goto("https://intentlang.test/page");
+    await page.locator("#element-3").click(); // "go" -- fires the real fetch(), which is aborted
+    await page.locator("#element-2").filter({ hasText: "Could not load players" }).waitFor();
+    assert.equal(await page.locator("#element-2").textContent(), "Could not load players");
+    assert.deepEqual(await page.locator("#element-1 li").allTextContents(), []); // list stayed empty
+    // Only real unhandled JS errors are asserted here -- see the sibling test above for why
+    // the browser's own "net::ERR_FAILED" console message is expected, not a failure.
+    assert.deepEqual(pageErrors, []);
   } finally { await browser.close(); }
 });
 

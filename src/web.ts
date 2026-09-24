@@ -432,16 +432,21 @@ export function compilePageSource(source: string): PageCompileResult {
     // grant, so the compiled page can never be made to call an arbitrary third-party server.
     // Only a GET request is offered -- there's no instruction for sending a request body, so
     // this can only ever read from a backend, never mutate one, keeping the smallest useful
-    // slice of "talk to a backend" as small as it can be.
-    const fetchText = /^fetch\s+the\s+text\s+at\s+(\S+)\s+into\s+the\s+text\s+of\s+(.+)$/i.exec(part);
+    // slice of "talk to a backend" as small as it can be. An optional trailing "otherwise ..."
+    // runs a fallback instruction (any other supported instruction, recursively compiled, the
+    // same "otherwise" already used by every runtime "if") whenever the request fails outright
+    // or the response status isn't 2xx -- so a page can show a visitor a clear error instead
+    // of silently leaving stale or blank text in place.
+    const fetchText = /^fetch\s+the\s+text\s+at\s+(\S+)\s+into\s+the\s+text\s+of\s+(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
     // The next bridge past fetchText's single plain-text read: a generated CRUD backend
     // (see the entity/auth spec language) always replies to a list with JSON shaped
     // {"data":[...]} -- "list" fetches that same-origin address, reads each record's own
     // named fields (its actual column names, sanitized to a plain identifier so nothing but
     // a dotted property read is ever generated), and renders one <li> per record inside a
     // bullet or numbered list, replacing whatever the list held before. It is deliberately
-    // read-only and GET-only, the same as fetchText.
-    const listRecords = /^list\s+(.+?)\s+of\s+each\s+record\s+at\s+(\S+)\s+into\s+(.+)$/i.exec(part);
+    // read-only and GET-only, the same as fetchText, and shares the same optional trailing
+    // "otherwise ..." fallback for a failed request or non-2xx response.
+    const listRecords = /^list\s+(.+?)\s+of\s+each\s+record\s+at\s+(\S+)\s+into\s+(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
     // The write-side counterpart: POSTs one JSON object, built only from the exact fields
     // named here and only from other elements' own live ".value" (never arbitrary text), to a
     // same-origin address. A generated CRUD backend always requires a non-empty
@@ -449,8 +454,9 @@ export function compilePageSource(source: string): PageCompileResult {
     // (a plain unique string, not a strict UUID -- the backend only checks it is present and
     // non-empty). This cannot yet drive an authenticated backend's CSRF-protected create,
     // since there is no runtime-variable storage in this language to remember a fetched CSRF
-    // token between requests -- that remains a documented follow-up.
-    const createRecord = /^create\s+a\s+record\s+at\s+(\S+)\s+with\s+(.+)$/i.exec(part);
+    // token between requests -- that remains a documented follow-up. Shares fetchText/
+    // listRecords' own optional trailing "otherwise ..." fallback.
+    const createRecord = /^create\s+a\s+record\s+at\s+(\S+)\s+with\s+(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
     if (ifValue) {
       const source = resolve(ifValue[1]!, index);
       if (!source) return undefined;
@@ -1075,9 +1081,15 @@ export function compilePageSource(source: string): PageCompileResult {
       }
       const target = resolve(fetchText[2]!, index);
       if (!target) return undefined;
+      let onFail = "";
+      if (fetchText[3]) {
+        const compiledFallback = compileClickPart(fetchText[3].trim(), index);
+        if (compiledFallback === undefined) return undefined;
+        onFail = compiledFallback;
+      }
       usesFetch = true;
-      return `fetch(${JSON.stringify(path)}).then(function(r){return r.text();})` +
-        `.then(function(t){document.getElementById(${JSON.stringify(target.id)}).textContent=t;}).catch(function(){});`;
+      return `fetch(${JSON.stringify(path)}).then(function(r){if(!r.ok){throw new Error("");}return r.text();})` +
+        `.then(function(t){document.getElementById(${JSON.stringify(target.id)}).textContent=t;}).catch(function(){${onFail}});`;
     } else if (listRecords) {
       const path = listRecords[2]!;
       if (!isSameOriginPath(path)) {
@@ -1103,11 +1115,17 @@ export function compilePageSource(source: string): PageCompileResult {
           "Field names come from the backend record's own keys, such as name or email.");
         return undefined;
       }
+      let onFail = "";
+      if (listRecords[4]) {
+        const compiledFallback = compileClickPart(listRecords[4].trim(), index);
+        if (compiledFallback === undefined) return undefined;
+        onFail = compiledFallback;
+      }
       usesFetch = true;
       const rowText = fields.map((field) => `(item.${field}==null?"":item.${field})`).join('+", "+');
-      return `fetch(${JSON.stringify(path)}).then(function(r){return r.json();})` +
+      return `fetch(${JSON.stringify(path)}).then(function(r){if(!r.ok){throw new Error("");}return r.json();})` +
         `.then(function(j){var items=(j&&j.data)||[];var c=document.getElementById(${JSON.stringify(container.id)});c.innerHTML="";` +
-        `items.forEach(function(item){var li=document.createElement("li");li.textContent=${rowText};c.appendChild(li);});}).catch(function(){});`;
+        `items.forEach(function(item){var li=document.createElement("li");li.textContent=${rowText};c.appendChild(li);});}).catch(function(){${onFail}});`;
     } else if (createRecord) {
       const path = createRecord[1]!;
       if (!isSameOriginPath(path)) {
@@ -1145,10 +1163,16 @@ export function compilePageSource(source: string): PageCompileResult {
         }
         fieldExprs.push(`${JSON.stringify(field)}:document.getElementById(${JSON.stringify(valueSource.id)}).value`);
       }
+      let onFail = "";
+      if (createRecord[3]) {
+        const compiledFallback = compileClickPart(createRecord[3].trim(), index);
+        if (compiledFallback === undefined) return undefined;
+        onFail = compiledFallback;
+      }
       usesFetch = true;
       return `fetch(${JSON.stringify(path)},{method:"POST",headers:{"Content-Type":"application/json",` +
         `"Idempotency-Key":String(Date.now())+"-"+Math.random().toString(36).slice(2)},` +
-        `body:JSON.stringify({${fieldExprs.join(",")}})}).catch(function(){});`;
+        `body:JSON.stringify({${fieldExprs.join(",")}})}).then(function(r){if(!r.ok){throw new Error("");}}).catch(function(){${onFail}});`;
     }
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
@@ -1171,9 +1195,9 @@ export function compilePageSource(source: string): PageCompileResult {
       `"disable ...", "enable ..." for a button, input, text box, dropdown, or field group, ` +
       `"go to ..." to switch to a section, hiding its sibling sections, ` +
       `"move ... from left/right/top/bottom to the opposite edge over ... seconds" to animate any element across the screen, ` +
-      `"fetch the text at /a-same-origin-address into the text of ..." to read from a backend, ` +
-      `"list <field>, <field> and <field> of each record at /a-same-origin-address into ... (a bullet or numbered list)" to render backend records, ` +
-      `"create a record at /a-same-origin-address with <field> set to the value of ..., and <field> set to the value of ..." to POST a new record, ` +
+      `"fetch the text at /a-same-origin-address into the text of ..., otherwise ..." to read from a backend, ` +
+      `"list <field>, <field> and <field> of each record at /a-same-origin-address into ... (a bullet or numbered list), otherwise ..." to render backend records, ` +
+      `"create a record at /a-same-origin-address with <field> set to the value of ..., and <field> set to the value of ..., otherwise ..." to POST a new record, ` +
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to/not equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is between ... and ... (two numbers, or the value of ..., or a mix), ... otherwise ...", ` +

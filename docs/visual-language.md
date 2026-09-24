@@ -408,9 +408,14 @@ the single additional `connect-src 'self'` policy clause needed to let its
 own generated fetch reach the same origin it was served from. This is
 deliberately GET-only and read-only — there is no matching instruction to
 send a request body, so a page can display backend data but never mutate
-it — and a failed request is swallowed silently, leaving the target's text
-unchanged, since there is not yet an instruction for showing a fetch error
-to a visitor. A page's own generated backend (see the CRUD/entity/auth
+it. An optional trailing `otherwise <instruction>` runs any other
+supported instruction whenever the request fails outright (a genuine
+network error) or comes back with a non-2xx status — for example, `fetch
+the text at /status into the text of result otherwise set the text of
+error to Could not reach the server` — and the target's own text is left
+untouched either way. Leaving off `otherwise` keeps today's exact
+behavior: the failure is swallowed silently, and the target's text stays
+unchanged. A page's own generated backend (see the CRUD/entity/auth
 language below) is one natural thing to point this at, but the instruction
 itself doesn't know anything about that generator's specific routes; it
 will read any same-origin path that returns plain text.
@@ -429,9 +434,13 @@ record's own property, so nothing else can appear there — and the target
 must actually be a bullet list or a numbered list, the same real elements
 `Add a bullet list called ...`/`Add a numbered list called ...` already
 produce, since a list item can only ever live inside one of those two. Like
-`fetch`, this is GET-only, same-origin-only, and opts a page in to the same
-`connect-src 'self'` policy clause; a failed request or bad response simply
-leaves the list unchanged.
+`fetch`, this is GET-only, same-origin-only, opts a page in to the same
+`connect-src 'self'` policy clause, and supports the same trailing
+`otherwise <instruction>` fallback on a failed request or non-2xx status
+— for example, `list name of each record at /players into player list
+otherwise set the text of error to Could not load players` — leaving the
+list's existing items untouched either way; without `otherwise`, a failure
+still simply leaves the list unchanged.
 
 `create a record at <same-origin address> with <field> set to the value of
 <name>, and <field> set to the value of <name>` is the write-side
@@ -450,13 +459,18 @@ instruction composes with `and then` exactly like every other click
 instruction, so one click can create a record and immediately refresh a
 rendered list of them: `create a record at /players with name set to the
 value of name input and then list name of each record at /players into
-player list`. It cannot yet drive an authenticated backend's
-CSRF-protected create or update, since there is no runtime-variable storage
-in this language to remember a fetched CSRF token between requests — nor
-is there yet a `PUT`-based update or a `DELETE`, or any way to show a
-visitor that a create failed — all of that remains a documented, unscoped
-follow-up; this first slice targets a backend running with authentication
-turned off, or any other same-origin JSON API shaped like `{ "data": ... }`.
+player list`. The same trailing `otherwise <instruction>` fallback runs
+whenever the POST fails outright or the backend responds with a non-2xx
+status (for example a `409` on a unique-field conflict) — `create a record
+at /players with name set to the value of name input otherwise set the
+text of error to Could not save` — and, as with `fetch`/`list`, leaving off
+`otherwise` keeps the failure silent. It cannot yet drive an authenticated
+backend's CSRF-protected create or update, since there is no
+runtime-variable storage in this language to remember a fetched CSRF token
+between requests — nor is there yet a `PUT`-based update or a `DELETE` —
+all of that remains a documented, unscoped follow-up; this first slice
+targets a backend running with authentication turned off, or any other
+same-origin JSON API shaped like `{ "data": ... }`.
 
 **`When the page loads, <one or more instructions>.`** runs the exact same
 closed instruction set immediately, as soon as the page's markup exists,
@@ -900,17 +914,19 @@ When the announce is clicked, move banner from left to right over 3 seconds
 ```text
 Add a paragraph called status
 Set the text of status to unknown
+Add a paragraph called status error
 Add a button called check status
 Set the text of check status to Check status
-When the check status is clicked, fetch the text at /status into the text of status
+When the check status is clicked, fetch the text at /status into the text of status otherwise set the text of status error to Could not reach the server
 ```
 
 ```text
 Add a text input called new player name
 Add a bullet list called player list
+Add a paragraph called player list error
 Add a button called add player
 Set the text of add player to Add player
-When the page loads, list name of each record at /players into player list
+When the page loads, list name of each record at /players into player list otherwise set the text of player list error to Could not load players
 When the add player is clicked, create a record at /players with name set to the value of new player name and then list name of each record at /players into player list
 ```
 

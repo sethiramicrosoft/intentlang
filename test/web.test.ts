@@ -564,7 +564,7 @@ Set the text of go to Go
 When the go is clicked, fetch the text at /status into the text of result`);
   const script = /<script>(.+?)<\/script>/.exec(fetched.html)![1]!;
   assert.match(script,
-    /fetch\("\/status"\)\.then\(function\(r\)\{return r\.text\(\);\}\)\.then\(function\(t\)\{document\.getElementById\("element-1"\)\.textContent=t;\}\)\.catch\(function\(\)\{\}\);/);
+    /fetch\("\/status"\)\.then\(function\(r\)\{if\(!r\.ok\)\{throw new Error\(""\);\}return r\.text\(\);\}\)\.then\(function\(t\)\{document\.getElementById\("element-1"\)\.textContent=t;\}\)\.catch\(function\(\)\{\}\);/);
 
   // A page that never uses "fetch the text at ..." keeps today's exact CSP -- no
   // "connect-src" clause at all -- so no page's security posture changes by default.
@@ -593,13 +593,60 @@ When the go is clicked, fetch the text at //example.com/status into the text of 
     /must be a same-origin address, starting with a single/);
 });
 
+test("fetch/list/create all support a trailing \"otherwise ...\" fallback for a failed or non-2xx request", () => {
+  const withFallback = page(`Add a paragraph called result
+Add a paragraph called error
+Add a button called go
+Set the text of go to Go
+When the go is clicked, fetch the text at /status into the text of result otherwise set the text of error to Could not reach the server`);
+  const script = /<script>(.+?)<\/script>/.exec(withFallback.html)![1]!;
+  assert.match(script,
+    /fetch\("\/status"\)\.then\(function\(r\)\{if\(!r\.ok\)\{throw new Error\(""\);\}return r\.text\(\);\}\)\.then\(function\(t\)\{document\.getElementById\("element-1"\)\.textContent=t;\}\)\.catch\(function\(\)\{document\.getElementById\("element-2"\)\.textContent="Could not reach the server";\}\);/);
+
+  // Without "otherwise", nothing changed -- the fallback stays the empty statement it always
+  // was, matching every prior test's exact "catch(function(){});" shape.
+  const withoutFallback = page(`Add a paragraph called result
+Add a button called go
+Set the text of go to Go
+When the go is clicked, fetch the text at /status into the text of result`);
+  const plainScript = /<script>(.+?)<\/script>/.exec(withoutFallback.html)![1]!;
+  assert.match(plainScript, /\.catch\(function\(\)\{\}\);/);
+
+  // "list" and "create" share the exact same trailing clause, recursively compiled the same
+  // way "if ... otherwise ..." already compiles its own else branch -- any other supported
+  // instruction is valid here, not just "set the text of ...".
+  const listFallback = page(`Add a bullet list called player list
+Add a paragraph called error
+Add a button called go
+Set the text of go to Go
+When the go is clicked, list name of each record at /players into player list otherwise set the text of error to Could not load players`);
+  const listScript = /<script>(.+?)<\/script>/.exec(listFallback.html)![1]!;
+  assert.match(listScript, /catch\(function\(\)\{document\.getElementById\("element-2"\)\.textContent="Could not load players";\}\);/);
+
+  const createFallback = page(`Add a text input called name input
+Add a paragraph called error
+Add a button called go
+Set the text of go to Go
+When the go is clicked, create a record at /players with name set to the value of name input otherwise set the text of error to Could not save`);
+  const createScript = /<script>(.+?)<\/script>/.exec(createFallback.html)![1]!;
+  assert.match(createScript, /catch\(function\(\)\{document\.getElementById\("element-2"\)\.textContent="Could not save";\}\);/);
+
+  // A malformed fallback instruction (any error a plain "and then" chain would already
+  // report) is still a clear compile-time error, since it's compiled the same way.
+  invalid(`Add a paragraph called result
+Add a button called go
+Set the text of go to Go
+When the go is clicked, fetch the text at /status into the text of result otherwise not a real instruction`,
+    /is not one of the supported click instructions/);
+});
+
 test("a click can render a real backend's JSON records with \"list ... of each record at ... into ...\"", () => {
   const listed = page(`Add a bullet list called player list
 Add a button called go
 Set the text of go to Go
 When the go is clicked, list name and score of each record at /players into player list`);
   const script = /<script>(.+?)<\/script>/.exec(listed.html)![1]!;
-  assert.match(script, /fetch\("\/players"\)\.then\(function\(r\)\{return r\.json\(\);\}\)/);
+  assert.match(script, /fetch\("\/players"\)\.then\(function\(r\)\{if\(!r\.ok\)\{throw new Error\(""\);\}return r\.json\(\);\}\)/);
   assert.match(script, /var items=\(j&&j\.data\)\|\|\[\];var c=document\.getElementById\("element-1"\);c\.innerHTML="";/);
   assert.match(script,
     /items\.forEach\(function\(item\)\{var li=document\.createElement\("li"\);li\.textContent=\(item\.name==null\?"":item\.name\)\+", "\+\(item\.score==null\?"":item\.score\);c\.appendChild\(li\);\}\);\}\)\.catch\(function\(\)\{\}\);/);
@@ -653,7 +700,7 @@ When the go is clicked, create a record at /players with name set to the value o
   const script = /<script>(.+?)<\/script>/.exec(created.html)![1]!;
   assert.match(script, /fetch\("\/players",\{method:"POST",headers:\{"Content-Type":"application\/json","Idempotency-Key":String\(Date\.now\(\)\)\+"-"\+Math\.random\(\)\.toString\(36\)\.slice\(2\)\},/);
   assert.match(script,
-    /body:JSON\.stringify\(\{"name":document\.getElementById\("element-1"\)\.value,"score":document\.getElementById\("element-2"\)\.value\}\)\}\)\.catch\(function\(\)\{\}\);/);
+    /body:JSON\.stringify\(\{"name":document\.getElementById\("element-1"\)\.value,"score":document\.getElementById\("element-2"\)\.value\}\)\}\)\.then\(function\(r\)\{if\(!r\.ok\)\{throw new Error\(""\);\}\}\)\.catch\(function\(\)\{\}\);/);
   assert.match(created.html, /connect-src 'self'/);
 
   // The comma+"and" separated form is equally accepted, matching the same lookahead-based
@@ -676,7 +723,7 @@ Set the text of go to Go
 When the go is clicked, create a record at /players with name set to the value of name input and then list name of each record at /players into player list`);
   const combinedScript = /<script>(.+?)<\/script>/.exec(combined.html)![1]!;
   assert.match(combinedScript, /"method":"POST"|method:"POST"/);
-  assert.match(combinedScript, /fetch\("\/players"\)\.then\(function\(r\)\{return r\.json\(\);\}\)/);
+  assert.match(combinedScript, /fetch\("\/players"\)\.then\(function\(r\)\{if\(!r\.ok\)\{throw new Error\(""\);\}return r\.json\(\);\}\)/);
 
   // Only a real input/text box/dropdown has a live ".value" to read -- the same rule
   // "if the value of ..." already enforces.
