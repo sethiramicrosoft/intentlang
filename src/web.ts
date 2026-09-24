@@ -112,6 +112,11 @@ export function compilePageSource(source: string): PageCompileResult {
   // Each entry is one already-safe JS statement (element ids are compiler-generated,
   // never derived from user text; literal text is always embedded via JSON.stringify).
   const runtimeScripts: string[] = [];
+  // Statements from "When the page loads, ..." -- run once, immediately, in source order,
+  // ahead of any click-handler registration below (so a page-load default doesn't
+  // accidentally overwrite state a click has already set, which can't happen at parse
+  // time anyway, but keeps the generated script's own ordering intuitive to read).
+  const onloadScripts: string[] = [];
   function report(index: number, message: string, hint: string, suggestions?: VisualSuggestion[], category: VisualDiagnostic["category"] = "syntax") {
     const line = lines[index] ?? "";
     diagnostics.push({ code: category === "ambiguity" ? "W002" : "W001", category, message, hint,
@@ -604,6 +609,13 @@ export function compilePageSource(source: string): PageCompileResult {
       if (snippet) runtimeScripts.push(`document.getElementById(${JSON.stringify(target.id)}).addEventListener("click",function(){${snippet}});`);
       continue;
     }
+    if (statement.kind === "onload") {
+      // Reuses the exact same closed instruction set and compiler as a click handler --
+      // "the page loads" is just a different trigger, not a different set of actions.
+      const snippet = compileClickBody(statement.body, index);
+      if (snippet) onloadScripts.push(snippet);
+      continue;
+    }
     if (statement.kind === "make") {
       const phrase = targetKey(statement.phrase);
       const candidates = [...elements.map((node) => node.name), "it", "background"]
@@ -736,7 +748,8 @@ export function compilePageSource(source: string): PageCompileResult {
     if (!found.has(node.id)) report(node.line - 1, `The browser would discard ${node.name} in this position.`, "Choose a valid parent.");
   }
   if (diagnostics.length) return { ok: false, diagnostics };
-  const script = runtimeScripts.length ? `"use strict";${runtimeScripts.join("")}` : undefined;
+  const script = (onloadScripts.length || runtimeScripts.length) ?
+    `"use strict";${onloadScripts.join("")}${runtimeScripts.join("")}` : undefined;
   return { ok: true, ir, html: renderPage(ir, body, script) };
 }
 

@@ -200,14 +200,25 @@ instruction>`) branches on whether it's ticked, `if <checkbox name> is not
 checked, ...` branches on the opposite, and `check <checkbox name>` /
 `uncheck <checkbox name>` tick or untick it directly from a click. The
 target of any of these must be a checkbox or a radio button specifically —
-using them on a text input or any other element is a clear error. The
-compiler turns
-every `When ... is clicked` sentence in a page into ONE small, entirely
+using them on a text input or any other element is a clear error.
+
+**`When the page loads, <one or more instructions>.`** runs the exact same
+closed instruction set immediately, as soon as the page's markup exists,
+instead of waiting for a click — for setting up a default, rolling an
+opening random number, or otherwise giving the page a live starting state
+without needing a visitor to click anything first. It shares one compiler
+with `When ... is clicked` (so every instruction documented above, including
+`if`, `repeat`, and `otherwise`, works exactly the same way here), and its
+instructions run before any click handler is registered, in source order —
+so a later click can still visibly override whatever a page-load default
+set. The compiler turns
+every `When ... is clicked` or `When the page loads` sentence in a page into
+ONE small, entirely
 compiler-generated script (never containing any user-authored markup,
 attribute, or script tag — only compiler-fixed code with your text safely
 embedded as a JSON string), and pins that exact script into the page's
-Content-Security-Policy by its SHA-256 hash. A page that doesn't use `When
-... is clicked` stays exactly as script-free as before, byte for byte. The
+Content-Security-Policy by its SHA-256 hash. A page that doesn't use either
+form stays exactly as script-free as before, byte for byte. The
 target of "is clicked" must be a button (a native, keyboard-operable
 control), so this never creates a click-only trap for people who use a
 keyboard or assistive technology instead of a mouse. The source of
@@ -308,6 +319,12 @@ Set the text of result to none
 Add a button called submit
 Set the text of submit to Submit
 When the submit is clicked, if agree is checked, set the text of result to thanks otherwise set the text of result to please agree first
+```
+
+```text
+Add a paragraph called roll
+Set the text of roll to 0
+When the page loads, set the text of roll to a random number from 1 to 6
 ```
 
 ```text

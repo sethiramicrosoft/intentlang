@@ -686,6 +686,42 @@ Set the text of go to Go
 When the go is clicked, uncheck n`, /Only a checkbox or a radio button has a checked state/);
 });
 
+test("When the page loads runs its instructions immediately, using the same closed instruction set as a click", () => {
+  const basic = page(`Add a paragraph called greeting
+Set the text of greeting to loading...
+When the page loads, set the text of greeting to Welcome!`);
+  const basicScript = /<script>(.+?)<\/script>/.exec(basic.html)![1]!;
+  assert.match(basicScript, /^"use strict";document\.getElementById\("element-1"\)\.textContent="Welcome!";$/);
+
+  // The same recursive compiler backs both triggers, so any click instruction (random,
+  // if, repeat, ...) works here too, unchanged.
+  const random = page(`Add a paragraph called roll
+Set the text of roll to 0
+When the page loads, set the text of roll to a random number from 1 to 6`);
+  const randomScript = /<script>(.+?)<\/script>/.exec(random.html)![1]!;
+  assert.match(randomScript, /Math\.floor\(Math\.random\(\)/);
+
+  // Page-load instructions run before any click handler is even registered, and in source
+  // order, so a page-load default is visibly overridden by a later click as expected.
+  const both = page(`Add a paragraph called counter
+Set the text of counter to 0
+Add a button called go
+Set the text of go to Go
+When the page loads, set the text of counter to 10
+When the go is clicked, add 1 to the text of counter`);
+  const bothScript = /<script>(.+?)<\/script>/.exec(both.html)![1]!;
+  assert.match(bothScript, /^"use strict";document\.getElementById\("element-1"\)\.textContent="10";document\.getElementById\("element-2"\)\.addEventListener/);
+
+  // A page using neither "When ... is clicked" nor "When the page loads" stays entirely
+  // script-free, byte for byte, exactly as before this feature existed.
+  const scriptless = page(`Add a paragraph called greeting
+Set the text of greeting to Hello`);
+  assert.equal(/<script>/.test(scriptless.html), false);
+
+  invalid(`Add a paragraph called greeting
+When the page loads, do something silly`, /is not one of the supported click instructions/);
+});
+
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
   const result = page(`Add an image called photo
 Set the source of photo to https://example.com/MyPhoto.png

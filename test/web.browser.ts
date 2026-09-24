@@ -147,6 +147,29 @@ When the increment is clicked, add 1 to the text of counter`);
   } finally { await browser.close(); }
 });
 
+test("When the page loads runs its instructions immediately in a real browser, ahead of any click", async () => {
+  const compiled = compilePageSource(`Add a paragraph called greeting
+Set the text of greeting to loading...
+Add a button called go
+Set the text of go to Go
+When the page loads, set the text of greeting to Welcome!
+When the go is clicked, set the text of greeting to Clicked!`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    // The page-load instruction has already run by the time content settles, with no click.
+    assert.equal(await page.locator("#element-1").textContent(), "Welcome!");
+    await page.locator("#element-2").click();
+    assert.equal(await page.locator("#element-1").textContent(), "Clicked!");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can read what a visitor actually typed into a real text input", async () => {
   const compiled = compilePageSource(`Add a text input called name field
 Add a paragraph called greeting

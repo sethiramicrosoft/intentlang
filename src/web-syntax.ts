@@ -5,14 +5,16 @@ export type PageStatement =
   | { kind: "make"; phrase: string }
   | { kind: "underline"; target: string }
   | { kind: "show"; source: string }
-  | { kind: "when"; target: string; body: string };
+  | { kind: "when"; target: string; body: string }
+  | { kind: "onload"; body: string };
 
 export function usesPageGrammar(source: string): boolean {
   return source.split(/\r?\n/).some((line) =>
     /^\s*(?:add|create)\b/i.test(line) ||
     /^\s*set\s+.+?\s+of\s+.+?\s+to\b/i.test(line) ||
     /^\s*put\s+.+?\s+inside\b/i.test(line) ||
-    /^\s*when\s+.+?\s+is\s+clicked\s*,/i.test(line));
+    /^\s*when\s+.+?\s+is\s+clicked\s*,/i.test(line) ||
+    /^\s*when\s+the\s+page\s+loads\s*,/i.test(line));
 }
 
 export function parsePageStatement(line: string): PageStatement | undefined {
@@ -32,6 +34,10 @@ export function parsePageStatement(line: string): PageStatement | undefined {
   const underline = /^underline\s+(.+)$/i.exec(control);
   if (underline) return { kind: "underline", target: underline[1]! };
   if (/^(show|display)\s+/i.test(source)) return { kind: "show", source };
+  // Checked before the plain "When ... is clicked, ..." pattern, since "the page" would
+  // otherwise be read (and fail) as a clickable element name.
+  const onload = /^when\s+the\s+page\s+loads\s*,\s*(.+?)\.?$/i.exec(control);
+  if (onload) return { kind: "onload", body: onload[1]! };
   const when = /^when\s+(?:the\s+)?(.+?)\s+is\s+clicked\s*,\s*(.+?)\.?$/i.exec(source);
   if (when) return { kind: "when", target: when[1]!, body: when[2]! };
   return undefined;
