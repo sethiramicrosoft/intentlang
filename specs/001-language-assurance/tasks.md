@@ -245,19 +245,19 @@ a normative rule and applicable fixtures.
 
 ## Phase 10: Typed Computation and Query Language (US7, P2)
 
-- [ ] T076 [P] [US7] Specify typed expressions, numeric precision, dates, time,
+- [x] T076 [P] [US7] Specify typed expressions, numeric precision, dates, time,
   money, enums, nullability, and errors.
-- [ ] T077 [P] [US7] Specify functions/procedures, effects, recursion, and
+- [x] T077 [P] [US7] Specify functions/procedures, effects, recursion, and
   evaluation order.
-- [ ] T078 [P] [US7] Specify collections, records, pattern matching, and
+- [x] T078 [P] [US7] Specify collections, records, pattern matching, and
   iteration.
-- [ ] T079 [P] [US7] Specify authorization-aware filtering, sorting, grouping,
+- [x] T079 [P] [US7] Specify authorization-aware filtering, sorting, grouping,
   joins, and aggregation.
-- [ ] T080 [US7] Implement typed expression/type-checking foundation.
-- [ ] T081 [US7] Implement function/procedure IR and runtime.
-- [ ] T082 [US7] Implement collection and record semantics.
-- [ ] T083 [US7] Implement query planner and generated SQL/runtime behavior.
-- [ ] T084 [US7] Add reference pricing and analytics applications.
+- [x] T080 [US7] Implement typed expression/type-checking foundation.
+- [x] T081 [US7] Implement function/procedure IR and runtime.
+- [x] T082 [US7] Implement collection and record semantics.
+- [x] T083 [US7] Implement query planner and generated SQL/runtime behavior.
+- [x] T084 [US7] Add reference pricing and analytics applications.
 
 ---
 

@@ -193,6 +193,66 @@
       }
     },
     {
+      "id": "TYPED-EXPRESSION-001",
+      "status": "experimental",
+      "title": "Typed expressions use exact values and deterministic evaluation",
+      "canonicalForm": "Closed typed AST with explicit operators, nullability, currency, and timezone semantics",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-COMPUTE-001"],
+      "specification": "docs/spec/typed-computation.md#typed-expression-001",
+      "evidence": {
+        "positive": ["test/typed-expressions.test.ts"],
+        "negative": ["test/typed-expressions.test.ts"],
+        "canonical": ["test/typed-expressions.test.ts"],
+        "runtime": ["test/typed-expressions.test.ts"]
+      }
+    },
+    {
+      "id": "FUNCTION-PROCEDURE-001",
+      "status": "experimental",
+      "title": "Pure functions and explicit procedures have closed effect semantics",
+      "canonicalForm": "function <name>(typed parameters) returns <type> = <expression> | procedure <name> effects <capabilities>",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-COMPUTE-002"],
+      "specification": "docs/spec/typed-computation.md#function-procedure-001",
+      "evidence": {
+        "positive": ["test/typed-functions-queries.test.ts"],
+        "negative": ["test/typed-functions-queries.test.ts"],
+        "canonical": ["test/typed-functions-queries.test.ts"],
+        "runtime": ["test/typed-functions-queries.test.ts"]
+      }
+    },
+    {
+      "id": "COLLECTION-RECORD-001",
+      "status": "experimental",
+      "title": "Collections are ordered and immutable, records closed, and enum matches exhaustive",
+      "canonicalForm": "map | filter | fold | closed record | exhaustive enum match",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-COMPUTE-003"],
+      "specification": "docs/spec/typed-computation.md#collection-record-001",
+      "evidence": {
+        "positive": ["test/typed-functions-queries.test.ts"],
+        "negative": ["test/typed-functions-queries.test.ts"],
+        "canonical": ["test/typed-functions-queries.test.ts"],
+        "runtime": ["test/typed-functions-queries.test.ts"]
+      }
+    },
+    {
+      "id": "AUTHORIZED-QUERY-001",
+      "status": "experimental",
+      "title": "Typed queries apply authorization before deterministic query operations",
+      "canonicalForm": "authorized source -> explicit joins -> typed filter -> group/aggregate -> stable order",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-QUERY-001"],
+      "specification": "docs/spec/typed-computation.md#authorized-query-001",
+      "evidence": {
+        "positive": ["test/typed-functions-queries.test.ts"],
+        "negative": ["test/typed-functions-queries.test.ts"],
+        "canonical": ["test/typed-functions-queries.test.ts"],
+        "runtime": ["test/typed-functions-queries.test.ts"]
+      }
+    },
+    {
       "id": "RUNTIME-GENERATION-001",
       "status": "stable",
       "title": "Business IR generates synchronized persistence, UI, API, security, workflow, concurrency, idempotency, and audit behavior",

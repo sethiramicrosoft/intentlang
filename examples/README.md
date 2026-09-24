@@ -159,6 +159,25 @@ safe run instructions.
 
 ![LaunchOps Executive approval confirmation showing the declared status effect](launch-ops-executive-approval.png)
 
+## Exact Pricing and Authorized Analytics
+
+The experimental typed-computation example demonstrates exact decimal and money
+arithmetic, composable pure functions, authorization-first aggregation, and
+parameterized SQL generation.
+
+**[Executable example](typed-pricing-analytics.ts)** ·
+**[Normative semantics](../docs/spec/typed-computation.md)**
+
+Run it from the repository root:
+
+```powershell
+npx tsx examples\typed-pricing-analytics.ts
+```
+
+The hidden USD 999 order is removed by authorization before grouping and
+aggregation. The generated SQL contains placeholders and a separate parameter
+list; data values are never interpolated into SQL text.
+
 ## Focus Board
 
 A small task board that combines both IntentLang pipelines in one app: a
