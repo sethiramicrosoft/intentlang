@@ -295,7 +295,18 @@ Repeat 3 times, the wins is wins plus 1.
   compared with `equal to` or `not equal to` (ordering doesn't make sense for a
   whole list); using another comparator on a list is reported as a clear
   error. The `<name>` can be a variable, or a plain number (useful when it's a
-  For each counting loop's own variable, which is a number itself).
+  For each counting loop's own variable, which is a number itself). A text
+  variable can also be compared with three substring comparators —
+  **`contains`**, **`starts with`**, and **`ends with`** (all
+  case-insensitive) — and, since these already read like ordinary verbs,
+  the leading `is` before them is optional: `If the name contains Carter,
+  ...` and `If the name is contains Carter, ...` both work, whichever reads
+  more naturally to you. A list variable can use `contains` too, but with a
+  different meaning: it checks whether any one item in the list equals the
+  given value exactly (`If the favorite colors contains green, ...`), rather
+  than a substring check. Comparing a plain number with `contains`, `starts
+  with`, or `ends with` is a clear error, since those only make sense for
+  text and lists.
 - **`If the <name>, <one or more instructions>.`** (or **`If not the <name>,
   ...`**) is a shorter, plain-boolean way to write a condition, without
   spelling out "is equal to true" every time. A number is true when it's
@@ -586,14 +597,17 @@ style, and attribute names elsewhere in the page grammar. Typo fixes are always
 offered, never applied silently.
 
 **Current limits, stated plainly:**
-- Text variables can be compared with all six comparators — `equal to`,
-  `not equal to`, `greater than`, `less than`, `at least`, `at most` — with
-  the ordering ones comparing alphabetically (plain code-point order, not
-  locale-aware alphabetization, and case-insensitive). Text still can't be
-  used in arithmetic, though; it has its own `joined with` chain for
-  concatenation, which is string-building only, not arithmetic. A list
-  variable, unlike a plain text variable, can still only be compared with
-  `equal to` or `not equal to` (ordering a whole list doesn't make sense).
+- Text variables can be compared with all six ordering/equality comparators —
+  `equal to`, `not equal to`, `greater than`, `less than`, `at least`,
+  `at most` — with the ordering ones comparing alphabetically (plain
+  code-point order, not locale-aware alphabetization, and case-insensitive)
+  — plus three substring comparators, `contains`, `starts with`, and `ends
+  with`. Text still can't be used in arithmetic, though; it has its own
+  `joined with` chain for concatenation, which is string-building only, not
+  arithmetic. A list variable, unlike a plain text variable, can still only
+  be compared with `equal to`, `not equal to`, or `contains` (ordering a
+  whole list doesn't make sense, and `contains` on a list checks item
+  membership, not a substring, since a list has no single string to search).
 - There's no real boolean type: `true` and `false` are just literal text.
   The bare `If the <name>, ...` / `If not the <name>, ...` shorthand only
   reads a variable as true/false when it's a number (non-zero is true) or

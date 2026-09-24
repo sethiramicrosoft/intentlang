@@ -113,6 +113,43 @@ Do shout with the uppercase of name.`);
   assert.equal(textOf(ir, "message"), "BOB");
 });
 
+test("'contains', 'starts with', and 'ends with' compare a text variable as a substring, with or without a leading 'is'", () => {
+  const { ir } = page(`Add a paragraph called a inside page
+Add a paragraph called b inside page
+Add a paragraph called c inside page
+The name is Bob Carter.
+If the name contains carter, set the text of a to yes.
+Otherwise, set the text of a to no.
+If the name is starts with Bob, set the text of b to yes.
+Otherwise, set the text of b to no.
+If the name ends with Smith, set the text of c to yes.
+Otherwise, set the text of c to no.`);
+  assert.equal(textOf(ir, "a"), "yes");
+  assert.equal(textOf(ir, "b"), "yes");
+  assert.equal(textOf(ir, "c"), "no");
+});
+
+test("'contains' also checks list membership, and compounds with 'and'", () => {
+  const { ir } = page(`Add a paragraph called found inside page
+Add a paragraph called both inside page
+The name is Bob Carter.
+The colors is a list of red, green and blue.
+If the colors contains green, set the text of found to yes.
+Otherwise, set the text of found to no.
+If the name contains bob and the colors contains green, set the text of both to yes.`);
+  assert.equal(textOf(ir, "found"), "yes");
+  assert.equal(textOf(ir, "both"), "yes");
+});
+
+test("comparing a number with 'contains', 'starts with', or 'ends with' is a clear error, and a list with an ordering comparator is too", () => {
+  invalid(`Add a paragraph called message inside page
+The score is 5.
+If the score contains 5, set the text of message to yes.`, /A number can only be compared/);
+  invalid(`Add a paragraph called message inside page
+The colors is a list of red, green and blue.
+If the colors is greater than green, set the text of message to yes.`, /A list can only be compared/);
+});
+
 test("an If sentence keeps its instruction only when the condition is true", () => {
   const { ir } = page(`Add a paragraph called message inside page
 The score is 42.
