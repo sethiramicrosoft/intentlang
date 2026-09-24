@@ -937,6 +937,32 @@ When the go is clicked, repeat 3 times, add 1 to the text of counter and then re
   } finally { await browser.close(); }
 });
 
+test("a click can repeat an instruction as many times as a real live input's own value, clamped, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called times
+Add a paragraph called counter
+Set the text of counter to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat the value of times times, add 1 to the text of counter`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("4");
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").textContent(), "4");
+    // A negative live count clamps to zero rather than throwing or looping forever.
+    await page.locator("#element-1").fill("-5");
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").textContent(), "4");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("all advertised element types survive real browser parsing with their requested parentage", async () => {
   const source = webElements.filter((element) => element.status === "available")
     .map((element) => elementExample(element).replace(/\b(called|inside) sample /g, `$1 sample ${element.name} `)).join("\n");

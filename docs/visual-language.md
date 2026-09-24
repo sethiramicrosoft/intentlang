@@ -355,11 +355,14 @@ own `and then` chain — chain further instructions after the whole
 `if ... otherwise ...` at the top level instead, and they'll run every time
 the button is clicked, regardless of which branch (or neither, if there's no
 `otherwise`) actually ran. `repeat <count> times, <one instruction>` runs its
-one instruction that many times in a row on every click — the count must be
-a fixed whole number known at compile time (0 or more, and at most 100000),
-not a live input's value, so a click can never accidentally trigger a
-runaway loop; a negative count is a clear error rather than silently running
-zero times. Repeats nest safely, including a repeat inside another repeat's
+one instruction that many times in a row on every click — the count can be a
+fixed whole number known at compile time (0 or more, and at most 100000; a
+negative count is a clear error rather than silently running zero times), or
+`repeat the value of <input name> times, <one instruction>` to run it as
+many times as a visitor actually typed — since a live count can't be range-
+checked at compile time, the generated code itself clamps it into that same
+[0, 100000] window instead, so neither a negative nor a huge typed value can
+ever cause a runaway loop or a startling error mid-click. Repeats nest safely, including a repeat inside another repeat's
 own instruction, or inside an `if`'s instruction.
 
 **`When the <input/text box/dropdown name> changes, <one or more
@@ -665,6 +668,16 @@ Set the text of counter to 0
 Add a button called go
 Set the text of go to Go
 When the go is clicked, repeat 5 times, add 1 to the text of counter
+```
+
+```text
+Add a number input called times
+Set the value of times to 3
+Add a paragraph called counter
+Set the text of counter to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat the value of times times, add 1 to the text of counter
 ```
 
 The second example is real user input, not compile-time data: whatever a

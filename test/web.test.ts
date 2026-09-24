@@ -994,6 +994,23 @@ When the go is clicked, repeat 0 times, add 1 to the text of counter`);
   assert.match(zeroScript, /for\(let i=0;i<0;i\+\+\)/);
 });
 
+test("a click can repeat one instruction as many times as a live input's own value, clamped safely and rejecting a non-value source", () => {
+  const live = page(`Add a text input called times
+Add a paragraph called counter
+Set the text of counter to 0
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat the value of times times, add 1 to the text of counter`);
+  const liveScript = /<script>(.+?)<\/script>/.exec(live.html)![1]!;
+  assert.match(liveScript, /for\(let i=0,n=Math\.min\(100000,Math\.max\(0,Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)\);i<n;i\+\+\)\{/);
+
+  invalid(`Add a paragraph called times
+Add a paragraph called counter
+Add a button called go
+Set the text of go to Go
+When the go is clicked, repeat the value of times times, add 1 to the text of counter`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("a click's if-conditional can compare a live input's text with is/is not/contains/starts with/ends with", () => {
   const equals = page(`Add a text input called name field
 Add a paragraph called result

@@ -244,7 +244,10 @@ export function compilePageSource(source: string): PageCompileResult {
       /^if\s+(?!the\s+value\s+of\s)(.+?)\s+is\s+(checked|not checked)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // "Repeat" needs no shadowing precaution of its own -- no other pattern starts with the
     // word "repeat" -- but like "if", its own trailing instruction is compiled recursively.
-    const repeat = /^repeat\s+(-?\d+)\s+times?\s*,\s*(.+)$/i.exec(part);
+    // The count can be a plain number known at compile time, or (matching how every other
+    // "the value of ..." reference in this family works) a live input's own value, for a
+    // loop count a visitor actually typed rather than one fixed at compile time.
+    const repeat = /^repeat\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+))\s+times?\s*,\s*(.+)$/i.exec(part);
     // Checked before the plainer "set the text of X to Y", since that one's own value half
     // would otherwise happily swallow "the value of Y" as literal display text instead.
     const setFromValue = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
@@ -531,7 +534,24 @@ export function compilePageSource(source: string): PageCompileResult {
       }
       return `if(${negate}document.getElementById(${JSON.stringify(source.id)}).checked){${inner}}${elseClause}`;
     } else if (repeat) {
-      const count = Number(repeat[1]);
+      if (repeat[1]) {
+        const source = resolve(repeat[1]!, index);
+        if (!source) return undefined;
+        if (!hasReadableValue(source.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+            `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+          return undefined;
+        }
+        const inner = compileClickPart(repeat[3]!.trim(), index);
+        if (inner === undefined) return undefined;
+        // A live count can't be range-checked at compile time -- it isn't known until the
+        // click actually happens -- so the generated code itself clamps it into the same
+        // [0, 100000] bound the fixed-number form already enforces at compile time, rather
+        // than letting a huge or negative typed value hang or silently loop zero times for
+        // the wrong reason.
+        return `for(let i=0,n=Math.min(100000,Math.max(0,Number(document.getElementById(${JSON.stringify(source.id)}).value)||0));i<n;i++){${inner}}`;
+      }
+      const count = Number(repeat[2]);
       if (count < 0) {
         report(index, `"Repeat ${count} times" needs a count of 0 or more.`,
           `Use a non-negative number, such as "repeat 3 times, ...".`);
@@ -542,7 +562,7 @@ export function compilePageSource(source: string): PageCompileResult {
           "Use a smaller count.");
         return undefined;
       }
-      const inner = compileClickPart(repeat[2]!.trim(), index);
+      const inner = compileClickPart(repeat[3]!.trim(), index);
       if (inner === undefined) return undefined;
       // A block-scoped "let" (rather than "var") gives each repeat loop, even a nested one,
       // its own counter, so "repeat ..., repeat ..., ..." never has an inner loop's counter
@@ -778,7 +798,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
       `"if the selected label of ... is/is not ... (a dropdown), ... otherwise ...", ` +
       `"if ... is/is not checked, ... otherwise ...", ` +
-      `or "repeat ... times, ...".`);
+      `or "repeat ... times, ..." (a number, or the value of ...).`);
     return undefined;
   }
   /** Which element tags have a live, readable ".value" in the DOM. */
