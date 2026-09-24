@@ -68,3 +68,10 @@ examples/focus-board-generated/app.sqlite-*
 examples/focus-board-generated/.env
 examples/focus-board-generated/.env.*
 examples/focus-board-generated/node_modules/
+
+!examples/launch-ops-generated/
+examples/launch-ops-generated/app.sqlite
+examples/launch-ops-generated/app.sqlite-*
+examples/launch-ops-generated/.env
+examples/launch-ops-generated/.env.*
+examples/launch-ops-generated/node_modules/

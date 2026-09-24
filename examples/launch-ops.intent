@@ -1,0 +1,216 @@
+application LaunchOps
+authentication uses User identified by email
+
+role Administrator
+role ProgramManager
+role Contributor
+role Executive
+
+a User has a required name as text length between 1 and 120
+a User has a required unique email as text length between 3 and 320
+
+a Program has a required unique code as text length between 2 and 20
+a Program has a required name as text length between 2 and 160
+a Program has a summary as text
+a Program has a status as text default "planning"
+a Program has a healthScore as integer default 100
+
+a Milestone has a required title as text length between 2 and 160
+a Milestone has a targetDate as text
+a Milestone has a status as text default "planned"
+a Milestone has a progress as integer default 0
+
+a WorkItem has a required title as text length between 2 and 200
+a WorkItem has a details as text
+a WorkItem has a status as text default "open"
+a WorkItem has a priority as text default "medium"
+a WorkItem has an estimate as integer default 1
+a WorkItem has a done as boolean default false
+
+a Risk has a required title as text length between 2 and 200
+a Risk has an impact as text default "medium"
+a Risk has a probability as text default "medium"
+a Risk has a mitigation as text
+a Risk has a status as text default "open"
+a Risk has an escalated as boolean default false
+
+a Decision has a required title as text length between 2 and 200
+a Decision has a context as text
+a Decision has an outcome as text
+a Decision has a status as text default "pending"
+
+an Update has a required headline as text length between 2 and 200
+an Update has a details as text
+an Update has a health as text default "green"
+an Update has a status as text default "draft"
+
+each Milestone belongs to a Program as program on delete cascade
+each WorkItem belongs to a Program as program on delete cascade
+each WorkItem belongs to a Milestone as milestone on delete cascade
+each WorkItem belongs to a User as owner on delete restrict
+each Risk belongs to a Program as program on delete cascade
+each Risk belongs to a User as owner on delete restrict
+each Decision belongs to a Program as program on delete cascade
+each Decision belongs to a User as owner on delete restrict
+each Update belongs to a Program as program on delete cascade
+each Update belongs to a User as owner on delete restrict
+
+action activate a Program
+  require status is "planning" otherwise "Only a planning program can be activated"
+  set status to "active"
+
+action pause a Program
+  require status is "active" otherwise "Only an active program can be paused"
+  set status to "paused"
+
+action complete a Program
+  require status is "active" otherwise "Only an active program can be completed"
+  set status to "complete"
+
+action start a Milestone
+  require status is "planned" otherwise "Only a planned milestone can be started"
+  set status to "active"
+
+action complete a Milestone
+  require status is "active" otherwise "Only an active milestone can be completed"
+  set status to "complete"
+  set progress to 100
+
+action start a WorkItem
+  require status is "open" otherwise "Only an open work item can be started"
+  set status to "in-progress"
+
+action block a WorkItem
+  require done is false otherwise "A completed work item cannot be blocked"
+  set status to "blocked"
+
+action complete a WorkItem
+  require done is false otherwise "Work item is already complete"
+  set done to true
+  set status to "done"
+
+action reopen a WorkItem
+  require done is true otherwise "Only a completed work item can be reopened"
+  set done to false
+  set status to "open"
+
+action escalate a Risk
+  require escalated is false otherwise "Risk is already escalated"
+  set escalated to true
+  set status to "escalated"
+
+action mitigate a Risk
+  require status is not "mitigated" otherwise "Risk is already mitigated"
+  set escalated to false
+  set status to "mitigated"
+
+action approve a Decision
+  require status is "pending" otherwise "Only a pending decision can be approved"
+  set status to "approved"
+
+action reject a Decision
+  require status is "pending" otherwise "Only a pending decision can be rejected"
+  set status to "rejected"
+
+action publish an Update
+  require status is "draft" otherwise "Only a draft update can be published"
+  set status to "published"
+
+allow Administrator to provision accounts
+allow Administrator to create User
+allow Administrator to read User
+allow Administrator to update User
+allow Administrator to create Program
+allow Administrator to read Program
+allow Administrator to update Program
+allow Administrator to create Milestone
+allow Administrator to read Milestone
+allow Administrator to update Milestone
+allow Administrator to create WorkItem
+allow Administrator to read WorkItem
+allow Administrator to update WorkItem
+allow Administrator to create Risk
+allow Administrator to read Risk
+allow Administrator to update Risk
+allow Administrator to create Decision
+allow Administrator to read Decision
+allow Administrator to update Decision
+allow Administrator to create Update
+allow Administrator to read Update
+allow Administrator to update Update
+allow Administrator to run activate on Program
+allow Administrator to run pause on Program
+allow Administrator to run complete on Program
+allow Administrator to run start on Milestone
+allow Administrator to run complete on Milestone
+allow Administrator to run start on WorkItem
+allow Administrator to run block on WorkItem
+allow Administrator to run complete on WorkItem
+allow Administrator to run reopen on WorkItem
+allow Administrator to run escalate on Risk
+allow Administrator to run mitigate on Risk
+allow Administrator to run approve on Decision
+allow Administrator to run reject on Decision
+allow Administrator to run publish on Update
+
+allow ProgramManager to read User
+allow ProgramManager to create Program
+allow ProgramManager to read Program
+allow ProgramManager to update Program
+allow ProgramManager to create Milestone
+allow ProgramManager to read Milestone
+allow ProgramManager to update Milestone
+allow ProgramManager to create WorkItem
+allow ProgramManager to read WorkItem
+allow ProgramManager to update WorkItem
+allow ProgramManager to create Risk
+allow ProgramManager to read Risk
+allow ProgramManager to update Risk
+allow ProgramManager to create Decision
+allow ProgramManager to read Decision
+allow ProgramManager to update Decision
+allow ProgramManager to create Update
+allow ProgramManager to read Update
+allow ProgramManager to update Update
+allow ProgramManager to run activate on Program
+allow ProgramManager to run pause on Program
+allow ProgramManager to run complete on Program
+allow ProgramManager to run start on Milestone
+allow ProgramManager to run complete on Milestone
+allow ProgramManager to run start on WorkItem
+allow ProgramManager to run block on WorkItem
+allow ProgramManager to run complete on WorkItem
+allow ProgramManager to run reopen on WorkItem
+allow ProgramManager to run escalate on Risk
+allow ProgramManager to run mitigate on Risk
+allow ProgramManager to run publish on Update
+
+allow Contributor to read User where self
+allow Contributor to read Program
+allow Contributor to read Milestone
+allow Contributor to read WorkItem
+allow Contributor to create WorkItem with owner as self
+allow Contributor to update WorkItem where owner is self
+allow Contributor to read Risk
+allow Contributor to create Risk with owner as self
+allow Contributor to update Risk where owner is self
+allow Contributor to read Decision
+allow Contributor to read Update
+allow Contributor to create Update with owner as self
+allow Contributor to update Update where owner is self
+allow Contributor to run start on WorkItem where owner is self
+allow Contributor to run block on WorkItem where owner is self
+allow Contributor to run complete on WorkItem where owner is self
+allow Contributor to run reopen on WorkItem where owner is self
+allow Contributor to run escalate on Risk where owner is self
+allow Contributor to run mitigate on Risk where owner is self
+allow Contributor to run publish on Update where owner is self
+
+allow Executive to read Program
+allow Executive to read Milestone
+allow Executive to read WorkItem
+allow Executive to read Risk
+allow Executive to read Decision
+allow Executive to read Update
+allow Executive to run approve on Decision
+allow Executive to run reject on Decision

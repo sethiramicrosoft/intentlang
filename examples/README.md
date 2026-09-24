@@ -112,6 +112,51 @@ Slide the text from bottom to top over 8 seconds
 Open the HTML to see the movement; the image above is a still frame. Reload to
 replay. Movement is disabled when your operating system requests reduced motion.
 
+## LaunchOps Mission Control
+
+A full-stack, authenticated program-launch system generated from one controlled
+English file. It models programs, milestones, work items, risks, decisions,
+status updates, users, ownership, and workflow transitions.
+
+![LaunchOps Administrator view showing the active Nova launch program and its generated workflow actions](launch-ops-admin.png)
+
+**[IntentLang source](launch-ops.intent)** ·
+**[Generated application](launch-ops-generated/)** ·
+**[SQL schema](launch-ops-generated/migration.sql)** ·
+**[Typed manifest](launch-ops-generated/intentlang.manifest.json)**
+
+The source compiles to:
+
+- 7 entities and 31 business fields
+- 10 foreign-key relationships
+- 14 guarded workflow actions
+- 4 roles and 95 explicit permissions
+- Authentication, account provisioning, owner isolation, CSRF protection,
+  idempotency, optimistic concurrency, audit logging, REST routes, and a
+  permission-aware browser UI
+
+Representative workflow code remains readable:
+
+```text
+action escalate a Risk
+  require escalated is false otherwise "Risk is already escalated"
+  set escalated to true
+  set status to "escalated"
+
+allow Contributor to create Risk with owner as self
+allow Contributor to update Risk where owner is self
+allow Executive to run approve on Decision
+```
+
+The checked browser walkthrough creates connected records, changes their real
+workflow state, verifies Contributor ownership scoping, and approves a Decision
+as an Executive. See the generated snapshot README for the full scenario and
+safe run instructions.
+
+![LaunchOps Contributor view showing owner-scoped work and generated actions](launch-ops-contributor.png)
+
+![LaunchOps Executive approval confirmation showing the declared status effect](launch-ops-executive-approval.png)
+
 ## Focus Board
 
 A small task board that combines both IntentLang pipelines in one app: a

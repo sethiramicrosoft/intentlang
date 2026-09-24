@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LaunchOps</title>
+<script>(() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();</script>
+<script>(function(){var t=localStorage.getItem('theme');if(t==='dark'&&!new URLSearchParams(window.location.search).get('scoutTheme')){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<link rel="stylesheet" href="/styles.css">
+<script nonce="__INTENTLANG_NONCE__">window.__INTENTLANG_SCRIPT_HASHES__={"scout":"sha256-WvI/8458JiRfrlEicAv3wbmp2Cxb2fpzogYsrs7NC1s=","theme":"sha256-bgEY38FTnlgFOaKK67Gezkcopsz2Glx6h7wrpBIAym8="};window.APP_SCHEMA={"name":"LaunchOps","authEnabled":true,"roles":[{"id":"administrator","name":"Administrator"},{"id":"programmanager","name":"ProgramManager"},{"id":"contributor","name":"Contributor"},{"id":"executive","name":"Executive"}],"entities":[{"id":"user","name":"User","path":"/users","fields":[{"id":"user-name","name":"name","type":"text","required":true,"unique":false,"length":{"min":1,"max":120}},{"id":"user-email","name":"email","type":"text","required":true,"unique":true,"length":{"min":3,"max":320}}],"relationships":[],"forceOwnerRoleIds":[],"actions":[]},{"id":"program","name":"Program","path":"/programs","fields":[{"id":"program-code","name":"code","type":"text","required":true,"unique":true,"length":{"min":2,"max":20}},{"id":"program-name","name":"name","type":"text","required":true,"unique":false,"length":{"min":2,"max":160}},{"id":"program-summary","name":"summary","type":"text","required":false,"unique":false},{"id":"program-status","name":"status","type":"text","required":false,"unique":false,"default":"planning"},{"id":"program-healthscore","name":"healthScore","type":"integer","required":false,"unique":false,"default":100}],"relationships":[],"forceOwnerRoleIds":[],"actions":[{"id":"program-activate","name":"activate","effects":["status → active"],"preconditionMessages":["Only a planning program can be activated"]},{"id":"program-pause","name":"pause","effects":["status → paused"],"preconditionMessages":["Only an active program can be paused"]},{"id":"program-complete","name":"complete","effects":["status → complete"],"preconditionMessages":["Only an active program can be completed"]}]},{"id":"milestone","name":"Milestone","path":"/milestones","fields":[{"id":"milestone-title","name":"title","type":"text","required":true,"unique":false,"length":{"min":2,"max":160}},{"id":"milestone-targetdate","name":"targetDate","type":"text","required":false,"unique":false},{"id":"milestone-status","name":"status","type":"text","required":false,"unique":false,"default":"planned"},{"id":"milestone-progress","name":"progress","type":"integer","required":false,"unique":false,"default":0}],"relationships":[{"id":"milestone-program","name":"program","column":"program_id","targetEntityId":"program","targetName":"Program","targetPath":"/programs"}],"forceOwnerRoleIds":[],"actions":[{"id":"milestone-start","name":"start","effects":["status → active"],"preconditionMessages":["Only a planned milestone can be started"]},{"id":"milestone-complete","name":"complete","effects":["status → complete","progress → 100"],"preconditionMessages":["Only an active milestone can be completed"]}]},{"id":"workitem","name":"WorkItem","path":"/workitems","fields":[{"id":"workitem-title","name":"title","type":"text","required":true,"unique":false,"length":{"min":2,"max":200}},{"id":"workitem-details","name":"details","type":"text","required":false,"unique":false},{"id":"workitem-status","name":"status","type":"text","required":false,"unique":false,"default":"open"},{"id":"workitem-priority","name":"priority","type":"text","required":false,"unique":false,"default":"medium"},{"id":"workitem-estimate","name":"estimate","type":"integer","required":false,"unique":false,"default":1},{"id":"workitem-done","name":"done","type":"boolean","required":false,"unique":false,"default":false}],"relationships":[{"id":"workitem-program","name":"program","column":"program_id","targetEntityId":"program","targetName":"Program","targetPath":"/programs"},{"id":"workitem-milestone","name":"milestone","column":"milestone_id","targetEntityId":"milestone","targetName":"Milestone","targetPath":"/milestones"},{"id":"workitem-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":["contributor"],"actions":[{"id":"workitem-start","name":"start","effects":["status → in-progress"],"preconditionMessages":["Only an open work item can be started"]},{"id":"workitem-block","name":"block","effects":["status → blocked"],"preconditionMessages":["A completed work item cannot be blocked"]},{"id":"workitem-complete","name":"complete","effects":["done → true","status → done"],"preconditionMessages":["Work item is already complete"]},{"id":"workitem-reopen","name":"reopen","effects":["done → false","status → open"],"preconditionMessages":["Only a completed work item can be reopened"]}]},{"id":"risk","name":"Risk","path":"/risks","fields":[{"id":"risk-title","name":"title","type":"text","required":true,"unique":false,"length":{"min":2,"max":200}},{"id":"risk-impact","name":"impact","type":"text","required":false,"unique":false,"default":"medium"},{"id":"risk-probability","name":"probability","type":"text","required":false,"unique":false,"default":"medium"},{"id":"risk-mitigation","name":"mitigation","type":"text","required":false,"unique":false},{"id":"risk-status","name":"status","type":"text","required":false,"unique":false,"default":"open"},{"id":"risk-escalated","name":"escalated","type":"boolean","required":false,"unique":false,"default":false}],"relationships":[{"id":"risk-program","name":"program","column":"program_id","targetEntityId":"program","targetName":"Program","targetPath":"/programs"},{"id":"risk-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":["contributor"],"actions":[{"id":"risk-escalate","name":"escalate","effects":["escalated → true","status → escalated"],"preconditionMessages":["Risk is already escalated"]},{"id":"risk-mitigate","name":"mitigate","effects":["escalated → false","status → mitigated"],"preconditionMessages":["Risk is already mitigated"]}]},{"id":"decision","name":"Decision","path":"/decisions","fields":[{"id":"decision-title","name":"title","type":"text","required":true,"unique":false,"length":{"min":2,"max":200}},{"id":"decision-context","name":"context","type":"text","required":false,"unique":false},{"id":"decision-outcome","name":"outcome","type":"text","required":false,"unique":false},{"id":"decision-status","name":"status","type":"text","required":false,"unique":false,"default":"pending"}],"relationships":[{"id":"decision-program","name":"program","column":"program_id","targetEntityId":"program","targetName":"Program","targetPath":"/programs"},{"id":"decision-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":[],"actions":[{"id":"decision-approve","name":"approve","effects":["status → approved"],"preconditionMessages":["Only a pending decision can be approved"]},{"id":"decision-reject","name":"reject","effects":["status → rejected"],"preconditionMessages":["Only a pending decision can be rejected"]}]},{"id":"update","name":"Update","path":"/updates","fields":[{"id":"update-headline","name":"headline","type":"text","required":true,"unique":false,"length":{"min":2,"max":200}},{"id":"update-details","name":"details","type":"text","required":false,"unique":false},{"id":"update-health","name":"health","type":"text","required":false,"unique":false,"default":"green"},{"id":"update-status","name":"status","type":"text","required":false,"unique":false,"default":"draft"}],"relationships":[{"id":"update-program","name":"program","column":"program_id","targetEntityId":"program","targetName":"Program","targetPath":"/programs"},{"id":"update-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":["contributor"],"actions":[{"id":"update-publish","name":"publish","effects":["status → published"],"preconditionMessages":["Only a draft update can be published"]}]}]};</script>
+</head>
+<body>
+<div class="page">
+  <header class="card row app-header">
+    <h1>LaunchOps</h1>
+    <button id="theme-toggle" class="btn-secondary" type="button" aria-label="Switch to dark mode">🌙</button>
+    <div id="auth-identity-bar" class="identity hidden">
+      <div id="auth-identity"></div>
+      <div class="muted" id="auth-role"></div>
+    </div>
+    <button id="auth-logout" class="btn-secondary hidden" type="button">Log out</button>
+  </header>
+  <section id="auth-login-card" class="card ">
+    <h2>Sign in</h2>
+    <form id="auth-login-form" class="auth-login-form">
+      <div class="field"><label for="auth-login-email">Email</label><input id="auth-login-email" type="email" autocomplete="username" required></div>
+      <div class="field"><label for="auth-login-password">Password</label><input id="auth-login-password" type="password" autocomplete="current-password" required></div>
+      <button id="auth-login-submit" class="btn" type="submit">Sign in</button>
+      <div id="auth-login-error" class="status" aria-live="assertive"></div>
+    </form>
+  </section>
+  <main id="app-root" class="hidden">
+    <section id="provision-card" class="card hidden" aria-labelledby="provision-heading">
+      <h2 id="provision-heading">Provision account</h2>
+      <form id="provision-form" class="provision-form">
+        <div class="field"><label for="provision-name">Name</label><input id="provision-name" autocomplete="off" required></div>
+        <div class="field"><label for="provision-email">Email</label><input id="provision-email" type="email" autocomplete="off" required></div>
+        <div class="field"><label for="provision-password">Temporary password</label><input id="provision-password" type="password" autocomplete="new-password" minlength="12" required></div>
+        <div class="field"><label for="provision-role">Role</label><select id="provision-role" required></select></div>
+        <div class="form-actions"><button id="provision-submit" class="btn" type="submit">Provision</button></div>
+      </form>
+      <div id="provision-error" class="status" aria-live="polite"></div>
+    </section>
+    <section class="card" aria-labelledby="entity-heading">
+      <nav id="entity-nav" class="row" aria-label="Entities"></nav>
+      <div class="row">
+        <h2 id="entity-heading">Records</h2>
+        <button id="entity-create" class="btn" type="button">New record</button>
+      </div>
+      <div id="page-status" class="status" aria-live="polite"></div>
+      <div id="entity-table"></div>
+    </section>
+  </main>
+</div>
+<dialog id="entity-dialog" aria-labelledby="entity-dialog-title">
+  <div class="dialog-body">
+    <h2 id="entity-dialog-title">Record</h2>
+    <form id="entity-form" class="dialog-form">
+      <div id="entity-fields"></div>
+      <div id="entity-error" class="status" aria-live="assertive"></div>
+      <div class="dialog-actions">
+        <button id="entity-reload" class="btn-secondary hidden" type="button">Reload</button>
+        <button id="entity-cancel" class="btn-secondary" type="button">Cancel</button>
+        <button id="entity-submit" class="btn" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+<dialog id="action-dialog" aria-labelledby="action-dialog-title" aria-describedby="action-target">
+  <div class="dialog-body">
+    <h2 id="action-dialog-title">Confirm action</h2>
+    <p id="action-target"></p>
+    <p>Declared effects:</p>
+    <ul id="action-effects" class="effects"></ul>
+    <div id="action-error" class="status" aria-live="assertive"></div>
+    <div class="dialog-actions">
+      <button id="action-reload" class="btn-secondary hidden" type="button">Reload</button>
+      <button id="action-cancel" class="btn-secondary" type="button">Cancel</button>
+      <button id="action-confirm" class="btn" type="button">Confirm</button>
+    </div>
+  </div>
+</dialog>
+<script src="/app.js"></script>
+</body>
+</html>

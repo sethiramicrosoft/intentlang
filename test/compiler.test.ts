@@ -599,6 +599,7 @@ test("UI create lifecycle uses one operation key and prevents double submit", ()
   const ui = generateUi(compileOk(minimalSource));
   assert.ok(ui.appJs.includes("operationKey = mode === 'create' ? crypto.randomUUID()"));
   assert.ok(ui.appJs.includes("state.submitting"));
+  assert.ok(ui.appJs.includes("entitySubmit.disabled = false; entityCancel.disabled = false"));
   assert.ok(ui.appJs.includes("entitySubmit.disabled = true"));
   assert.ok(ui.appJs.includes("'Creating…'"));
   assert.ok(ui.appJs.includes("init.headers['Idempotency-Key'] = state.operationKey"));
