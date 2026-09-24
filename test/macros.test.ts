@@ -1359,6 +1359,56 @@ If the number of items in score is equal to 3, set the text of message to x
 Otherwise, set the text of message to not matched`, /is not a list.*number of items/);
 });
 
+test("'the sum of <list>' and 'the average of <list>' resolve as plain numeric operands", () => {
+  const { ir } = page(`Add a paragraph called sum display inside page
+Add a paragraph called average display inside page
+The scores is a list of 2, 4 and 6.
+The total is the sum of scores.
+The mean is the average of scores.
+Set the text of sum display to total
+Set the text of average display to mean`);
+  assert.equal(textOf(ir, "sum display"), "12");
+  assert.equal(textOf(ir, "average display"), "4");
+});
+
+test("'the sum of <list>' works inside a larger arithmetic chain", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The scores is a list of 1, 2 and 3.
+The doubled is the sum of scores times 2.
+Set the text of message to doubled`);
+  assert.equal(textOf(ir, "message"), "12");
+});
+
+test("'the sum of <list>' and 'the average of <list>' work as an If condition's subject", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The high scores is a list of 4, 5 and 6.
+If the sum of high scores is greater than 10, set the text of message to big total
+Otherwise, set the text of message to small total`);
+  assert.equal(textOf(ir, "message"), "big total");
+});
+
+test("'the average of <list>' resolves inside a 'joined with' text chain, not just plain arithmetic", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The scores is a list of 2, 4 and 6.
+The report is "average is " joined with the average of scores.
+Set the text of message to report`);
+  assert.equal(textOf(ir, "message"), "average is 4");
+});
+
+test("'sum of'/'average of' a variable that isn't a list is a clear error, not silently copied as text", () => {
+  invalid(`Add a paragraph called message inside page
+The name is "Alex".
+The total is the sum of name.
+Set the text of message to total`, /name.*is not a list.*sum/);
+});
+
+test("'sum of'/'average of' a list with a non-numeric item is a clear error, not a silent zero", () => {
+  invalid(`Add a paragraph called message inside page
+The scores is a list of 1, two and 3.
+The mean is the average of scores.
+Set the text of message to mean`, /scores.*average.*needs every item to be a number/);
+});
+
 test("'item N in <list>' reads one item out of a list by 1-based position", () => {
   const { ir } = page(`Add a paragraph called message inside page
 The favorite colors is a list of red, green and blue.

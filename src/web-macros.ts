@@ -46,6 +46,12 @@ const LIST_OF_RE = /^a\s+list\s+of\s+(.+)$/i;
 // one whole phrase before an ordinary variable lookup is tried, so a variable literally named
 // "number of items in x" is never possible to accidentally shadow it.
 const LIST_LENGTH_RE = /^number of items in\s+(.+)$/i;
+// "the sum of <list>" and "the average of <list>" resolve a numeric list variable's total or
+// mean wherever a plain number could go -- the arithmetic-aggregate siblings of "the number of
+// items in <list>" above. Every item must already be a number (parseable as one); a list with
+// any non-numeric item is a clear error rather than silently treating it as zero.
+const LIST_SUM_RE = /^sum of\s+(.+)$/i;
+const LIST_AVERAGE_RE = /^average of\s+(.+)$/i;
 // "the length of <text>" resolves to a text value's character count wherever a plain number
 // could go -- the text sibling of "the number of items in <list>" above.
 const TEXT_LENGTH_RE = /^length of\s+(.+)$/i;
@@ -409,6 +415,62 @@ function applySetListItem(numGroup: string | undefined, firstLastGroup: string |
 }
 
 
+/** Parses every item of a list as a plain number, or returns undefined if any item isn't one --
+ * used by "the sum of <list>" and "the average of <list>", which only make sense when every
+ * item genuinely is a number (silently treating a non-numeric item as 0 would hide a mistake). */
+function listAggregate(list: string[], kind: "sum" | "average"): number | undefined {
+  const numbers: number[] = [];
+  for (const item of list) {
+    const trimmed = item.trim();
+    if (!/^-?\d+(?:\.\d+)?$/.test(trimmed)) return undefined;
+    numbers.push(Number(trimmed));
+  }
+  if (numbers.length === 0) return kind === "sum" ? 0 : undefined;
+  const total = numbers.reduce((a, b) => a + b, 0);
+  return kind === "sum" ? total : total / numbers.length;
+}
+
+/**
+ * Matches "the sum of <list>" / "the average of <list>" as a whole assignment value or call
+ * argument (not just as an arithmetic operand, which `resolveNumericOperand` already handles on
+ * its own) and reports a clear error rather than silently falling through to literal text when
+ * the named variable isn't a list, or is a list but contains a non-numeric item. Returns
+ * undefined when the raw text isn't this phrase at all (so the caller can keep trying its own
+ * other checks); otherwise `{ value }` on success, or `{ value: undefined }` after already
+ * reporting the error.
+ */
+function resolveListAggregatePhrase(rawValue: string, variables: Map<string, VarValue>, lineNumber: number,
+  text: string, diagnostics: VisualDiagnostic[]): { value: number | undefined } | undefined {
+  const stripped = stripLeadingThe(rawValue.trim()).toLowerCase();
+  const sumOf = LIST_SUM_RE.exec(stripped);
+  const averageOf = sumOf ? undefined : LIST_AVERAGE_RE.exec(stripped);
+  const match = sumOf ?? averageOf;
+  if (!match) return undefined;
+  const kind = sumOf ? "sum" : "average";
+  const listName = stripLeadingThe(match[1]!);
+  const found = variables.get(listName.toLowerCase());
+  if (found === undefined) {
+    const closest = closestVariable(listName.toLowerCase(), variables);
+    report(diagnostics, lineNumber, text, "M001", `"${listName}" was never given a value.`,
+      closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${listName} is a list of ...." before this line.`,
+      closest ? [{ label: `Use "${closest}"`, replacement: text.replace(listName, closest) }] : undefined);
+    return { value: undefined };
+  }
+  if (found.type !== "list") {
+    report(diagnostics, lineNumber, text, "M002", `"${listName}" is not a list, so it has no "${kind}".`,
+      `Define "${listName}" with "is a list of ...", or compute the ${kind} from a list variable instead.`);
+    return { value: undefined };
+  }
+  const aggregate = listAggregate(found.value, kind);
+  if (aggregate === undefined) {
+    report(diagnostics, lineNumber, text, "M002",
+      `"${listName}"'s "${kind}" needs every item to be a number, and at least one item isn't.`,
+      `Use a list whose items are all plain numbers, like "The ${listName} is a list of 1, 2 and 3.".`);
+    return { value: undefined };
+  }
+  return { value: aggregate };
+}
+
 function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): number | undefined {
   const token = raw.trim().toLowerCase();
   if (/^-?\d+(?:\.\d+)?$/.test(token)) return Number(token);
@@ -416,6 +478,16 @@ function resolveNumericOperand(raw: string, variables: Map<string, VarValue>): n
   if (lengthOf) {
     const list = variables.get(stripLeadingThe(lengthOf[1]!).toLowerCase());
     return list?.type === "list" ? list.value.length : undefined;
+  }
+  const sumOf = LIST_SUM_RE.exec(token);
+  if (sumOf) {
+    const list = variables.get(stripLeadingThe(sumOf[1]!).toLowerCase());
+    return list?.type === "list" ? listAggregate(list.value, "sum") : undefined;
+  }
+  const averageOf = LIST_AVERAGE_RE.exec(token);
+  if (averageOf) {
+    const list = variables.get(stripLeadingThe(averageOf[1]!).toLowerCase());
+    return list?.type === "list" ? listAggregate(list.value, "average") : undefined;
   }
   const textLengthOf = TEXT_LENGTH_RE.exec(token);
   if (textLengthOf) return resolveTextOperand(textLengthOf[1]!, variables).length;
@@ -433,6 +505,18 @@ function resolveTextOperand(raw: string, variables: Map<string, VarValue>): stri
   if (lengthOf) {
     const list = variables.get(stripLeadingThe(lengthOf[1]!).toLowerCase());
     if (list?.type === "list") return formatNumber(list.value.length);
+  }
+  const sumOf = LIST_SUM_RE.exec(stripLeadingThe(raw).toLowerCase());
+  if (sumOf) {
+    const list = variables.get(stripLeadingThe(sumOf[1]!).toLowerCase());
+    const aggregate = list?.type === "list" ? listAggregate(list.value, "sum") : undefined;
+    if (aggregate !== undefined) return formatNumber(aggregate);
+  }
+  const averageOf = LIST_AVERAGE_RE.exec(stripLeadingThe(raw).toLowerCase());
+  if (averageOf) {
+    const list = variables.get(stripLeadingThe(averageOf[1]!).toLowerCase());
+    const aggregate = list?.type === "list" ? listAggregate(list.value, "average") : undefined;
+    if (aggregate !== undefined) return formatNumber(aggregate);
   }
   const caseConvert = CASE_CONVERT_RE.exec(stripLeadingThe(raw).toLowerCase());
   if (caseConvert) {
@@ -694,10 +778,13 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
     subject = { type: "number", value: Number(rawSubject) };
   } else {
     const lengthOf = LIST_LENGTH_RE.exec(rawSubject);
-    const textLengthOf = lengthOf ? undefined : TEXT_LENGTH_RE.exec(rawSubject.toLowerCase());
-    const caseConvert = lengthOf || textLengthOf ? undefined : CASE_CONVERT_RE.exec(rawSubject.toLowerCase());
-    const resultOf = lengthOf || textLengthOf || caseConvert ? undefined : RESULT_OF_RE.exec(`the ${rawSubject}`);
-    const displayName = lengthOf ? stripLeadingThe(lengthOf[1]!) : rawSubject;
+    const sumOf = lengthOf ? undefined : LIST_SUM_RE.exec(rawSubject);
+    const averageOf = lengthOf || sumOf ? undefined : LIST_AVERAGE_RE.exec(rawSubject);
+    const listAgg = lengthOf ?? sumOf ?? averageOf;
+    const textLengthOf = listAgg ? undefined : TEXT_LENGTH_RE.exec(rawSubject.toLowerCase());
+    const caseConvert = listAgg || textLengthOf ? undefined : CASE_CONVERT_RE.exec(rawSubject.toLowerCase());
+    const resultOf = listAgg || textLengthOf || caseConvert ? undefined : RESULT_OF_RE.exec(`the ${rawSubject}`);
+    const displayName = listAgg ? stripLeadingThe(listAgg[1]!) : rawSubject;
     const name = displayName.toLowerCase();
     if (textLengthOf) {
       subject = { type: "number", value: resolveTextOperand(textLengthOf[1]!, variables).length };
@@ -725,6 +812,21 @@ function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: num
           return undefined;
         }
         subject = { type: "number", value: found.value.length };
+      } else if (sumOf || averageOf) {
+        const kind = sumOf ? "sum" : "average";
+        if (found.type !== "list") {
+          report(diagnostics, lineNumber, text, "M002", `"${displayName}" is not a list, so it has no "${kind}".`,
+            `Compare "${rawSubject}" against a variable defined with "is a list of ...".`);
+          return undefined;
+        }
+        const aggregate = listAggregate(found.value, kind);
+        if (aggregate === undefined) {
+          report(diagnostics, lineNumber, text, "M002",
+            `"${displayName}"'s "${kind}" needs every item to be a number, and at least one item isn't.`,
+            `Compare "${rawSubject}" against a list whose items are all plain numbers.`);
+          return undefined;
+        }
+        subject = { type: "number", value: aggregate };
       } else {
         subject = found;
       }
@@ -914,6 +1016,12 @@ function resolveArgValue(rawValue: string, variables: Map<string, VarValue>, lin
   }
   const numericValue = evaluateExpression(trimmed, variables);
   if (numericValue !== undefined) return { type: "number", value: numericValue };
+  const listAggregateResult = resolveListAggregatePhrase(trimmed, variables, lineNumber, callText, diagnostics);
+  if (listAggregateResult) {
+    return listAggregateResult.value !== undefined
+      ? { type: "number", value: listAggregateResult.value }
+      : { type: "text", value: "" }; // failure already reported its own diagnostic
+  }
   const caseConvert = TEXT_CHAIN_SPLIT_RE.test(trimmed) ? undefined : CASE_CONVERT_RE.exec(stripLeadingThe(trimmed).toLowerCase());
   if (caseConvert) {
     const inner = resolveTextOperand(caseConvert[2]!, variables);
@@ -1079,6 +1187,11 @@ function applyAssignment(name: string, rawValue: string, variables: Map<string, 
   if (numericValue !== undefined) {
     variables.set(name, { type: "number", value: numericValue });
     return true;
+  }
+  const listAggregateResult = resolveListAggregatePhrase(rawValue, variables, lineNumber, rawValue, diagnostics);
+  if (listAggregateResult) {
+    if (listAggregateResult.value !== undefined) variables.set(name, { type: "number", value: listAggregateResult.value });
+    return true; // handled either way -- a failure already reported its own diagnostic
   }
   if (TEXT_CHAIN_SPLIT_RE.test(rawValue)) {
     variables.set(name, { type: "text", value: evaluateTextChain(rawValue, variables) });
