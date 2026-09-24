@@ -304,6 +304,18 @@ export function compilePageSource(source: string): PageCompileResult {
     // isn't known until the click actually happens), so the generated code itself guards it.
     const multiplyFromValue = /^multiply\s+the\s+text\s+of\s+(.+?)\s+by\s+the\s+value\s+of\s+(.+)$/i.exec(part);
     const divideFromValue = !multiplyFromValue ? /^divide\s+the\s+text\s+of\s+(.+?)\s+by\s+the\s+value\s+of\s+(.+)$/i.exec(part) : null;
+    // The value-target siblings of multiplyText/divideText/multiplyFromValue/divideFromValue
+    // -- multiplies/divides a live input's own ".value" in place, rather than only ever some
+    // other displayed text, matching how addToValue/subtractFromValueAmount already do this
+    // for add/subtract. The live-factor forms are checked first for the same shadowing reason
+    // as multiplyFromValue/divideFromValue: otherwise "the value of Y" would be read as a
+    // (non-numeric, so effectively zero) literal factor instead of a live input's value.
+    const multiplyValueByValue = /^multiply\s+the\s+value\s+of\s+(.+?)\s+by\s+the\s+value\s+of\s+(.+)$/i.exec(part);
+    const divideValueByValue = !multiplyValueByValue ? /^divide\s+the\s+value\s+of\s+(.+?)\s+by\s+the\s+value\s+of\s+(.+)$/i.exec(part) : null;
+    const multiplyValue = !multiplyValueByValue && !divideValueByValue ?
+      /^multiply\s+the\s+value\s+of\s+(.+?)\s+by\s+(-?\d+(?:\.\d+)?)$/i.exec(part) : null;
+    const divideValue = !multiplyValueByValue && !divideValueByValue && !multiplyValue ?
+      /^divide\s+the\s+value\s+of\s+(.+?)\s+by\s+(-?\d+(?:\.\d+)?)$/i.exec(part) : null;
     // Writes into a live input/textarea/select's own ".value" (as opposed to "set the text
     // of ...", which writes an element's displayed textContent) -- for clearing or presetting
     // a form field from a click, e.g. resetting an input after its value has been used.
@@ -682,6 +694,47 @@ export function compilePageSource(source: string): PageCompileResult {
       const amount = (addToValue ? 1 : -1) * Number(match[1]);
       return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
         `e.value=String((Number(e.value)||0)+(${JSON.stringify(amount)}));})();`;
+    } else if (multiplyValueByValue || divideValueByValue) {
+      const match = multiplyValueByValue ?? divideValueByValue!;
+      const target = resolve(match[1]!, index);
+      const source = target ? resolve(match[2]!, index) : undefined;
+      if (!target || !source) return undefined;
+      if (!hasReadableValue(target.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to set, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add an input called ${target.name} instead, such as Add a text input called ${target.name}.`);
+        return undefined;
+      }
+      if (!hasReadableValue(source.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      const operator = multiplyValueByValue ? "*" : "/";
+      const zeroGuard = divideValueByValue ? "if(f===0)return;" : "";
+      // Same as divideFromValue: a live divisor can only be caught at runtime, so the
+      // generated code itself guards against it, leaving the target's value unchanged rather
+      // than producing NaN/Infinity.
+      return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
+        `var f=Number(document.getElementById(${JSON.stringify(source.id)}).value)||0;${zeroGuard}` +
+        `e.value=String((Number(e.value)||0)${operator}f);})();`;
+    } else if (multiplyValue || divideValue) {
+      const match = multiplyValue ?? divideValue!;
+      const target = resolve(match[1]!, index);
+      if (!target) return undefined;
+      if (!hasReadableValue(target.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to set, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add an input called ${target.name} instead, such as Add a text input called ${target.name}.`);
+        return undefined;
+      }
+      const factor = Number(match[2]);
+      if (divideValue && factor === 0) {
+        report(index, `"Divide ... by 0" would produce an undefined result.`,
+          "Use a non-zero number to divide by.");
+        return undefined;
+      }
+      const operator = multiplyValue ? "*" : "/";
+      return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});` +
+        `e.value=String((Number(e.value)||0)${operator}(${JSON.stringify(factor)}));})();`;
     } else if (multiplyText || divideText) {
       const match = multiplyText ?? divideText!;
       const target = resolve(match[1]!, index);
@@ -784,7 +837,9 @@ export function compilePageSource(source: string): PageCompileResult {
       `"subtract the value of ... from the text of ...", "multiply the text of ... by the value of ...", ` +
       `"divide the text of ... by the value of ...", "add ... to the value of ...", ` +
       `"subtract ... from the value of ...", "add the value of ... to the value of ...", ` +
-      `"subtract the value of ... from the value of ...", "set the value of ... to ...", ` +
+      `"subtract the value of ... from the value of ...", "multiply the value of ... by ...", ` +
+      `"divide the value of ... by ...", "multiply the value of ... by the value of ...", ` +
+      `"divide the value of ... by the value of ...", "set the value of ... to ...", ` +
       `"set the value of ... to the value of ...", "set the value of ... to the option labeled ... (a dropdown)", "clear the value of ...", ` +
       `"check ..."/"uncheck ..." for a checkbox or radio button, ` +
       `"toggle whether ... is checked" for a checkbox or radio button, ` +

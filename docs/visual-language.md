@@ -253,7 +253,18 @@ of <input name> from the value of <other input name>` do the same thing
 but with a live amount instead of a fixed one — the value-target sibling
 of `add the value of ... to the text of ...` — so a stepper's own step
 size can itself come from another field instead of always being the same
-fixed number. `set the value of
+fixed number. `multiply the value of <input name> by <number>` and
+`divide the value of <input name> by <number>` are the multiplicative
+value-target siblings of the same pair — the value-target counterparts of
+`multiply the text of <name> by <number>` — so a stepper can scale its own
+value by a factor rather than only adding a fixed amount (dividing by
+exactly 0 is a clear compile-time error here too). `multiply the value of
+<input name> by the value of <other input name>` and `divide the value of
+<input name> by the value of <other input name>` are their live-factor
+siblings, matching how `multiply the text of ... by the value of ...`
+already lets a live input drive a text target's factor — a live divisor of
+0 is guarded at runtime the same way, leaving the target's value unchanged
+rather than producing NaN/Infinity. `set the value of
 <dropdown name> to the option labeled
 <text>` is the write-side sibling of `the selected label of ...`: it
 selects an option by its own displayed text directly (the target must be a
@@ -632,6 +643,17 @@ Set the value of quantity to 0
 Add a button called increase
 Set the text of increase to +
 When the increase is clicked, add the value of step size to the value of quantity
+```
+
+```text
+Add a number input called quantity
+Set the value of quantity to 5
+Add a button called double
+Set the text of double to Double
+Add a button called halve
+Set the text of halve to Halve
+When the double is clicked, multiply the value of quantity by 2
+When the halve is clicked, divide the value of quantity by 2
 ```
 
 ```text

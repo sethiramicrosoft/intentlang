@@ -466,6 +466,41 @@ When the shrink is clicked, divide the text of total by the value of factor`);
   } finally { await browser.close(); }
 });
 
+test("a click can multiply or divide a real number input's own value by a fixed number or a live input's value, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a number input called factor
+Set the value of factor to 2
+Add a number input called quantity
+Set the value of quantity to 5
+Add a button called grow
+Set the text of grow to Grow
+Add a button called shrink
+Set the text of shrink to Shrink
+Add a button called shrink by factor
+Set the text of shrink by factor to Shrink by factor
+When the grow is clicked, multiply the value of quantity by the value of factor
+When the shrink is clicked, divide the value of quantity by 2
+When the shrink by factor is clicked, divide the value of quantity by the value of factor`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-3").click(); // grow: 5 * 2 -> 10
+    assert.equal(await page.locator("#element-2").inputValue(), "10");
+    await page.locator("#element-4").click(); // shrink (fixed): 10 / 2 -> 5
+    assert.equal(await page.locator("#element-2").inputValue(), "5");
+    // A live divisor of 0 is guarded at runtime -- the value is left unchanged rather than
+    // becoming NaN/Infinity.
+    await page.locator("#element-1").fill("0");
+    await page.locator("#element-5").click(); // shrink by factor: divide by live 0, guarded
+    assert.equal(await page.locator("#element-2").inputValue(), "5");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can run a real runtime if-conditional over a live input's value in a real browser", async () => {
   const compiled = compilePageSource(`Add a text input called score field
 Add a paragraph called result

@@ -345,6 +345,71 @@ Set the text of go to Go
 When the go is clicked, multiply the text of total by the value of factor`, /Only an input, a text box, or a dropdown has a value to read/);
 });
 
+test("a click can multiply or divide an input's own value by a fixed number or a live input's value, for a step-by-percentage stepper", () => {
+  const fixedMultiplied = page(`Add a number input called quantity
+Set the value of quantity to 2
+Add a button called go
+Set the text of go to Go
+When the go is clicked, multiply the value of quantity by 2`);
+  const fixedMultipliedScript = /<script>(.+?)<\/script>/.exec(fixedMultiplied.html)![1]!;
+  assert.match(fixedMultipliedScript, /var e=document\.getElementById\("element-1"\);e\.value=String\(\(Number\(e\.value\)\|\|0\)\*\(2\)\);/);
+
+  const fixedDivided = page(`Add a number input called quantity
+Set the value of quantity to 10
+Add a button called go
+Set the text of go to Go
+When the go is clicked, divide the value of quantity by 2`);
+  const fixedDividedScript = /<script>(.+?)<\/script>/.exec(fixedDivided.html)![1]!;
+  assert.match(fixedDividedScript, /e\.value=String\(\(Number\(e\.value\)\|\|0\)\/\(2\)\);/);
+
+  invalid(`Add a number input called quantity
+Set the value of quantity to 10
+Add a button called go
+Set the text of go to Go
+When the go is clicked, divide the value of quantity by 0`, /would produce an undefined result/);
+
+  const liveMultiplied = page(`Add a number input called factor
+Set the value of factor to 2
+Add a number input called quantity
+Set the value of quantity to 2
+Add a button called go
+Set the text of go to Go
+When the go is clicked, multiply the value of quantity by the value of factor`);
+  const liveMultipliedScript = /<script>(.+?)<\/script>/.exec(liveMultiplied.html)![1]!;
+  assert.match(liveMultipliedScript, /var e=document\.getElementById\("element-2"\);var f=Number\(document\.getElementById\("element-1"\)\.value\)\|\|0;e\.value=String\(\(Number\(e\.value\)\|\|0\)\*f\);/);
+
+  // A live divisor can't be checked at compile time, so the generated code guards it at
+  // runtime instead, leaving the target's value unchanged rather than producing NaN/Infinity.
+  const liveDivided = page(`Add a number input called factor
+Set the value of factor to 2
+Add a number input called quantity
+Set the value of quantity to 10
+Add a button called go
+Set the text of go to Go
+When the go is clicked, divide the value of quantity by the value of factor`);
+  const liveDividedScript = /<script>(.+?)<\/script>/.exec(liveDivided.html)![1]!;
+  assert.match(liveDividedScript, /if\(f===0\)return;e\.value=String\(\(Number\(e\.value\)\|\|0\)\/f\);/);
+
+  invalid(`Add a paragraph called quantity
+Add a button called go
+Set the text of go to Go
+When the go is clicked, multiply the value of quantity by 2`, /Only an input, a text box, or a dropdown has a value to set/);
+
+  invalid(`Add a number input called factor
+Set the value of factor to 2
+Add a paragraph called quantity
+Add a button called go
+Set the text of go to Go
+When the go is clicked, multiply the value of quantity by the value of factor`, /Only an input, a text box, or a dropdown has a value to set/);
+
+  invalid(`Add a paragraph called factor
+Add a number input called quantity
+Set the value of quantity to 2
+Add a button called go
+Set the text of go to Go
+When the go is clicked, multiply the value of quantity by the value of factor`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("a click can hide, show, or toggle the visibility of any element", () => {
   const hidden = page(`Add a paragraph called details
 Set the text of details to Secret info
