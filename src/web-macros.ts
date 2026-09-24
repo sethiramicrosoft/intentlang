@@ -32,10 +32,20 @@ const OPERAND_RE = new RegExp(`^${NUMBER_OR_NAME}$`, "i");
 // it reads in English ("a plus b, then minus c").
 const CHAIN_SPLIT_RE = /\s+(plus|minus|times|divided by)\s+/i;
 const NUMERIC_INTENT_RE = /\d|\b(?:plus|minus|times|divided by)\b/i;
-// The subject can be a variable name, or (since a For each counting loop's variable literally
-// substitutes to a number) a plain number too, so "if the number is greater than 3" still works
-// after "number" is replaced by, say, "4".
-const IF_RE = /^if\s+the\s+(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*(.+?)\.?$/i;
+// An If sentence's head, up to its FIRST comma (no matter what follows -- this is what lets an
+// If's own instruction be another nested If/For each/Repeat/Do without confusing this boundary).
+// The captured text between "if " and that comma is one or more conditions, described below.
+const IF_HEAD_RE = /^if\s+(.+?)\s*,\s*(.+?)\.?$/i;
+// A single condition, on its own: "the <subject> is <comparator> <target>". The subject can be
+// a variable name, or (since a For each counting loop's variable literally substitutes to a
+// number) a plain number too, so "if the number is greater than 3" still works after "number"
+// is replaced by, say, "4".
+const CONDITION_RE = /^the\s+(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s+is\s+(greater than|less than|not equal to|equal to|at least|at most)\s+(?:the\s+)?(-?\d+(?:\.\d+)?|[a-z][a-z ]*?)$/i;
+// Splits two or more conditions joined by "and" or "or" ("the a is equal to 1 and the b is
+// equal to 2"). Only splits right before a literal "the", which is what every condition must
+// start with -- so a text comparison's own value can still safely contain the bare word "and"
+// or "or" (e.g. "is equal to Alex and Sam") as long as the word right after it isn't "the".
+const CONDITION_SPLIT_RE = /\s+(and|or)\s+(?=the\s+)/i;
 const OTHERWISE_RE = /^otherwise\s*,\s*(.+?)\.?$/i;
 // Only the head ("for each <name> in ") is a fixed shape; where the list ends and the
 // instruction begins is worked out by `matchForEachList` below, because a naive "last comma
@@ -153,6 +163,34 @@ function matchRepeat(trimmed: string): RepeatMatch | undefined {
   const instruction = match[2]!.trim();
   if (!instruction) return undefined;
   return { count: Number(match[1]), instruction };
+}
+
+type IfClause = { subject: string; comparator: string; target: string };
+type IfMatch = { clauses: IfClause[]; connectors: string[]; instruction: string };
+
+/**
+ * Matches an If sentence's head: one or more conditions, optionally joined with "and" or "or",
+ * followed by its instruction after the first comma. Structurally valid even when "and" and
+ * "or" are mixed together (e.g. "the a is equal to 1 and the b is equal to 2 or the c is equal
+ * to 3") -- that ambiguous case is caught and reported as a clear error at evaluation time (see
+ * `evaluateIfCondition`), the same way an empty For each list structurally matches but is
+ * reported as an error in `evaluateForEach`, rather than being rejected here.
+ */
+function matchIf(trimmed: string): IfMatch | undefined {
+  const head = IF_HEAD_RE.exec(trimmed);
+  if (!head) return undefined;
+  const instruction = head[2]!.trim();
+  if (!instruction) return undefined;
+  const segments = head[1]!.trim().split(CONDITION_SPLIT_RE);
+  const clauses: IfClause[] = [];
+  const connectors: string[] = [];
+  for (let i = 0; i < segments.length; i += 2) {
+    const clauseMatch = CONDITION_RE.exec(segments[i]!.trim());
+    if (!clauseMatch) return undefined;
+    clauses.push({ subject: clauseMatch[1]!.trim(), comparator: clauseMatch[2]!.trim(), target: clauseMatch[3]!.trim() });
+    if (i + 1 < segments.length) connectors.push(segments[i + 1]!.trim().toLowerCase());
+  }
+  return { clauses, connectors, instruction };
 }
 
 function splitEnglishList(text: string): string[] {
@@ -322,7 +360,7 @@ function suggestMacroFix(trimmed: string): VisualSuggestion | undefined {
     const fixed = closestKeyword(ifWord[1]!, ["if"]);
     if (fixed) {
       const corrected = `if${ifWord[2]}`;
-      if (IF_RE.test(corrected)) return { label: `Change "${ifWord[1]}" to "if"`, replacement: corrected };
+      if (matchIf(corrected)) return { label: `Change "${ifWord[1]}" to "if"`, replacement: corrected };
     }
   }
   const otherwiseWord = /^(\S+)(\s*,\s*.+)$/i.exec(trimmed);
@@ -363,7 +401,7 @@ function suggestMacroFix(trimmed: string): VisualSuggestion | undefined {
     const fixed = closestKeyword(comparatorPhrase[2]!, COMPARATORS);
     if (fixed) {
       const corrected = `${comparatorPhrase[1]}${fixed}${comparatorPhrase[3]}`;
-      if (IF_RE.test(corrected)) return { label: `Change "${comparatorPhrase[2]}" to "${fixed}"`, replacement: corrected };
+      if (matchIf(corrected)) return { label: `Change "${comparatorPhrase[2]}" to "${fixed}"`, replacement: corrected };
     }
   }
   return undefined;
@@ -378,14 +416,12 @@ function report(diagnostics: VisualDiagnostic[], lineNumber: number, trimmed: st
 }
 
 /**
- * Evaluates an If sentence's condition only (does not touch the surrounding "last condition"
- * state used for Otherwise-pairing, so a nested If never corrupts an outer one's pending
- * Otherwise). Returns undefined when the condition itself couldn't be evaluated (a diagnostic
- * has already been recorded in that case).
+ * Evaluates one clause's condition ("the <subject> is <comparator> <target>"). Returns undefined
+ * when it couldn't be evaluated (a diagnostic has already been recorded in that case).
  */
-function evaluateIfCondition(ifMatch: RegExpExecArray, text: string, lineNumber: number,
+function evaluateSingleCondition(clause: IfClause, text: string, lineNumber: number,
   variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[]): boolean | undefined {
-  const rawSubject = ifMatch[1]!.trim();
+  const rawSubject = clause.subject;
   let subject: VarValue;
   if (/^-?\d+(?:\.\d+)?$/.test(rawSubject)) {
     subject = { type: "number", value: Number(rawSubject) };
@@ -396,33 +432,64 @@ function evaluateIfCondition(ifMatch: RegExpExecArray, text: string, lineNumber:
       const closest = closestVariable(rawSubject, variables);
       report(diagnostics, lineNumber, text, "M001", `"${rawSubject}" was never given a value.`,
         closest ? `Did you mean "${closest}"?` : `Add a sentence like "The ${rawSubject} is 0." before this line.`,
-        closest ? [{ label: `Use "${closest}"`, replacement: text.replace(ifMatch[1]!, closest) }] : undefined);
+        closest ? [{ label: `Use "${closest}"`, replacement: text.replace(rawSubject, closest) }] : undefined);
       return undefined;
     }
     subject = found;
   }
-  const comparator = ifMatch[2]!.trim().toLowerCase();
+  const comparator = clause.comparator.toLowerCase();
   if (subject.type === "text") {
     if (comparator !== "equal to" && comparator !== "not equal to") {
       report(diagnostics, lineNumber, text, "M006",
         `Text can only be compared with "is equal to" or "is not equal to", not "is ${comparator}".`,
-        `Try "If the ${ifMatch[1]!.trim()} is equal to ...".`,
-        [{ label: `Change "${comparator}" to "equal to"`, replacement: text.replace(ifMatch[2]!, "equal to") }]);
+        `Try "If the ${rawSubject} is equal to ...".`,
+        [{ label: `Change "${comparator}" to "equal to"`, replacement: text.replace(clause.comparator, "equal to") }]);
       return undefined;
     }
-    const target = resolveTextOperand(ifMatch[3]!, variables);
+    const target = resolveTextOperand(clause.target, variables);
     const isEqual = subject.value.trim().toLowerCase() === target.trim().toLowerCase();
     return comparator === "equal to" ? isEqual : !isEqual;
   }
-  const target = resolveNumericOperand(ifMatch[3]!, variables);
+  const target = resolveNumericOperand(clause.target, variables);
   if (target === undefined) {
-    const closest = closestVariable(ifMatch[3]!, variables);
-    report(diagnostics, lineNumber, text, "M002", `"${ifMatch[3]!.trim()}" is not a number or a known variable.`,
-      closest ? `Did you mean "${closest}"?` : `Compare "${ifMatch[1]!.trim()}" to a number or to a variable defined earlier.`,
-      closest ? [{ label: `Use "${closest}"`, replacement: text.replace(ifMatch[3]!, closest) }] : undefined);
+    const closest = closestVariable(clause.target, variables);
+    report(diagnostics, lineNumber, text, "M002", `"${clause.target}" is not a number or a known variable.`,
+      closest ? `Did you mean "${closest}"?` : `Compare "${rawSubject}" to a number or to a variable defined earlier.`,
+      closest ? [{ label: `Use "${closest}"`, replacement: text.replace(clause.target, closest) }] : undefined);
     return undefined;
   }
   return compareNumbers(subject.value, comparator, target);
+}
+
+/**
+ * Evaluates an If sentence's whole condition -- one clause, or several joined with "and" (all
+ * must be true) or "or" (at least one must be true) -- but not the surrounding "last condition"
+ * state used for Otherwise-pairing, so a nested If never corrupts an outer one's pending
+ * Otherwise. Every clause is always evaluated, even once the overall result is already decided
+ * (e.g. the first clause of an "or" is already true), so a mistake anywhere in the line is
+ * always caught the same way regardless of value order -- consistent with the rest of the
+ * language never resolving something silently or inconsistently. Mixing "and" and "or" in the
+ * same line is ambiguous (there's no operator precedence in this language, on purpose) and is
+ * reported as a clear error rather than guessed at. Returns undefined when the condition itself
+ * couldn't be evaluated (a diagnostic has already been recorded in that case).
+ */
+function evaluateIfCondition(ifMatch: IfMatch, text: string, lineNumber: number,
+  variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[]): boolean | undefined {
+  const uniqueConnectors = new Set(ifMatch.connectors);
+  if (uniqueConnectors.size > 1) {
+    report(diagnostics, lineNumber, text, "M015",
+      `This If sentence mixes "and" and "or" together, which is ambiguous.`,
+      `Use only "and" or only "or" in one If sentence, or split it into two separate If sentences.`);
+    return undefined;
+  }
+  const results: boolean[] = [];
+  for (const clause of ifMatch.clauses) {
+    const result = evaluateSingleCondition(clause, text, lineNumber, variables, diagnostics);
+    if (result === undefined) return undefined;
+    results.push(result);
+  }
+  if (uniqueConnectors.size === 0) return results[0];
+  return uniqueConnectors.has("and") ? results.every(Boolean) : results.some(Boolean);
 }
 
 /**
@@ -575,11 +642,11 @@ function expandInstruction(instr: string, lineNumber: number, variables: Map<str
   const trimmedInstr = instr.trim();
   const assign = ASSIGN_RE.exec(trimmedInstr);
   if (assign && applyAssignment(assign[1]!.trim().toLowerCase(), assign[2]!.trim(), variables)) return [];
-  const nestedIf = IF_RE.exec(trimmedInstr);
+  const nestedIf = matchIf(trimmedInstr);
   if (nestedIf) {
     const condition = evaluateIfCondition(nestedIf, trimmedInstr, lineNumber, variables, diagnostics);
     if (condition === undefined) return [];
-    return condition ? expandChain(nestedIf[4]!, lineNumber, variables, diagnostics, functions, callStack) : [];
+    return condition ? expandChain(nestedIf.instruction, lineNumber, variables, diagnostics, functions, callStack) : [];
   }
   const nestedForEach = matchForEach(trimmedInstr);
   if (nestedForEach) return evaluateForEach(nestedForEach, lineNumber, variables, diagnostics, functions, callStack);
@@ -606,7 +673,7 @@ function expandChain(text: string, lineNumber: number, variables: Map<string, Va
   const result: string[] = [];
   for (let i = 0; i < parts.length; i++) {
     const rest = parts.slice(i).join(" and then ").trim();
-    if (IF_RE.test(rest) || matchForEach(rest) || matchRepeat(rest)) {
+    if (matchIf(rest) || matchForEach(rest) || matchRepeat(rest)) {
       result.push(...expandInstruction(rest, lineNumber, variables, diagnostics, functions, callStack));
       return result; // the nested construct consumed everything remaining in the chain
     }
@@ -619,7 +686,7 @@ function expandChain(text: string, lineNumber: number, variables: Map<string, Va
 export function usesMacroGrammar(source: string): boolean {
   return source.split(/\r?\n/).some((line) => {
     const trimmed = line.trim();
-    return ASSIGN_RE.test(trimmed) || IF_RE.test(trimmed) || OTHERWISE_RE.test(trimmed) || matchForEach(trimmed) !== undefined
+    return ASSIGN_RE.test(trimmed) || matchIf(trimmed) !== undefined || OTHERWISE_RE.test(trimmed) || matchForEach(trimmed) !== undefined
       || matchRepeat(trimmed) !== undefined || FUNCTION_DEF_RE.test(trimmed) || FUNCTION_CALL_RE.test(trimmed);
   });
 }
@@ -682,12 +749,12 @@ export function expandMacros(source: string): MacroExpandResult {
       return;
     }
 
-    const ifMatch = IF_RE.exec(trimmed);
+    const ifMatch = matchIf(trimmed);
     if (ifMatch) {
       const condition = evaluateIfCondition(ifMatch, trimmed, lineNumber, variables, diagnostics);
       if (condition === undefined) return; // a diagnostic was already recorded
       lastCondition = condition;
-      if (condition) for (const instr of expandChain(ifMatch[4]!, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
+      if (condition) for (const instr of expandChain(ifMatch.instruction, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
       return;
     }
 

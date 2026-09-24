@@ -761,3 +761,78 @@ Do add ten.
 Set the text of message to total`);
   assert.equal(textOf(ir, "message"), "10");
 });
+
+test("an If sentence can combine two conditions with 'and', requiring both to be true", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 50.
+The wins is 12.
+If the score is at least 40 and the wins is at least 10, set the text of message to promoted
+Otherwise, set the text of message to not promoted`);
+  assert.equal(textOf(ir, "message"), "promoted");
+});
+
+test("an 'and' compound condition is false as soon as one clause is false", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 50.
+The wins is 5.
+If the score is at least 40 and the wins is at least 10, set the text of message to promoted
+Otherwise, set the text of message to not promoted`);
+  assert.equal(textOf(ir, "message"), "not promoted");
+});
+
+test("an If sentence can combine two conditions with 'or', requiring only one to be true", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 10.
+The wins is 12.
+If the score is at least 40 or the wins is at least 10, set the text of message to promoted
+Otherwise, set the text of message to not promoted`);
+  assert.equal(textOf(ir, "message"), "promoted");
+});
+
+test("an 'or' compound condition is false only when every clause is false", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The score is 10.
+The wins is 2.
+If the score is at least 40 or the wins is at least 10, set the text of message to promoted
+Otherwise, set the text of message to not promoted`);
+  assert.equal(textOf(ir, "message"), "not promoted");
+});
+
+test("an If sentence can chain three or more conditions with the same connector", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The a is 1.
+The b is 1.
+The c is 1.
+If the a is equal to 1 and the b is equal to 1 and the c is equal to 1, set the text of message to all match`);
+  assert.equal(textOf(ir, "message"), "all match");
+});
+
+test("mixing 'and' and 'or' in the same If sentence is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+The a is 1.
+The b is 1.
+The c is 2.
+If the a is equal to 1 and the b is equal to 1 or the c is equal to 1, set the text of message to x`,
+    /mixes.*and.*and.*or.*together/);
+});
+
+test("an unresolvable clause in a compound condition is still reported as a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+The a is 1.
+If the a is equal to 1 and the missing is equal to 1, set the text of message to x`,
+    /missing.*was never given a value/);
+});
+
+test("a text comparison's own value can still contain the literal word 'and'", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The winner is Alex and Sam.
+If the winner is equal to Alex and Sam, set the text of message to matched
+Otherwise, set the text of message to no match`);
+  assert.equal(textOf(ir, "message"), "matched");
+});
+
+test("a compound If condition can be a For each's own nested instruction", () => {
+  const { ir } = page(`Add a paragraph called note inside page
+For each n from 1 to 3, if the n is equal to 2 and the n is greater than 1, set the text of note to found`);
+  assert.equal(textOf(ir, "note"), "found");
+});

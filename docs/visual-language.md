@@ -229,6 +229,8 @@ Set the text of points line to total points
 If the total points is at least 40, set the text of form line to Promotion form and then set the text of banner to Well played.
 Otherwise, set the text of form line to Steady form.
 
+If the wins is at least 10 and the draws is at least 5, set the text of banner to Consistent season.
+
 For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list item called result opponent inside fixtures
 
 For each round from 1 to 5, add a list item called round line round inside fixtures
@@ -255,6 +257,17 @@ Repeat 3 times, the wins is wins plus 1.
   another comparator on text is reported as a clear error. The `<name>` can be
   a variable, or a plain number (useful when it's a For each counting loop's
   own variable, which is a number itself).
+- **`If the <name> is <comparison> <value> and the <name> is <comparison>
+  <value>, ...`** (or joined with `or` instead of `and`) combines two or more
+  conditions into one: `and` requires every one of them to be true, `or`
+  requires at least one. Chain as many as you like, all joined the same way
+  (`... and the c is equal to 3 and the d is equal to 4, ...`). Mixing `and`
+  and `or` in the same If sentence is ambiguous — there's no operator
+  precedence in this language, on purpose — and is reported as a clear error;
+  use only one connector per If sentence, or split it into two separate If
+  sentences instead. Every clause is always checked, even once the overall
+  result is already decided, so a mistake in any clause is always caught the
+  same way no matter what order the values come in.
 - **`Otherwise, <one or more instructions>.`** runs when the If sentence right
   before it was false.
 - **`For each <name> in <item, item and item>, <one or more instructions>.`**
@@ -429,6 +442,18 @@ offered, never applied silently.
   an inconsistency) — it's how a single line always reads as "do this, then,
   if still applicable, do that" — but it means two truly independent If
   checks should be put on separate lines rather than joined with `and then`.
+- A compound If condition's clauses must all be joined with the same
+  connector (`and` only, or `or` only) — mixing both in one line is reported
+  as a clear error rather than guessed at, since this language deliberately
+  has no operator precedence rule to fall back on. Also, splitting a
+  compound condition into clauses only happens right before a literal "the",
+  so an ordinary text value is always safe to contain a bare "and" or "or"
+  — but in the rare case where the words right after it happen to read like
+  a whole new condition too (e.g. "...equal to Red and the score is equal to
+  1"), it will be split into two clauses instead of read as one long text
+  value (quoting the text does not prevent this, since the split happens
+  before quotes are interpreted); rephrase the text to avoid that exact
+  pattern if it happens.
 - The, If, Otherwise, For each, To, and Do sentences on this page are
   compile-time only: they compute a value once, when the page is compiled,
   not in response to anything a visitor does afterward. Real runtime
