@@ -258,9 +258,15 @@ export function compilePageSource(source: string): PageCompileResult {
     const setValueFromValue = /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
     const setValue = !setValueFromValue ? /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part) : null;
     const clearValue = /^clear\s+the\s+value\s+of\s+(.+)$/i.exec(part);
-    // Toggles a checkbox/radio button's own ".checked" state directly.
+    // Sets a checkbox/radio button's own ".checked" state directly.
     const checkBox = /^check\s+(.+)$/i.exec(part);
     const uncheckBox = /^uncheck\s+(.+)$/i.exec(part);
+    // Flips a checkbox/radio button's own ".checked" state without needing to know which way
+    // it currently is -- the checked-state sibling of "toggle the visibility of ...", written
+    // with its own distinct "toggle whether ... is checked" phrase so it's never confused with
+    // that one when skimming a script (both start with "toggle", but read the rest and the
+    // target kind is unambiguous either way).
+    const toggleChecked = /^toggle\s+whether\s+(.+?)\s+is\s+checked$/i.exec(part);
     // Shows/hides any element by its ".hidden" property (a real, accessible, built-in
     // browser mechanism -- a hidden element is removed from the accessibility tree and
     // stops rendering, unlike a CSS trick that only fools sighted mouse users). Works on
@@ -510,8 +516,8 @@ export function compilePageSource(source: string): PageCompileResult {
         return undefined;
       }
       return `document.getElementById(${JSON.stringify(target.id)}).value="";`;
-    } else if (checkBox || uncheckBox) {
-      const match = checkBox ?? uncheckBox!;
+    } else if (checkBox || uncheckBox || toggleChecked) {
+      const match = checkBox ?? uncheckBox ?? toggleChecked!;
       const target = resolve(match[1]!, index);
       if (!target) return undefined;
       if (!hasCheckedState(target)) {
@@ -519,6 +525,7 @@ export function compilePageSource(source: string): PageCompileResult {
           `Add a checkbox called ${target.name} instead, such as Add a checkbox called ${target.name}.`);
         return undefined;
       }
+      if (toggleChecked) return `(function(){var e=document.getElementById(${JSON.stringify(target.id)});e.checked=!e.checked;})();`;
       return `document.getElementById(${JSON.stringify(target.id)}).checked=${checkBox ? "true" : "false"};`;
     } else if (hideElement || showElement) {
       const match = hideElement ?? showElement!;
@@ -552,6 +559,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"subtract the value of ... from the text of ...", "set the value of ... to ...", ` +
       `"set the value of ... to the value of ...", "clear the value of ...", ` +
       `"check ..."/"uncheck ..." for a checkbox or radio button, ` +
+      `"toggle whether ... is checked" for a checkbox or radio button, ` +
       `"hide ...", "show ...", "toggle the visibility of ...", "focus ...", ` +
       `"disable ...", "enable ..." for a button, input, text box, dropdown, or field group, ` +
       `"if the value of ... is greater than/less than/` +

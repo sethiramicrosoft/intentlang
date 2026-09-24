@@ -223,7 +223,9 @@ forms: `if <checkbox name> is checked, <one instruction>` (optionally with
 `the` before the name, and optionally followed by `otherwise <one
 instruction>`) branches on whether it's ticked, `if <checkbox name> is not
 checked, ...` branches on the opposite, and `check <checkbox name>` /
-`uncheck <checkbox name>` tick or untick it directly from a click. The
+`uncheck <checkbox name>` tick or untick it directly from a click, and
+`toggle whether <checkbox name> is checked` flips it without needing to
+know which way it currently is. The
 target of any of these must be a checkbox or a radio button specifically —
 using them on a text input or any other element is a clear error. A click
 can also change whether any element is on the page at all (not just its
@@ -409,6 +411,13 @@ Set the text of result to none
 Add a button called submit
 Set the text of submit to Submit
 When the submit is clicked, if agree is checked, set the text of result to thanks otherwise set the text of result to please agree first
+```
+
+```text
+Add a checkbox called agree
+Add a button called turn
+Set the text of turn to Toggle agreement
+When the turn is clicked, toggle whether agree is checked
 ```
 
 ```text

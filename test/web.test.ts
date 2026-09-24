@@ -903,6 +903,27 @@ Set the text of go to Go
 When the go is clicked, uncheck n`, /Only a checkbox or a radio button has a checked state/);
 });
 
+test("a click can flip a checkbox or radio button's own checked state with \"toggle whether ... is checked\"", () => {
+  const flip = page(`Add a checkbox called agree
+Add a button called turn
+Set the text of turn to Turn
+When the turn is clicked, toggle whether agree is checked`);
+  const script = /<script>(.+?)<\/script>/.exec(flip.html)![1]!;
+  assert.match(script, /\(function\(\)\{var e=document\.getElementById\("element-1"\);e\.checked=!e\.checked;\}\)\(\);/);
+
+  // "the" is optional before the checkbox's name, matching every other instruction's target.
+  const withThe = page(`Add a radio button called opt
+Add a button called turn
+Set the text of turn to Turn
+When the turn is clicked, toggle whether the opt is checked`);
+  assert.match(/<script>(.+?)<\/script>/.exec(withThe.html)![1]!, /var e=document\.getElementById\("element-1"\)/);
+
+  invalid(`Add a text input called n
+Add a button called go
+Set the text of go to Go
+When the go is clicked, toggle whether n is checked`, /Only a checkbox or a radio button has a checked state/);
+});
+
 test("When the page loads runs its instructions immediately, using the same closed instruction set as a click", () => {
   const basic = page(`Add a paragraph called greeting
 Set the text of greeting to loading...

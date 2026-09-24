@@ -480,6 +480,28 @@ When the turn on is clicked, check agree`);
   } finally { await browser.close(); }
 });
 
+test("a click can flip a real checkbox's checked state with \"toggle whether ... is checked\" in a real browser", async () => {
+  const compiledWithHandler = compilePageSource(`Add a checkbox called agree
+Add a button called turn
+Set the text of turn to Turn
+When the turn is clicked, toggle whether agree is checked`);
+  if (!compiledWithHandler.ok) assert.fail(JSON.stringify(compiledWithHandler.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiledWithHandler.html);
+    assert.equal(await page.locator("#element-1").isChecked(), false);
+    await page.locator("#element-2").click();
+    assert.equal(await page.locator("#element-1").isChecked(), true);
+    await page.locator("#element-2").click();
+    assert.equal(await page.locator("#element-1").isChecked(), false);
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can hide, show or toggle the visibility of a real element in a real browser", async () => {
   const compiled = compilePageSource(`Add a paragraph called details
 Set the text of details to Secret info
