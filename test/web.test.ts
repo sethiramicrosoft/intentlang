@@ -660,6 +660,50 @@ Set the text of dice to Roll
 When the dice is clicked, set the text of roll to a random number from 6 to 1`, /low end \(6\) can't be greater than its high end \(1\)/);
 });
 
+test("a click's random number range can have either end (or both) be a live input's value, not only fixed numbers", () => {
+  const bothLive = page(`Add a text input called low bound
+Add a text input called high bound
+Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from the value of low bound to the value of high bound`);
+  const bothLiveScript = /<script>(.+?)<\/script>/.exec(bothLive.html)![1]!;
+  assert.match(bothLiveScript, /var lo=\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\);var hi=\(Number\(document\.getElementById\("element-2"\)\.value\)\|\|0\);var min=Math\.min\(lo,hi\);var max=Math\.max\(lo,hi\);document\.getElementById\("element-3"\)\.textContent=String\(Math\.floor\(Math\.random\(\)\*\(max-min\+1\)\)\+min\);/);
+
+  // A mix: one end fixed, one end live.
+  const mixed = page(`Add a text input called high bound
+Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from 1 to the value of high bound`);
+  const mixedScript = /<script>(.+?)<\/script>/.exec(mixed.html)![1]!;
+  assert.match(mixedScript, /var lo=\(1\);var hi=\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\);/);
+
+  // A backwards live range is NOT a compile-time error (unlike the fixed-number form) --
+  // the generated code takes Math.min/Math.max of both evaluated ends at runtime instead,
+  // so the range simply always comes out the right way around regardless of which input
+  // currently holds the smaller value.
+  const backwards = page(`Add a text input called low bound
+Add a text input called high bound
+Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from the value of low bound to the value of high bound`);
+  assert.doesNotThrow(() => backwards);
+
+  invalid(`Add a paragraph called low bound
+Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from the value of low bound to 6`, /Only an input, a text box, or a dropdown has a value to read/);
+
+  invalid(`Add a paragraph called high bound
+Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from 1 to the value of high bound`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("reading a value from an element that isn't an input, textarea, or select is a clear error", () => {
   invalid(`Add a paragraph called label
 Add a paragraph called greeting

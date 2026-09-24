@@ -323,6 +323,46 @@ When the dice is clicked, set the text of roll to a random number from 1 to 6`);
   } finally { await browser.close(); }
 });
 
+test("a click's random number range can be bounded by live inputs' own values, staying within a moving window, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called low bound
+Add a text input called high bound
+Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from the value of low bound to the value of high bound`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("10");
+    await page.locator("#element-2").fill("12");
+    for (let i = 0; i < 10; i++) {
+      await page.locator("#element-4").click();
+      const value = Number(await page.locator("#element-3").textContent());
+      assert.ok(value >= 10 && value <= 12, `${value} was outside 10-12`);
+    }
+    // The window itself moves once the live bounds are edited.
+    await page.locator("#element-1").fill("100");
+    await page.locator("#element-2").fill("101");
+    await page.locator("#element-4").click();
+    const movedValue = Number(await page.locator("#element-3").textContent());
+    assert.ok(movedValue >= 100 && movedValue <= 101, `${movedValue} was outside 100-101`);
+    // A "backwards" live range (low bound now typed larger than high bound) still produces a
+    // value inside the correct window instead of erroring, since the generated code takes
+    // Math.min/Math.max of both evaluated ends at runtime.
+    await page.locator("#element-1").fill("50");
+    await page.locator("#element-2").fill("20");
+    await page.locator("#element-4").click();
+    const afterBackwards = Number(await page.locator("#element-3").textContent());
+    assert.ok(afterBackwards >= 20 && afterBackwards <= 50, `${afterBackwards} was outside 20-50`);
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can add or subtract a live input's value into a running total in a real browser", async () => {
   const compiled = compilePageSource(`Add a text input called amount field
 Add a paragraph called total

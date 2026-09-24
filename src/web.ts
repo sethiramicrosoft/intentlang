@@ -258,7 +258,13 @@ export function compilePageSource(source: string): PageCompileResult {
     const repeat = /^repeat\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+))\s+times?\s*,\s*(.+)$/i.exec(part);
     // Checked before the plainer "set the text of X to Y", since that one's own value half
     // would otherwise happily swallow "the value of Y" as literal display text instead.
-    const setFromValue = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
+    // Guarded against setRandom below: "set the text of roll to a random number from the
+    // value of low bound to the value of high bound" also contains a literal " to the value
+    // of " substring (inside its own "from ... to ..." clause), which the non-greedy (.+?)
+    // here would otherwise happily swallow as setFromValue's own target name instead of
+    // letting setRandom's more specific pattern match the whole instruction.
+    const setRandomPreCheck = /^set\s+the\s+text\s+of\s+(?:.+?)\s+to\s+a\s+random\s+number\s+from\s+/i.test(part);
+    const setFromValue = !setRandomPreCheck ? /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part) : null;
     // A dropdown's own ".value" is its selected option's value attribute (or, if that option
     // has none, its own displayed text -- the HTML default) -- but once an option's value is
     // set explicitly to something other than its label (e.g. a short code), ".value" no
@@ -274,7 +280,10 @@ export function compilePageSource(source: string): PageCompileResult {
     const setFromLength = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+the\s+number\s+of\s+characters\s+in\s+the\s+value\s+of\s+(.+)$/i.exec(part);
     // Same reason: checked before the plainer "set the text of X to Y", so its own value
     // half doesn't swallow "a random number from A to B" as literal display text instead.
-    const setRandom = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+a\s+random\s+number\s+from\s+(-?\d+)\s+to\s+(-?\d+)$/i.exec(part);
+    // Either end can be a plain number known at compile time, or (like ifBetween's own ends)
+    // another live input's own value, so a random range can move with whatever a visitor
+    // actually typed rather than only ever being fixed.
+    const setRandom = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+a\s+random\s+number\s+from\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+))\s+to\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+))$/i.exec(part);
     const setText = /^set\s+the\s+text\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part);
     // Checked before the plain "add/subtract <number>" forms below, for the same reason
     // setFromValue is checked before setText: otherwise "the value of X" would be read as a
@@ -678,14 +687,48 @@ export function compilePageSource(source: string): PageCompileResult {
     } else if (setRandom) {
       const target = resolve(setRandom[1]!, index);
       if (!target) return undefined;
-      const min = Number(setRandom[2]);
-      const max = Number(setRandom[3]);
-      if (min > max) {
-        report(index, `A random range's low end (${min}) can't be greater than its high end (${max}).`,
-          `Try "a random number from ${max} to ${min}" instead.`);
-        return undefined;
+      let loExpr: string;
+      if (setRandom[2]) {
+        const loSource = resolve(setRandom[2]!, index);
+        if (!loSource) return undefined;
+        if (!hasReadableValue(loSource.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${loSource.name} is a ${englishName(loSource.tag)}.`,
+            `Add an input called ${loSource.name} instead, such as Add a text input called ${loSource.name}.`);
+          return undefined;
+        }
+        loExpr = `(Number(document.getElementById(${JSON.stringify(loSource.id)}).value)||0)`;
+      } else {
+        loExpr = `(${JSON.stringify(Number(setRandom[3]))})`;
       }
-      return `document.getElementById(${JSON.stringify(target.id)}).textContent=String(Math.floor(Math.random()*(${JSON.stringify(max - min + 1)}))+(${JSON.stringify(min)}));`;
+      let hiExpr: string;
+      if (setRandom[4]) {
+        const hiSource = resolve(setRandom[4]!, index);
+        if (!hiSource) return undefined;
+        if (!hasReadableValue(hiSource.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${hiSource.name} is a ${englishName(hiSource.tag)}.`,
+            `Add an input called ${hiSource.name} instead, such as Add a text input called ${hiSource.name}.`);
+          return undefined;
+        }
+        hiExpr = `(Number(document.getElementById(${JSON.stringify(hiSource.id)}).value)||0)`;
+      } else {
+        hiExpr = `(${JSON.stringify(Number(setRandom[5]))})`;
+      }
+      // The backwards-range compile-time error only applies when both ends are still plain
+      // numbers -- once either end is a live input's value, the actual order can only be
+      // known at runtime, so the generated code itself takes the min/max of both evaluated
+      // ends instead of assuming which one is the low end.
+      if (!setRandom[2] && !setRandom[4]) {
+        const min = Number(setRandom[3]);
+        const max = Number(setRandom[5]);
+        if (min > max) {
+          report(index, `A random range's low end (${min}) can't be greater than its high end (${max}).`,
+            `Try "a random number from ${max} to ${min}" instead.`);
+          return undefined;
+        }
+        return `document.getElementById(${JSON.stringify(target.id)}).textContent=String(Math.floor(Math.random()*(${JSON.stringify(max - min + 1)}))+(${JSON.stringify(min)}));`;
+      }
+      return `(function(){var lo=${loExpr};var hi=${hiExpr};var min=Math.min(lo,hi);var max=Math.max(lo,hi);` +
+        `document.getElementById(${JSON.stringify(target.id)}).textContent=String(Math.floor(Math.random()*(max-min+1))+min);})();`;
     } else if (setText) {
       const target = resolve(setText[1]!, index);
       if (!target) return undefined;
@@ -864,7 +907,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
       `"set the text of ... to the selected label of ... (a dropdown)", ` +
       `"set the text of ... to the number of characters in the value of ...", ` +
-      `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
+      `"set the text of ... to a random number from ... to ... (two numbers, or the value of ..., or a mix)", "add ... to the text of ...", ` +
       `"subtract ... from the text of ...", "multiply the text of ... by ...", ` +
       `"divide the text of ... by ...", "add the value of ... to the text of ...", ` +
       `"subtract the value of ... from the text of ...", "multiply the text of ... by the value of ...", ` +

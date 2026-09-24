@@ -173,7 +173,15 @@ runtime click handler. This is still plain English, and the instruction is
 still a fixed, closed set (chained with `and then` the same way everywhere
 else in the language is): `set the text of <name> to <value>`,
 `set the text of <name> to the value of <input name>`,
-`set the text of <name> to a random number from <min> to <max>`,
+`set the text of <name> to a random number from <min> to <max>` (either end
+can also be another live input's own value, or a mix of the two, so the
+range itself can move with whatever a visitor actually typed —
+`from the value of low bound to the value of high bound`, or `from 1 to
+the value of high bound`; the compile-time backwards-range check below
+only applies when both ends are still plain numbers, since a live-bound
+range's actual order can only be known once the click happens, so the
+generated code itself takes the smaller/larger of the two evaluated ends
+at runtime instead),
 `add <number> to the text of <name>`, `subtract <number> from the text of
 <name>`, `multiply the text of <name> by <number>`, `divide the text of
 <name> by <number>` (dividing by exactly 0 is a clear compile-time error,
@@ -430,6 +438,15 @@ Add a paragraph called roll
 Add a button called dice
 Set the text of dice to Roll
 When the dice is clicked, set the text of roll to a random number from 1 to 6
+```
+
+```text
+Add a text input called low bound
+Add a text input called high bound
+Add a paragraph called roll
+Add a button called dice
+Set the text of dice to Roll
+When the dice is clicked, set the text of roll to a random number from the value of low bound to the value of high bound
 ```
 
 ```text
