@@ -113,6 +113,11 @@ const REPEAT_RE = /^repeat\s+(-?\d+)\s+times?\s*,\s*(.+?)\.?$/i;
 // is anchored to the end of the line/chain-segment the same way Otherwise is.
 const FUNCTION_DEF_RE = /^to\s+([a-z][a-z ]*?)(?:\s+with\s+([a-z][a-z ]*?))?\s*,\s*(.+?)\.?$/i;
 const FUNCTION_CALL_RE = /^do\s+([a-z][a-z ]*?)(?:\s+with\s+(.+?))?\s*\.?$/i;
+// "the result of <name>" or "the result of <name> with <args>" calls a procedure and uses
+// whatever it set "the result" to as a value, right inside an assignment or a call's own
+// argument -- e.g. "The doubled is the result of double with 5." -- instead of needing a
+// separate "Do ... with ..." sentence followed by reading "result" afterward as its own step.
+const RESULT_OF_RE = /^the\s+result\s+of\s+([a-z][a-z ]*?)(?:\s+with\s+(.+))?$/i;
 const COMPARATORS = ["greater than", "less than", "not equal to", "equal to", "at least", "at most"];
 // Multiple instructions in one If/Otherwise/For each sentence are chained with "and then",
 // a phrase that reads naturally and never collides with ordinary instruction text (unlike a
@@ -786,8 +791,14 @@ function evaluateRepeat(repeatMatch: RepeatMatch, lineNumber: number, variables:
  * (directly, or through another procedure) is caught as a clear error instead of hanging the
  * compiler in recursion.
  */
-function resolveArgValue(rawValue: string, variables: Map<string, VarValue>): VarValue {
+function resolveArgValue(rawValue: string, variables: Map<string, VarValue>, lineNumber: number, callText: string,
+  diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): VarValue {
   const trimmed = rawValue.trim();
+  const resultOf = RESULT_OF_RE.exec(trimmed);
+  if (resultOf) {
+    return evaluateProcedureResult(resultOf[1]!.trim().toLowerCase(), resultOf[2], trimmed, lineNumber, variables,
+      diagnostics, functions, callStack) ?? { type: "text", value: "" };
+  }
   const numericValue = evaluateExpression(trimmed, variables);
   if (numericValue !== undefined) return { type: "number", value: numericValue };
   const itemLookup = resolveListItem(trimmed, variables);
@@ -795,6 +806,79 @@ function resolveArgValue(rawValue: string, variables: Map<string, VarValue>): Va
     return /^-?\d+(?:\.\d+)?$/.test(itemLookup.value) ? { type: "number", value: Number(itemLookup.value) } : { type: "text", value: itemLookup.value };
   }
   return variables.get(stripLeadingThe(trimmed).toLowerCase()) ?? { type: "text", value: dequote(trimmed) };
+}
+
+/**
+ * Evaluates "the result of <name>" / "the result of <name> with <args>": runs the procedure the
+ * same way "Do <name> with ..." does (the same argument binding, recursion guard, and error
+ * reporting), but instead of returning its instructions, reads back whatever it set "the
+ * result" to, for use directly inside an assignment or another call's own argument -- e.g. "The
+ * doubled is the result of double with 5." -- instead of needing a separate "Do ... with ..."
+ * sentence followed by reading "result" as its own step. "result" itself is temporarily
+ * shadowed and restored the same way a parameter is, so a call used this way never clobbers an
+ * outer variable also named "result" -- only the procedure's own body sees (and can set) it
+ * fresh each call. Any elements the procedure's own instructions would otherwise add to the
+ * page are silently not added when it's called this way -- using a procedure for its result
+ * value takes only its final "result", not its page side effects (its side effects on OTHER
+ * variables, including list mutations, still apply normally).
+ */
+function evaluateProcedureResult(name: string, argRaw: string | undefined, callText: string, lineNumber: number,
+  variables: Map<string, VarValue>, diagnostics: VisualDiagnostic[], functions: FunctionMap,
+  callStack: Set<string>): VarValue | undefined {
+  const fn = functions.get(name);
+  if (fn === undefined) {
+    const closest = closestFunction(name, functions);
+    report(diagnostics, lineNumber, callText, "M007", `"${name}" was never defined.`,
+      closest ? `Did you mean "the result of ${closest}"?` : `Add a sentence like "To ${name}, ..." before this line.`,
+      closest ? [{ label: `Use "${closest}"`, replacement: callText.replace(name, closest) }] : undefined);
+    return undefined;
+  }
+  if (callStack.has(name)) {
+    report(diagnostics, lineNumber, callText, "M008",
+      `"${name}" calls itself, directly or indirectly, which isn't supported yet.`,
+      `Rewrite "${name}" so it doesn't call itself.`);
+    return undefined;
+  }
+  if (fn.params.length > 0 && argRaw === undefined) {
+    report(diagnostics, lineNumber, callText, "M010", `"${name}" needs ${fn.params.length === 1 ? "a value" : `${fn.params.length} values`}.`,
+      `Try "the result of ${name} with ${fn.params.map((_, i) => `<value${fn.params.length > 1 ? ` ${i + 1}` : ""}>`).join(" and ")}".`);
+    return undefined;
+  }
+  if (fn.params.length === 0 && argRaw !== undefined) {
+    report(diagnostics, lineNumber, callText, "M011", `"${name}" doesn't take a value.`,
+      `Try "the result of ${name}".`);
+    return undefined;
+  }
+  const values = fn.params.length === 0 ? [] : fn.params.length === 1 ? [argRaw!.trim()] : splitEnglishList(argRaw!);
+  if (values.length !== fn.params.length) {
+    report(diagnostics, lineNumber, callText, "M012",
+      `"${name}" needs ${fn.params.length} values, but this call gives ${values.length}.`,
+      `Try "the result of ${name} with ${fn.params.map((_, i) => `<value ${i + 1}>`).join(" and ")}".`);
+    return undefined;
+  }
+  const restore: { name: string; hadPrevious: boolean; previous: VarValue | undefined }[] = [];
+  for (let i = 0; i < fn.params.length; i++) {
+    const paramName = fn.params[i]!;
+    restore.push({ name: paramName, hadPrevious: variables.has(paramName), previous: variables.get(paramName) });
+    variables.set(paramName, resolveArgValue(values[i]!, variables, lineNumber, callText, diagnostics, functions, callStack));
+  }
+  const hadResult = variables.has("result");
+  const previousResult = variables.get("result");
+  variables.delete("result");
+  const nextCallStack = new Set(callStack);
+  nextCallStack.add(name);
+  expandChain(fn.body, lineNumber, variables, diagnostics, functions, nextCallStack);
+  const resultValue = variables.get("result");
+  if (hadResult) variables.set("result", previousResult!); else variables.delete("result");
+  for (const entry of restore) {
+    if (entry.hadPrevious) variables.set(entry.name, entry.previous!); else variables.delete(entry.name);
+  }
+  if (resultValue === undefined) {
+    report(diagnostics, lineNumber, callText, "M018", `"${name}" doesn't set "the result", so it has no value to use here.`,
+      `Add a sentence like "The result is ..." inside "To ${name}, ...".`);
+    return undefined;
+  }
+  return resultValue;
 }
 
 function expandFunctionCall(name: string, argRaw: string | undefined, callText: string, lineNumber: number,
@@ -839,7 +923,7 @@ function expandFunctionCall(name: string, argRaw: string | undefined, callText: 
   for (let i = 0; i < fn.params.length; i++) {
     const paramName = fn.params[i]!;
     restore.push({ name: paramName, hadPrevious: variables.has(paramName), previous: variables.get(paramName) });
-    variables.set(paramName, resolveArgValue(values[i]!, variables));
+    variables.set(paramName, resolveArgValue(values[i]!, variables, lineNumber, callText, diagnostics, functions, callStack));
   }
   const nextCallStack = new Set(callStack);
   nextCallStack.add(name);
@@ -851,18 +935,26 @@ function expandFunctionCall(name: string, argRaw: string | undefined, callText: 
 }
 
 /**
- * Applies a "The X is Y." assignment: resolves Y as a number expression first, then as a text
- * "joined with" chain, then as a list literal ("a list of ..."), then as a list-item-by-position
- * read ("item N in ..." / "the first/last item in ..."), falling back to copying an existing
- * variable's value, and finally to literal text (only when Y doesn't even look like an
- * arithmetic attempt, so a genuine mistake like dividing by zero isn't silently treated as
- * text). Returns true once handled (this includes a recognized-but-invalid list-item access,
- * where a diagnostic is reported instead of silently falling through to a confusing generic
- * "unrecognized instruction" error); false means the caller should leave the line for the page
- * compiler to report as an ordinary unrecognized instruction.
+ * Applies a "The X is Y." assignment: resolves Y as a procedure's result ("the result of ...",
+ * checked first since it's a fixed phrase that can't collide with any other shape), then a
+ * number expression, then a text "joined with" chain, then as a list literal ("a list of ..."),
+ * then as a list-item-by-position read ("item N in ..." / "the first/last item in ..."),
+ * falling back to copying an existing variable's value, and finally to literal text (only when Y
+ * doesn't even look like an arithmetic attempt, so a genuine mistake like dividing by zero isn't
+ * silently treated as text). Returns true once handled (this includes a recognized-but-invalid
+ * list-item access or procedure call, where a diagnostic is reported instead of silently falling
+ * through to a confusing generic "unrecognized instruction" error); false means the caller
+ * should leave the line for the page compiler to report as an ordinary unrecognized instruction.
  */
 function applyAssignment(name: string, rawValue: string, variables: Map<string, VarValue>, lineNumber: number,
-  diagnostics: VisualDiagnostic[]): boolean {
+  diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): boolean {
+  const resultOf = RESULT_OF_RE.exec(rawValue.trim());
+  if (resultOf) {
+    const value = evaluateProcedureResult(resultOf[1]!.trim().toLowerCase(), resultOf[2], rawValue.trim(), lineNumber,
+      variables, diagnostics, functions, callStack);
+    if (value !== undefined) variables.set(name, value);
+    return true; // handled either way -- a failure already reported its own diagnostic
+  }
   const numericValue = evaluateExpression(rawValue, variables);
   if (numericValue !== undefined) {
     variables.set(name, { type: "number", value: numericValue });
@@ -907,7 +999,7 @@ function expandInstruction(instr: string, lineNumber: number, variables: Map<str
   diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): string[] {
   const trimmedInstr = instr.trim();
   const assign = ASSIGN_RE.exec(trimmedInstr);
-  if (assign && applyAssignment(assign[1]!.trim().toLowerCase(), assign[2]!.trim(), variables, lineNumber, diagnostics)) return [];
+  if (assign && applyAssignment(assign[1]!.trim().toLowerCase(), assign[2]!.trim(), variables, lineNumber, diagnostics, functions, callStack)) return [];
   const setItem = SET_LIST_ITEM_RE.exec(trimmedInstr);
   if (setItem) {
     applySetListItem(setItem[1], setItem[2], setItem[3]!.trim(), setItem[4]!.trim(), lineNumber, trimmedInstr, variables, diagnostics);
@@ -1014,7 +1106,7 @@ export function expandMacros(source: string): MacroExpandResult {
     if (assign) {
       const name = assign[1]!.trim().toLowerCase();
       const rawValue = assign[2]!.trim();
-      if (applyAssignment(name, rawValue, variables, lineNumber, diagnostics)) return; // a variable sentence does not render anything by itself
+      if (applyAssignment(name, rawValue, variables, lineNumber, diagnostics, functions, new Set())) return; // a variable sentence does not render anything by itself
       // Doesn't resolve to a known number or variable expression: leave it for the
       // page compiler to report as an ordinary unrecognized instruction.
       output.push(resolveTrailingVariable(rawLine, variables));

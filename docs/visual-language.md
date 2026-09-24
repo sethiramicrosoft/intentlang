@@ -486,6 +486,34 @@ Do sum with scores.
 A call's value can likewise be `item N in <list>` or `the first/last item
 in <list>` directly, passing just that one item rather than the whole list.
 
+**A procedure can return a value**, by having its own body set a variable
+literally named `result` (`The result is ...`), and a caller can use that
+value directly, without a separate `Do ... with ...` sentence: **`the result
+of <name>`** (for a parameterless procedure) or **`the result of <name> with
+<args>`** works anywhere an assignment's value or a call's own argument can
+go:
+
+```text
+To double with n, the result is n times 2
+
+The doubled is the result of double with 5.
+Set the text of message to doubled
+```
+
+A call written this way can itself be nested as another call's own argument
+(`the result of triple with the result of double with 5`), and it
+temporarily shadows an outer variable also named `result` the same way a
+parameter is shadowed — restoring it once the call finishes — so it never
+leaks or clobbers an unrelated variable of the same name. Calling a
+procedure that never sets `the result`, an undefined procedure name, the
+wrong number of values, or a procedure that (directly or indirectly) calls
+itself this way are all reported as the same clear errors an ordinary `Do
+...` call already reports. Using a procedure this way only takes its final
+`result` — any elements its own instructions would otherwise add to the page
+are not added, since there's nowhere for them to go inside an expression;
+its effects on other variables (including list mutations) still apply
+normally.
+
 A variable's value, number or text, can be used anywhere a plain instruction ends
 with `to <name>`, such as `Set the text of points line to total points`. That
 same trailing spot also accepts an arithmetic chain, such as
@@ -535,6 +563,16 @@ offered, never applied silently.
   reported as a clear error rather than guessed at, since there's no
   general notion of "truthy" text in this language. Compare it with the
   ordinary `is equal to ...` form instead.
+- `the result of <name>` / `the result of <name> with <args>` can only be
+  used as a whole assignment value (`The x is the result of ...`) or a
+  whole call argument (`Do y with the result of ...`) — it can't be used
+  inside an If condition, or combined with an arithmetic/text `joined with`
+  chain in the same phrase (`the result of double with 5 plus 1` reads as
+  one call, `double with "5 plus 1"` evaluated as one number, not `(the
+  result of double with 5) plus 1`), for the same reason a call's own
+  single-parameter argument already reads to the end of the line: assign
+  the result to a variable first, then use that variable in the condition
+  or chain.
 - A list variable can be looped over, displayed, copied, measured with
   `the number of items in ...`, read one item at a time by position with
   `item N in ...` / `the first item in ...` / `the last item in ...`, and

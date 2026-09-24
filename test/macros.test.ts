@@ -623,6 +623,83 @@ To b, do a.
 Do a.`, /calls itself/);
 });
 
+test("'the result of <name> with <args>' calls a procedure and uses whatever it sets 'the result' to", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To double with n, the result is n times 2.
+The doubled is the result of double with 5.
+Set the text of message to doubled`);
+  assert.equal(textOf(ir, "message"), "10");
+});
+
+test("'the result of <name>' (no args) works for a zero-parameter procedure", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To greeting, the result is Hello there.
+The greetingText is the result of greeting.
+Set the text of message to greetingText`);
+  assert.equal(textOf(ir, "message"), "Hello there");
+});
+
+test("'the result of <name> with <args>' works for a two-parameter procedure", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To add with a and b, the result is a plus b.
+The total is the result of add with 3 and 4.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "7");
+});
+
+test("'the result of ...' can itself be nested as another procedure call's own argument", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To double with n, the result is n times 2.
+To triple with n, the result is n times 3.
+The value is the result of triple with the result of double with 5.
+Set the text of message to value`);
+  assert.equal(textOf(ir, "message"), "30");
+});
+
+test("'the result of ...' can be used directly as a 'Do ... with ...' call's own argument", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+To double with n, the result is n times 2.
+To shout with n, set the text of message to n.
+Do shout with the result of double with 21.`);
+  assert.equal(textOf(ir, "message"), "42");
+});
+
+test("'the result of ...' temporarily shadows and restores an outer variable literally named 'result'", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The result is untouched.
+To double with n, the result is n times 2.
+The doubled is the result of double with 5.
+Set the text of message to result`);
+  assert.equal(textOf(ir, "message"), "untouched");
+});
+
+test("'the result of <name>' on a procedure that never sets 'the result' is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+To sayHi, set the text of message to hi.
+The x is the result of sayHi.
+Set the text of message to x`, /doesn't set/);
+});
+
+test("'the result of <name>' on an unknown procedure name is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+The x is the result of missingProc with 1.
+Set the text of message to x`, /was never defined/);
+});
+
+test("'the result of <name> with <args>' with the wrong number of values is a clear error", () => {
+  invalid(`Add a paragraph called message inside page
+To add with a and b, the result is a plus b.
+The x is the result of add with 3.
+Set the text of message to x`, /needs 2 values, but this call gives 1/);
+});
+
+test("a procedure that calls itself through 'the result of ...' is a clear error instead of hanging the compiler", () => {
+  invalid(`Add a paragraph called message inside page
+To loopy with n, the result is the result of loopy with n.
+The x is the result of loopy with 1.
+Set the text of message to x`, /calls itself/);
+});
+
 test("defining the same procedure name twice is a clear error", () => {
   invalid(`Add a paragraph called message inside page
 To greet, set the text of message to hello
