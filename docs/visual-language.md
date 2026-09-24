@@ -179,10 +179,18 @@ runtime conditional, with an optional else branch, so a click can behave
 differently depending on what a visitor actually typed) — the right-hand
 side of that comparison can be a plain number or another live input's value
 (`if the value of a is greater than the value of b, ...`), for comparing
-two things a visitor actually typed against each other. The same `if` can
+two things a visitor actually typed against each other. A sixth form,
+`if the value of <input name> is between <low> and <high>, <one
+instruction>` (also optionally followed by `otherwise <one instruction>`),
+checks a fixed, inclusive range in one step instead of writing two separate
+comparisons — both ends must be plain numbers known at compile time (not
+another live input's value), and a backwards range (a low end greater than
+the high end) is a clear compile-time error rather than a condition that's
+silently always false. The same `if` can
 also compare live text instead of numbers, with `is`, `is not`, `contains`,
 `starts with`, or `ends with` (`if the value of message contains urgent,
-...`) — the numeric comparisons are always tried first, so a phrase like
+...`) — the numeric comparisons (including `is between ... and ...`) are
+always tried first, so a phrase like
 `is greater than 50` still runs the numeric check, while anything else after
 `is`/`is not` (including a whole phrase) is compared as literal text; the
 right-hand side of a text comparison can likewise be a plain word/phrase or
@@ -322,6 +330,15 @@ Set the text of result to none
 Add a button called check
 Set the text of check to Check
 When the check is clicked, if the value of score field is greater than 50, set the text of result to high otherwise set the text of result to low
+```
+
+```text
+Add a text input called score field
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is between 1 and 10, set the text of result to valid otherwise set the text of result to out of range
 ```
 
 ```text

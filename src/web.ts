@@ -198,18 +198,24 @@ export function compilePageSource(source: string): PageCompileResult {
     // comparison (group 3 or group 4) is either a literal number or another live input's
     // value, checked as alternatives in the same capture position.
     const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|equal to)\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+(?:\.\d+)?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
+    // A fixed-range check, inclusive of both ends -- both ends are plain numbers known at
+    // compile time (not a live input's value, so a range can never be inverted or moved by
+    // user input), and checked before ifText below so "is between 1 and 10" is never
+    // misread as a literal-text comparison against the whole phrase "between 1 and 10".
+    const ifBetween = !ifValue ?
+      /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+between\s+(-?\d+(?:\.\d+)?)\s+and\s+(-?\d+(?:\.\d+)?)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // Only tried when the numeric form above doesn't match (e.g. "is red" rather than
     // "is greater than 5"), so a numeric comparison is never misread as a text one. "is not"
     // must come before the plain "is" in the alternation, or "is not red" would match "is"
     // with a leftover "not red" as the compared text instead of matching "is not" whole.
-    const ifText = !ifValue ? /^if\s+the\s+value\s+of\s+(.+?)\s+(is not|is|contains|starts with|ends with)\s+(?:the\s+value\s+of\s+(.+?)|(.+?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
+    const ifText = !ifValue && !ifBetween ? /^if\s+the\s+value\s+of\s+(.+?)\s+(is not|is|contains|starts with|ends with)\s+(?:the\s+value\s+of\s+(.+?)|(.+?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // A checkbox/radio button's state lives in ".checked", not ".value" (its ".value" is a
     // fixed attribute, never reflecting whether it's ticked) -- this is a separate condition
     // form for that reason. The negative lookahead keeps it from ever matching "if the value
     // of X is checked, ..." (which isn't valid there, since "checked" isn't a recognized
     // ifValue/ifText comparison word either, and would otherwise misread "the value of X"
     // itself as the checkbox's name).
-    const ifChecked = !ifValue && !ifText ?
+    const ifChecked = !ifValue && !ifBetween && !ifText ?
       /^if\s+(?!the\s+value\s+of\s)(.+?)\s+is\s+(checked|not checked)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // "Repeat" needs no shadowing precaution of its own -- no other pattern starts with the
     // word "repeat" -- but like "if", its own trailing instruction is compiled recursively.
@@ -285,6 +291,31 @@ export function compilePageSource(source: string): PageCompileResult {
         elseClause = `else{${elseInner}}`;
       }
       return `if((Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)${operator}${rightSide}){${inner}}${elseClause}`;
+    } else if (ifBetween) {
+      const source = resolve(ifBetween[1]!, index);
+      if (!source) return undefined;
+      if (!hasReadableValue(source.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      const low = Number(ifBetween[2]);
+      const high = Number(ifBetween[3]);
+      if (low > high) {
+        report(index, `The range "between ${ifBetween[2]} and ${ifBetween[3]}" is backwards.`,
+          `Put the smaller number first, such as "is between ${ifBetween[3]} and ${ifBetween[2]}".`);
+        return undefined;
+      }
+      const inner = compileClickPart(ifBetween[4]!.trim(), index);
+      if (inner === undefined) return undefined;
+      let elseClause = "";
+      if (ifBetween[5]) {
+        const elseInner = compileClickPart(ifBetween[5].trim(), index);
+        if (elseInner === undefined) return undefined;
+        elseClause = `else{${elseInner}}`;
+      }
+      const value = `(Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)`;
+      return `if(${value}>=${JSON.stringify(low)}&&${value}<=${JSON.stringify(high)}){${inner}}${elseClause}`;
     } else if (ifText) {
       const source = resolve(ifText[1]!, index);
       if (!source) return undefined;
@@ -479,6 +510,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"hide ...", "show ...", "toggle the visibility of ...", "focus ...", ` +
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to (a number or the value of ...), ... otherwise ...", ` +
+      `"if the value of ... is between ... and ... (two numbers), ... otherwise ...", ` +
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
       `"if ... is/is not checked, ... otherwise ...", ` +
       `or "repeat ... times, ...".`);

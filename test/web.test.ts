@@ -480,6 +480,33 @@ Set the text of go to Go
 When the go is clicked, if the value of n resembles 5, set the text of out to hmm`, /is not one of the supported click instructions/);
 });
 
+test("a click's if-conditional can check a fixed inclusive range with \"is between ... and ...\"", () => {
+  const withOtherwise = page(`Add a text input called score field
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is between 1 and 10, set the text of result to valid otherwise set the text of result to out of range`);
+  const script = /<script>(.+?)<\/script>/.exec(withOtherwise.html)![1]!;
+  assert.match(script, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>=1&&\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)<=10\)\{document\.getElementById\("element-2"\)\.textContent="valid";\}else\{document\.getElementById\("element-2"\)\.textContent="out of range";\}/);
+
+  // A backwards range (low end greater than high end) is a clear compile-time error, not a
+  // silently-always-false condition.
+  invalid(`Add a text input called score field
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score field is between 10 and 1, set the text of result to valid`, /range .*between 10 and 1.* is backwards/);
+
+  // The target must still be an input/text box/dropdown, same as every other "the value
+  // of ..." reference.
+  invalid(`Add a paragraph called label
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of label is between 1 and 10, set the text of result to valid`, /Only an input, a text box, or a dropdown has a value to read/);
+});
+
 test("a click's if-conditional can have an otherwise (else) branch, which itself can be any supported instruction", () => {
   const basic = page(`Add a text input called score field
 Add a paragraph called result
