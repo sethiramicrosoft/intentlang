@@ -198,6 +198,14 @@ export function compilePageSource(source: string): PageCompileResult {
     // must come before the plain "is" in the alternation, or "is not red" would match "is"
     // with a leftover "not red" as the compared text instead of matching "is not" whole.
     const ifText = !ifValue ? /^if\s+the\s+value\s+of\s+(.+?)\s+(is not|is|contains|starts with|ends with)\s+(?:the\s+value\s+of\s+(.+?)|(.+?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
+    // A checkbox/radio button's state lives in ".checked", not ".value" (its ".value" is a
+    // fixed attribute, never reflecting whether it's ticked) -- this is a separate condition
+    // form for that reason. The negative lookahead keeps it from ever matching "if the value
+    // of X is checked, ..." (which isn't valid there, since "checked" isn't a recognized
+    // ifValue/ifText comparison word either, and would otherwise misread "the value of X"
+    // itself as the checkbox's name).
+    const ifChecked = !ifValue && !ifText ?
+      /^if\s+(?!the\s+value\s+of\s)(.+?)\s+is\s+(checked|not checked)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // "Repeat" needs no shadowing precaution of its own -- no other pattern starts with the
     // word "repeat" -- but like "if", its own trailing instruction is compiled recursively.
     const repeat = /^repeat\s+(-?\d+)\s+times?\s*,\s*(.+)$/i.exec(part);
@@ -223,6 +231,9 @@ export function compilePageSource(source: string): PageCompileResult {
     const setValueFromValue = /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+the\s+value\s+of\s+(.+)$/i.exec(part);
     const setValue = !setValueFromValue ? /^set\s+the\s+value\s+of\s+(.+?)\s+to\s+(.+)$/i.exec(part) : null;
     const clearValue = /^clear\s+the\s+value\s+of\s+(.+)$/i.exec(part);
+    // Toggles a checkbox/radio button's own ".checked" state directly.
+    const checkBox = /^check\s+(.+)$/i.exec(part);
+    const uncheckBox = /^uncheck\s+(.+)$/i.exec(part);
     if (ifValue) {
       const source = resolve(ifValue[1]!, index);
       if (!source) return undefined;
@@ -286,6 +297,24 @@ export function compilePageSource(source: string): PageCompileResult {
         elseClause = `else{${elseInner}}`;
       }
       return `if(${textComparisons[op]!(left, rightSide)}){${inner}}${elseClause}`;
+    } else if (ifChecked) {
+      const source = resolve(ifChecked[1]!, index);
+      if (!source) return undefined;
+      if (!hasCheckedState(source)) {
+        report(index, `Only a checkbox or a radio button has a checked state, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add a checkbox called ${source.name} instead, such as Add a checkbox called ${source.name}.`);
+        return undefined;
+      }
+      const negate = ifChecked[2]!.toLowerCase() === "not checked" ? "!" : "";
+      const inner = compileClickPart(ifChecked[3]!.trim(), index);
+      if (inner === undefined) return undefined;
+      let elseClause = "";
+      if (ifChecked[4]) {
+        const elseInner = compileClickPart(ifChecked[4].trim(), index);
+        if (elseInner === undefined) return undefined;
+        elseClause = `else{${elseInner}}`;
+      }
+      return `if(${negate}document.getElementById(${JSON.stringify(source.id)}).checked){${inner}}${elseClause}`;
     } else if (repeat) {
       const count = Number(repeat[1]);
       if (count < 0) {
@@ -382,6 +411,16 @@ export function compilePageSource(source: string): PageCompileResult {
         return undefined;
       }
       return `document.getElementById(${JSON.stringify(target.id)}).value="";`;
+    } else if (checkBox || uncheckBox) {
+      const match = checkBox ?? uncheckBox!;
+      const target = resolve(match[1]!, index);
+      if (!target) return undefined;
+      if (!hasCheckedState(target)) {
+        report(index, `Only a checkbox or a radio button has a checked state, and ${target.name} is a ${englishName(target.tag)}.`,
+          `Add a checkbox called ${target.name} instead, such as Add a checkbox called ${target.name}.`);
+        return undefined;
+      }
+      return `document.getElementById(${JSON.stringify(target.id)}).checked=${checkBox ? "true" : "false"};`;
     }
     report(index, `"${part}" is not one of the supported click instructions.`,
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
@@ -389,15 +428,21 @@ export function compilePageSource(source: string): PageCompileResult {
       `"subtract ... from the text of ...", "add the value of ... to the text of ...", ` +
       `"subtract the value of ... from the text of ...", "set the value of ... to ...", ` +
       `"set the value of ... to the value of ...", "clear the value of ...", ` +
+      `"check ..."/"uncheck ..." for a checkbox or radio button, ` +
       `"if the value of ... is greater than/less than/` +
       `at least/at most/equal to (a number or the value of ...), ... otherwise ...", ` +
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
+      `"if ... is/is not checked, ... otherwise ...", ` +
       `or "repeat ... times, ...".`);
     return undefined;
   }
   /** Which element tags have a live, readable ".value" in the DOM. */
   function hasReadableValue(tag: string): boolean {
     return tag === "input" || tag === "textarea" || tag === "select";
+  }
+  /** A checkbox or radio button has a live, readable/writable ".checked" state. */
+  function hasCheckedState(node: PageElement): boolean {
+    return node.tag === "input" && (node.attributes.type === "checkbox" || node.attributes.type === "radio");
   }
   function dequoteRuntime(text: string): string {
     return /^"([\s\S]*)"$/.exec(text.trim())?.[1] ?? text.trim();

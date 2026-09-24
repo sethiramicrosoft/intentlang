@@ -191,7 +191,17 @@ name> to the value of <other input name>` (a live copy from one input to
 another) preset a field, and `clear the value of <input name>` resets it to
 empty — handy for clearing a form after its value has already been read
 into a result. The target of `set/clear the value of ...` must likewise be
-an input, a text box, or a dropdown. The compiler turns
+an input, a text box, or a dropdown. A checkbox or radio button doesn't have
+a meaningful `.value` (it's a fixed attribute, never reflecting whether it's
+actually ticked) — it has a `.checked` state instead, so it gets its own
+forms: `if <checkbox name> is checked, <one instruction>` (optionally with
+`the` before the name, and optionally followed by `otherwise <one
+instruction>`) branches on whether it's ticked, `if <checkbox name> is not
+checked, ...` branches on the opposite, and `check <checkbox name>` /
+`uncheck <checkbox name>` tick or untick it directly from a click. The
+target of any of these must be a checkbox or a radio button specifically —
+using them on a text input or any other element is a clear error. The
+compiler turns
 every `When ... is clicked` sentence in a page into ONE small, entirely
 compiler-generated script (never containing any user-authored markup,
 attribute, or script tag — only compiler-fixed code with your text safely
@@ -289,6 +299,15 @@ Set the text of result to none
 Add a button called send
 Set the text of send to Send
 When the send is clicked, set the text of result to the value of message and then clear the value of message
+```
+
+```text
+Add a checkbox called agree
+Add a paragraph called result
+Set the text of result to none
+Add a button called submit
+Set the text of submit to Submit
+When the submit is clicked, if agree is checked, set the text of result to thanks otherwise set the text of result to please agree first
 ```
 
 ```text

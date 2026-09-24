@@ -346,6 +346,36 @@ When the send is clicked, set the text of result to the value of message and the
   } finally { await browser.close(); }
 });
 
+test("a click can check/uncheck a real checkbox and branch on its checked state in a real browser", async () => {
+  const compiled = compilePageSource(`Add a checkbox called agree
+Add a paragraph called result
+Set the text of result to none
+Add a button called submit
+Set the text of submit to Submit
+Add a button called turn on
+Set the text of turn on to Turn on
+When the submit is clicked, if agree is checked, set the text of result to yes otherwise set the text of result to no
+When the turn on is clicked, check agree`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-3").click(); // submit, unchecked
+    assert.equal(await page.locator("#element-2").textContent(), "no");
+    await page.locator("#element-1").check(); // a real user click on the checkbox itself
+    await page.locator("#element-3").click(); // submit, now checked
+    assert.equal(await page.locator("#element-2").textContent(), "yes");
+    await page.locator("#element-1").uncheck();
+    await page.locator("#element-4").click(); // "check agree" instruction, driven by JS
+    assert.equal(await page.locator("#element-1").isChecked(), true);
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can repeat an instruction the correct number of times, including nested repeats, in a real browser", async () => {
   const compiled = compilePageSource(`Add a paragraph called counter
 Set the text of counter to 0

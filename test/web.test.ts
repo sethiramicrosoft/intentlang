@@ -616,6 +616,76 @@ Set the text of copy to Copy
 When the copy is clicked, set the value of b to the value of missing`, /There is no earlier element called missing/);
 });
 
+test("a click can check/uncheck a checkbox or radio button and branch on its checked state", () => {
+  const branch = page(`Add a checkbox called agree
+Add a paragraph called result
+Set the text of result to none
+Add a button called submit
+Set the text of submit to Submit
+When the submit is clicked, if agree is checked, set the text of result to yes otherwise set the text of result to no`);
+  const branchScript = /<script>(.+?)<\/script>/.exec(branch.html)![1]!;
+  assert.match(branchScript, /if\(document\.getElementById\("element-1"\)\.checked\)\{document\.getElementById\("element-2"\)\.textContent="yes";\}else\{document\.getElementById\("element-2"\)\.textContent="no";\}/);
+
+  // "the" is optional before the checkbox's name, and "is not checked" negates the condition.
+  const negated = page(`Add a checkbox called agree
+Add a paragraph called result
+Set the text of result to none
+Add a button called submit
+Set the text of submit to Submit
+When the submit is clicked, if the agree is not checked, set the text of result to please agree`);
+  const negatedScript = /<script>(.+?)<\/script>/.exec(negated.html)![1]!;
+  assert.match(negatedScript, /if\(!document\.getElementById\("element-1"\)\.checked\)/);
+
+  // A radio button has the same checked state as a checkbox.
+  const radio = page(`Add a radio button called opt a
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if opt a is checked, set the text of result to chosen`);
+  const radioScript = /<script>(.+?)<\/script>/.exec(radio.html)![1]!;
+  assert.match(radioScript, /if\(document\.getElementById\("element-1"\)\.checked\)/);
+
+  const toggled = page(`Add a checkbox called agree
+Add a button called turn on
+Set the text of turn on to Turn on
+Add a button called turn off
+Set the text of turn off to Turn off
+When the turn on is clicked, check agree
+When the turn off is clicked, uncheck agree`);
+  const toggledScript = /<script>(.+?)<\/script>/.exec(toggled.html)![1]!;
+  assert.match(toggledScript, /document\.getElementById\("element-1"\)\.checked=true;/);
+  assert.match(toggledScript, /document\.getElementById\("element-1"\)\.checked=false;/);
+
+  // "if the value of X is checked, ..." is NOT read as a checkbox condition -- the negative
+  // lookahead keeps ifChecked from matching it, and since "checked" isn't a recognized
+  // numeric/text comparison word either... except "is" is a text-equality comparison against
+  // any literal phrase, so this is actually still valid: a text comparison against "checked".
+  const textEquality = page(`Add a text input called n
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of n is checked, set the text of result to yes`);
+  const textEqualityScript = /<script>(.+?)<\/script>/.exec(textEquality.html)![1]!;
+  assert.match(textEqualityScript, /if\(String\(document\.getElementById\("element-1"\)\.value\)==="checked"\)/);
+
+  invalid(`Add a text input called n
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if n is checked, set the text of result to yes`, /Only a checkbox or a radio button has a checked state/);
+
+  invalid(`Add a text input called n
+Add a button called go
+Set the text of go to Go
+When the go is clicked, check n`, /Only a checkbox or a radio button has a checked state/);
+
+  invalid(`Add a text input called n
+Add a button called go
+Set the text of go to Go
+When the go is clicked, uncheck n`, /Only a checkbox or a radio button has a checked state/);
+});
+
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
   const result = page(`Add an image called photo
 Set the source of photo to https://example.com/MyPhoto.png
