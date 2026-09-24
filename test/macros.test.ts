@@ -94,6 +94,37 @@ For each color in red, green and blue, set the text of swatch color to color`);
   assert.equal(textOf(ir, "swatch blue"), "blue");
 });
 
+test("For each's loop word can be used as a nested If condition's own subject", () => {
+  const { ir } = page(`Add a bullet list called colors inside page
+For each color in red, green and blue, if the color is equal to green, add a list item called swatch color inside colors`);
+  assert.equal(ir.elements.some((element) => element.name === "swatch red"), false);
+  assert.equal(ir.elements.some((element) => element.name === "swatch green"), true);
+  assert.equal(ir.elements.some((element) => element.name === "swatch blue"), false);
+});
+
+test("For each's loop word works as an If subject in a compound 'and'/'or' condition, on either clause", () => {
+  const { ir } = page(`Add a bullet list called colors inside page
+For each color in red, green and blue, if the color is equal to red or the color is equal to blue, add a list item called swatch color inside colors`);
+  assert.equal(ir.elements.some((element) => element.name === "swatch red"), true);
+  assert.equal(ir.elements.some((element) => element.name === "swatch green"), false);
+  assert.equal(ir.elements.some((element) => element.name === "swatch blue"), true);
+});
+
+test("For each's loop word still builds a differently-named element per iteration when used alongside an If subject in the same instruction", () => {
+  const { ir } = page(`Add a bullet list called colors inside page
+For each color in red, green and blue, if the color is equal to green, add a list item called swatch color inside colors
+For each color in red, green and blue, if the color is equal to green, set the text of swatch color to color`);
+  assert.equal(textOf(ir, "swatch green"), "green");
+});
+
+test("For each's numeric loop word compares correctly (as a number, not alphabetically) when used as an If subject", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The last match is nothing.
+For each amount in 1, 9 and 10, if the amount is greater than 5, the last match is amount
+Set the text of message to last match`);
+  assert.equal(textOf(ir, "message"), "10");
+});
+
 test("For each accepts a two-item list without a comma before and", () => {
   const { ir } = page(`Add a bullet list called colors inside page
 For each color in red and blue, add a list item called swatch color inside colors`);

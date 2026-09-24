@@ -513,9 +513,27 @@ function resolveTruthy(subject: VarValue, rawSubject: string, lineNumber: number
   return undefined;
 }
 
+/**
+ * Replaces every whole-word occurrence of the For-each loop word with the current item's
+ * literal text -- except when that occurrence is the subject of an If/Otherwise-if condition
+ * ("if the color is ..." or the bare-boolean "if the color, ..."/"if not the color, ..."),
+ * which is left alone so the condition parser resolves it as the loop word's real variable
+ * binding (see evaluateForEach) instead of a literal word that could never be a declared
+ * variable. This is what lets "For each color in red, green and blue, if the color is equal to
+ * green, ..." work, while "add a list item called result color inside fixtures" still builds a
+ * differently-named element per iteration exactly as before.
+ */
 function substituteWord(text: string, word: string, replacement: string): string {
   const escaped = word.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return text.replace(new RegExp(`\\b${escaped}\\b`, "gi"), replacement);
+  const re = new RegExp(`\\b${escaped}\\b`, "gi");
+  return text.replace(re, (match, offset: number, full: string) => {
+    const before = full.slice(0, offset);
+    if (/\b(?:if|otherwise\s+if|and|or)\s+(?:not\s+)?the\s*$/i.test(before)) {
+      const after = full.slice(offset + match.length);
+      if (/^\s+is\b/i.test(after) || /^\s*,/.test(after)) return match;
+    }
+    return replacement;
+  });
 }
 
 /** Closest known variable name to an unresolved reference, for a "did you mean" suggestion. */
@@ -788,8 +806,21 @@ function evaluateForEach(forEachMatch: ForEachMatch, lineNumber: number, variabl
     return [];
   }
   const results: string[] = [];
+  const loopKey = loopVar.trim().toLowerCase();
   for (const item of items) {
-    results.push(...expandChain(substituteWord(instruction, loopVar, item), lineNumber, variables, diagnostics, functions, callStack));
+    // Bind the loop word as a real variable for the duration of this iteration too (shadowing
+    // and restoring any outer variable of the same name, the same as a procedure parameter),
+    // so an If condition can use the loop word as its subject (e.g. "if the color is equal to
+    // green") -- substituteWord below still handles literal name-building uses (e.g. "add a
+    // list item called result color"), but skips the specific position where the word is an
+    // If/Otherwise-if condition's subject, leaving it as a real variable reference there.
+    const previous = variables.get(loopKey);
+    variables.set(loopKey, /^-?\d+(?:\.\d+)?$/.test(item) ? { type: "number", value: Number(item) } : { type: "text", value: item });
+    try {
+      results.push(...expandChain(substituteWord(instruction, loopVar, item), lineNumber, variables, diagnostics, functions, callStack));
+    } finally {
+      if (previous === undefined) variables.delete(loopKey); else variables.set(loopKey, previous);
+    }
   }
   return results;
 }

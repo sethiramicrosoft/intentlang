@@ -596,19 +596,22 @@ offered, never applied silently.
   take a list as any one of them too, as long as the argument list's other
   values don't themselves need commas or "and" to separate them (the same
   word-splitting rule a For each's own inline list already follows).
-- Inside a For each's own repeated instruction, the loop word is a literal
-  find-and-replace over the instruction's text (not a real variable) — this
-  is deliberate, since it's what lets a loop build a differently-named
-  element per iteration (`For each opponent in ..., add a list item called
-  result opponent inside fixtures`). One consequence: comparing the loop
-  word itself in a nested If condition (`If the color is equal to green,
-  ...`) doesn't work when the loop is over a word list, because by the time
-  the condition is evaluated the loop word has already been replaced by its
-  item's actual text (e.g. "red"), which then reads as an undeclared
-  variable named "red" rather than a comparison. Compare a different,
-  already-declared variable in the nested If instead, or use a numeric
-  counting loop (`For each round from 1 to 5, ...`), where the substituted
-  word is a plain number and this doesn't arise.
+- Inside a For each's own repeated instruction, the loop word is replaced
+  with each item's literal text everywhere it's used to build a
+  differently-named element (`For each opponent in ..., add a list item
+  called result opponent inside fixtures`) — but it's also bound as a real
+  variable for that same iteration, so it can be compared directly in a
+  nested If condition too (`For each color in red, green and blue, if the
+  color is equal to green, ...`), including inside a compound `and`/`or`
+  condition, and even in the same instruction as a differently-named
+  element (`if the color is equal to green, add a list item called swatch
+  color inside colors`). A numeric loop (`For each amount in 1, 9 and 10,
+  ...` or a counting loop like `For each round from 1 to 5, ...`) compares
+  as a real number, not alphabetically, when used this way. This recognition
+  only applies when the loop word is the condition's whole subject on its
+  own (`if the color is ...`) — if it's part of a longer subject phrase
+  (`if the favorite color is ...`), the loop word inside it is still
+  replaced literally, the same as everywhere else in the instruction.
 - A parenthesis-free `a list of ...` value is recognized by its exact
   leading words, the same way `joined with` and the arithmetic operator
   words are — so a piece of literal text that itself happens to start with
