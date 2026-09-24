@@ -1,0 +1,8 @@
+application TaskBoard
+
+a Task has a required title as text length between 1 and 200
+a Task has a status as text default "open"
+
+action close a Task
+  require status is not "closed" otherwise "Task is already closed"
+  set status to "closed"

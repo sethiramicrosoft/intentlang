@@ -1,0 +1,68 @@
+Add a paragraph called title
+Set the text of title to Focus Board
+
+Add a section called board screen
+Add a section called about screen
+
+Add a paragraph called banner inside board screen
+Set the text of banner to Live tasks from a real generated backend
+
+Add a paragraph called celebration inside board screen
+Set the text of celebration to Task added!
+
+Add a text input called task title inside board screen
+Add a paragraph called char count inside board screen
+Set the text of char count to 0
+
+Add a button called add task inside board screen
+Set the text of add task to Add task
+
+Add a paragraph called task error inside board screen
+
+Add a bullet list called task list inside board screen
+
+Add a checkbox called show tips inside board screen
+Add a paragraph called tips inside board screen
+Set the text of tips to Tip: press Add task after typing a title above.
+
+Add a number input called batch count inside board screen
+Set the value of batch count to 3
+Add a button called add batch inside board screen
+Set the text of add batch to Add sample tasks
+
+Add a paragraph called focus roll inside board screen
+Add a button called roll focus inside board screen
+Set the text of roll focus to Suggest a focus number
+
+Add a button called open about inside board screen
+Set the text of open about to About this board
+
+Add a paragraph called about text inside about screen
+Set the text of about text to This bulleted list is fetched live from a real generated CRUD backend, not sample data.
+Add a button called close about inside about screen
+Set the text of close about to Back to board
+
+When the page loads, hide about screen
+When the page loads, hide celebration
+When the page loads, disable add task
+When the page loads, hide tips
+When the page loads, list title of each record at /tasks into task list otherwise set the text of task error to Could not load tasks yet
+
+When the task title changes, set the text of char count to the number of characters in the value of task title
+When the task title changes, if the value of task title has at least 1 characters, enable add task otherwise disable add task
+
+When the add task is clicked, create a record at /tasks with title set to the value of task title and then list title of each record at /tasks into task list otherwise set the text of task error to Could not add that task
+When the add task is clicked, clear the value of task title
+When the add task is clicked, set the text of char count to 0
+When the add task is clicked, disable add task
+When the add task is clicked, show celebration
+
+When the show tips changes, toggle the visibility of tips
+
+When the add batch is clicked, repeat the value of batch count times, create a record at /tasks with title set to the value of batch count
+When the add batch is clicked, list title of each record at /tasks into task list otherwise set the text of task error to Could not refresh tasks
+
+When the roll focus is clicked, set the text of focus roll to a random number from 1 to 45
+
+When the open about is clicked, go to about screen
+When the close about is clicked, go to board screen

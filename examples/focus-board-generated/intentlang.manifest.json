@@ -1,0 +1,63 @@
+{
+  "compilerVersion": "0.8.0-alpha.0",
+  "ir": {
+    "actions": [
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "closed"
+          }
+        ],
+        "entityId": "task",
+        "id": "task-close",
+        "name": "close",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Task is already closed",
+            "operator": "is not",
+            "value": "closed"
+          }
+        ]
+      }
+    ],
+    "application": {
+      "id": "taskboard",
+      "name": "TaskBoard"
+    },
+    "entities": [
+      {
+        "fields": [
+          {
+            "id": "task-title",
+            "length": {
+              "max": 200,
+              "min": 1
+            },
+            "name": "title",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "open",
+            "id": "task-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "task",
+        "name": "Task"
+      }
+    ],
+    "permissions": [],
+    "relationships": [],
+    "roles": [],
+    "schemaVersion": "0.5.0"
+  },
+  "irFingerprint": "sha256:6d0b17a9e8acbeb5d9602e7832bdf71953beb972f1b351e30938672cf2bb88b2",
+  "schemaVersion": "0.5.0"
+}

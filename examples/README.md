@@ -112,6 +112,34 @@ Slide the text from bottom to top over 8 seconds
 Open the HTML to see the movement; the image above is a still frame. Reload to
 replay. Movement is disabled when your operating system requests reduced motion.
 
+## Focus Board
+
+A small task board that combines both IntentLang pipelines in one app: a
+generated full-stack CRUD backend (`focus-board.intent` →
+`focus-board-generated/`) and a static click-runtime page
+(`focus-board.visual.intent` → `focus-board.html`) that reads and writes
+real `Task` records against that backend over HTTP — no handwritten
+JavaScript on either side.
+
+![Focus Board's actual output: a task title field, a live character count, an add-task form, and a batch-created task list](focus-board.png)
+
+**[Entity source](focus-board.intent)** ·
+**[Page source](focus-board.visual.intent)** ·
+**[HTML file](focus-board.html)** ·
+**[Generated backend](focus-board-generated/)**
+
+The page reads its task list from a running backend and writes new tasks
+back to it, using the same closed instruction set as the other examples:
+
+```text
+list title, status of each record at /tasks into task list otherwise show empty state
+create a record at /tasks with title set to the value of new task title, and status set to open otherwise show add error
+```
+
+The `focus-board-generated/` directory is a committed, read-only snapshot
+of what `intentlang generate examples/focus-board.intent` produces — see
+its own README for the full artifact table and how to run it locally.
+
 ## Edit and regenerate
 
 To edit any example in the playground, run `npm run sample:studio`, open

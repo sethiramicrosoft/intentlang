@@ -485,6 +485,41 @@ textarea:focus-visible,
   line-height: inherit;
 }
 
+/* IntelliSense completion popup */
+.completion-popup {
+  position: fixed;
+  z-index: 5000;
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border-strong);
+  border-radius: 6px;
+  box-shadow: var(--cp-shadow);
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: "Cascadia Code", "Fira Mono", "Consolas", "Courier New", monospace;
+  font-size: 12.5px;
+  min-width: 220px;
+  max-width: 520px;
+  padding: 4px 0;
+}
+.completion-item {
+  padding: 4px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--cp-text);
+}
+.completion-item .completion-kind {
+  float: right;
+  font-size: 10px;
+  color: var(--cp-text-muted);
+  margin-left: 12px;
+}
+.completion-item.active,
+.completion-item:hover {
+  background: var(--cp-accent-soft);
+}
+
 /* Status bar */
 #status-bar {
   padding: 4px 12px;
@@ -1227,6 +1262,300 @@ export const STUDIO_JS = `
   var debounceTimer = null;
   var DEBOUNCE_MS = 500;
 
+  // ── IntelliSense (predictive completion) ─────────────────────────────────────
+
+  var INSTRUCTION_TEMPLATES = [
+    // Application / entity language
+    'application ',
+    'authentication uses User identified by email',
+    'role Administrator',
+    'role Member',
+    'a User has a required name as text',
+    'a User has a required unique email as text length between 1 and 320',
+    'a User has a required name as text length between 1 and 200',
+    'each  belongs to a  as  on delete cascade',
+    'each  belongs to a  as  on delete restrict',
+    'action ',
+    'require  is  otherwise ""',
+    'require  is not  otherwise ""',
+    'set  to ""',
+    'allow  to provision accounts',
+    'allow  to create ',
+    'allow  to read ',
+    'allow  to update ',
+    'allow  to run  on ',
+    'allow  to read  where self',
+    'allow  to create  with owner as self',
+    // Page / click-runtime language: element declarations
+    'Add a paragraph called ',
+    'Add a button called ',
+    'Add a text input called ',
+    'Add a number input called ',
+    'Add a checkbox called ',
+    'Add a radio button called ',
+    'Add a dropdown called ',
+    'Add a bullet list called ',
+    'Add a numbered list called ',
+    'Add a section called ',
+    'Add a slider called ',
+    'Add an image called ',
+    // Page language: styling / text
+    'Set the text of  to ',
+    'Set the value of  to ',
+    'Set the min of  to ',
+    'Set the max of  to ',
+    'Set the style width of  to ',
+    'Set the accent color of  to ',
+    'Set the color of  to ',
+    'Set the background color of  to ',
+    'Set the popover target of  to ',
+    'Clear the value of ',
+    // Page language: visibility / state
+    'Hide ',
+    'Show ',
+    'Disable ',
+    'Enable ',
+    'Focus ',
+    'Toggle the visibility of ',
+    'Check ',
+    'Uncheck ',
+    'Toggle whether  is checked',
+    'Go to ',
+    'Move  from left to right over  seconds',
+    'Move  from top to bottom over  seconds',
+    // Page language: event triggers
+    'When the page loads, ',
+    'When the  is clicked, ',
+    'When the  changes, ',
+    // Page language: conditionals / loops
+    'if the value of  is greater than , otherwise ',
+    'if the value of  is at least , otherwise ',
+    'if the value of  is between  and , otherwise ',
+    'if the value of  has at least  characters, otherwise ',
+    'if the value of  is , otherwise ',
+    'if  is checked, otherwise ',
+    'repeat  times, ',
+    'repeat the value of  times, ',
+    // Page language: backend integration
+    'fetch the text at / into the text of  otherwise ',
+    'list  of each record at / into  otherwise ',
+    'create a record at / with  set to the value of  otherwise ',
+    'set the text of  to a random number from  to ',
+    'set the text of  to the number of characters in the value of ',
+    'set the text of  to the value of ',
+    'set the text of  to the selected label of '
+  ];
+
+  var COMPLETION_ANCHORS = [
+    ' the visibility of ', ' the value of ', ' the text of ', ' the min of ', ' the max of ',
+    ' the style width of ', ' the accent color of ', ' the color of ', ' the background color of ',
+    ' the popover target of ', ' of ', ' called ', 'When the ', 'Hide ', 'Show ', 'Disable ',
+    'Enable ', 'Focus ', 'Check ', 'Uncheck ', 'Go to ', 'Move ', 'if ', 'if the ', ' is checked the same as ',
+    ' checked the same as '
+  ];
+
+  var completionState = { open: false, items: [], activeIndex: 0, popup: null };
+
+  function ensureCompletionPopup() {
+    if (completionState.popup) return completionState.popup;
+    var popup = document.createElement('div');
+    popup.className = 'completion-popup';
+    popup.setAttribute('role', 'listbox');
+    popup.setAttribute('aria-label', 'Suggestions');
+    popup.hidden = true;
+    document.body.appendChild(popup);
+    completionState.popup = popup;
+    return popup;
+  }
+
+  function collectDeclaredNames(source) {
+    var names = [];
+    var seen = {};
+    var re = /\\bcalled[ \\t]+([a-zA-Z][a-zA-Z0-9]*(?: [a-zA-Z][a-zA-Z0-9]*)*)/g;
+    var match;
+    while ((match = re.exec(source))) {
+      var raw = match[1];
+      // Trim trailing keywords that are not part of the name, e.g. "task title inside board screen"
+      var stopWords = [' inside ', ' outside '];
+      for (var i = 0; i < stopWords.length; i++) {
+        var idx = raw.toLowerCase().indexOf(stopWords[i]);
+        if (idx !== -1) raw = raw.slice(0, idx);
+      }
+      raw = raw.trim();
+      if (raw && !seen[raw.toLowerCase()]) {
+        seen[raw.toLowerCase()] = true;
+        names.push(raw);
+      }
+    }
+    return names;
+  }
+
+  function computeCompletions(source, caretPos) {
+    var lineStart = source.lastIndexOf('\\n', caretPos - 1) + 1;
+    var linePrefix = source.slice(lineStart, caretPos);
+    var trimmedLeft = linePrefix.replace(/^\\s+/, '');
+    var indentLen = linePrefix.length - trimmedLeft.length;
+    var items = [];
+
+    // 1) Whole-instruction template matches, from the start of the line's own text.
+    if (trimmedLeft.length >= 2) {
+      var lowerTrimmed = trimmedLeft.toLowerCase();
+      for (var t = 0; t < INSTRUCTION_TEMPLATES.length && items.length < 6; t++) {
+        var template = INSTRUCTION_TEMPLATES[t];
+        if (template.toLowerCase().indexOf(lowerTrimmed) === 0 && template.length > trimmedLeft.length) {
+          items.push({
+            kind: 'template',
+            label: template,
+            insertText: template.slice(trimmedLeft.length),
+            replaceFrom: lineStart + indentLen
+          });
+        }
+      }
+    }
+
+    // 2) Declared element-name completions, when the caret follows a recognised anchor phrase.
+    var lowerLinePrefix = linePrefix.toLowerCase();
+    var bestAnchorEnd = -1;
+    for (var a = 0; a < COMPLETION_ANCHORS.length; a++) {
+      var anchorLower = COMPLETION_ANCHORS[a].toLowerCase();
+      var idx = lowerLinePrefix.lastIndexOf(anchorLower);
+      if (idx !== -1) {
+        var end = idx + anchorLower.length;
+        if (end > bestAnchorEnd) bestAnchorEnd = end;
+      }
+    }
+    if (bestAnchorEnd !== -1) {
+      var tail = linePrefix.slice(bestAnchorEnd);
+      if (/^[A-Za-z0-9 ]*$/.test(tail)) {
+        var names = collectDeclaredNames(source);
+        var lowerTail = tail.toLowerCase();
+        for (var n = 0; n < names.length && items.length < 10; n++) {
+          var name = names[n];
+          if (name.toLowerCase().indexOf(lowerTail) === 0 && name.length > tail.length) {
+            items.push({
+              kind: 'name',
+              label: name,
+              insertText: name.slice(tail.length),
+              replaceFrom: caretPos - tail.length
+            });
+          }
+        }
+      }
+    }
+
+    return items;
+  }
+
+  function renderCompletions(items) {
+    var popup = ensureCompletionPopup();
+    popup.textContent = '';
+    items.forEach(function (item, index) {
+      var row = document.createElement('div');
+      row.className = 'completion-item' + (index === completionState.activeIndex ? ' active' : '');
+      row.setAttribute('role', 'option');
+      row.setAttribute('data-index', String(index));
+      var labelSpan = document.createElement('span');
+      labelSpan.textContent = item.label;
+      row.appendChild(labelSpan);
+      var kindSpan = document.createElement('span');
+      kindSpan.className = 'completion-kind';
+      kindSpan.textContent = item.kind === 'name' ? 'name' : 'snippet';
+      row.appendChild(kindSpan);
+      row.addEventListener('mousedown', function (e) {
+        e.preventDefault();
+        acceptCompletion(index);
+      });
+      popup.appendChild(row);
+    });
+  }
+
+  function positionCompletionPopup() {
+    var textarea = el('editor');
+    var popup = ensureCompletionPopup();
+    var coords = getCaretCoordinates(textarea, textarea.selectionEnd);
+    var top = coords.top + coords.lineHeight;
+    var left = coords.left;
+    var maxLeft = window.innerWidth - 260;
+    if (left > maxLeft) left = maxLeft;
+    var maxTop = window.innerHeight - 60;
+    if (top > maxTop) top = coords.top - 8;
+    popup.style.top = Math.max(4, top) + 'px';
+    popup.style.left = Math.max(4, left) + 'px';
+  }
+
+  function getCaretCoordinates(textarea, position) {
+    var style = getComputedStyle(textarea);
+    var mirror = document.createElement('div');
+    var props = [
+      'boxSizing', 'width', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft',
+      'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth',
+      'fontStyle', 'fontVariant', 'fontWeight', 'fontSize', 'lineHeight', 'fontFamily',
+      'textAlign', 'textTransform', 'textIndent', 'letterSpacing', 'wordSpacing'
+    ];
+    mirror.style.position = 'fixed';
+    mirror.style.visibility = 'hidden';
+    mirror.style.whiteSpace = 'pre-wrap';
+    mirror.style.wordWrap = 'break-word';
+    mirror.style.top = '0';
+    mirror.style.left = '-9999px';
+    props.forEach(function (p) { mirror.style[p] = style[p]; });
+    document.body.appendChild(mirror);
+    mirror.textContent = textarea.value.substring(0, position);
+    var span = document.createElement('span');
+    span.textContent = textarea.value.substring(position) || '.';
+    mirror.appendChild(span);
+    var textareaRect = textarea.getBoundingClientRect();
+    var spanRect = span.getBoundingClientRect();
+    var mirrorRect = mirror.getBoundingClientRect();
+    var lineHeight = parseInt(style.lineHeight, 10) || 18;
+    var top = textareaRect.top + (spanRect.top - mirrorRect.top) - textarea.scrollTop;
+    var left = textareaRect.left + (spanRect.left - mirrorRect.left) - textarea.scrollLeft;
+    document.body.removeChild(mirror);
+    return { top: top, left: left, lineHeight: lineHeight };
+  }
+
+  function updateCompletions() {
+    var textarea = el('editor');
+    if (textarea.selectionStart !== textarea.selectionEnd) { closeCompletions(); return; }
+    var items = computeCompletions(textarea.value, textarea.selectionEnd);
+    if (!items.length) { closeCompletions(); return; }
+    completionState.open = true;
+    completionState.items = items;
+    completionState.activeIndex = 0;
+    renderCompletions(items);
+    positionCompletionPopup();
+    ensureCompletionPopup().hidden = false;
+  }
+
+  function closeCompletions() {
+    completionState.open = false;
+    completionState.items = [];
+    completionState.activeIndex = 0;
+    if (completionState.popup) completionState.popup.hidden = true;
+  }
+
+  function acceptCompletion(index) {
+    var item = completionState.items[index];
+    if (!item) return;
+    var textarea = el('editor');
+    var caret = textarea.selectionEnd;
+    var value = textarea.value;
+    var newValue = value.slice(0, item.replaceFrom) + item.label + value.slice(caret);
+    var newCaret = item.replaceFrom + item.label.length;
+    textarea.value = newValue;
+    textarea.selectionStart = textarea.selectionEnd = newCaret;
+    closeCompletions();
+    onEditorInput();
+    textarea.focus();
+  }
+
+  function moveActiveCompletion(delta) {
+    var count = completionState.items.length;
+    if (!count) return;
+    completionState.activeIndex = (completionState.activeIndex + delta + count) % count;
+    renderCompletions(completionState.items);
+  }
+
   function el(id) { return document.getElementById(id); }
 
   function escText(str) {
@@ -1287,6 +1616,9 @@ export const STUDIO_JS = `
     el('editor').addEventListener('input', onEditorInput);
     el('editor').addEventListener('scroll', syncLineNumberScroll);
     el('editor').addEventListener('keydown', onEditorKeydown);
+    el('editor').addEventListener('blur', function () { setTimeout(closeCompletions, 120); });
+    el('editor').addEventListener('click', closeCompletions);
+    window.addEventListener('resize', function () { if (completionState.open) positionCompletionPopup(); });
 
     // Toolbar
     el('btn-check').addEventListener('click', function () { runCheck(el('editor').value); });
@@ -1396,11 +1728,18 @@ export const STUDIO_JS = `
     updateLineNumbers();
     markUnsaved();
     checkProseBanner();
+    updateCompletions();
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(function () { runCheck(el('editor').value); }, DEBOUNCE_MS);
   }
 
   function onEditorKeydown(e) {
+    if (completionState.open) {
+      if (e.key === 'ArrowDown') { e.preventDefault(); moveActiveCompletion(1); return; }
+      if (e.key === 'ArrowUp') { e.preventDefault(); moveActiveCompletion(-1); return; }
+      if (e.key === 'Tab' || e.key === 'Enter') { e.preventDefault(); acceptCompletion(completionState.activeIndex); return; }
+      if (e.key === 'Escape') { e.preventDefault(); closeCompletions(); return; }
+    }
     if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key === 's') {
       e.preventDefault();
       onSaveClick();
@@ -1408,6 +1747,13 @@ export const STUDIO_JS = `
     if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'F') {
       e.preventDefault();
       onFormat();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === ' ') {
+      e.preventDefault();
+      updateCompletions();
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'Home' || e.key === 'End') {
+      closeCompletions();
     }
   }
 

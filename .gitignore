@@ -61,3 +61,10 @@ examples/issue-tracker-generated/app.sqlite-*
 examples/issue-tracker-generated/.env
 examples/issue-tracker-generated/.env.*
 examples/issue-tracker-generated/node_modules/
+
+!examples/focus-board-generated/
+examples/focus-board-generated/app.sqlite
+examples/focus-board-generated/app.sqlite-*
+examples/focus-board-generated/.env
+examples/focus-board-generated/.env.*
+examples/focus-board-generated/node_modules/
