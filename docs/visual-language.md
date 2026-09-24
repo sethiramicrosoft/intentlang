@@ -176,7 +176,15 @@ runtime conditional, with an optional else branch, so a click can behave
 differently depending on what a visitor actually typed) — the right-hand
 side of that comparison can be a plain number or another live input's value
 (`if the value of a is greater than the value of b, ...`), for comparing
-two things a visitor actually typed against each other. The compiler turns
+two things a visitor actually typed against each other. The same `if` can
+also compare live text instead of numbers, with `is`, `is not`, `contains`,
+`starts with`, or `ends with` (`if the value of message contains urgent,
+...`) — the numeric comparisons are always tried first, so a phrase like
+`is greater than 50` still runs the numeric check, while anything else after
+`is`/`is not` (including a whole phrase) is compared as literal text; the
+right-hand side of a text comparison can likewise be a plain word/phrase or
+another live input's value (`if the value of a is the value of b, ...`).
+The compiler turns
 every `When ... is clicked` sentence in a page into ONE small, entirely
 compiler-generated script (never containing any user-authored markup,
 attribute, or script tag — only compiler-fixed code with your text safely
@@ -256,6 +264,15 @@ Set the text of result to none
 Add a button called check
 Set the text of check to Check
 When the check is clicked, if the value of a is greater than the value of b, set the text of result to a wins otherwise set the text of result to b wins
+```
+
+```text
+Add a text input called message
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of message contains urgent, set the text of result to flagged otherwise set the text of result to normal
 ```
 
 ```text

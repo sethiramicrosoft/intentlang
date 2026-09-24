@@ -298,6 +298,31 @@ When the check is clicked, if the value of a is greater than the value of b, set
   } finally { await browser.close(); }
 });
 
+test("a click's if-conditional can compare live text with is/contains/starts with/ends with in a real browser", async () => {
+  const compiled = compilePageSource(`Add a text input called message
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of message contains urgent, set the text of result to flagged otherwise set the text of result to normal`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-1").fill("this is urgent, please read");
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").textContent(), "flagged");
+    await page.locator("#element-1").fill("nothing to see here");
+    await page.locator("#element-3").click();
+    assert.equal(await page.locator("#element-2").textContent(), "normal");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a click can repeat an instruction the correct number of times, including nested repeats, in a real browser", async () => {
   const compiled = compilePageSource(`Add a paragraph called counter
 Set the text of counter to 0

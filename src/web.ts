@@ -169,6 +169,15 @@ export function compilePageSource(source: string): PageCompileResult {
   const clickComparisons: Record<string, string> = {
     "greater than": ">", "less than": "<", "at least": ">=", "at most": "<=", "equal to": "==="
   };
+  // Same idea for text comparisons; only these five verbs are recognized. Ordered with
+  // "is not" before "is" in the regex alternation below so "is not" isn't cut short.
+  const textComparisons: Record<string, (left: string, right: string) => string> = {
+    "is": (left, right) => `${left}===${right}`,
+    "is not": (left, right) => `${left}!==${right}`,
+    "contains": (left, right) => `${left}.includes(${right})`,
+    "starts with": (left, right) => `${left}.startsWith(${right})`,
+    "ends with": (left, right) => `${left}.endsWith(${right})`
+  };
   /**
    * Compiles a single click instruction (one "and then"-separated part, or the inner
    * instruction of an "If ..., ..." conditional) into one JS statement, or undefined if a
@@ -184,6 +193,11 @@ export function compilePageSource(source: string): PageCompileResult {
     // comparison (group 3 or group 4) is either a literal number or another live input's
     // value, checked as alternatives in the same capture position.
     const ifValue = /^if\s+the\s+value\s+of\s+(.+?)\s+is\s+(greater than|less than|at least|at most|equal to)\s+(?:the\s+value\s+of\s+(.+?)|(-?\d+(?:\.\d+)?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
+    // Only tried when the numeric form above doesn't match (e.g. "is red" rather than
+    // "is greater than 5"), so a numeric comparison is never misread as a text one. "is not"
+    // must come before the plain "is" in the alternation, or "is not red" would match "is"
+    // with a leftover "not red" as the compared text instead of matching "is not" whole.
+    const ifText = !ifValue ? /^if\s+the\s+value\s+of\s+(.+?)\s+(is not|is|contains|starts with|ends with)\s+(?:the\s+value\s+of\s+(.+?)|(.+?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // "Repeat" needs no shadowing precaution of its own -- no other pattern starts with the
     // word "repeat" -- but like "if", its own trailing instruction is compiled recursively.
     const repeat = /^repeat\s+(-?\d+)\s+times?\s*,\s*(.+)$/i.exec(part);
@@ -232,6 +246,38 @@ export function compilePageSource(source: string): PageCompileResult {
         elseClause = `else{${elseInner}}`;
       }
       return `if((Number(document.getElementById(${JSON.stringify(source.id)}).value)||0)${operator}${rightSide}){${inner}}${elseClause}`;
+    } else if (ifText) {
+      const source = resolve(ifText[1]!, index);
+      if (!source) return undefined;
+      if (!hasReadableValue(source.tag)) {
+        report(index, `Only an input, a text box, or a dropdown has a value to read, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add an input called ${source.name} instead, such as Add a text input called ${source.name}.`);
+        return undefined;
+      }
+      const op = ifText[2]!.toLowerCase();
+      let rightSide: string;
+      if (ifText[3]) {
+        const other = resolve(ifText[3]!, index);
+        if (!other) return undefined;
+        if (!hasReadableValue(other.tag)) {
+          report(index, `Only an input, a text box, or a dropdown has a value to read, and ${other.name} is a ${englishName(other.tag)}.`,
+            `Add an input called ${other.name} instead, such as Add a text input called ${other.name}.`);
+          return undefined;
+        }
+        rightSide = `String(document.getElementById(${JSON.stringify(other.id)}).value)`;
+      } else {
+        rightSide = JSON.stringify(dequoteRuntime(ifText[4]!.trim()));
+      }
+      const left = `String(document.getElementById(${JSON.stringify(source.id)}).value)`;
+      const inner = compileClickPart(ifText[5]!.trim(), index);
+      if (inner === undefined) return undefined;
+      let elseClause = "";
+      if (ifText[6]) {
+        const elseInner = compileClickPart(ifText[6].trim(), index);
+        if (elseInner === undefined) return undefined;
+        elseClause = `else{${elseInner}}`;
+      }
+      return `if(${textComparisons[op]!(left, rightSide)}){${inner}}${elseClause}`;
     } else if (repeat) {
       const count = Number(repeat[1]);
       if (count < 0) {
@@ -300,8 +346,10 @@ export function compilePageSource(source: string): PageCompileResult {
       `Try "set the text of ... to ...", "set the text of ... to the value of ...", ` +
       `"set the text of ... to a random number from ... to ...", "add ... to the text of ...", ` +
       `"subtract ... from the text of ...", "add the value of ... to the text of ...", ` +
-      `"subtract the value of ... from the text of ...", or "if the value of ... is greater than/less than/` +
-      `at least/at most/equal to (a number or the value of ...), ... otherwise ..." or "repeat ... times, ...".`);
+      `"subtract the value of ... from the text of ...", "if the value of ... is greater than/less than/` +
+      `at least/at most/equal to (a number or the value of ...), ... otherwise ...", ` +
+      `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
+      `or "repeat ... times, ...".`);
     return undefined;
   }
   /** Which element tags have a live, readable ".value" in the DOM. */

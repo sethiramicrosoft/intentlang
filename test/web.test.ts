@@ -365,7 +365,7 @@ When the check is clicked, if the value of label is greater than 5, set the text
 Add a paragraph called out
 Add a button called go
 Set the text of go to Go
-When the go is clicked, if the value of n is around 5, set the text of out to hmm`, /is not one of the supported click instructions/);
+When the go is clicked, if the value of n resembles 5, set the text of out to hmm`, /is not one of the supported click instructions/);
 });
 
 test("a click's if-conditional can have an otherwise (else) branch, which itself can be any supported instruction", () => {
@@ -486,6 +486,81 @@ Set the text of go to Go
 When the go is clicked, repeat 0 times, add 1 to the text of counter`);
   const zeroScript = /<script>(.+?)<\/script>/.exec(zero.html)![1]!;
   assert.match(zeroScript, /for\(let i=0;i<0;i\+\+\)/);
+});
+
+test("a click's if-conditional can compare a live input's text with is/is not/contains/starts with/ends with", () => {
+  const equals = page(`Add a text input called name field
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of name field is admin, set the text of result to welcome admin otherwise set the text of result to hello guest`);
+  const equalsScript = /<script>(.+?)<\/script>/.exec(equals.html)![1]!;
+  assert.match(equalsScript, /if\(String\(document\.getElementById\("element-1"\)\.value\)==="admin"\)\{document\.getElementById\("element-2"\)\.textContent="welcome admin";\}else\{document\.getElementById\("element-2"\)\.textContent="hello guest";\}/);
+
+  const notEquals = page(`Add a text input called name field
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of name field is not admin, set the text of result to guest`);
+  const notEqualsScript = /<script>(.+?)<\/script>/.exec(notEquals.html)![1]!;
+  assert.match(notEqualsScript, /if\(String\(document\.getElementById\("element-1"\)\.value\)!=="admin"\)/);
+
+  const contains = page(`Add a text input called message
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of message contains urgent, set the text of result to flagged`);
+  const containsScript = /<script>(.+?)<\/script>/.exec(contains.html)![1]!;
+  assert.match(containsScript, /if\(String\(document\.getElementById\("element-1"\)\.value\)\.includes\("urgent"\)\)/);
+
+  const startsWith = page(`Add a text input called code
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of code starts with US, set the text of result to domestic`);
+  const startsWithScript = /<script>(.+?)<\/script>/.exec(startsWith.html)![1]!;
+  assert.match(startsWithScript, /if\(String\(document\.getElementById\("element-1"\)\.value\)\.startsWith\("US"\)\)/);
+
+  const endsWith = page(`Add a text input called file name
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of file name ends with .txt, set the text of result to text file`);
+  const endsWithScript = /<script>(.+?)<\/script>/.exec(endsWith.html)![1]!;
+  assert.match(endsWithScript, /if\(String\(document\.getElementById\("element-1"\)\.value\)\.endsWith\("\.txt"\)\)/);
+
+  // A text comparison's right-hand side can be another live input's value, not just a literal.
+  const compared = page(`Add a text input called a
+Add a text input called b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of a is the value of b, set the text of result to match otherwise set the text of result to different`);
+  const comparedScript = /<script>(.+?)<\/script>/.exec(compared.html)![1]!;
+  assert.match(comparedScript, /if\(String\(document\.getElementById\("element-1"\)\.value\)===String\(document\.getElementById\("element-2"\)\.value\)\)/);
+
+  // A numeric comparison still compiles exactly as before -- the text-comparison regex is
+  // only tried when the numeric one doesn't match (no regression).
+  const numeric = page(`Add a text input called score
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of score is greater than 50, set the text of result to high otherwise set the text of result to low`);
+  const numericScript = /<script>(.+?)<\/script>/.exec(numeric.html)![1]!;
+  assert.match(numericScript, /if\(\(Number\(document\.getElementById\("element-1"\)\.value\)\|\|0\)>\(50\)\)/);
+
+  invalid(`Add a paragraph called label
+Add a paragraph called result
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the value of label contains hi, set the text of result to yes`, /Only an input, a text box, or a dropdown has a value to read/);
 });
 
 test("resource URL case, CSS strings and ordinary attribute values are preserved", () => {
