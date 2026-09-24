@@ -1,0 +1,9 @@
+# Deterministic adversarial seeds
+1
+7
+42
+20260925
+2147483647
+
+# A minimized failure must be added as a rule-linked JSON fixture beside this
+# file before changing or removing the seed that exposed it.

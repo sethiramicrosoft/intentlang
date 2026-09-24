@@ -1,0 +1,10 @@
+{
+  "id": "unicode-identifier-invalid",
+  "category": "invalid",
+  "ruleIds": ["APP-DECL-001"],
+  "source": "application Café\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E001", "E004"]
+  }
+}

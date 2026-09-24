@@ -1,0 +1,10 @@
+{
+  "id": "case-collision-invalid",
+  "category": "invalid",
+  "ruleIds": ["ENTITY-DECL-001", "SOURCE-STRUCTURE-001"],
+  "source": "application Collision\nentity Task with id task\n  title is required text with id task-title\nentity task with id task-lower\n",
+  "expected": {
+    "ok": false,
+    "diagnosticCodes": ["E001"]
+  }
+}

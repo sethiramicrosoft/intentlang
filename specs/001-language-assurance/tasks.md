@@ -152,19 +152,19 @@ a normative rule and applicable fixtures.
 
 ## Phase 6: Adversarial Assurance (US6, P2)
 
-- [ ] T041 [P] [US6] Add seeded parser and formatter fuzz/property harness in
+- [x] T041 [P] [US6] Add seeded parser and formatter fuzz/property harness in
   `test/properties.test.ts`.
-- [ ] T042 [P] [US6] Add generated authorization-matrix tests in
+- [x] T042 [P] [US6] Add generated authorization-matrix tests in
   `test/authorization-matrix.test.ts`.
-- [ ] T043 [P] [US6] Add workflow state/invariant model tests in
+- [x] T043 [P] [US6] Add workflow state/invariant model tests in
   `test/workflow-invariants.test.ts`.
-- [ ] T044 [P] [US6] Add idempotency and transaction model tests in
+- [x] T044 [P] [US6] Add idempotency and transaction model tests in
   `test/runtime-properties.test.ts`.
-- [ ] T045 [P] [US6] Add Unicode, case, collision, and resource-limit corpus
+- [x] T045 [P] [US6] Add Unicode, case, collision, and resource-limit corpus
   under `conformance/invalid/`.
-- [ ] T046 [US6] Add deterministic fuzz seeds and minimized regression fixture
+- [x] T046 [US6] Add deterministic fuzz seeds and minimized regression fixture
   persistence.
-- [ ] T047 [US6] Add CI budgets and reporting for adversarial suites.
+- [x] T047 [US6] Add CI budgets and reporting for adversarial suites.
 
 **Checkpoint**: SC-007 and release-scale SC-011 gates operational.
 

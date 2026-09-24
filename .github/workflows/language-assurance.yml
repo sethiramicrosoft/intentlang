@@ -20,4 +20,5 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm run test:assurance
+      - run: npm run test:adversarial
       - run: npm run assurance:complete
