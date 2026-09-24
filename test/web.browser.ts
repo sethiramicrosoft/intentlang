@@ -245,6 +245,36 @@ When the pick is clicked, set the value of favorite color to the option labeled 
   } finally { await browser.close(); }
 });
 
+test("a click's if-conditional can branch on a real dropdown's selected label directly, in a real browser", async () => {
+  const compiled = compilePageSource(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Add an option called blue inside favorite color
+Set the text of red to Red
+Set the text of blue to Blue
+Set the value of red to r
+Set the value of blue to b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the selected label of favorite color is Blue, set the text of result to yes otherwise set the text of result to no`);
+  if (!compiled.ok) assert.fail(JSON.stringify(compiled.diagnostics));
+  const browser = await chromium.launch();
+  try {
+    const page = await browser.newPage();
+    const errors: string[] = [];
+    page.on("pageerror", (error) => errors.push(error.message));
+    page.on("console", (msg) => { if (msg.type() === "error") errors.push(msg.text()); });
+    await page.setContent(compiled.html);
+    await page.locator("#element-5").click(); // still on "Red" by default
+    assert.equal(await page.locator("#element-4").textContent(), "no");
+    await page.locator("#element-1").selectOption({ label: "Blue" }); // a real user pick, by visible label
+    await page.locator("#element-5").click();
+    assert.equal(await page.locator("#element-4").textContent(), "yes");
+    assert.deepEqual(errors, []); // no CSP violation, no runtime error
+  } finally { await browser.close(); }
+});
+
 test("a live character count tracks real typed input length as it changes, in a real browser", async () => {
   const compiled = compilePageSource(`Add a text input called message
 Add a paragraph called counter

@@ -221,13 +221,20 @@ export function compilePageSource(source: string): PageCompileResult {
     // must come before the plain "is" in the alternation, or "is not red" would match "is"
     // with a leftover "not red" as the compared text instead of matching "is not" whole.
     const ifText = !ifValue && !ifBetween && !ifLength ? /^if\s+the\s+value\s+of\s+(.+?)\s+(is not|is|contains|starts with|ends with)\s+(?:the\s+value\s+of\s+(.+?)|(.+?))\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
+    // The read-side condition sibling of "set the value of ... to the option labeled ..." /
+    // "set the text of ... to the selected label of ...": compares a dropdown's selected
+    // option's own displayed text directly, rather than its (possibly divergent) ".value" --
+    // distinct from ifText, which only ever compares raw ".value". Its own literal ("the
+    // selected label of ...") never overlaps with ifText's ("the value of ..."), so there's
+    // no shadowing risk either way, but it's placed alongside the other If forms for clarity.
+    const ifLabel = /^if\s+the\s+selected\s+label\s+of\s+(.+?)\s+(is not|is)\s+(.+?)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part);
     // A checkbox/radio button's state lives in ".checked", not ".value" (its ".value" is a
     // fixed attribute, never reflecting whether it's ticked) -- this is a separate condition
     // form for that reason. The negative lookahead keeps it from ever matching "if the value
     // of X is checked, ..." (which isn't valid there, since "checked" isn't a recognized
     // ifValue/ifText comparison word either, and would otherwise misread "the value of X"
     // itself as the checkbox's name).
-    const ifChecked = !ifValue && !ifBetween && !ifLength && !ifText ?
+    const ifChecked = !ifValue && !ifBetween && !ifLength && !ifText && !ifLabel ?
       /^if\s+(?!the\s+value\s+of\s)(.+?)\s+is\s+(checked|not checked)\s*,\s*(.+?)(?:\s+otherwise\s+(.+))?$/i.exec(part) : null;
     // "Repeat" needs no shadowing precaution of its own -- no other pattern starts with the
     // word "repeat" -- but like "if", its own trailing instruction is compiled recursively.
@@ -414,6 +421,26 @@ export function compilePageSource(source: string): PageCompileResult {
       let elseClause = "";
       if (ifText[6]) {
         const elseInner = compileClickPart(ifText[6].trim(), index);
+        if (elseInner === undefined) return undefined;
+        elseClause = `else{${elseInner}}`;
+      }
+      return `if(${textComparisons[op]!(left, rightSide)}){${inner}}${elseClause}`;
+    } else if (ifLabel) {
+      const source = resolve(ifLabel[1]!, index);
+      if (!source) return undefined;
+      if (source.tag !== "select") {
+        report(index, `Only a dropdown has a selected option's label, and ${source.name} is a ${englishName(source.tag)}.`,
+          `Add a dropdown called ${source.name} instead, such as Add a dropdown called ${source.name}.`);
+        return undefined;
+      }
+      const op = ifLabel[2]!.toLowerCase();
+      const left = `(function(){var s=document.getElementById(${JSON.stringify(source.id)});return s.options[s.selectedIndex]?s.options[s.selectedIndex].text:"";})()`;
+      const rightSide = JSON.stringify(dequoteRuntime(ifLabel[3]!.trim()));
+      const inner = compileClickPart(ifLabel[4]!.trim(), index);
+      if (inner === undefined) return undefined;
+      let elseClause = "";
+      if (ifLabel[5]) {
+        const elseInner = compileClickPart(ifLabel[5].trim(), index);
         if (elseInner === undefined) return undefined;
         elseClause = `else{${elseInner}}`;
       }
@@ -649,6 +676,7 @@ export function compilePageSource(source: string): PageCompileResult {
       `"if the value of ... is between ... and ... (two numbers), ... otherwise ...", ` +
       `"if the value of ... has more than/fewer than/at least/at most/exactly ... characters, ... otherwise ...", ` +
       `"if the value of ... is/is not/contains/starts with/ends with ... (text or the value of ...), ... otherwise ...", ` +
+      `"if the selected label of ... is/is not ... (a dropdown), ... otherwise ...", ` +
       `"if ... is/is not checked, ... otherwise ...", ` +
       `or "repeat ... times, ...".`);
     return undefined;

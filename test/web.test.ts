@@ -524,6 +524,40 @@ Set the text of go to Go
 When the go is clicked, set the value of n to the option labeled X`, /Only a dropdown has options with labels/);
 });
 
+test("a click's if-conditional can check a dropdown's selected label directly with \"if the selected label of ...\"", () => {
+  const matched = page(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Add an option called blue inside favorite color
+Set the text of red to Red
+Set the text of blue to Blue
+Set the value of red to r
+Set the value of blue to b
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the selected label of favorite color is Blue, set the text of result to yes otherwise set the text of result to no`);
+  const script = /<script>(.+?)<\/script>/.exec(matched.html)![1]!;
+  assert.match(script, /if\(\(function\(\)\{var s=document\.getElementById\("element-1"\);return s\.options\[s\.selectedIndex\]\?s\.options\[s\.selectedIndex\]\.text:"";\}\)\(\)==="Blue"\)\{/);
+
+  // "is not" negates the comparison, matching every other text-comparison form.
+  const negated = page(`Add a dropdown called favorite color
+Add an option called red inside favorite color
+Set the text of red to Red
+Add a paragraph called result
+Set the text of result to none
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the selected label of favorite color is not Blue, set the text of result to different`);
+  assert.match(/<script>(.+?)<\/script>/.exec(negated.html)![1]!, /\)\(\)!=="Blue"\)/);
+
+  invalid(`Add a text input called n
+Add a paragraph called result
+Add a button called go
+Set the text of go to Go
+When the go is clicked, if the selected label of n is X, set the text of result to yes`, /Only a dropdown has a selected option's label/);
+});
+
 test("a click can read a live character count with \"the number of characters in the value of ...\"", () => {
   const counter = page(`Add a text input called message
 Add a paragraph called counter

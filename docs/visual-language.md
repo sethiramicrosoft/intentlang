@@ -216,6 +216,13 @@ always tried first, so a phrase like
 `is`/`is not` (including a whole phrase) is compared as literal text; the
 right-hand side of a text comparison can likewise be a plain word/phrase or
 another live input's value (`if the value of a is the value of b, ...`).
+A dropdown has its own condition sibling for this: `if the selected label
+of <dropdown name> is/is not <text>, <one instruction>` (also optionally
+followed by `otherwise <one instruction>`) compares the selected option's
+own displayed text directly, the read-side counterpart of `set the value
+of ... to the option labeled ...` — unlike `if the value of <dropdown> is
+...`, which compares the raw, possibly-divergent `.value`, this always
+reflects exactly what a visitor saw and picked.
 A click can also write into a live input's own value (as opposed to
 `set the text of ...`, which only changes what's displayed elsewhere):
 `set the value of <input name> to <text>` and `set the value of <input
@@ -533,6 +540,21 @@ Set the value of uk to UK
 Add a button called pick uk
 Set the text of pick uk to Default to United Kingdom
 When the pick uk is clicked, set the value of country to the option labeled United Kingdom
+```
+
+```text
+Add a dropdown called country
+Add an option called us inside country
+Add an option called uk inside country
+Set the text of us to United States
+Set the text of uk to United Kingdom
+Set the value of us to US
+Set the value of uk to UK
+Add a paragraph called result
+Set the text of result to Pick a country
+Add a button called check
+Set the text of check to Check
+When the check is clicked, if the selected label of country is United Kingdom, set the text of result to across the pond otherwise set the text of result to elsewhere
 ```
 
 ```text
