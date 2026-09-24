@@ -224,6 +224,7 @@ The wins is 14.
 The draws is 6.
 The points is the wins times 3.
 The total points is the points plus the draws.
+The season summary is Season record joined with " " joined with the wins.
 Set the text of points line to total points
 
 If the total points is at least 40, set the text of form line to Promotion form and then set the text of banner to Well played.
@@ -248,7 +249,14 @@ Repeat 3 times, the wins is wins plus 1.
   the other grouping. A value can also be plain text, either bare words (`The
   winner is Alex Carter.`) or a quoted phrase (`The motto is "Play as a
   team".`) — quotes are only needed if the text itself could be confused with
-  a number or another variable's name.
+  a number or another variable's name. Text has its own chain operator,
+  `joined with`, which concatenates two or more operands end to end (`The
+  full name is the first name joined with " " joined with the last name.`) —
+  it's a separate word from `plus` on purpose, so a number chain and a text
+  chain never look alike, and so plain text can still safely contain the bare
+  word "plus". Each operand in a `joined with` chain can be a variable
+  (stringified if it's a number) or a literal — quote a literal that's just
+  whitespace, like `" "`, since bare whitespace alone isn't a word.
 - **`If the <name> is <comparison> <value>, <one or more instructions>.`** keeps
   its instruction(s) only when the comparison is true. Comparisons are written
   as words: `greater than`, `less than`, `equal to`, `not equal to`, `at least`,
@@ -424,7 +432,8 @@ offered, never applied silently.
 **Current limits, stated plainly:**
 - Text variables can only be compared with `equal to` or `not equal to`;
   there's no ordering (`greater than`, etc.) for text, and text can't be used
-  in arithmetic.
+  in arithmetic. Text does have its own `joined with` chain for
+  concatenation, but that's string-building only, not arithmetic.
 - A procedure's parameters can only be used the same way a variable can —
   a parameter can't be used to build a different element name per call (for
   example, a procedure can't add a differently-named element on each call

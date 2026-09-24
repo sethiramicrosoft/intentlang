@@ -836,3 +836,43 @@ test("a compound If condition can be a For each's own nested instruction", () =>
 For each n from 1 to 3, if the n is equal to 2 and the n is greater than 1, set the text of note to found`);
   assert.equal(textOf(ir, "note"), "found");
 });
+
+test("'joined with' concatenates two text variables into one", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The first name is Alex.
+The last name is Rivera.
+The full name is the first name joined with " " joined with the last name.
+Set the text of message to full name`);
+  assert.equal(textOf(ir, "message"), "Alex Rivera");
+});
+
+test("'joined with' can mix a text variable, a number variable and literal words", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The wins is 5.
+The summary is Total wins joined with " " joined with the wins.
+Set the text of message to summary`);
+  assert.equal(textOf(ir, "message"), "Total wins 5");
+});
+
+test("'joined with' still works when every operand is a plain literal", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The greeting is Hello joined with " " joined with there.
+Set the text of message to greeting`);
+  assert.equal(textOf(ir, "message"), "Hello there");
+});
+
+test("a bare word 'plus' inside ordinary text is unaffected by 'joined with'", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The slogan is Salt and pepper, fish and chips.
+Set the text of message to slogan`);
+  assert.equal(textOf(ir, "message"), "Salt and pepper, fish and chips");
+});
+
+test("'joined with' is a separate chain from numeric 'plus', so the two never mix", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The a is 2.
+The b is 3.
+The c is a plus b.
+Set the text of message to c`);
+  assert.equal(textOf(ir, "message"), "5");
+});

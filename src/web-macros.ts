@@ -32,6 +32,10 @@ const OPERAND_RE = new RegExp(`^${NUMBER_OR_NAME}$`, "i");
 // it reads in English ("a plus b, then minus c").
 const CHAIN_SPLIT_RE = /\s+(plus|minus|times|divided by)\s+/i;
 const NUMERIC_INTENT_RE = /\d|\b(?:plus|minus|times|divided by)\b/i;
+// Text's own chain operator: "the full name is the first name joined with the last name."
+// Kept as a separate word from numeric "plus" so a number chain and a text chain never look
+// alike, and so an ordinary piece of text can still safely contain the bare word "plus".
+const TEXT_CHAIN_SPLIT_RE = /\s+joined with\s+/i;
 // An If sentence's head, up to its FIRST comma (no matter what follows -- this is what lets an
 // If's own instruction be another nested If/For each/Repeat/Do without confusing this boundary).
 // The captured text between "if " and that comma is one or more conditions, described below.
@@ -289,6 +293,16 @@ function evaluateExpression(expr: string, variables: Map<string, VarValue>): num
     }
   }
   return result;
+}
+
+/** Joins two or more text operands end to end (no separator added automatically -- put a
+ * quoted literal like " " as one of the operands for a space). Each operand resolves the same
+ * way an If condition's text target does: a known variable's value (stringified if it's a
+ * number), or, failing that, the raw words themselves (unquoted if quoted). */
+function evaluateTextChain(expr: string, variables: Map<string, VarValue>): string {
+  return expr.trim().split(TEXT_CHAIN_SPLIT_RE)
+    .map((part) => resolveTextOperand(part.trim(), variables))
+    .join("");
 }
 
 function compareNumbers(value: number, comparator: string, target: number): boolean {
@@ -609,16 +623,21 @@ function expandFunctionCall(name: string, argRaw: string | undefined, callText: 
 }
 
 /**
- * Applies a "The X is Y." assignment: resolves Y as a number expression first, falling back to
- * copying an existing variable's value, and finally to literal text (only when Y doesn't even
- * look like an arithmetic attempt, so a genuine mistake like dividing by zero isn't silently
- * treated as text). Returns true once handled; false means the caller should leave the line for
- * the page compiler to report as an ordinary unrecognized instruction.
+ * Applies a "The X is Y." assignment: resolves Y as a number expression first, then as a text
+ * "joined with" chain, falling back to copying an existing variable's value, and finally to
+ * literal text (only when Y doesn't even look like an arithmetic attempt, so a genuine mistake
+ * like dividing by zero isn't silently treated as text). Returns true once handled; false means
+ * the caller should leave the line for the page compiler to report as an ordinary unrecognized
+ * instruction.
  */
 function applyAssignment(name: string, rawValue: string, variables: Map<string, VarValue>): boolean {
   const numericValue = evaluateExpression(rawValue, variables);
   if (numericValue !== undefined) {
     variables.set(name, { type: "number", value: numericValue });
+    return true;
+  }
+  if (TEXT_CHAIN_SPLIT_RE.test(rawValue)) {
+    variables.set(name, { type: "text", value: evaluateTextChain(rawValue, variables) });
     return true;
   }
   if (!NUMERIC_INTENT_RE.test(rawValue)) {
