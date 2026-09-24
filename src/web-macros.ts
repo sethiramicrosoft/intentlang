@@ -140,15 +140,29 @@ interface ForEachMatch {
  * segment contains " and ", the list is just the first segment (a single item). Everything after
  * that boundary, rejoined with commas, is the instruction — commas inside a nested If or
  * Otherwise instruction are preserved untouched because they always come after the boundary.
+ *
+ * That "first segment containing and" rule has one real ambiguity: when the list itself is a
+ * single, comma-free segment (typically the name of a list variable, e.g. "favorite colors")
+ * and the INSTRUCTION that follows happens to contain the bare word "and" of its own (most
+ * commonly from "and then" chaining several instructions) -- the scan would otherwise mistake
+ * that instruction-side "and" for a list continuation and swallow the whole line as "list", with
+ * nothing left for the instruction. `variables`, when supplied, resolves this cleanly: if
+ * segment 0 alone is already the name of a known list-typed variable, that is unambiguously the
+ * whole list (a named list is always exactly one segment, never spread across a comma), so the
+ * boundary is fixed at 0 immediately, before the general and-scan ever gets a chance to look
+ * further and misfire on the instruction's own "and". `variables` is optional because a few
+ * call sites (typo-correction shape checks) only need to know whether a line looks roughly like
+ * a For each at all, without resolving real variables.
  */
-function matchForEachList(trimmed: string): ForEachMatch | undefined {
+function matchForEachList(trimmed: string, variables?: Map<string, VarValue>): ForEachMatch | undefined {
   const head = FOR_EACH_HEAD_RE.exec(trimmed);
   if (!head) return undefined;
   const loopVar = head[1]!.trim();
   const rest = head[2]!.replace(/\.$/, "");
   const segments = rest.split(",");
   if (segments.length < 2) return undefined; // no comma at all: not a valid For each sentence
-  const andIndex = segments.findIndex((segment) => /\band\b/i.test(segment));
+  const namedList = variables?.get(stripLeadingThe(segments[0]!).trim().toLowerCase());
+  const andIndex = namedList?.type === "list" ? 0 : segments.findIndex((segment) => /\band\b/i.test(segment));
   const boundary = andIndex === -1 ? 0 : andIndex;
   if (boundary + 1 >= segments.length) return undefined; // nothing left for the instruction
   const list = segments.slice(0, boundary + 1).join(",").trim();
@@ -181,9 +195,10 @@ function matchForEachRange(trimmed: string): ForEachMatch | undefined {
 }
 
 /** Matches either shape of a For each sentence: a word list ("in red, green and blue") or a
- * counting loop ("from 1 to 10"). */
-function matchForEach(trimmed: string): ForEachMatch | undefined {
-  return matchForEachRange(trimmed) ?? matchForEachList(trimmed);
+ * counting loop ("from 1 to 10"). `variables`, when supplied, resolves the one real list-vs-
+ * instruction boundary ambiguity a word list can have (see `matchForEachList`). */
+function matchForEach(trimmed: string, variables?: Map<string, VarValue>): ForEachMatch | undefined {
+  return matchForEachRange(trimmed) ?? matchForEachList(trimmed, variables);
 }
 
 type RepeatMatch = { count: number; instruction: string };
@@ -838,7 +853,7 @@ function expandInstruction(instr: string, lineNumber: number, variables: Map<str
     if (condition === undefined) return [];
     return condition ? expandChain(nestedIf.instruction, lineNumber, variables, diagnostics, functions, callStack) : [];
   }
-  const nestedForEach = matchForEach(trimmedInstr);
+  const nestedForEach = matchForEach(trimmedInstr, variables);
   if (nestedForEach) return evaluateForEach(nestedForEach, lineNumber, variables, diagnostics, functions, callStack);
   const nestedRepeat = matchRepeat(trimmedInstr);
   if (nestedRepeat) return evaluateRepeat(nestedRepeat, lineNumber, variables, diagnostics, functions, callStack);
@@ -863,7 +878,7 @@ function expandChain(text: string, lineNumber: number, variables: Map<string, Va
   const result: string[] = [];
   for (let i = 0; i < parts.length; i++) {
     const rest = parts.slice(i).join(" and then ").trim();
-    if (matchIf(rest) || matchForEach(rest) || matchRepeat(rest)) {
+    if (matchIf(rest) || matchForEach(rest, variables) || matchRepeat(rest)) {
       result.push(...expandInstruction(rest, lineNumber, variables, diagnostics, functions, callStack));
       return result; // the nested construct consumed everything remaining in the chain
     }
@@ -990,7 +1005,7 @@ export function expandMacros(source: string): MacroExpandResult {
       return;
     }
 
-    const forEach = matchForEach(trimmed);
+    const forEach = matchForEach(trimmed, variables);
     if (forEach) {
       for (const instr of evaluateForEach(forEach, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
       return;

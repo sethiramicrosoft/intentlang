@@ -1160,3 +1160,38 @@ Do shout with the first item in colors.
 Set the text of message to result`);
   assert.equal(textOf(ir, "message"), "red!");
 });
+
+test("a For each over a single-word named list variable, whose chained body contains its own bare 'and' (from 'and then'), no longer misparses the list/instruction boundary", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The count is 0.
+For each color in favorite colors, set item 1 in favorite colors to changed and then the count is count plus 1.
+Set the text of message to count`);
+  assert.equal(textOf(ir, "message"), "3");
+});
+
+test("a For each over a single-word named list variable can still nest an If whose own condition uses a bare 'and', alongside an 'and then' chain", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The favorite colors is a list of red, green and blue.
+The threshold is 1.
+The count is 0.
+For each color in favorite colors, if the threshold is equal to 1, set item 1 in favorite colors to changed and then the count is count plus 1.
+Set the text of message to count`);
+  assert.equal(textOf(ir, "message"), "3");
+});
+
+test("a For each over an inline literal list (not a named variable) is unaffected by the named-list boundary fix", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The count is 0.
+For each color in red, green and blue, the count is count plus 1.
+Set the text of message to count`);
+  assert.equal(textOf(ir, "message"), "3");
+});
+
+test("a For each over a comma-free two-item inline literal list ('red and green') is unaffected by the named-list boundary fix", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The count is 0.
+For each color in red and green, the count is count plus 1.
+Set the text of message to count`);
+  assert.equal(textOf(ir, "message"), "2");
+});

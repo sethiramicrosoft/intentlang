@@ -520,15 +520,19 @@ offered, never applied silently.
   take a list as any one of them too, as long as the argument list's other
   values don't themselves need commas or "and" to separate them (the same
   word-splitting rule a For each's own inline list already follows).
-- A `For each <name> in <list>, <instruction> and then <instruction>.` loop
-  can misparse when the list is a single-word named list variable (no comma
-  or "and" of its own, e.g. `favorite colors`) and the chained instruction
-  itself contains the bare word "and" (as `and then` does): the boundary
-  between the list and the instruction is found by scanning for the first
-  segment containing "and", so it can land inside the instruction instead of
-  the list. Splitting the loop body across two separate lines (or using a
-  `Repeat` loop for the chained part) avoids it; the fix would require a
-  different list/instruction boundary rule and is left for later.
+- Inside a For each's own repeated instruction, the loop word is a literal
+  find-and-replace over the instruction's text (not a real variable) — this
+  is deliberate, since it's what lets a loop build a differently-named
+  element per iteration (`For each opponent in ..., add a list item called
+  result opponent inside fixtures`). One consequence: comparing the loop
+  word itself in a nested If condition (`If the color is equal to green,
+  ...`) doesn't work when the loop is over a word list, because by the time
+  the condition is evaluated the loop word has already been replaced by its
+  item's actual text (e.g. "red"), which then reads as an undeclared
+  variable named "red" rather than a comparison. Compare a different,
+  already-declared variable in the nested If instead, or use a numeric
+  counting loop (`For each round from 1 to 5, ...`), where the substituted
+  word is a plain number and this doesn't arise.
 - A parenthesis-free `a list of ...` value is recognized by its exact
   leading words, the same way `joined with` and the arithmetic operator
   words are — so a piece of literal text that itself happens to start with
