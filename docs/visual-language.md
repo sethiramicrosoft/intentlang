@@ -232,6 +232,8 @@ Otherwise, set the text of form line to Steady form.
 For each opponent in Ashford Town, Bellmoor United and Castlebridge, add a list item called result opponent inside fixtures
 
 For each round from 1 to 5, add a list item called round line round inside fixtures
+
+Repeat 3 times, the wins is wins plus 1.
 ```
 
 - **`The <name> is <value>.`** defines or recomputes a variable. The value can be
@@ -265,18 +267,25 @@ For each round from 1 to 5, add a list item called round line round inside fixtu
   both ends, replacing the loop word with each number in turn. Counts upward
   when `<start>` is less than or equal to `<end>`, downward otherwise
   (`For each round from 5 to 1, ...` counts 5, 4, 3, 2, 1).
+- **`Repeat <count> times, <one or more instructions>.`** runs its
+  instruction(s) that many times in a row, with no loop word of its own —
+  simpler than a For each counting loop when nothing needs to vary per
+  iteration, such as accumulating a total (`Repeat 3 times, the total is
+  total plus 1.`). `<count>` can be a plain number or a numeric expression.
+  A count of `0` is valid and simply runs nothing; a negative count is
+  reported as a clear error instead of silently running zero times.
 
-An If, Otherwise, or For each sentence can carry several instructions by
-joining them with **`and then`**, for example:
+An If, Otherwise, For each, or Repeat sentence can carry several instructions
+by joining them with **`and then`**, for example:
 `If the score is at least 40, set the text of form line to Promotion form and then set the text of banner to Well played.`
 Plain `and` is never treated as a chain separator (so it stays safe to use
 inside ordinary text or a For each list) — only the exact phrase `and then`
 splits a sentence into multiple instructions.
 
 An If or Otherwise sentence's instruction can itself be another If, Otherwise-
-paired If, or For each sentence, written right there on the same line — and a
-For each's own repeated instruction can do the same, nesting an If or another
-For each:
+paired If, For each, or Repeat sentence, written right there on the same
+line — and a For each's or Repeat's own repeated instruction can do the
+same, nesting an If, For each, or another Repeat:
 
 ```text
 If the score is greater than 10, if the wins is greater than 5, set the text of message to double win
@@ -284,6 +293,8 @@ Otherwise, if the consolation is greater than 5, set the text of message to good
 If the show is equal to 1, for each color in red and blue, add a list item called swatch color inside colors
 For each color in red and blue, if the threshold is equal to 1, add a list item called swatch color inside colors
 For each row in a and b, for each column in x and y, add a list item called cell row column inside grid
+If the flag is equal to 1, repeat 3 times, the total is total plus 1.
+Repeat 2 times, for each round from 1 to 3, add a list item called badge round inside colors
 ```
 
 Nesting can go as deep as you like this way. A nested If's own condition never

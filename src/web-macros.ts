@@ -46,6 +46,12 @@ const FOR_EACH_HEAD_RE = /^for each\s+([a-z][a-z ]*?)\s+in\s+(.+)$/i;
 // so unlike a word list, the boundary between the head and the instruction is never ambiguous:
 // numbers never contain commas, so the first comma after "to <end>" always separates them.
 const FOR_EACH_RANGE_RE = /^for each\s+([a-z][a-z ]*?)\s+from\s+(-?\d+)\s+to\s+(-?\d+)\s*,\s*(.+?)\.?$/i;
+// "Repeat <count> times, <instruction>." runs its instruction a fixed number of times with no
+// loop variable at all -- simpler than a For each counting loop when nothing needs to vary per
+// iteration (e.g. "Repeat 3 times, the total is total plus 1."). Anchored to the end of the
+// line/chain-segment the same way If's own instruction is, so it can itself nest another If,
+// For each, Repeat, or Do sentence.
+const REPEAT_RE = /^repeat\s+(-?\d+)\s+times?\s*,\s*(.+?)\.?$/i;
 // A reusable procedure: "To <name>, <body>." defines it (no output by itself); "Do <name>."
 // calls it, expanding its body at the call site with whatever variables exist at that moment.
 // It can optionally take one or more parameters: "To <name> with <param>, <body>." or
@@ -136,6 +142,17 @@ function matchForEachRange(trimmed: string): ForEachMatch | undefined {
  * counting loop ("from 1 to 10"). */
 function matchForEach(trimmed: string): ForEachMatch | undefined {
   return matchForEachRange(trimmed) ?? matchForEachList(trimmed);
+}
+
+type RepeatMatch = { count: number; instruction: string };
+
+/** Matches a "Repeat <count> times, <instruction>" sentence. */
+function matchRepeat(trimmed: string): RepeatMatch | undefined {
+  const match = REPEAT_RE.exec(trimmed);
+  if (!match) return undefined;
+  const instruction = match[2]!.trim();
+  if (!instruction) return undefined;
+  return { count: Number(match[1]), instruction };
 }
 
 function splitEnglishList(text: string): string[] {
@@ -332,6 +349,14 @@ function suggestMacroFix(trimmed: string): VisualSuggestion | undefined {
       if (matchForEach(corrected)) return { label: `Change "${inWord[2]}" to "in"`, replacement: corrected };
     }
   }
+  const repeatWord = /^(\S+)(\s+-?\d+\s+times?\s*,\s*.+)$/i.exec(trimmed);
+  if (repeatWord) {
+    const fixed = closestKeyword(repeatWord[1]!, ["repeat"]);
+    if (fixed) {
+      const corrected = `repeat${repeatWord[2]}`;
+      if (matchRepeat(corrected)) return { label: `Change "${repeatWord[1]}" to "repeat"`, replacement: corrected };
+    }
+  }
   const comparatorPhrase = /^(if\s+the\s+[a-z][a-z ]*?\s+is\s+)([a-z]+\s+[a-z]+(?:\s+[a-z]+)?)(\s+(?:the\s+)?(?:-?\d+(?:\.\d+)?|[a-z][a-z ]*?)\s*,\s*.+)$/i
     .exec(trimmed);
   if (comparatorPhrase) {
@@ -418,6 +443,29 @@ function evaluateForEach(forEachMatch: ForEachMatch, lineNumber: number, variabl
   const results: string[] = [];
   for (const item of items) {
     results.push(...expandChain(substituteWord(instruction, loopVar, item), lineNumber, variables, diagnostics, functions, callStack));
+  }
+  return results;
+}
+
+/**
+ * Expands one "Repeat <count> times, <instruction>" sentence: runs its instruction that many
+ * times in a row, with no loop variable of its own (unlike For each). A negative count is
+ * reported as a clear error rather than silently running zero times, since it almost certainly
+ * indicates a mistake (e.g. a variable holding a negative number by accident); a count of zero
+ * is allowed and simply produces no output.
+ */
+function evaluateRepeat(repeatMatch: RepeatMatch, lineNumber: number, variables: Map<string, VarValue>,
+  diagnostics: VisualDiagnostic[], functions: FunctionMap, callStack: Set<string>): string[] {
+  const { count, instruction } = repeatMatch;
+  if (count < 0) {
+    report(diagnostics, lineNumber, `repeat ${count} times`, "M014",
+      `"Repeat ${count} times" needs a count of 0 or more.`,
+      `Use a non-negative number, such as "Repeat 3 times, ...".`);
+    return [];
+  }
+  const results: string[] = [];
+  for (let i = 0; i < count; i++) {
+    results.push(...expandChain(instruction, lineNumber, variables, diagnostics, functions, callStack));
   }
   return results;
 }
@@ -535,6 +583,8 @@ function expandInstruction(instr: string, lineNumber: number, variables: Map<str
   }
   const nestedForEach = matchForEach(trimmedInstr);
   if (nestedForEach) return evaluateForEach(nestedForEach, lineNumber, variables, diagnostics, functions, callStack);
+  const nestedRepeat = matchRepeat(trimmedInstr);
+  if (nestedRepeat) return evaluateRepeat(nestedRepeat, lineNumber, variables, diagnostics, functions, callStack);
   const call = FUNCTION_CALL_RE.exec(trimmedInstr);
   if (call) return expandFunctionCall(call[1]!.trim().toLowerCase(), call[2], trimmedInstr, lineNumber, variables, diagnostics, functions, callStack);
   return [resolveTrailingVariable(instr, variables)];
@@ -556,7 +606,7 @@ function expandChain(text: string, lineNumber: number, variables: Map<string, Va
   const result: string[] = [];
   for (let i = 0; i < parts.length; i++) {
     const rest = parts.slice(i).join(" and then ").trim();
-    if (IF_RE.test(rest) || matchForEach(rest)) {
+    if (IF_RE.test(rest) || matchForEach(rest) || matchRepeat(rest)) {
       result.push(...expandInstruction(rest, lineNumber, variables, diagnostics, functions, callStack));
       return result; // the nested construct consumed everything remaining in the chain
     }
@@ -570,7 +620,7 @@ export function usesMacroGrammar(source: string): boolean {
   return source.split(/\r?\n/).some((line) => {
     const trimmed = line.trim();
     return ASSIGN_RE.test(trimmed) || IF_RE.test(trimmed) || OTHERWISE_RE.test(trimmed) || matchForEach(trimmed) !== undefined
-      || FUNCTION_DEF_RE.test(trimmed) || FUNCTION_CALL_RE.test(trimmed);
+      || matchRepeat(trimmed) !== undefined || FUNCTION_DEF_RE.test(trimmed) || FUNCTION_CALL_RE.test(trimmed);
   });
 }
 
@@ -658,6 +708,12 @@ export function expandMacros(source: string): MacroExpandResult {
       return;
     }
 
+    const repeat = matchRepeat(trimmed);
+    if (repeat) {
+      for (const instr of evaluateRepeat(repeat, lineNumber, variables, diagnostics, functions, new Set())) output.push(instr);
+      return;
+    }
+
     const call = FUNCTION_CALL_RE.exec(trimmed);
     if (call) {
       for (const instr of expandFunctionCall(call[1]!.trim().toLowerCase(), call[2], trimmed, lineNumber, variables, diagnostics, functions, new Set())) {
@@ -669,7 +725,7 @@ export function expandMacros(source: string): MacroExpandResult {
     const fix = suggestMacroFix(trimmed);
     if (fix) {
       report(diagnostics, lineNumber, trimmed, "M005",
-        `This line looks like it was meant to be a variable, If, Otherwise, For each, To, or Do sentence, but has a spelling mistake.`,
+        `This line looks like it was meant to be a variable, If, Otherwise, For each, Repeat, To, or Do sentence, but has a spelling mistake.`,
         fix.label, [fix]);
       return;
     }

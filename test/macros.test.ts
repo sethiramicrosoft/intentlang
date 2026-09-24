@@ -723,3 +723,41 @@ Set the text of message to a divided by b plus 5`);
   // text rather than silently guessing a value.
   assert.equal(textOf(ir, "message"), "a divided by b plus 5");
 });
+
+test("Repeat runs its instruction a fixed number of times with no loop variable of its own", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The total is 0.
+Repeat 4 times, the total is total plus 1.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "4");
+});
+
+test("Repeat 0 times is valid and simply produces no output", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The total is 0.
+Repeat 0 times, the total is total plus 1.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "0");
+});
+
+test("a negative Repeat count is a clear error rather than silently running zero times", () => {
+  invalid(`Add a paragraph called message inside page
+Repeat -1 times, set the text of message to oops`, /needs a count of 0 or more/);
+});
+
+test("Repeat can nest inside an If's own instruction", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The total is 0.
+If the total is equal to 0, repeat 3 times, the total is total plus 10.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "30");
+});
+
+test("Repeat can be a procedure's own body, and can nest inside a For each's own instruction", () => {
+  const { ir } = page(`Add a paragraph called message inside page
+The total is 0.
+To add ten, repeat 10 times, the total is total plus 1.
+Do add ten.
+Set the text of message to total`);
+  assert.equal(textOf(ir, "message"), "10");
+});
