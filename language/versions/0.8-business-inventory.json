@@ -36,6 +36,7 @@
     { "id": "BUS-SYNTAX-032", "category": "syntax", "status": "experimental", "title": "Relative import with alias", "implementation": ["src/language/modules.ts:compileProject"] },
     { "id": "BUS-SYNTAX-033", "category": "syntax", "status": "experimental", "title": "Explicit module export", "implementation": ["src/language/modules.ts:compileProject"] },
     { "id": "BUS-SYNTAX-034", "category": "syntax", "status": "experimental", "title": "Dependency integrity lock", "implementation": ["src/language/modules.ts:compileProject"] },
-    { "id": "BUS-SYNTAX-035", "category": "syntax", "status": "experimental", "title": "IntentLang major/minor version requirement", "implementation": ["src/language/modules.ts:compileProject"] }
+    { "id": "BUS-SYNTAX-035", "category": "syntax", "status": "experimental", "title": "IntentLang major/minor version requirement", "implementation": ["src/language/modules.ts:compileProject"] },
+    { "id": "BUS-INTENT-001", "category": "syntax", "status": "experimental", "title": "Reviewed deterministic intent resolution contract", "implementation": ["src/language/intent-resolution.ts:resolveIntent"] }
   ]
 }

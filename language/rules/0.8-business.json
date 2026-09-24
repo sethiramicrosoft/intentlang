@@ -178,6 +178,21 @@
       }
     },
     {
+      "id": "INTENT-RESOLUTION-001",
+      "status": "experimental",
+      "title": "Requirement prose resolves only through reviewed clarification and canonical proposals",
+      "canonicalForm": "clarification | compiler-validated canonical proposal | unrecognized",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["BUS-INTENT-001"],
+      "specification": "docs/spec/intent-resolution.md#intent-resolution-001",
+      "evidence": {
+        "positive": ["test/intent-resolution.test.ts"],
+        "negative": ["test/intent-resolution.test.ts"],
+        "canonical": ["test/intent-resolution.test.ts"],
+        "runtime": ["conformance/ambiguous/intent/user-identity.json", "conformance/ambiguous/intent/workflow-failure.json", "conformance/ambiguous/intent/unsupported-side-effect.json"]
+      }
+    },
+    {
       "id": "RUNTIME-GENERATION-001",
       "status": "stable",
       "title": "Business IR generates synchronized persistence, UI, API, security, workflow, concurrency, idempotency, and audit behavior",

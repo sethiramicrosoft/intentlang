@@ -1,0 +1,10 @@
+{
+  "id": "intent-unsupported-effect-ambiguous",
+  "category": "ambiguous",
+  "ruleIds": ["INTENT-RESOLUTION-001"],
+  "source": "Build an app that allows people to add name and send email notifications.",
+  "expected": {
+    "outcome": "clarification",
+    "questionIds": ["failure-mode.unsupported"]
+  }
+}

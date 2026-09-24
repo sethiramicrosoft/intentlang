@@ -371,9 +371,9 @@ When in Advanced IDE, two modes are available at the top of the editor pane:
 | Mode | When to use |
 |---|---|
 | **Write IntentLang** | Default for existing source files. Accepts controlled grammar only. Errors are shown inline above the editor and in the Problems panel. |
-| **Describe App** | For plain-English input. The offline interpreter converts supported descriptions into IntentLang source without AI tokens. Optional AI handles broader descriptions if a provider is configured. |
+| **Describe App** | For plain-English input. Deterministic clarification resolves identity, ownership, workflow, type, default, and failure-mode decisions before compiler-validated source is offered. Optional AI proposals pass through the same review authority. |
 
-> **Not unrestricted English.** Describe App mode supports a finite vocabulary for simple CRUD apps. Unsupported features (sorting, search, delete, file upload) are listed explicitly, never silently omitted.
+> **Not unrestricted English.** Describe App mode supports a finite vocabulary for simple CRUD apps. Ambiguities become explicit questions; unsupported features are excluded or rejected only after a reviewed failure-mode choice. Applying a proposal persists a confirmation fingerprint but still does not save or generate automatically.
 
 #### Describe App mode: quick example
 

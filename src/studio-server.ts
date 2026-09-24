@@ -17,6 +17,8 @@ import type { BuildManifest } from "./model.js";
 import { createAiAssistant } from "./ai-assistant.js";
 import type { AiConfig } from "./ai-provider.js";
 import { interpretDescription } from "./description-interpreter.js";
+import { resolveIntent } from "./language/intent-resolution.js";
+import { sha256 } from "./language/semantic-fingerprint.js";
 import { compileEnglishSource } from "./english.js";
 import { getWebCatalogue } from "./web-catalogue.js";
 import { VISUAL_HTML, VISUAL_CSS, VISUAL_JS } from "./visual-assets.js";
@@ -120,6 +122,10 @@ interface PlanTokenEntry {
 }
 
 const planTokenStore = new Map<string, PlanTokenEntry>();
+const reviewedProposalStore = new Map<
+  string,
+  { source: string; origin: "offline" | "ai"; description: string }
+>();
 
 function createPlanToken(sourceFingerprint: string, requiresAcknowledgement = false): string {
   const token = randomBytes(24).toString("hex");
@@ -720,6 +726,7 @@ export async function startStudio(options: StudioOptions): Promise<{
       ["POST", "/api/generate"],
       ["POST", "/api/ai/propose"],
       ["POST", "/api/interpret"],
+      ["POST", "/api/intent/confirm"],
       ["POST", "/api/wizard/interpret"],
       ["POST", "/api/wizard/build"],
       ["POST", "/api/preview/start"],
@@ -1092,8 +1099,12 @@ export async function startStudio(options: StudioOptions): Promise<{
     if (pathname === "/api/interpret") {
       const description =
         typeof body["description"] === "string" ? body["description"].trim() : "";
-      const rawUsersAnswer =
-        typeof body["usersAnswer"] === "string" ? body["usersAnswer"] : undefined;
+      const answers =
+        body["answers"] !== null &&
+        typeof body["answers"] === "object" &&
+        !Array.isArray(body["answers"])
+          ? (body["answers"] as Record<string, string>)
+          : {};
 
       if (!description) {
         sendJson(res, 400, {
@@ -1103,12 +1114,7 @@ export async function startStudio(options: StudioOptions): Promise<{
         return;
       }
 
-      const usersAnswer =
-        rawUsersAnswer === "person" || rawUsersAnswer === "auth-user"
-          ? rawUsersAnswer
-          : undefined;
-
-      const result = interpretDescription(description, usersAnswer ? { usersAnswer } : undefined);
+      const result = resolveIntent(description, answers);
 
       if (result.kind === "unrecognized") {
         sendJson(res, 200, { kind: "unrecognized", reason: result.reason });
@@ -1119,39 +1125,108 @@ export async function startStudio(options: StudioOptions): Promise<{
         sendJson(res, 200, {
           kind: "clarification",
           questions: result.questions,
-          partialAssumptions: result.partialAssumptions
+          partialAssumptions: []
         });
         return;
       }
 
-      // Compile proposed source to validate — invalid output is a bug
-      const compiled = compileSource(result.source);
+      const compiled = compileSource(result.canonicalSource);
       if (!compiled.ok) {
         sendJson(res, 500, {
           code: "INTERPRET_BUG",
           error:
             "Description interpreter produced source that does not compile. Please report this as a bug.",
           diagnostics: compiled.diagnostics,
-          proposedSource: result.source
+          proposedSource: result.canonicalSource
         });
         return;
       }
 
       // Build diff lines (proposed source vs empty)
-      const proposedLines = result.source.split("\n");
+      const proposedLines = result.canonicalSource.split("\n");
       const diff = proposedLines.map((line) => ({ op: "add", line }));
 
+      reviewedProposalStore.set(result.confirmationFingerprint, {
+        source: result.canonicalSource,
+        origin: "offline",
+        description
+      });
       sendJson(res, 200, {
         kind: "proposal",
-        appName: result.appName,
-        entityName: result.entityName,
-        source: result.source,
+        appName: compiled.ir.application.name,
+        entityName: compiled.ir.entities[0]?.name ?? "Record",
+        source: result.canonicalSource,
         assumptions: result.assumptions,
         warnings: result.warnings,
-        unsupportedCapabilities: result.unsupportedCapabilities,
-        supportedFieldCount: result.supportedFieldCount,
+        unsupportedCapabilities: [],
+        supportedFieldCount: compiled.ir.entities.reduce(
+          (sum, entity) => sum + entity.fields.length,
+          0
+        ),
+        explanations: result.explanations,
+        confirmationFingerprint: result.confirmationFingerprint,
         diff
       });
+      return;
+    }
+
+    if (pathname === "/api/intent/confirm") {
+      const fingerprint =
+        typeof body["confirmationFingerprint"] === "string"
+          ? body["confirmationFingerprint"]
+          : "";
+      const proposal = reviewedProposalStore.get(fingerprint);
+      if (!proposal) {
+        sendJson(res, 409, {
+          code: "CONFIRMATION_INVALID",
+          error: "The reviewed proposal is missing, expired, or was not issued by this Studio session."
+        });
+        return;
+      }
+      let existing = "";
+      try {
+        existing = await readFile(sourcePath, "utf8");
+      } catch {
+        // New source file.
+      }
+      if (existing.trim()) {
+        const current = await compileStudioSource(sourcePath, existing);
+        if (current.ok && formatSource(current.ir) !== proposal.source) {
+          sendJson(res, 409, {
+            code: "SOURCE_CONFLICT",
+            error:
+              "The reviewed proposal differs from the current canonical source. Review the diff before replacing existing source."
+          });
+          return;
+        }
+      }
+      const confirmationPath = `${sourcePath}.confirmations.json`;
+      let records: unknown[] = [];
+      if (existsSync(confirmationPath)) {
+        try {
+          const parsed = JSON.parse(await readFile(confirmationPath, "utf8"));
+          if (Array.isArray(parsed)) records = parsed;
+        } catch {
+          sendJson(res, 409, {
+            code: "CONFIRMATION_STORE_INVALID",
+            error: "The existing confirmation record is invalid and was not overwritten."
+          });
+          return;
+        }
+      }
+      records.push({
+        confirmationFingerprint: fingerprint,
+        sourceFingerprint: sha256(proposal.source),
+        origin: proposal.origin,
+        description: proposal.description,
+        confirmedAt: new Date().toISOString()
+      });
+      await atomicWrite(
+        confirmationPath,
+        `${canonicalJson(records)}\n`
+      );
+      reviewedProposalStore.delete(fingerprint);
+      sendJson(res, 200, { confirmed: true, confirmationPath });
       return;
     }
 
@@ -1231,6 +1306,27 @@ export async function startStudio(options: StudioOptions): Promise<{
         return;
       }
 
+      if (result.kind === "proposal") {
+        const confirmationFingerprint = sha256(
+          JSON.stringify({
+            origin: "ai",
+            description,
+            clarificationAnswers,
+            canonicalSource: result.canonical
+          })
+        );
+        reviewedProposalStore.set(confirmationFingerprint, {
+          source: result.canonical,
+          origin: "ai",
+          description
+        });
+        sendJson(res, 200, {
+          ...result,
+          confirmationFingerprint,
+          authority: "review-required"
+        });
+        return;
+      }
       // Return sanitized result — never includes API key or raw upstream errors
       sendJson(res, 200, result);
       return;

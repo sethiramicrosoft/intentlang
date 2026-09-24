@@ -218,26 +218,26 @@ a normative rule and applicable fixtures.
 
 ### Deterministic clarification
 
-- [ ] T066 [P] [US2] Create ambiguity/context corpus under
+- [x] T066 [P] [US2] Create ambiguity/context corpus under
   `conformance/ambiguous/intent/`.
-- [ ] T067 [P] [US2] Specify clarification categories and question contracts.
-- [ ] T068 [US2] Implement requirement concept/context model in
+- [x] T067 [P] [US2] Specify clarification categories and question contracts.
+- [x] T068 [US2] Implement requirement concept/context model in
   `src/language/intent-resolution.ts`.
-- [ ] T069 [US2] Implement deterministic security, ownership, workflow, type,
+- [x] T069 [US2] Implement deterministic security, ownership, workflow, type,
   default, and failure-mode clarifications.
-- [ ] T070 [US2] Implement canonical proposal generation and deterministic
+- [x] T070 [US2] Implement canonical proposal generation and deterministic
   compiler validation.
 
 ### Review experience
 
-- [ ] T071 [US2] Add Studio clarification workflow and proposal diff.
-- [ ] T072 [US2] Explain data, workflow, security, and side effects before
+- [x] T071 [US2] Add Studio clarification workflow and proposal diff.
+- [x] T072 [US2] Explain data, workflow, security, and side effects before
   confirmation.
-- [ ] T073 [US2] Persist confirmation records and detect conflicts with existing
+- [x] T073 [US2] Persist confirmation records and detect conflicts with existing
   canonical source.
-- [ ] T074 [US2] Route optional AI proposals through the same authority-free
+- [x] T074 [US2] Route optional AI proposals through the same authority-free
   proposal contract.
-- [ ] T075 [US2] Add intent-resolution end-to-end browser tests.
+- [x] T075 [US2] Add intent-resolution end-to-end browser tests.
 
 **Checkpoint**: SC-002 and SC-010 achieved for the maintained corpus.
 

@@ -3013,20 +3013,16 @@ export const STUDIO_JS = `
     }
     describeState.questionAnswers = {};
     describeState.unsupportedAcknowledged = false;
-    await doInterpret(desc, undefined);
+    await doInterpret(desc, {});
   }
 
   async function onInterpretOfflineWithAnswers() {
     var desc = el('describe-textarea').value.trim();
     if (!desc) return;
-    var usersAnswer = describeState.questionAnswers['entity-type'];
-    var optionAnswer = usersAnswer === 'Person records (no login required)' ? 'person'
-                     : usersAnswer === 'Authenticated user accounts (login required)' ? 'auth-user'
-                     : undefined;
-    await doInterpret(desc, optionAnswer);
+    await doInterpret(desc, describeState.questionAnswers);
   }
 
-  async function doInterpret(description, usersAnswer) {
+  async function doInterpret(description, answers) {
     var resultEl = el('describe-result');
     resultEl.textContent = '';
     resultEl.classList.remove('visible');
@@ -3036,7 +3032,7 @@ export const STUDIO_JS = `
 
     try {
       var reqBody = { description: description };
-      if (usersAnswer) reqBody.usersAnswer = usersAnswer;
+      reqBody.answers = answers || {};
       var resp = await postJson('/api/interpret', reqBody);
       var data = await resp.json();
 
@@ -3144,6 +3140,8 @@ export const STUDIO_JS = `
 
     var sendBtn = el('btn-describe-send-answers');
     if (sendBtn) sendBtn.style.display = 'inline-block';
+    var applyRow = el('describe-apply-row');
+    if (applyRow) applyRow.style.display = 'flex';
     announce('Clarification needed. Please answer the questions.');
   }
 
@@ -3166,6 +3164,25 @@ export const STUDIO_JS = `
       });
     }
     container.appendChild(card);
+
+    if (data.explanations) {
+      var effects = document.createElement('div');
+      effects.className = 'describe-interpretation-card';
+      var effectsTitle = document.createElement('h4');
+      effectsTitle.textContent = 'Review generated meaning and effects';
+      effects.appendChild(effectsTitle);
+      ['data', 'security', 'workflow', 'sideEffects'].forEach(function (category) {
+        var values = data.explanations[category] || [];
+        values.forEach(function (value) {
+          var p = document.createElement('p');
+          p.className = 'describe-assumptions';
+          p.style.margin = '2px 0';
+          p.textContent = category + ': ' + value;
+          effects.appendChild(p);
+        });
+      });
+      container.appendChild(effects);
+    }
 
     // Unsupported capabilities warning
     if (data.unsupportedCapabilities && data.unsupportedCapabilities.length > 0) {
@@ -3243,18 +3260,35 @@ export const STUDIO_JS = `
     // Apply row
     var applyRow = el('describe-apply-row');
     if (applyRow) applyRow.style.display = 'flex';
+    var sendBtn = el('btn-describe-send-answers');
+    if (sendBtn) sendBtn.style.display = 'none';
 
     announce('Proposal ready: ' + data.appName + ' with ' + data.supportedFieldCount + ' field(s). ' +
       (data.unsupportedCapabilities && data.unsupportedCapabilities.length > 0
         ? 'Acknowledge unsupported items to enable Apply.' : 'Click Apply to Editor.'));
   }
 
-  function applyDescribeProposal() {
+  async function applyDescribeProposal() {
     if (!describeState.pending) return;
     var data = describeState.pending;
     if (data.unsupportedCapabilities && data.unsupportedCapabilities.length > 0 && !describeState.unsupportedAcknowledged) {
       announce('Please acknowledge the items that were not generated before applying.');
       return;
+    }
+    if (data.confirmationFingerprint) {
+      try {
+        var response = await postJson('/api/intent/confirm', {
+          confirmationFingerprint: data.confirmationFingerprint
+        });
+        var confirmation = await response.json();
+        if (!response.ok) {
+          announce('Proposal confirmation failed: ' + (confirmation.error || 'review conflict'));
+          return;
+        }
+      } catch (err) {
+        announce('Proposal confirmation failed: ' + String(err));
+        return;
+      }
     }
     var src = data.source;
     // Switch to Write IntentLang mode

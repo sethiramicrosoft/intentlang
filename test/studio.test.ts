@@ -1534,7 +1534,7 @@ test("studio JS wizard blocks omissions regardless of checkbox visibility and se
 
 // ── Studio Server /api/interpret tests ───────────────────────────────────────
 
-test("studio server POST /api/interpret returns proposal for observed sentence", async () => {
+test("studio server POST /api/interpret clarifies then returns a reviewed proposal", async () => {
   const { startStudio } = await import("../src/studio-server.js");
 
   await withTempSourceFile(todoSource, async (sourcePath) => {
@@ -1544,7 +1544,8 @@ test("studio server POST /api/interpret returns proposal for observed sentence",
       const state = await stateResp.json() as Record<string, unknown>;
       const csrfToken = String(state["csrfToken"] ?? "");
 
-      const resp = await fetch(`${studio.url}/api/interpret`, {
+      const request = (answers?: Record<string, string>) =>
+        fetch(`${studio.url}/api/interpret`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -1553,8 +1554,23 @@ test("studio server POST /api/interpret returns proposal for observed sentence",
         },
         body: JSON.stringify({
           description:
-            "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
+            "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting",
+          answers
         })
+      });
+      const clarificationResponse = await request();
+      const clarification = await clarificationResponse.json() as {
+        kind: string;
+        questions: Array<{ id: string }>;
+      };
+      assert.equal(clarification.kind, "clarification");
+      assert.deepEqual(
+        clarification.questions.map((question) => question.id),
+        ["security.identity", "failure-mode.unsupported"]
+      );
+      const resp = await request({
+        "security.identity": "person-record",
+        "failure-mode.unsupported": "exclude-and-report"
       });
       assert.equal(resp.status, 200);
       const body = await resp.json() as Record<string, unknown>;
@@ -1564,9 +1580,14 @@ test("studio server POST /api/interpret returns proposal for observed sentence",
       assert.ok(typeof body["source"] === "string", "source present");
       const src = body["source"] as string;
       assert.ok(src.includes("application People"), "source has application");
-      assert.ok(src.includes("dateOfBirth as text"), "DOB mapped correctly");
-      const unsupported = body["unsupportedCapabilities"] as unknown[];
-      assert.ok(Array.isArray(unsupported) && unsupported.length > 0, "unsupported capabilities present");
+      assert.ok(src.includes("dateOfBirth"), "DOB mapped correctly");
+      const explanations = body["explanations"] as {
+        sideEffects: string[];
+      };
+      assert.ok(
+        explanations.sideEffects.some((item) => item.includes("sorting")),
+        "excluded side effect is explained"
+      );
     } finally {
       await studio.close();
     }
@@ -1594,6 +1615,56 @@ test("studio server POST /api/interpret proposed source is compiler-valid", asyn
           description:
             "I want to build an app that just allows users to add their name, age, address, DOB, then allow sorting"
         })
+      });
+
+      test("studio persists reviewed intent confirmation and prevents replay", async () => {
+        const { startStudio } = await import("../src/studio-server.js");
+
+        await withTempSourceFile("", async (sourcePath) => {
+          const studio = await startStudio({ sourcePath, port: 3341, noOpen: true });
+          try {
+            const state = await (
+              await fetch(`${studio.url}/api/state`)
+            ).json() as Record<string, unknown>;
+            const post = (route: string, body: Record<string, unknown>) =>
+              fetch(`${studio.url}${route}`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  "Origin": studio.url,
+                  "X-Studio-CSRF-Token": String(state["csrfToken"])
+                },
+                body: JSON.stringify(body)
+              });
+            const proposalResponse = await post("/api/interpret", {
+              description: "Build an app with name and age."
+            });
+            const proposal = await proposalResponse.json() as {
+              kind: string;
+              confirmationFingerprint: string;
+            };
+            assert.equal(proposal.kind, "proposal");
+            const confirmed = await post("/api/intent/confirm", {
+              confirmationFingerprint: proposal.confirmationFingerprint
+            });
+            assert.equal(confirmed.status, 200);
+            const records = JSON.parse(
+              await readFile(`${sourcePath}.confirmations.json`, "utf8")
+            ) as unknown[];
+            assert.equal(records.length, 1);
+
+            const replay = await post("/api/intent/confirm", {
+              confirmationFingerprint: proposal.confirmationFingerprint
+            });
+            assert.equal(replay.status, 409);
+            assert.equal(
+              (await replay.json() as Record<string, unknown>)["code"],
+              "CONFIRMATION_INVALID"
+            );
+          } finally {
+            await studio.close();
+          }
+        });
       });
       const body = await resp.json() as Record<string, unknown>;
       if (body["kind"] === "proposal") {
@@ -1656,12 +1727,26 @@ test("studio description routes report omissions and wizard requires acknowledge
       });
       const description = "Build an app with name, age, occupation, then allow sorting";
       for (const route of ["/api/interpret", "/api/wizard/interpret"]) {
-        const response = await post(route, { description });
+        let response = await post(route, { description });
         assert.equal(response.status, 200);
-        const proposal = await response.json() as {
+        let proposal = await response.json() as {
           kind: string; source: string; proposalToken?: string;
           unsupportedCapabilities: Array<{ code: string; capability: string }>;
         };
+        if (route === "/api/interpret") {
+          assert.equal(proposal.kind, "clarification");
+          response = await post(route, {
+            description,
+            answers: {
+              "type.occupation": "text",
+              "failure-mode.unsupported": "exclude-and-report"
+            }
+          });
+          proposal = await response.json() as typeof proposal;
+          assert.equal(proposal.kind, "proposal");
+          assert.equal(compileSource(proposal.source).ok, true);
+          continue;
+        }
         assert.equal(proposal.kind, "proposal");
         assert.deepEqual(proposal.unsupportedCapabilities.map((item) => item.code),
           ["UNSUPPORTED_SORTING", "UNRECOGNIZED_FIELD"]);

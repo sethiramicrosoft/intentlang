@@ -1,0 +1,10 @@
+{
+  "id": "intent-workflow-failure-ambiguous",
+  "category": "ambiguous",
+  "ruleIds": ["INTENT-RESOLUTION-001"],
+  "source": "Create an app with title and status where managers approve or reject records.",
+  "expected": {
+    "outcome": "clarification",
+    "questionIds": ["workflow.invalid"]
+  }
+}

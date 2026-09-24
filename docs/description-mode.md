@@ -125,7 +125,12 @@ a Person has a dateOfBirth as text
   patterns. It is not a guarantee that every clause of arbitrary English is understood.
 - All proposals compile successfully before being offered to the user. An invalid proposal is a bug.
 - The interpreter never adds authentication, roles, or permissions silently. Auth apps require manual IntentLang authoring or the AI path.
-- Ambiguous cases (where interpretation changes semantics) show an assumption card explaining the choice. The offline interpreter always makes a deterministic choice — it does not ask clarifying questions before returning a proposal.
+- Ambiguous identity, ownership, workflow, type, default, and failure-mode
+  decisions produce stable categorized questions. The resolver does not offer a
+  proposal until every required answer is present.
+- The review card explains generated data, security, workflow, and side
+  effects. Optional AI proposals receive the same review-required authority
+  marker.
 
 ## After applying the proposal
 
@@ -133,4 +138,6 @@ a Person has a dateOfBirth as text
 2. Save the file explicitly (**Save** button or `Ctrl+S`).
 3. Generate the app explicitly (**Generate App**).
 
-Applying a proposal does not save the file and does not generate an app. These are always separate, explicit steps.
+Applying a proposal first persists a non-replayable confirmation record beside
+the source file. It does not save the source or generate an app. These remain
+separate, explicit steps.

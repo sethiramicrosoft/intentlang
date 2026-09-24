@@ -1,0 +1,10 @@
+{
+  "id": "intent-user-identity-ambiguous",
+  "category": "ambiguous",
+  "ruleIds": ["INTENT-RESOLUTION-001"],
+  "source": "Build an app that allows users to add their own name, age and address.",
+  "expected": {
+    "outcome": "clarification",
+    "questionIds": ["security.identity", "ownership.scope"]
+  }
+}
