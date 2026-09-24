@@ -51,6 +51,29 @@ Put email inside welcome`;
   assert.doesNotThrow(() => new Script(VISUAL_JS));
 });
 
+test("a plain page statement line can chain several instructions with \"and then\", not just a click body", () => {
+  const chained = page(`Add a paragraph called note
+Add a paragraph called label and then set the text of label to Note and then set the text of note to Hello`);
+  assert.equal(chained.ir.elements.find((element) => element.name === "label")!.text, "Note");
+  assert.equal(chained.ir.elements.find((element) => element.name === "note")!.text, "Hello");
+  // An ordinary "and" that is not "and then" must still read as ordinary literal text, not a
+  // chain split, so display text containing the word "and" is completely unaffected.
+  const ordinary = page(`Add a paragraph called note
+Set the text of note to salt and pepper`);
+  assert.equal(ordinary.ir.elements[1]!.text, "salt and pepper");
+  // A "When ... is clicked" trigger's own body already chains its instructions with "and
+  // then" through the click compiler -- the top-level line splitter must never re-split that
+  // body itself, or only the trigger's first instruction would ever end up attached to it.
+  const trigger = page(`Add a button called go
+Add a paragraph called result
+Set the text of result to none
+When the go is clicked, set the text of result to hi and then set the text of result to bye`);
+  assert.ok(trigger.html.includes("addEventListener"));
+  // An error in a later chained part is still reported, not silently dropped.
+  invalid(`Add a paragraph called note
+Set the text of note to hi and then set the text of missing to bye`, /no earlier element called missing/);
+});
+
 test("every available catalogue element compiles through the same document grammar", () => {
   assert.equal(webElements.length, 116, "Review coverage when updating the pinned HTML dataset");
   assert.equal(webElements.filter((entry) => entry.status === "available").length, 96);

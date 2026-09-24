@@ -683,7 +683,17 @@ export function compilePageSource(source: string): PageCompileResult {
   for (const [index, original] of lines.entries()) {
     const line = original.trim();
     if (!line || line.startsWith("#")) continue;
-    const statement = parsePageStatement(line);
+    // A trigger sentence ("When ... is clicked/changes, ..." or "When the page loads, ...")
+    // already splits and chains its own body on "and then" inside compileClickBody, so it must
+    // never be split again here -- doing so would sever a click's own instructions mid-sentence
+    // and leave only the first one attached to the trigger. Every other statement kind (add,
+    // set, put, underline, show, make) has no "and then" chaining of its own, so splitting the
+    // whole line into several statements here is what lets one line both add an element and set
+    // its text/parent, e.g. a "For each" loop line that both creates and fills in one go.
+    const parts = /^when\s+/i.test(line) ? [line] :
+      line.split(/\s+and\s+then\s+/i).map((part) => part.trim()).filter(Boolean);
+    for (const part of parts) {
+    const statement = parsePageStatement(part);
     if (!statement) {
       report(index, "This sentence is not part of the page language.",
         "Use Add a paragraph called greeting, Set the text of greeting to Hello world, or Set the color of greeting to blue. Single-text movement still works in programs without Add instructions.");
@@ -815,6 +825,7 @@ export function compilePageSource(source: string): PageCompileResult {
             replacement: `Set the ${scope} ${capability.words[0]} of ${node.name} to ${statement.value}` })),
           candidates.length ? "typo" : "syntax");
       }
+    }
     }
   }
 

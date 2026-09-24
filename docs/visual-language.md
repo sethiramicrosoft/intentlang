@@ -137,6 +137,14 @@ HTML conformance, complete English interpretation, or uniform browser support**.
 - Set values are literal: do not add sentence-ending punctuation unless it belongs
   in the value. Add, Put, Make, and Underline accept an optional final period.
   A property may be assigned once; edit an existing assignment to change it.
+- Several page instructions can be chained on one line with `and then`, the same
+  connector a click's own instructions already use: `Add a paragraph called label
+  and then set the text of label to Note` both creates the element and fills it
+  in, in one sentence. A plain `and` that is not `and then` is never treated as a
+  chain split, so ordinary display text such as `salt and pepper` is unaffected.
+  A `When ... is clicked`/`When the page loads`/`When ... changes` trigger's own
+  body already chains its instructions with `and then` through the click
+  compiler, so that sentence is never re-split at this level.
 
 The `page` root is the generated body. Pages use normal document flow, not the
 single-text scene's absolute positioning. They permit 200 created elements,
