@@ -2292,6 +2292,9 @@ test("studio HTML v0.8.0 has beginner-first wizard structure", () => {
   assert.ok(html.includes('href="/playground"'), "Visual Language navigation present");
   assert.ok(html.includes('id="btn-help"'), "Studio help button present");
   assert.ok(html.includes('id="dlg-help"'), "Studio help dialog present");
+  assert.ok(html.includes('id="help-search"'), "searchable in-product help present");
+  assert.ok(html.includes('id="help-troubleshooting"'), "troubleshooting help present");
+  assert.ok(html.includes("Everything needed to use Studio is available here"), "help does not require external documentation");
   assert.ok(html.includes('id="app-body"'), "app-body present");
   assert.ok(html.includes('id="wiz-step-1"'), "wizard step 1 present");
   assert.ok(html.includes('id="wiz-step-2"'), "wizard step 2 present");

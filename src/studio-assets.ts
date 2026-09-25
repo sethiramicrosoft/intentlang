@@ -1670,46 +1670,201 @@ body[data-workspace="code"] #wizard-view { display: none; }
 }
 dialog { border-radius: 2px; }
 .help-dialog {
-  max-width: min(920px, 94vw);
-  max-height: min(780px, 90vh);
-  overflow: auto;
+  width: min(1120px, 96vw);
+  max-width: min(1120px, 96vw);
+  height: min(820px, 92vh);
+  max-height: min(820px, 92vh);
+  padding: 0;
+  overflow: hidden;
 }
-.help-intro {
-  max-width: 720px;
-  margin: 0 0 20px;
-  color: var(--cp-text-muted);
-  font-size: 13px;
-  line-height: 1.7;
-}
-.help-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1px;
-  margin-bottom: 20px;
-  border: 1px solid var(--cp-border);
-  background: var(--cp-border);
-}
-.help-section {
-  min-width: 0;
-  padding: 16px;
+.help-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--cp-border);
   background: var(--cp-surface);
 }
-.help-section h3 {
-  margin: 0 0 7px;
-  font: 700 13px/1.3 Bahnschrift, "Aptos Display", sans-serif;
+.help-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
-.help-section p,
-.help-section li {
+.help-header .dialog-title {
+  margin-bottom: 5px;
+  font-size: 20px;
+}
+.help-intro {
+  max-width: 760px;
+  margin: 0;
   color: var(--cp-text-muted);
-  font-size: 12px;
+  font-size: 13px;
   line-height: 1.55;
 }
-.help-section p { margin: 0; }
-.help-section ul { margin: 8px 0 0; padding-left: 18px; }
-.help-section code {
+.help-search-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+#help-search {
+  flex: 1;
+  min-height: 38px;
+  padding: 8px 11px;
+  border: 1px solid var(--cp-border-strong);
+  border-radius: 2px;
+  background: var(--cp-surface);
+  color: var(--cp-text);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 12px;
+}
+#help-search:focus { border-color: var(--cp-accent); }
+#help-search-status {
+  min-height: 18px;
+  margin-top: 6px;
+  color: var(--cp-text-muted);
+  font-size: 11px;
+}
+.help-shell {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  height: calc(100% - 150px);
+  min-height: 0;
+}
+.help-nav {
+  overflow-y: auto;
+  padding: 14px 10px;
+  border-right: 1px solid var(--cp-border);
+  background: var(--cp-bg-elevated);
+}
+.help-nav-label {
+  padding: 4px 9px 9px;
+  color: var(--cp-text-muted);
+  font: 10px/1.3 "Cascadia Code", Consolas, monospace;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.help-nav button {
+  width: 100%;
+  padding: 8px 9px;
+  border-left: 2px solid transparent;
+  color: var(--cp-text-muted);
+  text-align: left;
+  font-size: 12px;
+}
+.help-nav button:hover,
+.help-nav button:focus-visible {
+  color: var(--cp-text);
+  background: var(--cp-highlight);
+  border-left-color: var(--cp-accent);
+}
+.help-content {
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding: 24px 28px 72px;
+}
+.help-topic {
+  max-width: 760px;
+  padding-bottom: 30px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid var(--cp-border);
+  scroll-margin-top: 20px;
+}
+.help-topic:last-child { border-bottom: 0; }
+.help-topic h3 {
+  margin: 0 0 8px;
+  font: 700 22px/1.2 Bahnschrift, "Aptos Display", sans-serif;
+  letter-spacing: -0.015em;
+}
+.help-topic h4 {
+  margin: 22px 0 7px;
+  color: var(--cp-text);
+  font: 700 14px/1.3 Bahnschrift, "Aptos Display", sans-serif;
+}
+.help-topic p,
+.help-topic li,
+.help-topic td,
+.help-topic th {
+  color: var(--cp-text-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.help-topic p { margin: 0 0 10px; }
+.help-topic ul,
+.help-topic ol { margin: 8px 0 14px; padding-left: 21px; }
+.help-topic li + li { margin-top: 5px; }
+.help-topic strong { color: var(--cp-text); }
+.help-topic code {
   color: var(--cp-text);
   font-family: "Cascadia Code", Consolas, monospace;
   font-size: 11px;
+}
+.help-example {
+  margin: 10px 0 16px;
+  padding: 12px 14px;
+  overflow-x: auto;
+  border-left: 3px solid var(--studio-brass);
+  background: var(--studio-ink-soft);
+  color: #e8e8df;
+  font: 12px/1.7 "Cascadia Code", Consolas, monospace;
+  white-space: pre-wrap;
+}
+.help-callout {
+  margin: 12px 0 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--cp-border);
+  border-left: 3px solid var(--cp-accent);
+  background: var(--cp-surface-soft);
+}
+.help-callout p:last-child { margin-bottom: 0; }
+.help-feature-list {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0 18px;
+}
+.help-feature {
+  padding: 12px;
+  border: 1px solid var(--cp-border);
+  background: var(--cp-surface);
+}
+.help-feature strong {
+  display: block;
+  margin-bottom: 3px;
+}
+.help-feature span {
+  color: var(--cp-text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+.help-table-wrap {
+  margin: 12px 0 18px;
+  overflow-x: auto;
+}
+.help-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.help-table th,
+.help-table td {
+  padding: 8px 10px;
+  border: 1px solid var(--cp-border);
+  text-align: left;
+  vertical-align: top;
+}
+.help-table th {
+  color: var(--cp-text);
+  background: var(--cp-bg-elevated);
+  font-weight: 700;
+}
+.help-footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 220px;
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px 20px;
+  border-top: 1px solid var(--cp-border);
+  background: var(--cp-panel-strong);
 }
 
 @media (max-width: 1040px) {
@@ -1801,7 +1956,42 @@ dialog { border-radius: 2px; }
   .prose-banner-actions { width: 100%; flex-wrap: wrap; }
   .describe-actions > div { width: 100%; }
   .describe-actions .toolbar-btn { width: 100%; }
-  .help-grid { grid-template-columns: minmax(0, 1fr); }
+  .help-dialog {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    height: calc(100vh - 40px);
+    max-height: calc(100vh - 40px);
+  }
+  .help-header { padding: 16px; }
+  .help-header-row { gap: 8px; }
+  .help-shell {
+    grid-template-columns: minmax(0, 1fr);
+    height: calc(100% - 169px);
+  }
+  .help-nav {
+    display: flex;
+    gap: 3px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px;
+    border-right: 0;
+    border-bottom: 1px solid var(--cp-border);
+  }
+  .help-nav-label { display: none; }
+  .help-nav button {
+    width: auto;
+    flex: 0 0 auto;
+    padding: 7px 10px;
+    border-left: 0;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .help-nav button:hover,
+  .help-nav button:focus-visible { border-bottom-color: var(--cp-accent); }
+  .help-content { padding: 20px 16px 74px; }
+  .help-topic h3 { font-size: 20px; }
+  .help-feature-list { grid-template-columns: minmax(0, 1fr); }
+  .help-footer { left: 0; padding: 10px 16px; }
 }
 
 @media (max-width: 430px) {
@@ -2271,6 +2461,27 @@ export const STUDIO_JS = `
     state.projectModules = data.projectModules || [];
   }
 
+  function filterHelp(query) {
+    var term = String(query || '').trim().toLowerCase();
+    var topics = Array.from(document.querySelectorAll('.help-topic'));
+    var visible = 0;
+    topics.forEach(function (topic) {
+      var matches = !term || topic.textContent.toLowerCase().includes(term);
+      topic.hidden = !matches;
+      if (matches) visible += 1;
+      var nav = document.querySelector('[data-help-target="' + topic.id + '"]');
+      if (nav) nav.hidden = !matches;
+    });
+    var status = el('help-search-status');
+    if (!term) {
+      status.textContent = 'Search controls, workflows, examples, limitations, or error recovery.';
+    } else if (visible === 0) {
+      status.textContent = 'No matching help topic. Try a control name such as Save, Preview, Problems, or autocomplete.';
+    } else {
+      status.textContent = visible + (visible === 1 ? ' topic matches.' : ' topics match.');
+    }
+  }
+
   function showFatal(msg) {
     var b = document.body;
     b.textContent = '';
@@ -2341,13 +2552,30 @@ export const STUDIO_JS = `
     el('btn-theme').addEventListener('click', toggleTheme);
     el('btn-help').addEventListener('click', function () {
       var helpDialog = el('dlg-help');
+      el('help-search').value = '';
+      filterHelp('');
       helpDialog.showModal();
       window.requestAnimationFrame(function () {
         helpDialog.focus({ preventScroll: true });
         helpDialog.scrollTop = 0;
+        el('help-content').scrollTop = 0;
       });
     });
     el('btn-help-close').addEventListener('click', function () { el('dlg-help').close(); });
+    el('help-search').addEventListener('input', function () {
+      filterHelp(el('help-search').value);
+    });
+    el('btn-help-clear').addEventListener('click', function () {
+      el('help-search').value = '';
+      filterHelp('');
+      el('help-search').focus();
+    });
+    document.querySelectorAll('[data-help-target]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var target = el(button.getAttribute('data-help-target'));
+        if (target) target.scrollIntoView({ block: 'start' });
+      });
+    });
 
     // Tabs — mark user intent
     document.querySelectorAll('[role="tab"]').forEach(function (tab) {
@@ -4768,68 +4996,193 @@ export function buildStudioHtml(filename: string, port: number): string {
 
   <!-- Studio help -->
   <dialog id="dlg-help" class="help-dialog" aria-labelledby="dlg-help-title" aria-modal="true" tabindex="-1">
-    <h2 class="dialog-title" id="dlg-help-title">IntentLang Studio help</h2>
-    <p class="help-intro">Studio has three authoring paths. Code edits the formal business language, App Builder proposes source from a finite supported vocabulary, and Visual Language builds browser pages with its own controlled grammar.</p>
-    <div class="help-grid">
-      <section class="help-section">
-        <h3>Code workspace</h3>
-        <p>Write <code>.intent</code> source directly. Autocomplete offers grammar snippets and declared names. Existing source files open here by default.</p>
-        <ul>
-          <li><strong>Check</strong> parses and validates without writing.</li>
-          <li><strong>Format</strong> previews canonical formatting before applying it.</li>
-          <li><strong>Save</strong> confirms before overwriting the source file.</li>
-          <li><strong>Generate App</strong> previews the artifact plan before writing.</li>
-          <li><strong>Templates</strong> loads a starter after an unsaved-change warning.</li>
-          <li><strong>AI Assist</strong> is optional, off by default, and cannot override compiler errors.</li>
-        </ul>
-      </section>
-      <section class="help-section">
-        <h3>App Builder</h3>
-        <p>Describe a supported CRUD-style app, review the exact proposed IntentLang, acknowledge anything unsupported, then build and preview.</p>
-        <ul>
-          <li><strong>Describe</strong> accepts finite, documented patterns.</li>
-          <li><strong>Review</strong> exposes assumptions, warnings, and omitted requests.</li>
-          <li><strong>Build</strong> compiles and generates only confirmed source.</li>
-          <li><strong>Open app</strong> starts a local preview when authentication setup is not required.</li>
-        </ul>
-      </section>
-      <section class="help-section">
-        <h3>Editor modes</h3>
-        <p><strong>Write IntentLang</strong> is the formal editor. <strong>Describe App</strong> uses the same offline interpreter as App Builder inside the Code workspace, with optional configured AI as a separate proposal path.</p>
-      </section>
-      <section class="help-section">
-        <h3>Inspector</h3>
-        <ul>
-          <li><strong>Problems</strong> lists diagnostics and navigates to their source locations.</li>
-          <li><strong>Application Model</strong> shows entities, fields, roles, permissions, policies, and safety information.</li>
-          <li><strong>Canonical Source</strong> shows normalized compiler output.</li>
-          <li><strong>Raw IR</strong> shows the typed intermediate representation.</li>
-        </ul>
-      </section>
-      <section class="help-section">
-        <h3>Visual Language</h3>
-        <p>A separate controlled-English language for elements, layout, styles, forms, animation, and safe browser interactions. It compiles to standalone HTML and does not create the business-app backend.</p>
-      </section>
-      <section class="help-section">
-        <h3>Safety and persistence</h3>
-        <p>Checking, formatting previews, and proposals do not save or generate automatically. Saving source and writing generated artifacts are explicit confirmed actions. Studio listens on localhost.</p>
-      </section>
-      <section class="help-section">
-        <h3>Keyboard shortcuts</h3>
-        <ul>
-          <li><code>Ctrl+Enter</code> — check source</li>
-          <li><code>Ctrl+Shift+F</code> — format source</li>
-          <li><code>Ctrl+S</code> — save source</li>
-          <li><code>Tab</code> or <code>Enter</code> — accept autocomplete</li>
-          <li><code>Escape</code> — close autocomplete</li>
-        </ul>
-      </section>
-      <section class="help-section">
-        <h3>Detailed documentation</h3>
-        <p>Read <code>docs/studio.md</code> for the complete feature guide, <code>docs/description-mode.md</code> for App Builder grammar, and <code>docs/visual-language.md</code> for the page language.</p>
-      </section>
+    <div class="help-header">
+      <div class="help-header-row">
+        <div>
+          <h2 class="dialog-title" id="dlg-help-title">IntentLang Studio help center</h2>
+          <p class="help-intro">Everything needed to use Studio is available here. Search for a control, workflow, concept, limitation, or error without leaving the application.</p>
+        </div>
+      </div>
+      <div class="help-search-row">
+        <input id="help-search" type="search" placeholder="Search help: Save, permissions, preview, autocomplete…" aria-label="Search Studio help">
+        <button id="btn-help-clear" class="toolbar-btn" type="button">Clear</button>
+      </div>
+      <div id="help-search-status" role="status" aria-live="polite">Search controls, workflows, examples, limitations, or error recovery.</div>
     </div>
-    <div class="dialog-actions">
+    <div class="help-shell">
+      <nav class="help-nav" aria-label="Help topics">
+        <div class="help-nav-label">Topics</div>
+        <button type="button" data-help-target="help-start">Start here</button>
+        <button type="button" data-help-target="help-code">Code editor</button>
+        <button type="button" data-help-target="help-builder">App Builder</button>
+        <button type="button" data-help-target="help-inspector">Inspector</button>
+        <button type="button" data-help-target="help-visual">Visual Language</button>
+        <button type="button" data-help-target="help-workflows">Workflows</button>
+        <button type="button" data-help-target="help-safety">Safety and files</button>
+        <button type="button" data-help-target="help-troubleshooting">Troubleshooting</button>
+        <button type="button" data-help-target="help-shortcuts">Shortcuts</button>
+      </nav>
+      <div id="help-content" class="help-content">
+        <article id="help-start" class="help-topic">
+          <h3>Start here</h3>
+          <p>Studio has three authoring paths. They are related, but they do different jobs.</p>
+          <div class="help-feature-list">
+            <div class="help-feature"><strong>Code</strong><span>Write the formal business language directly. Use it for entities, relationships, validation, authentication, roles, permissions, workflows, and generated full-stack applications.</span></div>
+            <div class="help-feature"><strong>App Builder</strong><span>Describe a supported simple application, review the exact source proposal, acknowledge unsupported requests, then build. It is guided scaffolding, not unrestricted prompt-to-code.</span></div>
+            <div class="help-feature"><strong>Visual Language</strong><span>Build browser pages and interfaces with a separate controlled grammar for elements, styles, layout, forms, animation, and safe interactions.</span></div>
+            <div class="help-feature"><strong>Which should I choose?</strong><span>Edit an existing business app in Code. Start a simple CRUD app in App Builder. Build a standalone interface or visual experiment in Visual Language.</span></div>
+          </div>
+          <div class="help-callout"><p><strong>The compiler is always the authority.</strong> Studio never treats a description or AI response as executable until it parses and validates as IntentLang source.</p></div>
+        </article>
+
+        <article id="help-code" class="help-topic">
+          <h3>Code editor</h3>
+          <p>The Code workspace is the direct IDE for <code>.intent</code> source. Existing non-empty files open here automatically.</p>
+          <h4>Editor modes</h4>
+          <ul>
+            <li><strong>Write IntentLang</strong> edits the formal controlled-English source.</li>
+            <li><strong>Describe App</strong> runs the deterministic description interpreter beside the editor. Applying a proposal changes the editor buffer only.</li>
+          </ul>
+          <h4>Toolbar controls</h4>
+          <div class="help-table-wrap"><table class="help-table">
+            <thead><tr><th>Control</th><th>What it does</th><th>What it does not do</th></tr></thead>
+            <tbody>
+              <tr><td><strong>Check</strong></td><td>Parses and validates the current buffer and refreshes diagnostics and the compiled model.</td><td>Does not save or generate files.</td></tr>
+              <tr><td><strong>Format</strong></td><td>Builds canonical formatting and shows a line-by-line preview before applying it.</td><td>Does not save the formatted buffer.</td></tr>
+              <tr><td><strong>Save</strong></td><td>Shows a confirmation, then overwrites the source file with the editor buffer.</td><td>Does not generate the application.</td></tr>
+              <tr><td><strong>Generate App</strong></td><td>Validates source, shows the artifact plan, and writes generated UI, backend, API, database, manifest, and controls after confirmation.</td><td>Does not silently accept invalid source or destructive changes.</td></tr>
+              <tr><td><strong>Templates</strong></td><td>Loads a known valid starter into the editor after warning about unsaved changes.</td><td>Does not save automatically.</td></tr>
+              <tr><td><strong>AI Assist</strong></td><td>When configured, asks a provider for a source proposal, shows questions or a diff, and requires explicit application.</td><td>Cannot write files, execute commands, bypass diagnostics, or override compiler meaning.</td></tr>
+            </tbody>
+          </table></div>
+          <h4>Autocomplete</h4>
+          <p>Autocomplete appears while typing and offers grammar snippets plus names already declared in the current source. Use arrow keys to select, <code>Tab</code> or <code>Enter</code> to accept, and <code>Escape</code> to close.</p>
+          <pre class="help-example">application TaskBoard
+
+a Task has a required title as text length between 1 and 200
+a Task has a status as text default "open"
+
+action close a Task
+  require status is not "closed" otherwise "Task is already closed"
+  set status to "closed"</pre>
+          <h4>Diagnostics and prose detection</h4>
+          <p>The first compiler error appears above the editor. If the buffer looks like unrestricted prose instead of controlled grammar, Studio offers to move it to Describe App or open valid examples.</p>
+        </article>
+
+        <article id="help-builder" class="help-topic">
+          <h3>App Builder</h3>
+          <p>App Builder is a four-step guided workflow for a finite set of business-app descriptions.</p>
+          <ol>
+            <li><strong>Describe</strong> the records and fields you need.</li>
+            <li><strong>Review</strong> generated source, assumptions, warnings, clarification answers, and anything not generated.</li>
+            <li><strong>Build</strong> the confirmed source through the normal compiler and generator.</li>
+            <li><strong>Open app</strong> by starting a local preview when the app does not require authentication setup.</li>
+          </ol>
+          <h4>Descriptions that work well</h4>
+          <pre class="help-example">I want to build an app that allows people to add their name, age, address, and date of birth.</pre>
+          <p>Common supported fields include name, age, address, date of birth, email, title, description, notes, status, category, phone, quantity, amount, active, done, price, and cost. When a type is ambiguous, Studio asks a question instead of guessing.</p>
+          <h4>Requests that are reported but not generated</h4>
+          <p>Sorting, search/filter, delete rules, file upload, and email notifications are currently recognized as unsupported in this guided path. Unrecognized fields are also shown. You must acknowledge omissions before building a partial proposal.</p>
+          <div class="help-callout"><p><strong>Acknowledgement is not implementation.</strong> It confirms that you understand which requested capabilities are absent.</p></div>
+          <h4>Existing source</h4>
+          <p>When a file already contains IntentLang, Code remains the primary workspace. App Builder warns before replacing anything and can move a reviewed proposal into Code for manual refinement.</p>
+          <h4>Preview and authentication</h4>
+          <p>Unauthenticated apps can start and stop a localhost preview. Authenticated apps show the required bootstrap environment variables and run command instead of placing a password in source or automatically launching an incomplete setup.</p>
+        </article>
+
+        <article id="help-inspector" class="help-topic">
+          <h3>Compiler inspector</h3>
+          <div class="help-feature-list">
+            <div class="help-feature"><strong>Problems</strong><span>Lists parser and semantic diagnostics. Selecting one moves the editor to its source location. A valid program says No problems detected.</span></div>
+            <div class="help-feature"><strong>Application Model</strong><span>Shows what the compiler understood: entities, fields, relationships, actions, roles, permissions, policy expansions, project modules, and safety information.</span></div>
+            <div class="help-feature"><strong>Canonical Source</strong><span>Shows normalized controlled English emitted from the compiled model. Use it to inspect stable meaning and formatting.</span></div>
+            <div class="help-feature"><strong>Raw IR</strong><span>Shows typed intermediate-representation JSON for advanced debugging, tooling integration, fingerprints, and traceability.</span></div>
+          </div>
+          <p>The inspector explains compiler output; it is not editable and is never a second source of truth.</p>
+        </article>
+
+        <article id="help-visual" class="help-topic">
+          <h3>Visual Language</h3>
+          <p>Visual Language is a separate compiler for standalone pages. It does not create the business-app database, API, authentication, roles, or workflows.</p>
+          <pre class="help-example">Add a section called welcome
+Add a heading called greeting inside welcome
+Set the text of greeting to Hello world
+Make greeting large and bold
+Set the background color of welcome to light blue
+Set the padding of welcome to 24 pixels</pre>
+          <h4>Playground features</h4>
+          <ul>
+            <li><strong>Live preview</strong> recompiles after a short typing pause.</li>
+            <li><strong>Run / replay</strong> restarts animations and load behavior.</li>
+            <li><strong>Examples</strong> load complete programs after confirming replacement of changed text.</li>
+            <li><strong>Browse HTML and CSS capabilities</strong> searches the implemented element, attribute, and property catalogue and inserts valid instructions.</li>
+            <li><strong>Download source</strong> saves the controlled-English program.</li>
+            <li><strong>Download HTML</strong> saves the compiled standalone page and is disabled when source is invalid.</li>
+          </ul>
+          <p>The language supports page elements, nesting, text, validated CSS properties and values, attributes, labels and references, common controls, forms, layout, animation, and safe click/change/load/keyboard interactions. It does not execute user-supplied JavaScript.</p>
+        </article>
+
+        <article id="help-workflows" class="help-topic">
+          <h3>Common workflows</h3>
+          <h4>Start a simple application</h4>
+          <ol><li>Open App Builder.</li><li>Describe records and fields.</li><li>Resolve questions and review omissions.</li><li>Build the confirmed source.</li><li>Open the preview or follow authentication setup guidance.</li></ol>
+          <h4>Edit an existing application</h4>
+          <ol><li>Open the file in Studio; Code opens automatically.</li><li>Edit with autocomplete.</li><li>Check until Problems is clear.</li><li>Inspect Application Model and Canonical Source.</li><li>Save, then Generate App as separate confirmed steps.</li></ol>
+          <h4>Turn a description into editable source</h4>
+          <ol><li>In Code, select Describe App.</li><li>Use offline guided interpretation.</li><li>Answer clarification questions.</li><li>Review generated meaning and effects.</li><li>Apply supported source to the editor, then check and edit it.</li></ol>
+          <h4>Build a visual page</h4>
+          <ol><li>Open Visual Language.</li><li>Load an example or add named elements.</li><li>Use the capability browser to insert valid styles and attributes.</li><li>Resolve all diagnostics.</li><li>Download the source or compiled HTML.</li></ol>
+        </article>
+
+        <article id="help-safety" class="help-topic">
+          <h3>Safety, files, and persistence</h3>
+          <ul>
+            <li>Studio listens on localhost.</li>
+            <li>Checking never writes files.</li>
+            <li>Formatting changes the editor only after a diff is accepted.</li>
+            <li>App Builder and AI proposals change the editor only after review.</li>
+            <li>Saving requires explicit confirmation.</li>
+            <li>Generation presents an artifact plan before writing.</li>
+            <li>Unsupported description content is visible and requires acknowledgement.</li>
+            <li>AI is optional, off by default, and never the compiler authority.</li>
+            <li>Authenticated preview setup uses environment variables rather than embedding passwords.</li>
+          </ul>
+          <p>The unsaved marker indicates that the editor differs from the source file. A successful check means the buffer is valid; it does not mean the buffer has been saved or generated.</p>
+        </article>
+
+        <article id="help-troubleshooting" class="help-topic">
+          <h3>Troubleshooting</h3>
+          <div class="help-table-wrap"><table class="help-table">
+            <thead><tr><th>Symptom</th><th>What to do</th></tr></thead>
+            <tbody>
+              <tr><td>Continue or Build is disabled</td><td>Enter a recognizable app description, answer every clarification, and acknowledge unsupported or unrecognized requests.</td></tr>
+              <tr><td>The editor shows a prose warning</td><td>Move the text to Describe App, or rewrite it using formal IntentLang statements.</td></tr>
+              <tr><td>Generate App does not proceed</td><td>Open Problems and resolve every diagnostic. Review the generation plan for blocked or destructive operations.</td></tr>
+              <tr><td>Open app is unavailable</td><td>Complete the build first. For authenticated apps, set the displayed bootstrap environment variables and run the generated server.</td></tr>
+              <tr><td>AI controls are disabled</td><td>No provider is configured. The compiler, Code, App Builder offline interpretation, templates, and generation remain fully usable.</td></tr>
+              <tr><td>Autocomplete is not visible</td><td>Use Write IntentLang mode, place the cursor in the editor, and type the beginning of a supported statement or a declared element name.</td></tr>
+              <tr><td>Visual preview is blank</td><td>Resolve the displayed visual-language diagnostics. Invalid input clears the preview and disables HTML download.</td></tr>
+              <tr><td>Changes disappeared after reload</td><td>Editor and playground changes are not persisted automatically. Use Save in Code or Download source in Visual Language.</td></tr>
+            </tbody>
+          </table></div>
+        </article>
+
+        <article id="help-shortcuts" class="help-topic">
+          <h3>Keyboard shortcuts</h3>
+          <div class="help-table-wrap"><table class="help-table">
+            <tbody>
+              <tr><th><code>Ctrl+Enter</code></th><td>Check the current IntentLang source.</td></tr>
+              <tr><th><code>Ctrl+Shift+F</code></th><td>Preview canonical formatting.</td></tr>
+              <tr><th><code>Ctrl+S</code></th><td>Open the save confirmation.</td></tr>
+              <tr><th><code>Arrow Up / Down</code></th><td>Move through autocomplete choices.</td></tr>
+              <tr><th><code>Tab</code> or <code>Enter</code></th><td>Accept the selected autocomplete choice.</td></tr>
+              <tr><th><code>Escape</code></th><td>Close autocomplete or dismiss the active browser dialog.</td></tr>
+            </tbody>
+          </table></div>
+        </article>
+      </div>
+    </div>
+    <div class="help-footer">
       <button id="btn-help-close" class="toolbar-btn primary" type="button">Close help</button>
     </div>
   </dialog>

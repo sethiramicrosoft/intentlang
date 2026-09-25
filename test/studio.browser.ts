@@ -21,7 +21,13 @@ test("Studio editor autocompletes instruction snippets and declared names", asyn
     await page.locator("#nav-code").waitFor();
     assert.equal(await page.locator("#nav-code").getAttribute("aria-pressed"), "true");
     await page.locator("#btn-help").click();
-    await page.getByRole("dialog", { name: "IntentLang Studio help" }).waitFor({ state: "visible" });
+    await page.getByRole("dialog", { name: "IntentLang Studio help center" }).waitFor({ state: "visible" });
+    await page.locator("#help-search").fill("autocomplete");
+    await page.locator("#help-search-status").filter({ hasText: "topics match" }).waitFor();
+    assert.ok(await page.locator("#help-code").isVisible());
+    assert.equal(await page.locator("#help-builder").isVisible(), false);
+    await page.locator("#btn-help-clear").click();
+    assert.ok(await page.locator("#help-builder").isVisible());
     await page.locator("#btn-help-close").click();
     await page.locator("#tab-mode-code").click();
     const editor = page.locator("#editor");
