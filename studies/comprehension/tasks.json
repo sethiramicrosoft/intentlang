@@ -1,0 +1,63 @@
+{
+  "version": "1.0.0",
+  "assignmentGroups": {
+    "A": [
+      { "taskId": "authorization-scope", "representation": "intentlang" },
+      { "taskId": "workflow-change", "representation": "typescript" },
+      { "taskId": "ambiguity-review", "representation": "intentlang" }
+    ],
+    "B": [
+      { "taskId": "authorization-scope", "representation": "typescript" },
+      { "taskId": "workflow-change", "representation": "intentlang" },
+      { "taskId": "ambiguity-review", "representation": "typescript" }
+    ]
+  },
+  "tasks": [
+    {
+      "id": "authorization-scope",
+      "semanticGoal": "Determine which task records a member can read and explain default denial.",
+      "prompt": "User U1 is a Member. Task A is owned by U1 and Task B by U2. Which records can U1 read, and why?",
+      "rubric": {
+        "maximumScore": 3,
+        "criteria": [
+          "Says Task A is readable.",
+          "Says Task B is not readable.",
+          "Explains owner scope and default denial."
+        ]
+      },
+      "intentlang": "authentication uses User identified by email\nrole Member\na User has a required unique email as text\na Task has a required title as text\neach Task belongs to a User as owner on delete restrict\nallow Member to read Task where owner is self",
+      "typescript": "function canReadTask(session: Session | null, task: Task): boolean {\n  if (!session) return false;\n  if (session.role !== 'member') return false;\n  return task.ownerId === session.userId;\n}"
+    },
+    {
+      "id": "workflow-change",
+      "semanticGoal": "Modify a guarded transition without permitting an invalid second transition.",
+      "prompt": "Add a reopen operation that changes done from true to false and rejects an already-open task.",
+      "rubric": {
+        "maximumScore": 4,
+        "criteria": [
+          "Adds a named reopen operation.",
+          "Requires done to be true.",
+          "Sets done to false.",
+          "Includes an explicit failure message."
+        ]
+      },
+      "intentlang": "a Task has a done as boolean default false\naction complete a Task\n  require done is false otherwise \"Task is already complete\"\n  set done to true",
+      "typescript": "function complete(task: Task): Task {\n  if (task.done) throw new Error('Task is already complete');\n  return { ...task, done: true };\n}"
+    },
+    {
+      "id": "ambiguity-review",
+      "semanticGoal": "Identify unresolved identity, ownership, and workflow-failure decisions.",
+      "prompt": "Review the requirement and list every decision that must be clarified before generation: Create a task app for users. Managers approve tasks.",
+      "rubric": {
+        "maximumScore": 3,
+        "criteria": [
+          "Requests the user identity field.",
+          "Requests ownership/access scope.",
+          "Requests valid workflow states and invalid-transition behavior."
+        ]
+      },
+      "intentlang": "Clarification required:\n- Which field identifies a user?\n- Who owns each task and who may read it?\n- From which state may a manager approve, and what happens otherwise?",
+      "typescript": "interface User { id: string }\ninterface Task { status: string; ownerId?: string }\nfunction approve(task: Task, manager: User): Task {\n  return { ...task, status: 'approved' };\n}"
+    }
+  ]
+}

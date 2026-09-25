@@ -18,7 +18,17 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Determine governance baseline
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "GOVERNANCE_BASE=${{ github.event.pull_request.base.sha }}" >> "$GITHUB_ENV"
+          else
+            echo "GOVERNANCE_BASE=${{ github.event.before }}" >> "$GITHUB_ENV"
+          fi
+      - run: npm run governance:check
       - run: npm run check
+      - run: npm run test:governance
       - run: npm run test:assurance
       - run: npm run test:adversarial
       - run: npm run assurance:complete

@@ -9,6 +9,7 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
+    "governance:check": "npm run build --silent && node scripts/validate-governance.mjs",
     "check": "tsc --noEmit",
     "test": "tsx --test test/**/*.test.ts",
     "test:assurance": "tsx --test test/language-contracts.test.ts test/language-inventory.test.ts test/rule-registry.test.ts test/conformance.test.ts test/language-coverage.test.ts test/canonical-properties.test.ts test/semantic-fingerprint.test.ts test/compatibility.test.ts test/traceability.test.ts test/launch-ops-trace.test.ts",
@@ -24,6 +25,7 @@
     "test:typed-computation": "tsx --test test/typed-expressions.test.ts test/typed-functions-queries.test.ts",
     "test:effects": "tsx --test test/effects-runtime.test.ts",
     "test:tooling": "tsx --test test/independent-tooling.test.ts",
+    "test:governance": "tsx --test test/governance.test.ts test/study-analysis.test.ts",
     "lsp": "tsx src/language/lsp-server.ts",
     "conformance": "tsx src/cli.ts conformance run",
     "example:typed-computation": "tsx examples/typed-pricing-analytics.ts",

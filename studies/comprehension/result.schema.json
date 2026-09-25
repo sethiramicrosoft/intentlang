@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Anonymized IntentLang comprehension result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "studyVersion",
+    "participantCode",
+    "cohort",
+    "experienceBand",
+    "assignmentGroup",
+    "responses"
+  ],
+  "properties": {
+    "studyVersion": { "type": "string" },
+    "participantCode": { "type": "string", "pattern": "^[A-Z0-9-]{6,24}$" },
+    "cohort": {
+      "enum": ["domain-expert", "developer", "security-reviewer", "beginner"]
+    },
+    "experienceBand": {
+      "enum": ["none", "under-1-year", "1-to-3-years", "4-to-10-years", "over-10-years"]
+    },
+    "assignmentGroup": { "enum": ["A", "B"] },
+    "responses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "taskId",
+          "phase",
+          "representation",
+          "correctnessScore",
+          "maximumScore",
+          "durationSeconds",
+          "confidence",
+          "introducedDefects",
+          "securityRiskOpportunities",
+          "securityRisksIdentified",
+          "excludedFromTiming"
+        ],
+        "properties": {
+          "taskId": { "type": "string" },
+          "phase": { "enum": ["initial", "retention"] },
+          "representation": { "enum": ["intentlang", "typescript"] },
+          "correctnessScore": { "type": "number", "minimum": 0 },
+          "maximumScore": { "type": "number", "exclusiveMinimum": 0 },
+          "durationSeconds": { "type": "integer", "minimum": 0 },
+          "confidence": { "type": "integer", "minimum": 1, "maximum": 5 },
+          "introducedDefects": { "type": "integer", "minimum": 0 },
+          "securityRiskOpportunities": { "type": "integer", "minimum": 0 },
+          "securityRisksIdentified": { "type": "integer", "minimum": 0 },
+          "excludedFromTiming": { "type": "boolean" },
+          "comment": { "type": "string", "maxLength": 500 }
+        }
+      }
+    }
+  }
+}

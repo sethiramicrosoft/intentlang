@@ -22,6 +22,7 @@
     { "id": "TOOL-OBL-001", "category": "obligation", "status": "experimental", "title": "Reusable LSP document intelligence and trace navigation", "implementation": ["src/language/language-service.ts", "src/language/lsp-server.ts"] },
     { "id": "TOOL-OBL-002", "category": "obligation", "status": "experimental", "title": "Typed REPL and explainable workflow and authorization debugger", "implementation": ["src/language/tooling-repl.ts", "src/language/debugger.ts"] },
     { "id": "TOOL-OBL-003", "category": "obligation", "status": "experimental", "title": "Standalone conformance and semantic manifest validation", "implementation": ["src/language/conformance-runner.ts", "src/language/manifest-validator.ts"] },
-    { "id": "TOOL-OBL-004", "category": "obligation", "status": "experimental", "title": "Correct-or-loud generated backend parity validation", "implementation": ["src/language/backend-parity.ts"] }
+    { "id": "TOOL-OBL-004", "category": "obligation", "status": "experimental", "title": "Correct-or-loud generated backend parity validation", "implementation": ["src/language/backend-parity.ts"] },
+    { "id": "TOOL-OBL-005", "category": "obligation", "status": "experimental", "title": "Executable language governance and anonymized human-evidence analysis", "implementation": ["src/language/governance.ts", "src/language/study-analysis.ts", "scripts/validate-governance.mjs"] }
   ]
 }

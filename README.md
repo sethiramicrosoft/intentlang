@@ -57,6 +57,14 @@ The stable language surface is linked to a
 and executable conformance fixtures. Run `npm run assurance:complete` to verify
 that every stable construct has rule and test evidence.
 
+Language changes also pass an executable
+[governance contract](docs/spec/language-governance.md). Run
+`npm run governance:check` to validate proposals, specifications, registry and
+evidence links, study materials, release gates, and independent-review status.
+The [human-comprehension study](studies/comprehension/STATUS.md) and independent
+review are **not yet complete**, so the repository makes no empirical
+comprehension or stable-graduation claim.
+
 ### Flagship example: LaunchOps Mission Control
 
 [`examples/launch-ops.intent`](examples/launch-ops.intent) is one controlled

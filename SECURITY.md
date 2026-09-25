@@ -2,11 +2,11 @@
 
 ## Scope and current status
 
-IntentLang is currently experimental (v0.7.x line). Security controls exist, but there are no guarantees of production readiness.
+IntentLang is currently experimental (`v0.8.0-alpha.0`). Security controls exist, but there are no guarantees of production readiness.
 
 Supported branch/version for security fixes in this repo:
 
-- `v0.7.x` (current)
+- `v0.8.0-alpha.x` (current)
 
 ## Reporting a vulnerability safely
 

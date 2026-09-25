@@ -289,16 +289,16 @@ a normative rule and applicable fixtures.
 
 ## Phase 13: Human Evidence and Governance (US8/US9, P2)
 
-- [ ] T098 [P] [US8] Define ethical, anonymized comprehension study protocol.
-- [ ] T099 [P] [US8] Create equivalent IntentLang/conventional-language tasks.
+- [x] T098 [P] [US8] Define ethical, anonymized comprehension study protocol.
+- [x] T099 [P] [US8] Create equivalent IntentLang/conventional-language tasks.
 - [ ] T100 [US8] Run pilot studies across domain experts, developers, security
   reviewers, and beginners.
 - [ ] T101 [US8] Publish correctness, confidence, defect, timing, and retention
   findings, including negative results.
-- [ ] T102 [P] [US9] Add language proposal template and checklist.
-- [ ] T103 [US9] Add CI verification that language changes reference proposals,
+- [x] T102 [P] [US9] Add language proposal template and checklist.
+- [x] T103 [US9] Add CI verification that language changes reference proposals,
   rules, fixtures, compatibility, traces, and docs.
-- [ ] T104 [US9] Add release checklist for constitution and compatibility gates.
+- [x] T104 [US9] Add release checklist for constitution and compatibility gates.
 - [ ] T105 Commission independent security and specification review before
   stable-language graduation.
 

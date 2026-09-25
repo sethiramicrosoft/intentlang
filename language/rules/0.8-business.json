@@ -343,6 +343,21 @@
       }
     },
     {
+      "id": "HUMAN-GOVERNANCE-001",
+      "status": "experimental",
+      "title": "Language changes require executable governance and human claims require real evidence",
+      "canonicalForm": "proposal + specification + registry + evidence + compatibility + traceability + documentation",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["TOOL-OBL-005"],
+      "specification": "docs/spec/language-governance.md#human-governance-001",
+      "evidence": {
+        "positive": ["test/governance.test.ts", "test/study-analysis.test.ts"],
+        "negative": ["test/governance.test.ts", "test/study-analysis.test.ts"],
+        "canonical": ["docs/governance/language-proposal-template.md"],
+        "runtime": [".github/workflows/language-assurance.yml"]
+      }
+    },
+    {
       "id": "RUNTIME-GENERATION-001",
       "status": "stable",
       "title": "Business IR generates synchronized persistence, UI, API, security, workflow, concurrency, idempotency, and audit behavior",
