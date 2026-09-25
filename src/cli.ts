@@ -20,10 +20,43 @@ import { loadRuleRegistries } from "./language/rule-registry.js";
 import { buildTraceMap } from "./language/trace.js";
 import { remapTraceMapSources } from "./language/trace.js";
 import { compileProject } from "./language/modules.js";
+import { runConformance } from "./language/conformance-runner.js";
+import { validateSemanticManifest } from "./language/manifest-validator.js";
+import {
+  evaluateExpressionRepl,
+  evaluateQueryRepl
+} from "./language/tooling-repl.js";
+import type { QueryDefinition, QueryRow } from "./language/typed-queries.js";
+import { debugRequest } from "./language/debugger.js";
+import {
+  codeActions,
+  documentSymbols,
+  languageDiagnostics,
+  semanticTokens,
+  traceLinks
+} from "./language/language-service.js";
+import { validateBackendParity } from "./language/backend-parity.js";
+import type { ConformanceCategory } from "./language/contracts.js";
 
 const [command, sourceArgument, ...options] = process.argv.slice(2);
 
-if (command === "assurance" && sourceArgument === "report") {
+if (command === "lsp") {
+  await import("./language/lsp-server.js");
+} else if (command === "conformance" && sourceArgument === "run") {
+  await runConformanceCommand(options);
+} else if (command === "manifest" && sourceArgument === "validate") {
+  await runManifestValidation(options);
+} else if (command === "repl" && sourceArgument === "expression") {
+  runExpressionRepl(options);
+} else if (command === "repl" && sourceArgument === "query") {
+  await runQueryRepl(options);
+} else if (command === "debug" && sourceArgument !== undefined) {
+  await runDebugger(sourceArgument, options);
+} else if (command === "tooling" && sourceArgument !== undefined) {
+  await runToolingInspection(sourceArgument);
+} else if (command === "parity" && sourceArgument !== undefined) {
+  await runParityCheck(sourceArgument);
+} else if (command === "assurance" && sourceArgument === "report") {
   await runAssuranceReport(options);
 } else if (command === "studio" && sourceArgument !== undefined) {
   await runStudio(sourceArgument, options);
@@ -40,6 +73,7 @@ if (command === "assurance" && sourceArgument === "report") {
   } else {
     await writeCompiledOutput(result.html, "visual", options);
   }
+
 } else if (
   (command !== "check" &&
     command !== "compile" &&
@@ -55,6 +89,156 @@ if (command === "assurance" && sourceArgument === "report") {
   await runFormat(sourceArgument, options);
 } else {
   await runCompile(command, sourceArgument, options);
+}
+
+function toolingJson(value: unknown): string {
+  return JSON.stringify(
+    value,
+    (_key, item) => (typeof item === "bigint" ? `${item}n` : item),
+    2
+  );
+}
+
+async function runConformanceCommand(options: string[]): Promise<void> {
+  const category = findOptionValue(options, "--category");
+  const rule = findOptionValue(options, "--rule");
+  const result = await runConformance({
+    categories: category
+      ? (category.split(",") as ConformanceCategory[])
+      : undefined,
+    ruleIds: rule ? rule.split(",") : undefined
+  });
+  console.log(toolingJson(result));
+  if (!result.passed) process.exitCode = 1;
+}
+
+async function runManifestValidation(options: string[]): Promise<void> {
+  const manifestPath = options[0];
+  if (!manifestPath || manifestPath.startsWith("--")) {
+    console.error("manifest validate requires a manifest JSON path.");
+    process.exitCode = 2;
+    return;
+  }
+  const dependenciesPath = findOptionValue(options, "--dependencies");
+  const dependencies = dependenciesPath
+    ? (JSON.parse(await readFile(resolve(dependenciesPath), "utf8")) as Record<
+        string,
+        string
+      >)
+    : {};
+  const manifest = JSON.parse(
+    await readFile(resolve(manifestPath), "utf8")
+  ) as unknown;
+  const result = validateSemanticManifest(manifest, dependencies);
+  console.log(toolingJson(result));
+  if (!result.valid) process.exitCode = 1;
+}
+
+function runExpressionRepl(options: string[]): void {
+  const expression = options[0];
+  if (!expression || expression.startsWith("--")) {
+    console.error("repl expression requires an expression string.");
+    process.exitCode = 2;
+    return;
+  }
+
+  try {
+    console.log(toolingJson(evaluateExpressionRepl({ expression })));
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : String(error));
+    process.exitCode = 1;
+  }
+}
+
+function reviveToolingValue(value: unknown): any {
+  if (typeof value === "string" && /^-?\d+n$/.test(value)) {
+    return BigInt(value.slice(0, -1));
+  }
+  if (Array.isArray(value)) return value.map(reviveToolingValue);
+  if (value !== null && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [
+        key,
+        reviveToolingValue(item)
+      ])
+    );
+  }
+  return value;
+}
+
+async function runQueryRepl(options: string[]): Promise<void> {
+  const inputPath = options[0];
+  if (!inputPath || inputPath.startsWith("--")) {
+    console.error("repl query requires a query JSON path.");
+    process.exitCode = 2;
+    return;
+  }
+  const input = reviveToolingValue(
+    JSON.parse(await readFile(resolve(inputPath), "utf8"))
+  ) as {
+    definition: QueryDefinition;
+    rows: Record<string, QueryRow[]>;
+    authorization?: Record<string, { field: string; equals: unknown }>;
+  };
+  const result = evaluateQueryRepl({
+    definition: input.definition,
+    context: {
+      rows: input.rows,
+      authorize: (sourceName, row) => {
+        const rule = input.authorization?.[sourceName];
+        return rule === undefined || row[rule.field] === rule.equals;
+      }
+    }
+  });
+  console.log(toolingJson(result));
+}
+
+async function runDebugger(
+  sourceArgument: string,
+  options: string[]
+): Promise<void> {
+  const requestPath = findOptionValue(options, "--request");
+  if (!requestPath) {
+    console.error("debug requires --request <request.json>.");
+    process.exitCode = 2;
+    return;
+  }
+  const result = await compileProject(resolve(sourceArgument));
+  if (!result.ok) {
+    printDiagnostics(resolve(sourceArgument), result.diagnostics);
+    process.exitCode = 1;
+    return;
+  }
+  const request = JSON.parse(
+    await readFile(resolve(requestPath), "utf8")
+  ) as Parameters<typeof debugRequest>[1];
+  console.log(toolingJson(debugRequest(result.ir, request)));
+}
+
+async function runToolingInspection(sourceArgument: string): Promise<void> {
+  const sourcePath = resolve(sourceArgument);
+  const source = await readFile(sourcePath, "utf8");
+  console.log(
+    toolingJson({
+      diagnostics: languageDiagnostics(source),
+      symbols: documentSymbols(source),
+      codeActions: codeActions(source),
+      semanticTokens: semanticTokens(source),
+      trace: traceLinks(source, sourcePath)
+    })
+  );
+}
+
+async function runParityCheck(sourceArgument: string): Promise<void> {
+  const result = await compileProject(resolve(sourceArgument));
+  if (!result.ok) {
+    printDiagnostics(resolve(sourceArgument), result.diagnostics);
+    process.exitCode = 1;
+    return;
+  }
+  const parity = validateBackendParity(result.ir);
+  console.log(toolingJson(parity));
+  if (!parity.valid) process.exitCode = 1;
 }
 
 async function runCompile(
@@ -421,6 +605,14 @@ function printUsage(): void {
   console.error("    [--ai-model <model>] [--ai-endpoint <url>] [--ai-timeout <ms>]");
   console.error("    [--allow-remote-ai]");
   console.error("  intentlang assurance report [--json] [--require-complete]");
+  console.error("  intentlang lsp");
+  console.error("  intentlang tooling <source>");
+  console.error("  intentlang repl expression \"<expression>\"");
+  console.error("  intentlang repl query <query.json>");
+  console.error("  intentlang debug <source> --request <request.json>");
+  console.error("  intentlang conformance run [--category <categories>] [--rule <rule-ids>]");
+  console.error("  intentlang manifest validate <manifest.json> [--dependencies <dependencies.json>]");
+  console.error("  intentlang parity <source>");
   console.error("  API key (if needed): set env INTENTLANG_AI_API_KEY before starting Studio.");
 }
 

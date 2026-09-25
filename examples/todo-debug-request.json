@@ -1,0 +1,13 @@
+{
+  "role": "Member",
+  "operation": "run",
+  "entity": "Task",
+  "action": "complete",
+  "identityId": "user-1",
+  "record": {
+    "id": "task-1",
+    "owner_id": "user-1",
+    "title": "Verify the debugger",
+    "done": false
+  }
+}

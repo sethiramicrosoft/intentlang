@@ -277,13 +277,13 @@ a normative rule and applicable fixtures.
 
 ## Phase 12: Tooling and Independent Validation (US1/US5/US7, P2)
 
-- [ ] T092 Implement complete LSP symbol/reference/rename/hover/completion/code
+- [x] T092 Implement complete LSP symbol/reference/rename/hover/completion/code
   action/semantic-token/module/trace navigation support.
-- [ ] T093 Implement typed expression/query REPL.
-- [ ] T094 Implement workflow, policy, and request debugger.
-- [ ] T095 Publish standalone conformance runner.
-- [ ] T096 Publish independent semantic manifest validator API/CLI.
-- [ ] T097 Add correct-or-loud parity tests for every compilation backend.
+- [x] T093 Implement typed expression/query REPL.
+- [x] T094 Implement workflow, policy, and request debugger.
+- [x] T095 Publish standalone conformance runner.
+- [x] T096 Publish independent semantic manifest validator API/CLI.
+- [x] T097 Add correct-or-loud parity tests for every compilation backend.
 
 ---
 

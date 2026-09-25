@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "bin": {
-    "intentlang": "./dist/src/cli.js"
+    "intentlang": "./dist/src/cli.js",
+    "intentlang-lsp": "./dist/src/language/lsp-server.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -22,6 +23,9 @@
     "test:typed-expressions": "tsx --test test/typed-expressions.test.ts",
     "test:typed-computation": "tsx --test test/typed-expressions.test.ts test/typed-functions-queries.test.ts",
     "test:effects": "tsx --test test/effects-runtime.test.ts",
+    "test:tooling": "tsx --test test/independent-tooling.test.ts",
+    "lsp": "tsx src/language/lsp-server.ts",
+    "conformance": "tsx src/cli.ts conformance run",
     "example:typed-computation": "tsx examples/typed-pricing-analytics.ts",
     "example:effects": "tsx examples/failure-safe-fulfillment.ts",
     "assurance": "tsx src/cli.ts assurance report",

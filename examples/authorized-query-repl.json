@@ -1,0 +1,43 @@
+{
+  "definition": {
+    "name": "visibleRevenue",
+    "source": {
+      "name": "Order",
+      "fields": {
+        "ownerId": { "kind": "integer" },
+        "category": { "kind": "text" },
+        "total": { "kind": "money", "currency": "USD", "scale": 2 }
+      }
+    },
+    "groupBy": ["category"],
+    "aggregates": [
+      { "name": "orders", "operation": "count" },
+      { "name": "revenue", "operation": "sum", "field": "total" }
+    ]
+  },
+  "rows": {
+    "Order": [
+      {
+        "ownerId": "7n",
+        "category": "Books",
+        "total": {
+          "kind": "money",
+          "currency": "USD",
+          "amount": { "kind": "decimal", "coefficient": "2000n", "scale": 2 }
+        }
+      },
+      {
+        "ownerId": "8n",
+        "category": "Books",
+        "total": {
+          "kind": "money",
+          "currency": "USD",
+          "amount": { "kind": "decimal", "coefficient": "99900n", "scale": 2 }
+        }
+      }
+    ]
+  },
+  "authorization": {
+    "Order": { "field": "ownerId", "equals": "7n" }
+  }
+}

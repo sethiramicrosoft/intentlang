@@ -5,6 +5,9 @@
   "source": "Create an app with title and status where managers approve or reject records.",
   "expected": {
     "outcome": "clarification",
-    "questionIds": ["workflow.invalid"]
+    "questionIds": [
+      "workflow.invalid",
+      "type.statusWhereManagersApproveOrRejectRecords"
+    ]
   }
 }

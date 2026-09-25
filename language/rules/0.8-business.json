@@ -298,6 +298,51 @@
       }
     },
     {
+      "id": "LANGUAGE-SERVICE-001",
+      "status": "experimental",
+      "title": "Language intelligence is reusable through a standard protocol",
+      "canonicalForm": "compiler diagnostics plus symbol, navigation, rename, completion, token, module, and trace services",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["TOOL-OBL-001"],
+      "specification": "docs/spec/independent-tooling.md#language-service-001",
+      "evidence": {
+        "positive": ["test/independent-tooling.test.ts"],
+        "negative": ["test/independent-tooling.test.ts"],
+        "canonical": ["test/independent-tooling.test.ts"],
+        "runtime": ["test/independent-tooling.test.ts"]
+      }
+    },
+    {
+      "id": "TOOLING-EVALUATION-001",
+      "status": "experimental",
+      "title": "Typed evaluation and request decisions are inspectable without mutation",
+      "canonicalForm": "expression/query evaluation | workflow/authorization/request explanation",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["TOOL-OBL-002"],
+      "specification": "docs/spec/independent-tooling.md#tooling-evaluation-001",
+      "evidence": {
+        "positive": ["test/independent-tooling.test.ts"],
+        "negative": ["test/independent-tooling.test.ts"],
+        "canonical": ["test/independent-tooling.test.ts"],
+        "runtime": ["test/independent-tooling.test.ts"]
+      }
+    },
+    {
+      "id": "INDEPENDENT-VALIDATION-001",
+      "status": "experimental",
+      "title": "Conformance, manifests, and backend parity are independently verifiable",
+      "canonicalForm": "structured conformance outcomes | recomputed manifest fingerprints | correct-or-loud backend obligations",
+      "compatibilityClass": "minor-additive",
+      "inventoryIds": ["TOOL-OBL-003", "TOOL-OBL-004"],
+      "specification": "docs/spec/independent-tooling.md#independent-validation-001",
+      "evidence": {
+        "positive": ["test/independent-tooling.test.ts"],
+        "negative": ["test/independent-tooling.test.ts"],
+        "canonical": ["test/independent-tooling.test.ts"],
+        "runtime": ["test/independent-tooling.test.ts"]
+      }
+    },
+    {
       "id": "RUNTIME-GENERATION-001",
       "status": "stable",
       "title": "Business IR generates synchronized persistence, UI, API, security, workflow, concurrency, idempotency, and audit behavior",

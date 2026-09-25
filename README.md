@@ -939,6 +939,23 @@ allow Member to run close on Ticket where owner is self
 | `intentlang compile <source>` | Emit canonical IR JSON | `--output ... --write` required for file write; `--force` required for overwrite |
 | `intentlang generate <source>` | Plan/generate app artifacts | Requires `--output`; use `--write` to materialize |
 | `intentlang studio <source>` | Open local authoring Studio | Default port 3211; `--port N` or `PORT=N`; `--no-open` to suppress browser |
+| `intentlang lsp` / `intentlang-lsp` | Start the stdio language server | Symbols, definitions, references, rename, hover, completion, quick fixes, semantic tokens, module links, and trace navigation |
+| `intentlang tooling <source>` | Inspect reusable language intelligence | Emits diagnostics, symbols, actions, tokens, and trace JSON |
+| `intentlang repl expression "<expression>"` | Evaluate an exact typed literal expression | Emits inferred type and exact value JSON |
+| `intentlang repl query <query.json>` | Evaluate a typed authorization-aware query plan | Big integers use JSON strings such as `"7n"`; see `examples/authorized-query-repl.json` |
+| `intentlang debug <source> --request <request.json>` | Explain authorization and workflow decisions | Read-only; does not mutate records |
+| `intentlang conformance run` | Run the standalone conformance suite | Filter with `--category` or `--rule` |
+| `intentlang manifest validate <manifest.json>` | Independently validate semantic fingerprints | Optional `--dependencies <dependencies.json>` |
+| `intentlang parity <source>` | Verify database/runtime/UI obligations | Fails when a backend omits required semantics |
+
+Runnable tooling examples:
+
+```bash
+intentlang repl query examples/authorized-query-repl.json
+intentlang debug examples/todo.intent --request examples/todo-debug-request.json
+intentlang manifest validate examples/launch-ops-generated/intentlang.manifest.json
+intentlang parity examples/launch-ops.intent
+```
 
 Generation safety flags:
 
