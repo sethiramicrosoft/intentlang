@@ -2286,7 +2286,12 @@ test("studio server preview start succeeds for wizard-built unauthenticated app"
 test("studio HTML v0.8.0 has beginner-first wizard structure", () => {
   const html = buildStudioHtml("test.intent", 3211);
   assert.ok(html.includes("IntentLang App Builder"), "heading present");
-  assert.ok(html.includes(">Studio<"), "studio badge present");
+  assert.ok(html.includes("IntentLang Studio"), "Studio identity present");
+  assert.ok(html.includes('id="nav-code"'), "Code workspace navigation present");
+  assert.ok(html.includes('id="nav-builder"'), "App Builder navigation present");
+  assert.ok(html.includes('href="/playground"'), "Visual Language navigation present");
+  assert.ok(html.includes('id="btn-help"'), "Studio help button present");
+  assert.ok(html.includes('id="dlg-help"'), "Studio help dialog present");
   assert.ok(html.includes('id="app-body"'), "app-body present");
   assert.ok(html.includes('id="wiz-step-1"'), "wizard step 1 present");
   assert.ok(html.includes('id="wiz-step-2"'), "wizard step 2 present");
@@ -2305,12 +2310,12 @@ test("studio HTML v0.8.0 has beginner-first wizard structure", () => {
   assert.ok(html.includes('id="studio-main"'), "studio-main preserved in advanced tools");
 });
 
-test("studio HTML v0.8.0 keeps advanced Studio below the wizard", () => {
+test("studio HTML v0.8.0 keeps the complete Code workspace", () => {
   const html = buildStudioHtml("test.intent", 3211);
   assert.ok(html.includes("btn-wizard-build"), "build button present");
   assert.ok(html.includes("btn-wizard-start-preview"), "start preview button present");
   assert.ok(html.includes("btn-wizard-stop-preview"), "stop preview button present");
-  assert.ok(html.includes("<details id=\"advanced-tools-section\">"), "advanced tools uses details");
+  assert.ok(html.includes("<details id=\"advanced-tools-section\">"), "Code workspace uses details");
   assert.ok(html.includes('aria-label="Source editor"'), "source editor preserved");
   assert.ok(html.includes('aria-label="Editor actions"'), "toolbar preserved");
   assert.ok(html.includes('aria-label="Output panels"'), "panels preserved");

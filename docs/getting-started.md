@@ -20,8 +20,22 @@ npm run sample:studio
 ```
 
 Studio uses `examples/todo.intent` and listens on
-`http://127.0.0.1:3211`. It includes the beginner-first App Builder wizard and
-the complete editor under **Advanced tools**.
+`http://127.0.0.1:3211`.
+
+Studio presents three explicit authoring paths:
+
+- **Code** opens the direct controlled-English IDE with autocomplete,
+  diagnostics, formatting, the compiled application model, canonical source,
+  and typed IR. Existing `.intent` files open here by default.
+- **App Builder** guides beginners through a finite set of supported
+  business-app descriptions, then shows the proposed IntentLang source for
+  review before generation. See [Describe App mode](description-mode.md).
+- **Visual Language** opens the separate page and interface language for
+  HTML/CSS, forms, animation, and safe interactions. See the
+  [visual language guide](visual-language.md).
+
+The [Studio feature guide](studio.md) explains every workspace, toolbar action,
+inspector panel, shortcut, and persistence boundary.
 
 Try this in the wizard:
 

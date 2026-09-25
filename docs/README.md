@@ -14,6 +14,7 @@ index for tutorials, references, case studies, and normative language material.
 
 ## Authoring experiences
 
+- [Studio feature guide](studio.md)
 - [Describe App mode](description-mode.md)
 - [Optional AI assistance](ai-assistance.md)
 - [Visual/page language](visual-language.md)

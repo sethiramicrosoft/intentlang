@@ -13,8 +13,8 @@ With Node.js 24 or newer and the repository dependencies installed:
 npm run sample:studio
 ```
 
-Open `http://127.0.0.1:3211/playground`, or follow **Try the visual language** from
-the App Builder. The preview recompiles after a short typing pause. **Run / replay**
+Open `http://127.0.0.1:3211/playground`, or choose **Visual Language** in
+Studio's authoring-path navigation. The preview recompiles after a short typing pause. **Run / replay**
 restarts the animation. Examples replace the editor, with confirmation if you
 have changed its contents. Edits are kept only in the current tab: use
 **Download source** to save them, and **Download HTML** for a compiled page.

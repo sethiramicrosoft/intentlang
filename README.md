@@ -82,6 +82,19 @@ Each case study links to the controlled-English source, complete generated
 frontend/backend/database snapshot, and real desktop and mobile screenshots.
 **[Explore the full example gallery](examples/README.md).**
 
+## Choose your authoring path
+
+- **Code** is the direct IntentLang IDE for writing the formal business
+  language with autocomplete, diagnostics, formatting, and a live application
+  model. Start here when editing an existing `.intent` file.
+- **App Builder** is a guided path for turning a finite set of supported
+  business-app descriptions into reviewable IntentLang source. It reports
+  unsupported requests instead of silently improvising. See
+  [Describe App mode](docs/description-mode.md).
+- **Visual Language** is a separate controlled-English grammar for pages,
+  styling, layout, animation, forms, and safe browser interactions. See the
+  [visual language guide](docs/visual-language.md).
+
 ## More than business applications
 
 IntentLang also includes an experimental visual/page language:
@@ -144,6 +157,7 @@ Unsupported meaning is rejected rather than guessed. See
 | Goal | Read |
 |---|---|
 | Install and run IntentLang | [Getting started](docs/getting-started.md) |
+| Understand every Studio feature | [Studio feature guide](docs/studio.md) |
 | Learn the business language | [Business language specification](docs/spec/business-core.md) |
 | Build visual pages | [Visual language guide](docs/visual-language.md) |
 | Use Studio and the App Builder | [Describe App mode](docs/description-mode.md) |

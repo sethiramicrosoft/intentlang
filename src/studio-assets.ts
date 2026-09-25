@@ -56,6 +56,7 @@ html[data-theme="dark"] {
   --cp-highlight: rgba(253, 142, 161, 0.12);
 }
 *, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { height: 100%; margin: 0; }
 body {
   font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -1189,6 +1190,637 @@ dialog::backdrop { background: rgba(0,0,0,.4); }
   color: var(--cp-text-muted);
 }
 .ai-guided-link a { color: var(--cp-link); }
+
+/* v0.8 Studio workbench */
+:root {
+  --cp-bg: #e9e5dc;
+  --cp-bg-elevated: #f2efe8;
+  --cp-surface: #fbfaf6;
+  --cp-surface-soft: #f0ede5;
+  --cp-border: #cfc9bc;
+  --cp-border-strong: #8b8579;
+  --cp-text: #1f2927;
+  --cp-text-muted: #626b67;
+  --cp-text-soft: #737b77;
+  --cp-accent: #a5482d;
+  --cp-accent-hover: #873821;
+  --cp-accent-soft: rgba(165, 72, 45, 0.1);
+  --cp-accent-fg: #fffaf0;
+  --cp-success: #28745b;
+  --cp-danger: #b42335;
+  --cp-warning: #a46a13;
+  --cp-link: #1d665d;
+  --cp-shadow: 0 18px 50px rgba(38, 43, 40, 0.14);
+  --cp-overlay: rgba(251, 250, 246, 0.9);
+  --cp-panel: rgba(251, 250, 246, 0.88);
+  --cp-panel-strong: rgba(251, 250, 246, 0.98);
+  --cp-sheen: rgba(255, 255, 255, 0.56);
+  --cp-highlight: rgba(165, 72, 45, 0.09);
+  --studio-ink: #17211f;
+  --studio-ink-soft: #23302d;
+  --studio-brass: #d3a84f;
+  --studio-brass-soft: rgba(211, 168, 79, 0.16);
+  --studio-grid: rgba(31, 41, 39, 0.05);
+}
+html[data-theme="dark"] {
+  --cp-bg: #111715;
+  --cp-bg-elevated: #18201e;
+  --cp-surface: #1d2623;
+  --cp-surface-soft: #242e2b;
+  --cp-border: #35413d;
+  --cp-border-strong: #68736e;
+  --cp-text: #e8e8df;
+  --cp-text-muted: #a3aaa5;
+  --cp-text-soft: #bcc1bd;
+  --cp-accent: #df7958;
+  --cp-accent-hover: #ed8a68;
+  --cp-accent-soft: rgba(223, 121, 88, 0.13);
+  --cp-accent-fg: #171d1b;
+  --cp-success: #66b898;
+  --cp-danger: #f07d88;
+  --cp-warning: #ddb666;
+  --cp-link: #72b9ae;
+  --cp-shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+  --cp-overlay: rgba(29, 38, 35, 0.92);
+  --cp-panel: rgba(29, 38, 35, 0.86);
+  --cp-panel-strong: rgba(29, 38, 35, 0.98);
+  --cp-sheen: rgba(255, 255, 255, 0.04);
+  --cp-highlight: rgba(223, 121, 88, 0.12);
+  --studio-ink: #0b100f;
+  --studio-ink-soft: #131b19;
+  --studio-brass: #dfbb69;
+  --studio-brass-soft: rgba(223, 187, 105, 0.14);
+  --studio-grid: rgba(232, 232, 223, 0.035);
+}
+html, body { min-width: 0; }
+body {
+  font-family: Aptos, "Segoe UI Variable", "Segoe UI", sans-serif;
+  background-color: var(--cp-bg);
+  background-image:
+    linear-gradient(var(--studio-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--studio-grid) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+button, input, select, textarea { min-width: 0; }
+
+#studio-header {
+  min-height: 68px;
+  height: auto;
+  padding: 10px 18px;
+  display: grid;
+  grid-template-columns: minmax(210px, auto) minmax(310px, 1fr) minmax(240px, auto);
+  gap: 20px;
+  background: var(--studio-ink);
+  border-bottom: 1px solid rgba(211, 168, 79, 0.34);
+  color: #f3f1e8;
+}
+.studio-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+.studio-brand-mark {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border: 1px solid var(--studio-brass);
+  color: var(--studio-brass);
+  font: 700 12px/1 "Cascadia Code", Consolas, monospace;
+  letter-spacing: 0.08em;
+}
+#studio-header h1 {
+  color: #f3f1e8;
+  font-family: Bahnschrift, "Aptos Display", sans-serif;
+  font-size: 17px;
+  letter-spacing: 0.01em;
+}
+.studio-brand-subtitle {
+  display: block;
+  margin-top: 1px;
+  color: #aeb8b3;
+  font: 10px/1.3 "Cascadia Code", Consolas, monospace;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+#workspace-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+}
+.workspace-nav-item {
+  position: relative;
+  min-height: 38px;
+  padding: 8px 13px;
+  border: 1px solid transparent;
+  color: #aeb8b3;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.workspace-nav-item:hover {
+  color: #fffdf4;
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+.workspace-nav-item[aria-pressed="true"] {
+  color: #fffdf4;
+  background: var(--studio-brass-soft);
+  border-color: rgba(211, 168, 79, 0.46);
+}
+.workspace-nav-item[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: -11px;
+  height: 2px;
+  background: var(--studio-brass);
+}
+.workspace-nav-note {
+  margin-left: 4px;
+  color: var(--studio-brass);
+  font: 10px/1 "Cascadia Code", Consolas, monospace;
+}
+.workspace-help {
+  margin-left: 8px;
+  border-left-color: rgba(255, 255, 255, 0.14);
+}
+.studio-context {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+.studio-file {
+  min-width: 0;
+  text-align: right;
+}
+.studio-file-label {
+  display: block;
+  color: #7f8d87;
+  font: 9px/1.2 "Cascadia Code", Consolas, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+#studio-header .filename {
+  display: block;
+  max-width: 210px;
+  color: #e1e4df;
+  font-size: 11px;
+}
+.studio-local-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #aeb8b3;
+  font: 10px/1 "Cascadia Code", Consolas, monospace;
+  white-space: nowrap;
+}
+.studio-local-state::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #62b08d;
+  box-shadow: 0 0 0 3px rgba(98, 176, 141, 0.12);
+}
+#btn-theme {
+  min-width: 82px;
+  padding: 6px 9px;
+  color: #d8ddd9;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  font: 10px/1.2 "Cascadia Code", Consolas, monospace;
+}
+#btn-theme:hover {
+  color: #fffdf4;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(211, 168, 79, 0.55);
+}
+
+#app-body {
+  width: min(1500px, 100%);
+  margin: 0 auto;
+  padding: 24px;
+  gap: 0;
+  overflow: auto;
+}
+body[data-workspace="builder"] #advanced-tools-section { display: none; }
+body[data-workspace="code"] #wizard-view { display: none; }
+
+#wizard-view {
+  min-height: calc(100vh - 116px);
+  display: grid;
+  grid-template-columns: minmax(260px, 0.72fr) minmax(0, 1.28fr);
+  grid-template-areas:
+    "hero stepper"
+    "hero panel"
+    "existing panel";
+  align-content: start;
+  gap: 18px 28px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.wizard-hero {
+  grid-area: hero;
+  min-height: 470px;
+  padding: 36px;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--studio-ink);
+  color: #f3f1e8;
+  border: 1px solid rgba(211, 168, 79, 0.36);
+  box-shadow: var(--cp-shadow);
+}
+.wizard-hero::after {
+  content: "FINITE GRAMMAR / DETERMINISTIC OUTPUT";
+  max-width: 220px;
+  color: var(--studio-brass);
+  font: 10px/1.5 "Cascadia Code", Consolas, monospace;
+  letter-spacing: 0.13em;
+}
+.wizard-hero-copy h2 {
+  max-width: 430px;
+  margin-bottom: 18px;
+  color: #fffdf4;
+  font-family: Bahnschrift, "Aptos Display", sans-serif;
+  font-size: clamp(32px, 4vw, 58px);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+}
+.wizard-hero-copy p {
+  max-width: 470px;
+  color: #bdc6c1;
+  font-size: 15px;
+  line-height: 1.7;
+}
+.wizard-hero-badge { display: none; }
+#wizard-stepper {
+  grid-area: stepper;
+  align-self: end;
+  border-bottom: 1px solid var(--cp-border);
+  padding-bottom: 14px;
+}
+.wizard-steps-indicator { margin: 0; }
+.wizard-step-indicator { opacity: 0.52; }
+.wizard-step-num {
+  border-radius: 2px;
+  background: transparent;
+  border: 1px solid var(--cp-border-strong);
+  font-family: "Cascadia Code", Consolas, monospace;
+}
+.wizard-step-indicator.active .wizard-step-num {
+  background: var(--studio-ink);
+  border-color: var(--studio-ink);
+}
+.wizard-step-indicator.done .wizard-step-num {
+  background: var(--cp-success);
+  border-color: var(--cp-success);
+}
+.wizard-step-divider { margin: 0 10px; }
+.wizard-existing-card {
+  grid-area: existing;
+  align-self: start;
+  border-radius: 0;
+  border-left-width: 2px;
+}
+.wizard-step-panel {
+  grid-area: panel;
+  max-width: none;
+  min-width: 0;
+  padding: 30px;
+  background: var(--cp-surface);
+  border: 1px solid var(--cp-border);
+  box-shadow: 0 10px 30px rgba(38, 43, 40, 0.07);
+}
+.wizard-step-title {
+  font-family: Bahnschrift, "Aptos Display", sans-serif;
+  font-size: 25px;
+  letter-spacing: -0.015em;
+}
+.wizard-step-desc { max-width: 680px; font-size: 14px; }
+.wizard-label,
+.describe-path-label {
+  font-family: "Cascadia Code", Consolas, monospace;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.wizard-textarea {
+  min-height: 150px;
+  padding: 16px;
+  border-radius: 2px;
+  border-color: var(--cp-border-strong);
+  font-size: 15px;
+}
+.wizard-textarea:focus-visible {
+  border-color: var(--cp-accent);
+  box-shadow: inset 3px 0 0 var(--cp-accent);
+}
+.toolbar-btn,
+#btn-templates {
+  min-height: 32px;
+  border-radius: 2px;
+  font-weight: 650;
+}
+.toolbar-btn.primary {
+  background: var(--studio-ink);
+  border-color: var(--studio-ink);
+  color: #fffdf4;
+}
+.toolbar-btn.primary:hover:not(:disabled) {
+  background: var(--cp-accent);
+  border-color: var(--cp-accent);
+  color: #fffdf4;
+}
+.wizard-review-card,
+.describe-interpretation-card,
+.model-card,
+.template-item {
+  border-radius: 2px;
+}
+
+#advanced-tools-section {
+  width: 100%;
+  border-radius: 0;
+  border-color: var(--cp-border);
+  box-shadow: var(--cp-shadow);
+}
+#advanced-tools-section > summary {
+  padding: 10px 14px;
+  background: var(--studio-ink-soft);
+  color: #e6e8e3;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+#advanced-tools-section > summary::after {
+  content: "Direct controlled-English source, diagnostics, model, and generated representation.";
+  display: inline;
+  margin: 0 0 0 12px;
+  color: #84918b;
+  font-size: 10px;
+}
+#studio-main {
+  min-height: calc(100vh - 132px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(340px, 0.85fr);
+  border-top-color: var(--cp-border);
+}
+#editor-pane {
+  width: auto;
+  min-width: 0;
+  background: var(--cp-surface);
+}
+#panels {
+  min-width: 0;
+  background: var(--cp-bg-elevated);
+}
+#editor-mode-tabs,
+#editor-toolbar,
+[role="tablist"] {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+#editor-mode-tabs {
+  min-height: 42px;
+  padding: 0 12px;
+  background: var(--studio-ink);
+  border-bottom-color: rgba(211, 168, 79, 0.28);
+}
+.mode-tab {
+  color: #8f9a95;
+  border-radius: 0;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 11px;
+}
+.mode-tab:hover { color: #e6e8e3; }
+.mode-tab[aria-selected="true"] {
+  color: #fffdf4;
+  border-bottom-color: var(--studio-brass);
+}
+#editor-toolbar {
+  min-height: 45px;
+  padding: 7px 12px;
+  background: var(--cp-bg-elevated);
+}
+#editor-wrap {
+  min-height: 470px;
+  background: var(--cp-surface);
+  font-family: "Cascadia Code", "IBM Plex Mono", Consolas, monospace;
+  font-size: 13px;
+  line-height: 1.75;
+}
+#line-numbers {
+  min-width: 48px;
+  padding: 16px 11px;
+  background: var(--studio-ink-soft);
+  border-right-color: rgba(211, 168, 79, 0.24);
+  color: #75817c;
+}
+#editor { padding: 16px 18px; caret-color: var(--cp-accent); }
+#status-bar {
+  min-height: 30px;
+  background: var(--studio-ink-soft);
+  border-top-color: rgba(211, 168, 79, 0.24);
+  color: #aeb8b3;
+  font-family: "Cascadia Code", Consolas, monospace;
+}
+#panels > [role="tablist"] {
+  min-height: 42px;
+  padding: 0 10px;
+  background: var(--cp-bg-elevated);
+}
+#panels [role="tab"] {
+  border-radius: 0;
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.055em;
+}
+[role="tabpanel"] { padding: 16px; }
+.completion-popup {
+  border-radius: 2px;
+  border-color: var(--studio-brass);
+  box-shadow: 0 16px 44px rgba(11, 16, 15, 0.28);
+  max-width: calc(100vw - 8px);
+}
+.completion-item { padding: 6px 12px; }
+.completion-item.active,
+.completion-item:hover {
+  background: var(--studio-brass-soft);
+  box-shadow: inset 3px 0 0 var(--studio-brass);
+}
+.code-pane,
+.wizard-source-preview,
+.wizard-build-result,
+.describe-proposal-source {
+  border-radius: 2px;
+  font-family: "Cascadia Code", "IBM Plex Mono", Consolas, monospace;
+}
+dialog { border-radius: 2px; }
+.help-dialog {
+  max-width: min(920px, 94vw);
+  max-height: min(780px, 90vh);
+  overflow: auto;
+}
+.help-intro {
+  max-width: 720px;
+  margin: 0 0 20px;
+  color: var(--cp-text-muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin-bottom: 20px;
+  border: 1px solid var(--cp-border);
+  background: var(--cp-border);
+}
+.help-section {
+  min-width: 0;
+  padding: 16px;
+  background: var(--cp-surface);
+}
+.help-section h3 {
+  margin: 0 0 7px;
+  font: 700 13px/1.3 Bahnschrift, "Aptos Display", sans-serif;
+}
+.help-section p,
+.help-section li {
+  color: var(--cp-text-muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+.help-section p { margin: 0; }
+.help-section ul { margin: 8px 0 0; padding-left: 18px; }
+.help-section code {
+  color: var(--cp-text);
+  font-family: "Cascadia Code", Consolas, monospace;
+  font-size: 11px;
+}
+
+@media (max-width: 1040px) {
+  #studio-header {
+    grid-template-columns: minmax(200px, auto) minmax(0, 1fr);
+  }
+  .studio-context {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 8px;
+  }
+  .studio-file { text-align: left; }
+  #studio-header .filename { max-width: 50vw; }
+  #wizard-view {
+    grid-template-columns: minmax(230px, 0.62fr) minmax(0, 1.38fr);
+  }
+  .wizard-hero { padding: 28px; }
+  #studio-main {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  #editor-pane {
+    min-height: 620px;
+    border-right: 0;
+    border-bottom: 1px solid var(--cp-border);
+  }
+  #panels { min-height: 430px; }
+}
+
+@media (max-width: 720px) {
+  #studio-header {
+    position: relative;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+  .studio-brand-mark { width: 32px; height: 32px; }
+  .studio-brand-subtitle { display: none; }
+  #workspace-nav {
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-bottom: 1px;
+  }
+  .workspace-nav-item { flex: 0 0 auto; }
+  .workspace-help { margin-left: 0; }
+  .workspace-nav-item[aria-pressed="true"]::after { bottom: -2px; }
+  .studio-context {
+    grid-column: auto;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+  }
+  .studio-local-state { order: 3; width: 100%; }
+  #studio-header .filename { max-width: calc(100vw - 130px); }
+  #app-body { padding: 12px; }
+  #wizard-view {
+    min-height: auto;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "hero"
+      "existing"
+      "stepper"
+      "panel";
+    gap: 12px;
+  }
+  .wizard-hero {
+    min-height: 270px;
+    padding: 26px 22px;
+  }
+  .wizard-hero-copy h2 { font-size: 38px; }
+  .wizard-hero-copy p { font-size: 14px; line-height: 1.55; }
+  #wizard-stepper {
+    overflow-x: auto;
+    padding: 10px 0 12px;
+  }
+  #wizard-stepper ol { width: max-content; min-width: 100%; }
+  .wizard-step-panel { padding: 22px 18px; }
+  .wizard-actions { align-items: stretch; }
+  .wizard-actions .toolbar-btn { flex: 1 1 150px; }
+  #advanced-tools-section > summary::after { display: none; }
+  #studio-main { min-height: 0; }
+  #editor-pane { min-height: 72vh; }
+  #editor-toolbar { flex-wrap: wrap; }
+  #btn-templates { margin-left: 0; }
+  #editor-wrap { min-height: 58vh; }
+  #panels { min-height: 55vh; }
+  #diag-summary,
+  #prose-banner { flex-wrap: wrap; }
+  .diag-summary-hint { max-width: 100%; }
+  .prose-banner-actions { width: 100%; flex-wrap: wrap; }
+  .describe-actions > div { width: 100%; }
+  .describe-actions .toolbar-btn { width: 100%; }
+  .help-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 430px) {
+  #studio-header .filename { max-width: 205px; }
+  .workspace-nav-item { padding-inline: 10px; }
+  .wizard-step-divider { margin-inline: 5px; }
+  .wizard-step-label { font-size: 11px; }
+  .wizard-step-panel { padding: 20px 15px; }
+  #editor-toolbar .toolbar-btn,
+  #btn-templates { flex: 1 1 calc(33.333% - 6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
 `.trim();
 
 export const STUDIO_JS = `
@@ -1508,7 +2140,8 @@ export const STUDIO_JS = `
     var coords = getCaretCoordinates(textarea, textarea.selectionEnd);
     var top = coords.top + coords.lineHeight;
     var left = coords.left;
-    var maxLeft = window.innerWidth - 260;
+    var popupWidth = Math.min(Math.max(popup.offsetWidth, 220), window.innerWidth - 8);
+    var maxLeft = window.innerWidth - popupWidth - 4;
     if (left > maxLeft) left = maxLeft;
     var maxTop = window.innerHeight - 60;
     if (top > maxTop) top = coords.top - 8;
@@ -1706,6 +2339,15 @@ export const STUDIO_JS = `
 
     // Theme
     el('btn-theme').addEventListener('click', toggleTheme);
+    el('btn-help').addEventListener('click', function () {
+      var helpDialog = el('dlg-help');
+      helpDialog.showModal();
+      window.requestAnimationFrame(function () {
+        helpDialog.focus({ preventScroll: true });
+        helpDialog.scrollTop = 0;
+      });
+    });
+    el('btn-help-close').addEventListener('click', function () { el('dlg-help').close(); });
 
     // Tabs — mark user intent
     document.querySelectorAll('[role="tab"]').forEach(function (tab) {
@@ -2652,7 +3294,7 @@ export const STUDIO_JS = `
     var next = current === 'dark' ? 'light' : 'dark';
     document.documentElement.setAttribute('data-theme', next);
     try { localStorage.setItem('theme', next); } catch (_) {}
-    el('btn-theme').textContent = next === 'dark' ? '\\u2600\\ufe0f Light' : '\\ud83c\\udf19 Dark';
+    el('btn-theme').textContent = next === 'dark' ? 'Light mode' : 'Dark mode';
     announce('Theme changed to ' + next);
   }
 
@@ -3307,8 +3949,28 @@ export const STUDIO_JS = `
   function openAdvancedTools() {
     var details = el('advanced-tools-section');
     if (!details) return;
-    details.open = true;
-    announce('Advanced tools opened.');
+    showWorkspace('code');
+    announce('Code workspace opened.');
+  }
+
+  function showWorkspace(workspace) {
+    var details = el('advanced-tools-section');
+    var wizard = el('wizard-view');
+    var codeNav = el('nav-code');
+    var builderNav = el('nav-builder');
+    if (!details || !wizard || !codeNav || !builderNav) return;
+    document.body.setAttribute('data-workspace', workspace);
+    if (workspace === 'code') {
+      details.open = true;
+      codeNav.setAttribute('aria-pressed', 'true');
+      builderNav.setAttribute('aria-pressed', 'false');
+    } else {
+      closeCompletions();
+      details.open = false;
+      codeNav.setAttribute('aria-pressed', 'false');
+      builderNav.setAttribute('aria-pressed', 'true');
+    }
+    window.scrollTo({ top: 0, behavior: 'auto' });
   }
 
   function syncAdvancedEditorWithProposal() {
@@ -3331,14 +3993,23 @@ export const STUDIO_JS = `
       existingCard.setAttribute('hidden', '');
       existingText.textContent = '';
     }
-    el('advanced-tools-section').open = false;
     el('wiz-description').value = wizardState.description;
     el('btn-wizard-continue').disabled = wizardState.description.trim().length === 0;
     showWizStep(1);
     refreshPreviewStatus();
+    showWorkspace(hasSource ? 'code' : 'builder');
   }
 
   function bindWizardEvents() {
+    el('nav-code').addEventListener('click', function () { showWorkspace('code'); });
+    el('nav-builder').addEventListener('click', function () { showWorkspace('builder'); });
+    el('advanced-tools-section').addEventListener('toggle', function () {
+      if (el('advanced-tools-section').open) {
+        document.body.setAttribute('data-workspace', 'code');
+        el('nav-code').setAttribute('aria-pressed', 'true');
+        el('nav-builder').setAttribute('aria-pressed', 'false');
+      }
+    });
     el('wiz-description').addEventListener('input', function () {
       el('btn-wizard-continue').disabled = el('wiz-description').value.trim().length === 0;
     });
@@ -3807,13 +4478,27 @@ export function buildStudioHtml(filename: string, port: number): string {
   <div id="live-region" role="status" aria-live="polite" aria-atomic="true"></div>
 
   <header id="studio-header" role="banner">
-    <h1>IntentLang App Builder</h1>
-    <a href="/playground">Try the visual language</a>
-    <span class="badge">Studio</span>
-    <span class="filename" title="${escapeHtml(filename)}">${escapeHtml(filename)}</span>
-    <span class="badge" title="Experimental offline authoring tool — no AI tokens required">experimental · offline · no-AI</span>
-    <div class="spacer"></div>
-    <button id="btn-theme" type="button" aria-label="Toggle dark/light theme">🌙 Dark</button>
+    <div class="studio-brand">
+      <span class="studio-brand-mark" aria-hidden="true">IL</span>
+      <div>
+        <h1>IntentLang Studio</h1>
+        <span class="studio-brand-subtitle">Executable requirements workbench</span>
+      </div>
+    </div>
+    <nav id="workspace-nav" aria-label="Authoring paths">
+      <button id="nav-code" class="workspace-nav-item" type="button" aria-pressed="false">Code</button>
+      <button id="nav-builder" class="workspace-nav-item" type="button" aria-pressed="false">App Builder</button>
+      <a class="workspace-nav-item" href="/playground">Visual Language <span class="workspace-nav-note" aria-hidden="true">↗</span></a>
+      <button id="btn-help" class="workspace-nav-item workspace-help" type="button">Help</button>
+    </nav>
+    <div class="studio-context">
+      <div class="studio-file">
+        <span class="studio-file-label">Open source</span>
+        <span class="filename" title="${escapeHtml(filename)}">${escapeHtml(filename)}</span>
+      </div>
+      <span class="studio-local-state" title="Experimental offline authoring tool — no AI tokens required">Local / no AI</span>
+      <button id="btn-theme" type="button" aria-label="Toggle dark/light theme">Dark mode</button>
+    </div>
   </header>
 
   <main id="app-body" role="main">
@@ -3821,16 +4506,16 @@ export function buildStudioHtml(filename: string, port: number): string {
       <div class="wizard-hero">
         <div class="wizard-hero-copy">
           <h2>IntentLang App Builder</h2>
-          <p>Describe the app you want in one sentence, review the generated IntentLang, build safely, then open the preview if authentication is not required.</p>
+          <p>Shape a supported business application through a guided path. Review the exact controlled-English source before anything is generated.</p>
         </div>
-        <span class="badge wizard-hero-badge">Studio</span>
+        <span class="badge wizard-hero-badge">Guided authoring</span>
       </div>
 
       <div class="wizard-existing-card" id="existing-app-card" hidden>
         <strong>Existing app source found</strong>
         <p id="existing-app-card-text"></p>
         <div class="wizard-actions">
-          <button id="btn-existing-open-advanced" class="toolbar-btn" type="button">Open advanced tools</button>
+          <button id="btn-existing-open-advanced" class="toolbar-btn" type="button">Continue in Code</button>
         </div>
       </div>
 
@@ -3869,7 +4554,7 @@ export function buildStudioHtml(filename: string, port: number): string {
         <div class="wizard-unsupported-box" id="wizard-clarification-box" hidden></div>
         <div class="wizard-actions">
           <button id="btn-wizard-continue" class="toolbar-btn primary btn-primary" type="button" disabled>Continue →</button>
-          <button id="btn-wizard-use-template" class="toolbar-btn" type="button">Use a template in advanced tools</button>
+          <button id="btn-wizard-use-template" class="toolbar-btn" type="button">Start from a code template</button>
         </div>
         <div class="wizard-spinner" id="wizard-interpret-spinner" aria-hidden="true" hidden></div>
         <div class="wizard-error-box" id="wizard-describe-error" role="alert" hidden></div>
@@ -3890,7 +4575,7 @@ export function buildStudioHtml(filename: string, port: number): string {
         <div class="wizard-actions">
           <button id="btn-wizard-back-to-describe" class="toolbar-btn" type="button">← Back</button>
           <button id="btn-wizard-build" class="toolbar-btn primary btn-primary" type="button">Build App →</button>
-          <button id="btn-wizard-edit-advanced" class="toolbar-btn" type="button">Edit in advanced tools ↗</button>
+          <button id="btn-wizard-edit-advanced" class="toolbar-btn" type="button">Edit source in Code</button>
         </div>
       </div>
 
@@ -3911,7 +4596,7 @@ export function buildStudioHtml(filename: string, port: number): string {
         <div class="wizard-error-box" id="wizard-build-error" role="alert" hidden></div>
         <div class="wizard-actions" id="wizard-build-actions" hidden>
           <button id="btn-wizard-back-to-review" class="toolbar-btn" type="button">← Back</button>
-          <button id="btn-wizard-open-advanced" class="toolbar-btn" type="button" data-open-advanced="true">Open advanced tools</button>
+          <button id="btn-wizard-open-advanced" class="toolbar-btn" type="button" data-open-advanced="true">Open Code workspace</button>
         </div>
       </div>
 
@@ -3935,14 +4620,14 @@ export function buildStudioHtml(filename: string, port: number): string {
           <button id="btn-wizard-start-preview" class="toolbar-btn primary" type="button">Start preview</button>
           <button id="btn-wizard-stop-preview" class="toolbar-btn" type="button" hidden>Stop Preview</button>
           <button id="btn-wizard-open-app" class="toolbar-btn primary btn-cta" type="button" hidden>Open app</button>
-          <button id="btn-wizard-open-advanced-2" class="toolbar-btn" type="button" data-open-advanced="true">Open advanced tools</button>
+          <button id="btn-wizard-open-advanced-2" class="toolbar-btn" type="button" data-open-advanced="true">Open Code workspace</button>
         </div>
         <div class="wizard-error-box" id="wizard-preview-error" role="alert" hidden></div>
       </div>
     </section>
 
     <details id="advanced-tools-section">
-      <summary>Advanced tools</summary>
+      <summary>Code workspace</summary>
       <div id="studio-main">
       <section id="editor-pane" aria-label="Source editor">
         <div id="editor-mode-tabs" role="tablist" aria-label="Editor mode">
@@ -3955,7 +4640,7 @@ export function buildStudioHtml(filename: string, port: number): string {
           <button id="btn-save" class="toolbar-btn" type="button" title="Save source (Ctrl+S)">Save</button>
           <button id="btn-generate" class="toolbar-btn primary" type="button" title="Generate App">Generate App</button>
           <button id="btn-templates" type="button" title="Load a template">Templates ▾</button>
-          <button id="btn-ai-open" class="toolbar-btn" type="button" title="Describe with AI (optional — off by default)">AI Assist ✦</button>
+          <button id="btn-ai-open" class="toolbar-btn" type="button" title="Describe with AI (optional — off by default)">AI Assist</button>
         </div>
         <div id="diag-summary" aria-live="assertive" aria-atomic="true" aria-label="First diagnostic">
           <span class="diag-summary-badge" aria-hidden="true"></span>
@@ -3965,7 +4650,7 @@ export function buildStudioHtml(filename: string, port: number): string {
           <button id="btn-show-all-problems" type="button" aria-label="Show all problems in Problems panel">Show all problems</button>
         </div>
         <div id="prose-banner" role="alert" aria-live="polite" aria-atomic="true">
-          <span class="prose-banner-icon" aria-hidden="true">💬</span>
+          <span class="prose-banner-icon" aria-hidden="true">TXT</span>
           <div>
             <div class="prose-banner-text">This looks like a description, not IntentLang code.</div>
             <div class="prose-banner-sub">Use <strong>Describe App</strong> mode for plain-English input, or <strong>Write IntentLang</strong> for the controlled grammar.</div>
@@ -4010,7 +4695,7 @@ export function buildStudioHtml(filename: string, port: number): string {
               </div>
               <div>
                 <div class="describe-path-label">Path 2 — requires AI provider</div>
-                <button id="btn-interpret-ai" class="toolbar-btn" type="button" disabled title="AI provider is not configured. Start Studio with --ai-provider to enable.">Ask configured AI ✦</button>
+                <button id="btn-interpret-ai" class="toolbar-btn" type="button" disabled title="AI provider is not configured. Start Studio with --ai-provider to enable.">Ask configured AI</button>
               </div>
             </div>
             <div id="describe-result"></div>
@@ -4080,6 +4765,74 @@ export function buildStudioHtml(filename: string, port: number): string {
       </div>
     </details>
   </main>
+
+  <!-- Studio help -->
+  <dialog id="dlg-help" class="help-dialog" aria-labelledby="dlg-help-title" aria-modal="true" tabindex="-1">
+    <h2 class="dialog-title" id="dlg-help-title">IntentLang Studio help</h2>
+    <p class="help-intro">Studio has three authoring paths. Code edits the formal business language, App Builder proposes source from a finite supported vocabulary, and Visual Language builds browser pages with its own controlled grammar.</p>
+    <div class="help-grid">
+      <section class="help-section">
+        <h3>Code workspace</h3>
+        <p>Write <code>.intent</code> source directly. Autocomplete offers grammar snippets and declared names. Existing source files open here by default.</p>
+        <ul>
+          <li><strong>Check</strong> parses and validates without writing.</li>
+          <li><strong>Format</strong> previews canonical formatting before applying it.</li>
+          <li><strong>Save</strong> confirms before overwriting the source file.</li>
+          <li><strong>Generate App</strong> previews the artifact plan before writing.</li>
+          <li><strong>Templates</strong> loads a starter after an unsaved-change warning.</li>
+          <li><strong>AI Assist</strong> is optional, off by default, and cannot override compiler errors.</li>
+        </ul>
+      </section>
+      <section class="help-section">
+        <h3>App Builder</h3>
+        <p>Describe a supported CRUD-style app, review the exact proposed IntentLang, acknowledge anything unsupported, then build and preview.</p>
+        <ul>
+          <li><strong>Describe</strong> accepts finite, documented patterns.</li>
+          <li><strong>Review</strong> exposes assumptions, warnings, and omitted requests.</li>
+          <li><strong>Build</strong> compiles and generates only confirmed source.</li>
+          <li><strong>Open app</strong> starts a local preview when authentication setup is not required.</li>
+        </ul>
+      </section>
+      <section class="help-section">
+        <h3>Editor modes</h3>
+        <p><strong>Write IntentLang</strong> is the formal editor. <strong>Describe App</strong> uses the same offline interpreter as App Builder inside the Code workspace, with optional configured AI as a separate proposal path.</p>
+      </section>
+      <section class="help-section">
+        <h3>Inspector</h3>
+        <ul>
+          <li><strong>Problems</strong> lists diagnostics and navigates to their source locations.</li>
+          <li><strong>Application Model</strong> shows entities, fields, roles, permissions, policies, and safety information.</li>
+          <li><strong>Canonical Source</strong> shows normalized compiler output.</li>
+          <li><strong>Raw IR</strong> shows the typed intermediate representation.</li>
+        </ul>
+      </section>
+      <section class="help-section">
+        <h3>Visual Language</h3>
+        <p>A separate controlled-English language for elements, layout, styles, forms, animation, and safe browser interactions. It compiles to standalone HTML and does not create the business-app backend.</p>
+      </section>
+      <section class="help-section">
+        <h3>Safety and persistence</h3>
+        <p>Checking, formatting previews, and proposals do not save or generate automatically. Saving source and writing generated artifacts are explicit confirmed actions. Studio listens on localhost.</p>
+      </section>
+      <section class="help-section">
+        <h3>Keyboard shortcuts</h3>
+        <ul>
+          <li><code>Ctrl+Enter</code> — check source</li>
+          <li><code>Ctrl+Shift+F</code> — format source</li>
+          <li><code>Ctrl+S</code> — save source</li>
+          <li><code>Tab</code> or <code>Enter</code> — accept autocomplete</li>
+          <li><code>Escape</code> — close autocomplete</li>
+        </ul>
+      </section>
+      <section class="help-section">
+        <h3>Detailed documentation</h3>
+        <p>Read <code>docs/studio.md</code> for the complete feature guide, <code>docs/description-mode.md</code> for App Builder grammar, and <code>docs/visual-language.md</code> for the page language.</p>
+      </section>
+    </div>
+    <div class="dialog-actions">
+      <button id="btn-help-close" class="toolbar-btn primary" type="button">Close help</button>
+    </div>
+  </dialog>
 
   <!-- Format dialog -->
   <dialog id="dlg-format" aria-labelledby="dlg-format-title" aria-modal="true">

@@ -1,7 +1,10 @@
 # Describe App Mode — Offline Interpreter
 
 > [!IMPORTANT]
-> In Studio v0.8.0-alpha.0, the **App Builder wizard is now the default experience**. It wraps this same description mode: the wizard's Describe and Review steps call the same offline interpreter documented below, then optionally open Advanced tools for deeper editing.
+> In Studio v0.8.0-alpha.0, **App Builder** wraps this same description mode.
+> New empty files begin there; existing `.intent` files open in **Code**. The
+> wizard's Describe and Review steps call the offline interpreter documented
+> below, then can move the proposed source into Code for direct editing.
 
 Studio's **Describe App** mode offers an offline, rule-based interpreter for converting plain-English descriptions into IntentLang source. This is **not** unrestricted natural language processing. The interpreter uses a finite vocabulary and finite patterns.
 
