@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="610" viewBox="0 0 1200 610" role="img" aria-labelledby="title desc">
+  <title id="title">How IntentLang turns controlled English into a full-stack application</title>
+  <desc id="desc">Controlled-English source flows through a deterministic compiler into a typed application model, then generates a browser interface, API, database, security controls, workflows, and traceability. Unsupported or ambiguous meaning produces a diagnostic instead of a guess.</desc>
+  <style>
+    :root { color-scheme: light dark; }
+    .bg { fill: #f7f3ee; }
+    .surface { fill: #fffdfa; stroke: #d8d3ca; }
+    .ink { fill: #1f2927; }
+    .muted { fill: #66736f; }
+    .line { stroke: #78837f; }
+    .source { fill: #f6e7ec; stroke: #a51f49; }
+    .compiler { fill: #e7f0f5; stroke: #1e5172; }
+    .model { fill: #f7eedc; stroke: #a66c14; }
+    .output { fill: #e8f2ed; stroke: #35765d; }
+    .rule { fill: #f7eedc; stroke: #a66c14; }
+    .sourceText { fill: #8e173d; }
+    .compilerText { fill: #1e5172; }
+    .modelText { fill: #8b590d; }
+    .outputText { fill: #286047; }
+    text { font-family: "Segoe UI", Aptos, sans-serif; }
+    .mono { font-family: Consolas, "SFMono-Regular", monospace; }
+    @media (prefers-color-scheme: dark) {
+      .bg { fill: #171b1a; }
+      .surface { fill: #202624; stroke: #39413e; }
+      .ink { fill: #edf2ef; }
+      .muted { fill: #a7b2ae; }
+      .line { stroke: #9daaa5; }
+      .source { fill: #3b252d; stroke: #ff8cab; }
+      .compiler { fill: #20323b; stroke: #83c3e6; }
+      .model { fill: #3a3020; stroke: #efbf70; }
+      .output { fill: #21352c; stroke: #8fd3b2; }
+      .rule { fill: #3a3020; stroke: #efbf70; }
+      .sourceText { fill: #ff9db7; }
+      .compilerText { fill: #9bd5f2; }
+      .modelText { fill: #f4c980; }
+      .outputText { fill: #a0dfc0; }
+    }
+  </style>
+  <rect class="bg" width="1200" height="610" rx="24"/>
+  <g opacity=".45" class="line">
+    <path d="M30 40H1170M30 80H1170M30 120H1170M30 160H1170M30 200H1170M30 240H1170M30 280H1170M30 320H1170M30 360H1170M30 400H1170M30 440H1170M30 480H1170M30 520H1170M30 560H1170" stroke-width=".5"/>
+    <path d="M40 30V580M80 30V580M120 30V580M160 30V580M200 30V580M240 30V580M280 30V580M320 30V580M360 30V580M400 30V580M440 30V580M480 30V580M520 30V580M560 30V580M600 30V580M640 30V580M680 30V580M720 30V580M760 30V580M800 30V580M840 30V580M880 30V580M920 30V580M960 30V580M1000 30V580M1040 30V580M1080 30V580M1120 30V580M1160 30V580" stroke-width=".5"/>
+  </g>
+
+  <text x="56" y="64" class="sourceText mono" font-size="13" font-weight="700" letter-spacing="2">INTENTLANG MENTAL MODEL</text>
+  <text x="56" y="108" class="ink" font-size="34" font-weight="700">Write the intent. Compile the system.</text>
+  <text x="56" y="138" class="muted" font-size="17">Readable business intent becomes a typed, inspectable, full-stack program.</text>
+
+  <rect x="56" y="180" width="300" height="268" rx="16" class="surface" stroke-width="1.5"/>
+  <rect x="56" y="180" width="300" height="7" rx="4" fill="#a51f49"/>
+  <text x="80" y="218" class="sourceText mono" font-size="12" font-weight="700" letter-spacing="1.5">1 · EXECUTABLE INTENT</text>
+  <text x="80" y="255" class="ink mono" font-size="14">action complete a Task</text>
+  <text x="80" y="282" class="ink mono" font-size="14">  require done is false</text>
+  <text x="80" y="309" class="ink mono" font-size="14">  set done to true</text>
+  <text x="80" y="352" class="ink mono" font-size="14">allow Member to run complete</text>
+  <text x="80" y="379" class="ink mono" font-size="14">  on Task where owner is self</text>
+  <rect x="80" y="405" width="244" height="26" rx="13" class="source"/>
+  <text x="202" y="423" text-anchor="middle" class="sourceText mono" font-size="11" font-weight="700">THE ENGLISH IS THE SOURCE</text>
+
+  <path d="M372 314H425m-12-12 12 12-12 12" fill="none" class="line" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="443" y="218" width="225" height="194" rx="16" class="compiler" stroke-width="2"/>
+  <text x="555.5" y="255" text-anchor="middle" class="compilerText mono" font-size="12" font-weight="700" letter-spacing="1.4">2 · COMPILER</text>
+  <text x="555.5" y="305" text-anchor="middle" class="compilerText mono" font-size="23" font-weight="700">{ intent → IR }</text>
+  <text x="555.5" y="344" text-anchor="middle" class="muted" font-size="13">Parse · validate · type-check</text>
+  <text x="555.5" y="367" text-anchor="middle" class="muted" font-size="13">authorize · canonicalize · trace</text>
+
+  <path d="M685 314H738m-12-12 12 12-12 12" fill="none" class="line" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <rect x="756" y="180" width="388" height="268" rx="16" class="surface" stroke-width="1.5"/>
+  <rect x="756" y="180" width="388" height="7" rx="4" fill="#35765d"/>
+  <text x="780" y="218" class="outputText mono" font-size="12" font-weight="700" letter-spacing="1.5">3 · ONE SOURCE, COMPLETE SYSTEM</text>
+
+  <g>
+    <rect x="780" y="241" width="160" height="72" rx="11" class="output"/>
+    <text x="796" y="269" class="outputText" font-size="15" font-weight="700">Browser UI</text>
+    <text x="796" y="292" class="muted" font-size="12">Forms · tables · actions</text>
+
+    <rect x="956" y="241" width="164" height="72" rx="11" class="output"/>
+    <text x="972" y="269" class="outputText" font-size="15" font-weight="700">REST API</text>
+    <text x="972" y="292" class="muted" font-size="12">Validated routes</text>
+
+    <rect x="780" y="326" width="160" height="72" rx="11" class="output"/>
+    <text x="796" y="354" class="outputText" font-size="15" font-weight="700">Database</text>
+    <text x="796" y="377" class="muted" font-size="12">Schema · relationships</text>
+
+    <rect x="956" y="326" width="164" height="72" rx="11" class="output"/>
+    <text x="972" y="354" class="outputText" font-size="15" font-weight="700">Security</text>
+    <text x="972" y="377" class="muted" font-size="12">Auth · roles · ownership</text>
+  </g>
+
+  <rect x="56" y="480" width="1088" height="82" rx="14" class="rule" stroke-width="1.5"/>
+  <text x="80" y="512" class="modelText mono" font-size="12" font-weight="700" letter-spacing="1.5">THE CORE RULE</text>
+  <text x="80" y="540" class="ink" font-size="16" font-weight="600">Unsupported or ambiguous meaning becomes a diagnostic—not a guess, hidden prompt, or silent behavior.</text>
+</svg>

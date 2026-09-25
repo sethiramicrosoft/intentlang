@@ -4,41 +4,32 @@
 ![node](https://img.shields.io/badge/node-%3E%3D24-339933)
 ![version](https://img.shields.io/badge/version-v0.8.0--alpha-blue)
 
-**IntentLang is a deterministic controlled-English programming language for
-building secure applications and interactive web pages.**
+## What if software requirements were executable?
 
-The English is the source code. A traditional compiler parses a published,
-finite grammar and either generates software predictably or returns explicit
-diagnostics. **No AI model is required.**
+**IntentLang turns application intent into the program itself.** Data models,
+relationships, business rules, workflows, permissions, and interface behavior
+are written in controlled English and compiled into a working full-stack
+system.
+
+Software intent normally passes through requirements, tickets, architecture,
+code, database schemas, APIs, security rules, and tests. Every translation can
+lose meaning. IntentLang collapses that chain: the source stays readable enough
+to review as intent and precise enough to execute as software.
+
+This is **not prompt-to-code** and not arbitrary natural language. There is no
+hidden model guessing what the author meant. Accepted sentences have defined
+semantics; unsupported or ambiguous instructions fail explicitly.
+
+**The English is the source code. The compiler is the authority.**
+
+![IntentLang controlled English flowing through a deterministic compiler into a complete full-stack system](docs/images/intentlang-language-flow.svg)
 
 > [!WARNING]
 > IntentLang `v0.8.0-alpha.0` is experimental. It is not production-ready or
 > intended for sensitive data, and it intentionally rejects unsupported or
 > ambiguous instructions.
 
-## See it
-
-[![LaunchOps Administrator view showing a generated program workflow](examples/launch-ops-admin.png)](docs/launch-ops-full-stack.md)
-
-[`examples/launch-ops.intent`](examples/launch-ops.intent) generates an
-authenticated program-launch system with:
-
-- 7 entities and 31 business fields
-- 10 relationships
-- 14 guarded actions across 6 state machines
-- 4 roles and 95 expanded, inspectable permissions
-- REST APIs, SQLite, authentication, authorization, CSRF protection,
-  idempotency, optimistic concurrency, and audit logging
-
-**[Read the case study](docs/launch-ops-full-stack.md)** ·
-**[Browse the English source](examples/launch-ops.intent)** ·
-**[Explore more examples](examples/README.md)**
-
-More generated full-stack systems:
-**[Atlas Grid supply-chain control tower](docs/atlas-grid-full-stack.md)** ·
-**[GridShield utility restoration command](docs/grid-shield-full-stack.md)**
-
-## What the code looks like
+## A language for intent, not implementation noise
 
 ```text
 application Todo
@@ -63,19 +54,35 @@ allow Member to update Task where owner is self
 allow Member to run complete on Task where owner is self
 ```
 
-IntentLang compiles supported business requirements into a typed application
-model, then generates the browser UI, Node.js backend, REST API, SQLite schema,
-authorization checks, workflows, and audit controls.
+Those statements are not comments, documentation, or an AI prompt. They define
+the application's data, ownership, authorization, and state transition. The
+compiler turns them into a typed application model and generates:
 
-```text
-Controlled English
-       ↓
-Parser + validation
-       ↓
-Typed application model
-       ↓
-UI + API + database + security controls
-```
+- Responsive browser UI with forms, tables, relationships, and workflow actions
+- Node.js backend and validated REST API
+- SQLite schema, constraints, foreign keys, and migration plans
+- Authentication, role-based authorization, owner scoping, CSRF protection,
+  idempotency, optimistic concurrency, and audit records
+- Canonical source, semantic fingerprints, manifests, and source-to-artifact
+  traceability
+
+## Proof: real systems built from IntentLang
+
+- **[LaunchOps Mission Control](docs/launch-ops-full-stack.md)** — program
+  launches, milestones, work, risks, decisions, updates, 14 workflows, and 4
+  roles. [Read the source](examples/launch-ops.intent).
+- **[Atlas Grid](docs/atlas-grid-full-stack.md)** — a global supply-chain
+  resilience control tower with 10 entities, 18 workflows, and 155 permissions.
+  [Read the source](examples/atlas-grid.intent).
+- **[GridShield](docs/grid-shield-full-stack.md)** — an electric-utility outage
+  restoration system with 11 entities, 24 workflows, and 171 permissions.
+  [Read the source](examples/grid-shield.intent).
+
+Each case study links to the controlled-English source, complete generated
+frontend/backend/database snapshot, and real desktop and mobile screenshots.
+**[Explore the full example gallery](examples/README.md).**
+
+## More than business applications
 
 IntentLang also includes an experimental visual/page language:
 
