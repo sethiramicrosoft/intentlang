@@ -1,0 +1,6551 @@
+{
+  "links": [
+    {
+      "artifacts": [
+        {
+          "kind": "manifest",
+          "path": "intentlang.manifest.json",
+          "symbol": "atlasgrid"
+        },
+        {
+          "kind": "database",
+          "path": "migration.sql"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js"
+        },
+        {
+          "kind": "ui",
+          "path": "index.html"
+        }
+      ],
+      "irNodeId": "atlasgrid",
+      "ruleIds": [
+        "APP-DECL-001"
+      ],
+      "source": {
+        "endLine": 1,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 1
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "authentication"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "authentication"
+        }
+      ],
+      "irNodeId": "authentication",
+      "ruleIds": [
+        "AUTH-DECL-001"
+      ],
+      "source": {
+        "endLine": 2,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 2
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "administrator"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "administrator"
+        }
+      ],
+      "irNodeId": "administrator",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 4,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 4
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "controltowerlead"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "controltowerlead"
+        }
+      ],
+      "irNodeId": "controltowerlead",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 5,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 5
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "sitemanager"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "sitemanager"
+        }
+      ],
+      "irNodeId": "sitemanager",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 6,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 6
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "supplierpartner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "supplierpartner"
+        }
+      ],
+      "irNodeId": "supplierpartner",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 7,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 7
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "executive"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "executive"
+        }
+      ],
+      "irNodeId": "executive",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 8,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 8
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "user"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "user"
+        }
+      ],
+      "irNodeId": "user",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 10,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 10
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "user-name"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "user-name"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "user-name"
+        }
+      ],
+      "irNodeId": "user-name",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 10,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 10
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "user-email"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "user-email"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "user-email"
+        }
+      ],
+      "irNodeId": "user-email",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 11,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 11
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "network"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "network"
+        }
+      ],
+      "irNodeId": "network",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 13,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 13
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "network-code"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "network-code"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "network-code"
+        }
+      ],
+      "irNodeId": "network-code",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 13,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 13
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "network-name"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "network-name"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "network-name"
+        }
+      ],
+      "irNodeId": "network-name",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 14,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 14
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "network-region"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "network-region"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "network-region"
+        }
+      ],
+      "irNodeId": "network-region",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 15,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 15
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "network-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "network-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "network-status"
+        }
+      ],
+      "irNodeId": "network-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 16,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 16
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "network-resiliencescore"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "network-resiliencescore"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "network-resiliencescore"
+        }
+      ],
+      "irNodeId": "network-resiliencescore",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 17,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 17
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "facility"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "facility"
+        }
+      ],
+      "irNodeId": "facility",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 19,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 19
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "facility-code"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "facility-code"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "facility-code"
+        }
+      ],
+      "irNodeId": "facility-code",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 19,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 19
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "facility-name"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "facility-name"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "facility-name"
+        }
+      ],
+      "irNodeId": "facility-name",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 20,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 20
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "facility-country"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "facility-country"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "facility-country"
+        }
+      ],
+      "irNodeId": "facility-country",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 21,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 21
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "facility-capacitypercent"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "facility-capacitypercent"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "facility-capacitypercent"
+        }
+      ],
+      "irNodeId": "facility-capacitypercent",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 22,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 22
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "facility-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "facility-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "facility-status"
+        }
+      ],
+      "irNodeId": "facility-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 23,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 23
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "supplier"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "supplier"
+        }
+      ],
+      "irNodeId": "supplier",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 25,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 25
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "supplier-code"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "supplier-code"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "supplier-code"
+        }
+      ],
+      "irNodeId": "supplier-code",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 25,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 25
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "supplier-name"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "supplier-name"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "supplier-name"
+        }
+      ],
+      "irNodeId": "supplier-name",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 26,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 26
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "supplier-category"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "supplier-category"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "supplier-category"
+        }
+      ],
+      "irNodeId": "supplier-category",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 27,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 27
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "supplier-risktier"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "supplier-risktier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "supplier-risktier"
+        }
+      ],
+      "irNodeId": "supplier-risktier",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 28,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 28
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "supplier-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "supplier-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "supplier-status"
+        }
+      ],
+      "irNodeId": "supplier-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 29,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 29
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment"
+        }
+      ],
+      "irNodeId": "shipment",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 31,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 31
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-trackingcode"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-trackingcode"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-trackingcode"
+        }
+      ],
+      "irNodeId": "shipment-trackingcode",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 31,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 31
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-description"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-description"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-description"
+        }
+      ],
+      "irNodeId": "shipment-description",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 32,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 32
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-origin"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-origin"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-origin"
+        }
+      ],
+      "irNodeId": "shipment-origin",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 33,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 33
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-destination"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-destination"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-destination"
+        }
+      ],
+      "irNodeId": "shipment-destination",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 34,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 34
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-expecteddate"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-expecteddate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-expecteddate"
+        }
+      ],
+      "irNodeId": "shipment-expecteddate",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 35,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 35
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-status"
+        }
+      ],
+      "irNodeId": "shipment-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 36,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 36
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-priority"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-priority"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-priority"
+        }
+      ],
+      "irNodeId": "shipment-priority",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 37,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 37
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "inventoryalert"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert"
+        }
+      ],
+      "irNodeId": "inventoryalert",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 39,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 39
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "inventoryalert-item"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "inventoryalert-item"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert-item"
+        }
+      ],
+      "irNodeId": "inventoryalert-item",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 39,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 39
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "inventoryalert-currentdays"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "inventoryalert-currentdays"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert-currentdays"
+        }
+      ],
+      "irNodeId": "inventoryalert-currentdays",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 40,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 40
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "inventoryalert-targetdays"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "inventoryalert-targetdays"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert-targetdays"
+        }
+      ],
+      "irNodeId": "inventoryalert-targetdays",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 41,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 41
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "inventoryalert-severity"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "inventoryalert-severity"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert-severity"
+        }
+      ],
+      "irNodeId": "inventoryalert-severity",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 42,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 42
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "inventoryalert-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "inventoryalert-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert-status"
+        }
+      ],
+      "irNodeId": "inventoryalert-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 43,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 43
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption"
+        }
+      ],
+      "irNodeId": "disruption",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 45,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 45
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "disruption-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-title"
+        }
+      ],
+      "irNodeId": "disruption-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 45,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 45
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption-summary"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "disruption-summary"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-summary"
+        }
+      ],
+      "irNodeId": "disruption-summary",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 46,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 46
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption-impact"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "disruption-impact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-impact"
+        }
+      ],
+      "irNodeId": "disruption-impact",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 47,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 47
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption-probability"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "disruption-probability"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-probability"
+        }
+      ],
+      "irNodeId": "disruption-probability",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 48,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 48
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "disruption-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-status"
+        }
+      ],
+      "irNodeId": "disruption-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 49,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 49
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption-escalated"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "disruption-escalated"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-escalated"
+        }
+      ],
+      "irNodeId": "disruption-escalated",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 50,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 50
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "recoveryplan"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan"
+        }
+      ],
+      "irNodeId": "recoveryplan",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 52,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 52
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "recoveryplan-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "recoveryplan-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan-title"
+        }
+      ],
+      "irNodeId": "recoveryplan-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 52,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 52
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "recoveryplan-strategy"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "recoveryplan-strategy"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan-strategy"
+        }
+      ],
+      "irNodeId": "recoveryplan-strategy",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 53,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 53
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "recoveryplan-targetdate"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "recoveryplan-targetdate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan-targetdate"
+        }
+      ],
+      "irNodeId": "recoveryplan-targetdate",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 54,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 54
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "recoveryplan-progress"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "recoveryplan-progress"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan-progress"
+        }
+      ],
+      "irNodeId": "recoveryplan-progress",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 55,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 55
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "recoveryplan-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "recoveryplan-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan-status"
+        }
+      ],
+      "irNodeId": "recoveryplan-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 56,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 56
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision"
+        }
+      ],
+      "irNodeId": "decision",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 58,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 58
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-title"
+        }
+      ],
+      "irNodeId": "decision-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 58,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 58
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-context"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-context"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-context"
+        }
+      ],
+      "irNodeId": "decision-context",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 59,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 59
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-recommendation"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-recommendation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-recommendation"
+        }
+      ],
+      "irNodeId": "decision-recommendation",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 60,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 60
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-status"
+        }
+      ],
+      "irNodeId": "decision-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 61,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 61
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update"
+        }
+      ],
+      "irNodeId": "update",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 63,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 63
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-headline"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-headline"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-headline"
+        }
+      ],
+      "irNodeId": "update-headline",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 63,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 63
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-details"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-details"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-details"
+        }
+      ],
+      "irNodeId": "update-details",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 64,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 64
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-audience"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-audience"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-audience"
+        }
+      ],
+      "irNodeId": "update-audience",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 65,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 65
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-health"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-health"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-health"
+        }
+      ],
+      "irNodeId": "update-health",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 66,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 66
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-status"
+        }
+      ],
+      "irNodeId": "update-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 67,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 67
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "facility-network"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "facility-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "facility-network"
+        }
+      ],
+      "irNodeId": "facility-network",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 69,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 69
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "facility-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "facility-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "facility-owner"
+        }
+      ],
+      "irNodeId": "facility-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 70,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 70
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "supplier-network"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "supplier-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "supplier-network"
+        }
+      ],
+      "irNodeId": "supplier-network",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 71,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 71
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "supplier-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "supplier-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "supplier-owner"
+        }
+      ],
+      "irNodeId": "supplier-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 72,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 72
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-network"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-network"
+        }
+      ],
+      "irNodeId": "shipment-network",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 73,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 73
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-supplier"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-supplier"
+        }
+      ],
+      "irNodeId": "shipment-supplier",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 74,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 74
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-facility"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-facility"
+        }
+      ],
+      "irNodeId": "shipment-facility",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 75,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 75
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "shipment-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "shipment-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-owner"
+        }
+      ],
+      "irNodeId": "shipment-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 76,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 76
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "inventoryalert-network"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "inventoryalert-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert-network"
+        }
+      ],
+      "irNodeId": "inventoryalert-network",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 77,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 77
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "inventoryalert-facility"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "inventoryalert-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert-facility"
+        }
+      ],
+      "irNodeId": "inventoryalert-facility",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 78,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 78
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "inventoryalert-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "inventoryalert-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert-owner"
+        }
+      ],
+      "irNodeId": "inventoryalert-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 79,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 79
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption-network"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "disruption-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-network"
+        }
+      ],
+      "irNodeId": "disruption-network",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 80,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 80
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption-facility"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "disruption-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-facility"
+        }
+      ],
+      "irNodeId": "disruption-facility",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 81,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 81
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption-supplier"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "disruption-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-supplier"
+        }
+      ],
+      "irNodeId": "disruption-supplier",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 82,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 82
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "disruption-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "disruption-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-owner"
+        }
+      ],
+      "irNodeId": "disruption-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 83,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 83
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "recoveryplan-disruption"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "recoveryplan-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan-disruption"
+        }
+      ],
+      "irNodeId": "recoveryplan-disruption",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 84,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 84
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "recoveryplan-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "recoveryplan-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan-owner"
+        }
+      ],
+      "irNodeId": "recoveryplan-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 85,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 85
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-disruption"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-disruption"
+        }
+      ],
+      "irNodeId": "decision-disruption",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 86,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 86
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-owner"
+        }
+      ],
+      "irNodeId": "decision-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 87,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 87
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-network"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-network"
+        }
+      ],
+      "irNodeId": "update-network",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 88,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 88
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-owner"
+        }
+      ],
+      "irNodeId": "update-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 89,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 89
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-provision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-provision"
+        }
+      ],
+      "irNodeId": "perm-administrator-provision",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 166,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 166
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-user"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-user",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 167,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 167
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-user"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-user",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 168,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 168
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-user"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-user",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 171,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 171
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-network"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-network",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 172,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 172
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-network"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-network",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 173,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 173
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-network"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-network",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 176,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 176
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-facility"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-facility",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 177,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 177
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-facility"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-facility",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 178,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 178
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-facility"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-facility",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 179,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 179
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-supplier"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-supplier",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 180,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 180
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-supplier"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-supplier",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 183,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 183
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-supplier"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-supplier",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 184,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 184
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-shipment"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-shipment",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 185,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 185
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-shipment"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-shipment",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 186,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 186
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-shipment"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-shipment",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 187,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 187
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-inventoryalert",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 190,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 190
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-inventoryalert",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 191,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 191
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "network-activate"
+        }
+      ],
+      "irNodeId": "network-activate",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 91,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 91
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/stabilize"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "network-stabilize"
+        }
+      ],
+      "irNodeId": "network-stabilize",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 91,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 91
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/restrict"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "facility-restrict"
+        }
+      ],
+      "irNodeId": "facility-restrict",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 99,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 99
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/restore"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "facility-restore"
+        }
+      ],
+      "irNodeId": "facility-restore",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 99,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 99
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/dispatch"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-dispatch"
+        }
+      ],
+      "irNodeId": "shipment-dispatch",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 108,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 108
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/delay"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-delay"
+        }
+      ],
+      "irNodeId": "shipment-delay",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 108,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 108
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/deliver"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "shipment-deliver"
+        }
+      ],
+      "irNodeId": "shipment-deliver",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 108,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 108
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/acknowledge"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert-acknowledge"
+        }
+      ],
+      "irNodeId": "inventoryalert-acknowledge",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 119,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 119
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/resolve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "inventoryalert-resolve"
+        }
+      ],
+      "irNodeId": "inventoryalert-resolve",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 119,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 119
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-escalate"
+        }
+      ],
+      "irNodeId": "disruption-escalate",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 127,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 127
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/contain"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-contain"
+        }
+      ],
+      "irNodeId": "disruption-contain",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 127,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 127
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/close"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "disruption-close"
+        }
+      ],
+      "irNodeId": "disruption-close",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 127,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 127
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan-approve"
+        }
+      ],
+      "irNodeId": "recoveryplan-approve",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 140,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 140
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan-start"
+        }
+      ],
+      "irNodeId": "recoveryplan-start",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 140,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 140
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "recoveryplan-complete"
+        }
+      ],
+      "irNodeId": "recoveryplan-complete",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 140,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 140
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-approve"
+        }
+      ],
+      "irNodeId": "decision-approve",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 152,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 152
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/reject"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-reject"
+        }
+      ],
+      "irNodeId": "decision-reject",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 152,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 152
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-publish"
+        }
+      ],
+      "irNodeId": "update-publish",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 160,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 160
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-inventoryalert",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-disruption"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-disruption"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-disruption"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-decision"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-decision"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-decision"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-update"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-update"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-update"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-network-activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-network-activate"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-network-activate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-network-stabilize"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-network-stabilize"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-network-stabilize",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-facility-restrict"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-facility-restrict"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-facility-restrict",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-facility-restore"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-facility-restore"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-facility-restore",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-shipment-dispatch"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-shipment-dispatch"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-shipment-dispatch",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-shipment-delay"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-shipment-delay"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-shipment-delay",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-shipment-deliver"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-shipment-deliver"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-shipment-deliver",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-inventoryalert-acknowledge"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-inventoryalert-acknowledge"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-inventoryalert-acknowledge",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-inventoryalert-resolve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-inventoryalert-resolve"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-inventoryalert-resolve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-disruption-escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-disruption-escalate"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-disruption-escalate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-disruption-contain"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-disruption-contain"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-disruption-contain",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-disruption-close"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-disruption-close"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-disruption-close",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-recoveryplan-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-recoveryplan-approve"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-recoveryplan-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-recoveryplan-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-recoveryplan-start"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-recoveryplan-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-recoveryplan-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-recoveryplan-complete"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-recoveryplan-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-decision-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-decision-approve"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-decision-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-decision-reject"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-decision-reject"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-decision-reject",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-update-publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-update-publish"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-update-publish",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-read-user"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-read-user",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-create-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-create-network"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-create-network",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-read-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-read-network"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-read-network",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-update-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-update-network"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-update-network",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-create-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-create-facility"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-create-facility",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-read-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-read-facility"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-read-facility",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-update-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-update-facility"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-update-facility",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-create-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-create-supplier"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-create-supplier",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-read-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-read-supplier"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-read-supplier",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-update-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-update-supplier"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-update-supplier",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-create-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-create-shipment"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-create-shipment",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-read-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-read-shipment"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-read-shipment",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-update-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-update-shipment"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-update-shipment",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-create-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-create-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-create-inventoryalert",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-read-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-read-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-read-inventoryalert",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-update-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-update-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-update-inventoryalert",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-create-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-create-disruption"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-create-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-read-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-read-disruption"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-read-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-update-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-update-disruption"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-update-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-create-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-create-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-create-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-read-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-read-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-read-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-update-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-update-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-update-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-create-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-create-decision"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-create-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-read-decision"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-update-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-update-decision"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-update-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-create-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-create-update"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-create-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-read-update"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-update-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-update-update"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-update-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-network-activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-network-activate"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-network-activate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-network-stabilize"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-network-stabilize"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-network-stabilize",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-facility-restrict"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-facility-restrict"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-facility-restrict",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-facility-restore"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-facility-restore"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-facility-restore",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-shipment-dispatch"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-shipment-dispatch"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-shipment-dispatch",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-shipment-delay"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-shipment-delay"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-shipment-delay",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-shipment-deliver"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-shipment-deliver"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-shipment-deliver",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-inventoryalert-acknowledge"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-inventoryalert-acknowledge"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-inventoryalert-acknowledge",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-inventoryalert-resolve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-inventoryalert-resolve"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-inventoryalert-resolve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-disruption-escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-disruption-escalate"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-disruption-escalate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-disruption-contain"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-disruption-contain"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-disruption-contain",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-disruption-close"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-disruption-close"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-disruption-close",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-recoveryplan-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-recoveryplan-approve"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-recoveryplan-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-recoveryplan-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-recoveryplan-start"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-recoveryplan-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-recoveryplan-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-recoveryplan-complete"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-recoveryplan-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-controltowerlead-run-update-publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-controltowerlead-run-update-publish"
+        }
+      ],
+      "irNodeId": "perm-controltowerlead-run-update-publish",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-read-user"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-read-user",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-read-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-read-network"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-read-network",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-read-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-read-supplier"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-read-supplier",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-read-decision"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-read-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-read-facility"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-read-facility",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-read-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-read-shipment"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-read-shipment",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-read-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-read-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-read-inventoryalert",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-read-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-read-disruption"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-read-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-read-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-read-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-read-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-read-update"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-create-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-create-facility"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-create-facility",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-update-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-update-facility"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-update-facility",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-create-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-create-shipment"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-create-shipment",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-update-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-update-shipment"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-update-shipment",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-create-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-create-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-create-inventoryalert",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-update-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-update-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-update-inventoryalert",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-create-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-create-disruption"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-create-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-update-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-update-disruption"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-update-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 194,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 194
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-create-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-create-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-create-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-update-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-update-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-update-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-create-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-create-update"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-create-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-update-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-update-update"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-update-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-facility-restrict"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-facility-restrict"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-facility-restrict",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-facility-restore"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-facility-restore"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-facility-restore",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-shipment-dispatch"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-shipment-dispatch"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-shipment-dispatch",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-shipment-delay"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-shipment-delay"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-shipment-delay",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-shipment-deliver"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-shipment-deliver"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-shipment-deliver",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-inventoryalert-acknowledge"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-inventoryalert-acknowledge"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-inventoryalert-acknowledge",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-inventoryalert-resolve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-inventoryalert-resolve"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-inventoryalert-resolve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-disruption-escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-disruption-escalate"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-disruption-escalate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-disruption-contain"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-disruption-contain"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-disruption-contain",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-disruption-close"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-disruption-close"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-disruption-close",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-recoveryplan-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-recoveryplan-approve"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-recoveryplan-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-recoveryplan-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-recoveryplan-start"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-recoveryplan-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-recoveryplan-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-recoveryplan-complete"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-recoveryplan-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-sitemanager-run-update-publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-sitemanager-run-update-publish"
+        }
+      ],
+      "irNodeId": "perm-sitemanager-run-update-publish",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-read-user"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-read-user",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-read-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-read-network"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-read-network",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-read-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-read-facility"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-read-facility",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-read-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-read-supplier"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-read-supplier",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-read-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-read-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-read-inventoryalert",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-read-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-read-disruption"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-read-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-read-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-read-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-read-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-read-decision"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-read-update"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-read-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-read-shipment"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-read-shipment",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-create-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-create-shipment"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-create-shipment",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-update-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-update-shipment"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-update-shipment",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-run-shipment-dispatch"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-run-shipment-dispatch"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-run-shipment-dispatch",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-run-shipment-delay"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-run-shipment-delay"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-run-shipment-delay",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-supplierpartner-run-shipment-deliver"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-supplierpartner-run-shipment-deliver"
+        }
+      ],
+      "irNodeId": "perm-supplierpartner-run-shipment-deliver",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-network"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-network"
+        }
+      ],
+      "irNodeId": "perm-executive-read-network",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-facility"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-facility"
+        }
+      ],
+      "irNodeId": "perm-executive-read-facility",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-supplier"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-supplier"
+        }
+      ],
+      "irNodeId": "perm-executive-read-supplier",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 195,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 195
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-shipment"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-shipment"
+        }
+      ],
+      "irNodeId": "perm-executive-read-shipment",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 196,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 196
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-inventoryalert"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-inventoryalert"
+        }
+      ],
+      "irNodeId": "perm-executive-read-inventoryalert",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 196,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 196
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-disruption"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-disruption"
+        }
+      ],
+      "irNodeId": "perm-executive-read-disruption",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 196,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 196
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-recoveryplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-recoveryplan"
+        }
+      ],
+      "irNodeId": "perm-executive-read-recoveryplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 196,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 196
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-decision"
+        }
+      ],
+      "irNodeId": "perm-executive-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 196,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 196
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-update"
+        }
+      ],
+      "irNodeId": "perm-executive-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 196,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 196
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-run-decision-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-run-decision-approve"
+        }
+      ],
+      "irNodeId": "perm-executive-run-decision-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 196,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 196
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-run-decision-reject"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-run-decision-reject"
+        }
+      ],
+      "irNodeId": "perm-executive-run-decision-reject",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 196,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\atlas-grid.intent",
+        "startLine": 196
+      }
+    }
+  ],
+  "sourceFingerprint": "sha256:dade602ad109a71cd209d8c438b55672385e25245ffa87abe2131d77776e5eed"
+}

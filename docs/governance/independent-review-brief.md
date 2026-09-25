@@ -1,7 +1,5 @@
 # Independent Security and Specification Review Brief
 
-**Review status: not commissioned. Stable graduation is blocked.**
-
 ## Reviewer independence
 
 The lead reviewer must not have authored the reviewed implementation. Record

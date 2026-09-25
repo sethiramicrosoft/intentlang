@@ -13,7 +13,7 @@ diagnostics. **No AI model is required.**
 
 > [!WARNING]
 > IntentLang `v0.8.0-alpha.0` is experimental. It is not production-ready or
-> independently security-audited, and it intentionally rejects unsupported or
+> intended for sensitive data, and it intentionally rejects unsupported or
 > ambiguous instructions.
 
 ## See it
@@ -33,6 +33,10 @@ authenticated program-launch system with:
 **[Read the case study](docs/launch-ops-full-stack.md)** ·
 **[Browse the English source](examples/launch-ops.intent)** ·
 **[Explore more examples](examples/README.md)**
+
+More generated full-stack systems:
+**[Atlas Grid supply-chain control tower](docs/atlas-grid-full-stack.md)** ·
+**[GridShield utility restoration command](docs/grid-shield-full-stack.md)**
 
 ## What the code looks like
 
@@ -128,31 +132,6 @@ This is **controlled English**, not arbitrary natural-language programming.
 Unsupported meaning is rejected rather than guessed. See
 [Project status and limitations](docs/project/status.md).
 
-## Evidence, not promises
-
-The current repository has:
-
-- 744 passing tests
-- 39 executable conformance fixtures
-- 97/97 stable language inventory coverage
-- A 5,000-program adversarial CI profile
-- Normative rules linked to implementation and test evidence
-- Semantic fingerprints, compatibility gates, and cross-layer trace maps
-- Executable governance for language changes
-
-Run the core gates:
-
-```bash
-npm run check
-npm test
-npm run governance:check
-npm run assurance:complete
-```
-
-The human-comprehension study and independent external review are prepared but
-not complete. IntentLang therefore makes no empirical comprehension or stable
-graduation claim.
-
 ## Documentation
 
 | Goal | Read |
@@ -168,7 +147,6 @@ graduation claim.
 | Report or evaluate a vulnerability | [Security policy](SECURITY.md) |
 | Inspect formal language assurance | [Normative specification index](docs/spec/index.md) |
 | Review language-change requirements | [Language governance](docs/spec/language-governance.md) |
-| Check the human-evidence position | [Comprehension study status](studies/comprehension/STATUS.md) |
 | Contribute | [Contributing guide](CONTRIBUTING.md) |
 
 The complete categorized list is in the

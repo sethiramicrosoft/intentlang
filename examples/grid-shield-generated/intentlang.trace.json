@@ -1,0 +1,7333 @@
+{
+  "links": [
+    {
+      "artifacts": [
+        {
+          "kind": "manifest",
+          "path": "intentlang.manifest.json",
+          "symbol": "gridshield"
+        },
+        {
+          "kind": "database",
+          "path": "migration.sql"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js"
+        },
+        {
+          "kind": "ui",
+          "path": "index.html"
+        }
+      ],
+      "irNodeId": "gridshield",
+      "ruleIds": [
+        "APP-DECL-001"
+      ],
+      "source": {
+        "endLine": 1,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 1
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "authentication"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "authentication"
+        }
+      ],
+      "irNodeId": "authentication",
+      "ruleIds": [
+        "AUTH-DECL-001"
+      ],
+      "source": {
+        "endLine": 2,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 2
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "administrator"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "administrator"
+        }
+      ],
+      "irNodeId": "administrator",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 4,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 4
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "incidentcommander"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "incidentcommander"
+        }
+      ],
+      "irNodeId": "incidentcommander",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 5,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 5
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "dispatcher"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "dispatcher"
+        }
+      ],
+      "irNodeId": "dispatcher",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 6,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 6
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "fieldlead"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "fieldlead"
+        }
+      ],
+      "irNodeId": "fieldlead",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 7,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 7
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "executive"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "executive"
+        }
+      ],
+      "irNodeId": "executive",
+      "ruleIds": [
+        "ROLE-DECL-001"
+      ],
+      "source": {
+        "endLine": 8,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 8
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "user"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "user"
+        }
+      ],
+      "irNodeId": "user",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 10,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 10
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "user-name"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "user-name"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "user-name"
+        }
+      ],
+      "irNodeId": "user-name",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 10,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 10
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "user-email"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "user-email"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "user-email"
+        }
+      ],
+      "irNodeId": "user-email",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 11,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 11
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "gridregion"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/gridregion"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "gridregion"
+        }
+      ],
+      "irNodeId": "gridregion",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 13,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 13
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "gridregion-code"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "gridregion-code"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "gridregion-code"
+        }
+      ],
+      "irNodeId": "gridregion-code",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 13,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 13
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "gridregion-name"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "gridregion-name"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "gridregion-name"
+        }
+      ],
+      "irNodeId": "gridregion-name",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 14,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 14
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "gridregion-weatherstate"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "gridregion-weatherstate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "gridregion-weatherstate"
+        }
+      ],
+      "irNodeId": "gridregion-weatherstate",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 15,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 15
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "gridregion-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "gridregion-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "gridregion-status"
+        }
+      ],
+      "irNodeId": "gridregion-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 16,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 16
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "gridregion-restorationpercent"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "gridregion-restorationpercent"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "gridregion-restorationpercent"
+        }
+      ],
+      "irNodeId": "gridregion-restorationpercent",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 17,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 17
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "substation"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation"
+        }
+      ],
+      "irNodeId": "substation",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 19,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 19
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "substation-code"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "substation-code"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation-code"
+        }
+      ],
+      "irNodeId": "substation-code",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 19,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 19
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "substation-name"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "substation-name"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation-name"
+        }
+      ],
+      "irNodeId": "substation-name",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 20,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 20
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "substation-municipality"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "substation-municipality"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation-municipality"
+        }
+      ],
+      "irNodeId": "substation-municipality",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 21,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 21
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "substation-customersserved"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "substation-customersserved"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation-customersserved"
+        }
+      ],
+      "irNodeId": "substation-customersserved",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 22,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 22
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "substation-loadpercent"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "substation-loadpercent"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation-loadpercent"
+        }
+      ],
+      "irNodeId": "substation-loadpercent",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 23,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 23
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "substation-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "substation-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation-status"
+        }
+      ],
+      "irNodeId": "substation-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 24,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 24
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage"
+        }
+      ],
+      "irNodeId": "outage",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 26,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 26
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage-incidentcode"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "outage-incidentcode"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-incidentcode"
+        }
+      ],
+      "irNodeId": "outage-incidentcode",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 26,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 26
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "outage-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-title"
+        }
+      ],
+      "irNodeId": "outage-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 27,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 27
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage-cause"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "outage-cause"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-cause"
+        }
+      ],
+      "irNodeId": "outage-cause",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 28,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 28
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage-affectedcustomers"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "outage-affectedcustomers"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-affectedcustomers"
+        }
+      ],
+      "irNodeId": "outage-affectedcustomers",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 29,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 29
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage-priority"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "outage-priority"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-priority"
+        }
+      ],
+      "irNodeId": "outage-priority",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 30,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 30
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "outage-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-status"
+        }
+      ],
+      "irNodeId": "outage-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 31,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 31
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage-escalated"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "outage-escalated"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-escalated"
+        }
+      ],
+      "irNodeId": "outage-escalated",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 32,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 32
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "crew"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "crew"
+        }
+      ],
+      "irNodeId": "crew",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 34,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 34
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "crew-callsign"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "crew-callsign"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "crew-callsign"
+        }
+      ],
+      "irNodeId": "crew-callsign",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 34,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 34
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "crew-name"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "crew-name"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "crew-name"
+        }
+      ],
+      "irNodeId": "crew-name",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 35,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 35
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "crew-specialty"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "crew-specialty"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "crew-specialty"
+        }
+      ],
+      "irNodeId": "crew-specialty",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 36,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 36
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "crew-members"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "crew-members"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "crew-members"
+        }
+      ],
+      "irNodeId": "crew-members",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 37,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 37
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "crew-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "crew-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "crew-status"
+        }
+      ],
+      "irNodeId": "crew-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 38,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 38
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workorder"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder"
+        }
+      ],
+      "irNodeId": "workorder",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 40,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 40
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workorder-ordercode"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workorder-ordercode"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-ordercode"
+        }
+      ],
+      "irNodeId": "workorder-ordercode",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 40,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 40
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workorder-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workorder-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-title"
+        }
+      ],
+      "irNodeId": "workorder-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 41,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 41
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workorder-location"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workorder-location"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-location"
+        }
+      ],
+      "irNodeId": "workorder-location",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 42,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 42
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workorder-priority"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workorder-priority"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-priority"
+        }
+      ],
+      "irNodeId": "workorder-priority",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 43,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 43
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workorder-estimatedminutes"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workorder-estimatedminutes"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-estimatedminutes"
+        }
+      ],
+      "irNodeId": "workorder-estimatedminutes",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 44,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 44
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workorder-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workorder-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-status"
+        }
+      ],
+      "irNodeId": "workorder-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 45,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 45
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "safetypermit"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit"
+        }
+      ],
+      "irNodeId": "safetypermit",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 47,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 47
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "safetypermit-permitcode"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "safetypermit-permitcode"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-permitcode"
+        }
+      ],
+      "irNodeId": "safetypermit-permitcode",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 47,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 47
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "safetypermit-scope"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "safetypermit-scope"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-scope"
+        }
+      ],
+      "irNodeId": "safetypermit-scope",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 48,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 48
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "safetypermit-hazardclass"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "safetypermit-hazardclass"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-hazardclass"
+        }
+      ],
+      "irNodeId": "safetypermit-hazardclass",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 49,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 49
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "safetypermit-isolationpoint"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "safetypermit-isolationpoint"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-isolationpoint"
+        }
+      ],
+      "irNodeId": "safetypermit-isolationpoint",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 50,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 50
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "safetypermit-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "safetypermit-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-status"
+        }
+      ],
+      "irNodeId": "safetypermit-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 51,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 51
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "customerimpact"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "customerimpact"
+        }
+      ],
+      "irNodeId": "customerimpact",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 53,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 53
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "customerimpact-area"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "customerimpact-area"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "customerimpact-area"
+        }
+      ],
+      "irNodeId": "customerimpact-area",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 53,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 53
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "customerimpact-affectedcustomers"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "customerimpact-affectedcustomers"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "customerimpact-affectedcustomers"
+        }
+      ],
+      "irNodeId": "customerimpact-affectedcustomers",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 54,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 54
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "customerimpact-criticalsites"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "customerimpact-criticalsites"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "customerimpact-criticalsites"
+        }
+      ],
+      "irNodeId": "customerimpact-criticalsites",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 55,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 55
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "customerimpact-estimatedrestoretime"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "customerimpact-estimatedrestoretime"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "customerimpact-estimatedrestoretime"
+        }
+      ],
+      "irNodeId": "customerimpact-estimatedrestoretime",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 56,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 56
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "customerimpact-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "customerimpact-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "customerimpact-status"
+        }
+      ],
+      "irNodeId": "customerimpact-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 57,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 57
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "restorationplan"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan"
+        }
+      ],
+      "irNodeId": "restorationplan",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 59,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 59
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "restorationplan-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "restorationplan-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-title"
+        }
+      ],
+      "irNodeId": "restorationplan-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 59,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 59
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "restorationplan-sequence"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "restorationplan-sequence"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-sequence"
+        }
+      ],
+      "irNodeId": "restorationplan-sequence",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 60,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 60
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "restorationplan-targettime"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "restorationplan-targettime"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-targettime"
+        }
+      ],
+      "irNodeId": "restorationplan-targettime",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 61,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 61
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "restorationplan-progress"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "restorationplan-progress"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-progress"
+        }
+      ],
+      "irNodeId": "restorationplan-progress",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 62,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 62
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "restorationplan-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "restorationplan-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-status"
+        }
+      ],
+      "irNodeId": "restorationplan-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 63,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 63
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision"
+        }
+      ],
+      "irNodeId": "decision",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 65,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 65
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-title"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-title"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-title"
+        }
+      ],
+      "irNodeId": "decision-title",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 65,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 65
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-context"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-context"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-context"
+        }
+      ],
+      "irNodeId": "decision-context",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 66,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 66
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-recommendation"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-recommendation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-recommendation"
+        }
+      ],
+      "irNodeId": "decision-recommendation",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 67,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 67
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-status"
+        }
+      ],
+      "irNodeId": "decision-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 68,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 68
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/api/update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update"
+        }
+      ],
+      "irNodeId": "update",
+      "ruleIds": [
+        "ENTITY-DECL-001"
+      ],
+      "source": {
+        "endLine": 70,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 70
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-headline"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-headline"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-headline"
+        }
+      ],
+      "irNodeId": "update-headline",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 70,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 70
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-details"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-details"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-details"
+        }
+      ],
+      "irNodeId": "update-details",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 71,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 71
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-audience"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-audience"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-audience"
+        }
+      ],
+      "irNodeId": "update-audience",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 72,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 72
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-severity"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-severity"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-severity"
+        }
+      ],
+      "irNodeId": "update-severity",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 73,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 73
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-status"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-status"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-status"
+        }
+      ],
+      "irNodeId": "update-status",
+      "ruleIds": [
+        "FIELD-DECL-001"
+      ],
+      "source": {
+        "endLine": 74,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 74
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "substation-region"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "substation-region"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation-region"
+        }
+      ],
+      "irNodeId": "substation-region",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 76,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 76
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "substation-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "substation-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation-owner"
+        }
+      ],
+      "irNodeId": "substation-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 77,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 77
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage-region"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "outage-region"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-region"
+        }
+      ],
+      "irNodeId": "outage-region",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 78,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 78
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage-substation"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "outage-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-substation"
+        }
+      ],
+      "irNodeId": "outage-substation",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 79,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 79
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "outage-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "outage-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-owner"
+        }
+      ],
+      "irNodeId": "outage-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 80,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 80
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "crew-region"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "crew-region"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "crew-region"
+        }
+      ],
+      "irNodeId": "crew-region",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 81,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 81
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "crew-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "crew-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "crew-owner"
+        }
+      ],
+      "irNodeId": "crew-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 82,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 82
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workorder-outage"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workorder-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-outage"
+        }
+      ],
+      "irNodeId": "workorder-outage",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 83,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 83
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workorder-crew"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workorder-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-crew"
+        }
+      ],
+      "irNodeId": "workorder-crew",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 84,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 84
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "workorder-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "workorder-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-owner"
+        }
+      ],
+      "irNodeId": "workorder-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 85,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 85
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "safetypermit-workorder"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "safetypermit-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-workorder"
+        }
+      ],
+      "irNodeId": "safetypermit-workorder",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 86,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 86
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "safetypermit-substation"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "safetypermit-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-substation"
+        }
+      ],
+      "irNodeId": "safetypermit-substation",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 87,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 87
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "safetypermit-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "safetypermit-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-owner"
+        }
+      ],
+      "irNodeId": "safetypermit-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 88,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 88
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "customerimpact-outage"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "customerimpact-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "customerimpact-outage"
+        }
+      ],
+      "irNodeId": "customerimpact-outage",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 89,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 89
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "customerimpact-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "customerimpact-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "customerimpact-owner"
+        }
+      ],
+      "irNodeId": "customerimpact-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 90,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 90
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "restorationplan-outage"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "restorationplan-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-outage"
+        }
+      ],
+      "irNodeId": "restorationplan-outage",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 91,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 91
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "restorationplan-crew"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "restorationplan-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-crew"
+        }
+      ],
+      "irNodeId": "restorationplan-crew",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 92,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 92
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "restorationplan-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "restorationplan-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-owner"
+        }
+      ],
+      "irNodeId": "restorationplan-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 93,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 93
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-outage"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-outage"
+        }
+      ],
+      "irNodeId": "decision-outage",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 94,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 94
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "decision-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "decision-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-owner"
+        }
+      ],
+      "irNodeId": "decision-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 95,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 95
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-region"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-region"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-region"
+        }
+      ],
+      "irNodeId": "update-region",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 96,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 96
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-outage"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-outage"
+        }
+      ],
+      "irNodeId": "update-outage",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 97,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 97
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "database",
+          "path": "migration.sql",
+          "symbol": "update-owner"
+        },
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "update-owner"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-owner"
+        }
+      ],
+      "irNodeId": "update-owner",
+      "ruleIds": [
+        "REL-DECL-001"
+      ],
+      "source": {
+        "endLine": 98,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 98
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-provision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-provision"
+        }
+      ],
+      "irNodeId": "perm-administrator-provision",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 199,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 199
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-user"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-user",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 200,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 200
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-user"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-user",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 201,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 201
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-user"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-user",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 204,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 204
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-gridregion"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-gridregion"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-gridregion",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 205,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 205
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-gridregion"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-gridregion"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-gridregion",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 206,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 206
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-gridregion"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-gridregion"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-gridregion",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 209,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 209
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-substation"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-substation",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 210,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 210
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-substation"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-substation",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 211,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 211
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-substation"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-substation",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 212,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 212
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-outage"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-outage",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 215,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 215
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-outage"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-outage",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 216,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 216
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-outage"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-outage",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 217,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 217
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-crew"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-crew",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 218,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 218
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-crew"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-crew",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 221,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 221
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-crew"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-crew",
+      "ruleIds": [
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 222,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 222
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "gridregion-activate"
+        }
+      ],
+      "irNodeId": "gridregion-activate",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 100,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 100
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/recover"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "gridregion-recover"
+        }
+      ],
+      "irNodeId": "gridregion-recover",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 100,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 100
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/isolate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation-isolate"
+        }
+      ],
+      "irNodeId": "substation-isolate",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 110,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 110
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/energize"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "substation-energize"
+        }
+      ],
+      "irNodeId": "substation-energize",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 110,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 110
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/assess"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-assess"
+        }
+      ],
+      "irNodeId": "outage-assess",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 119,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 119
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-escalate"
+        }
+      ],
+      "irNodeId": "outage-escalate",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 119,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 119
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/contain"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-contain"
+        }
+      ],
+      "irNodeId": "outage-contain",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 119,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 119
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/restore"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "outage-restore"
+        }
+      ],
+      "irNodeId": "outage-restore",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 119,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 119
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/deploy"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "crew-deploy"
+        }
+      ],
+      "irNodeId": "crew-deploy",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 135,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 135
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/release"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "crew-release"
+        }
+      ],
+      "irNodeId": "crew-release",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 135,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 135
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/assign"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-assign"
+        }
+      ],
+      "irNodeId": "workorder-assign",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-start"
+        }
+      ],
+      "irNodeId": "workorder-start",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "workorder-complete"
+        }
+      ],
+      "irNodeId": "workorder-complete",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 143,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 143
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-approve"
+        }
+      ],
+      "irNodeId": "safetypermit-approve",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 154,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 154
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-activate"
+        }
+      ],
+      "irNodeId": "safetypermit-activate",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 154,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 154
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/close"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "safetypermit-close"
+        }
+      ],
+      "irNodeId": "safetypermit-close",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 154,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 154
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/notify"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "customerimpact-notify"
+        }
+      ],
+      "irNodeId": "customerimpact-notify",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 165,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 165
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/resolve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "customerimpact-resolve"
+        }
+      ],
+      "irNodeId": "customerimpact-resolve",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 165,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 165
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-approve"
+        }
+      ],
+      "irNodeId": "restorationplan-approve",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 173,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 173
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-start"
+        }
+      ],
+      "irNodeId": "restorationplan-start",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 173,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 173
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "restorationplan-complete"
+        }
+      ],
+      "irNodeId": "restorationplan-complete",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 173,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 173
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-approve"
+        }
+      ],
+      "irNodeId": "decision-approve",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 185,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 185
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/reject"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "decision-reject"
+        }
+      ],
+      "irNodeId": "decision-reject",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 185,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 185
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "/actions/publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "update-publish"
+        }
+      ],
+      "irNodeId": "update-publish",
+      "ruleIds": [
+        "DECLARATION-EXPANSION-001",
+        "ACTION-DECL-001"
+      ],
+      "source": {
+        "endLine": 193,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 193
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-workorder"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-workorder"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-workorder"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-safetypermit"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-safetypermit",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-safetypermit"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-safetypermit",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-safetypermit"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-safetypermit",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-restorationplan"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-restorationplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-restorationplan"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-restorationplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-restorationplan"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-restorationplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-decision"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-decision"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-decision"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-create-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-create-update"
+        }
+      ],
+      "irNodeId": "perm-administrator-create-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-read-update"
+        }
+      ],
+      "irNodeId": "perm-administrator-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-update-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-update-update"
+        }
+      ],
+      "irNodeId": "perm-administrator-update-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-gridregion-activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-gridregion-activate"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-gridregion-activate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-gridregion-recover"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-gridregion-recover"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-gridregion-recover",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-substation-isolate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-substation-isolate"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-substation-isolate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-substation-energize"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-substation-energize"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-substation-energize",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-outage-assess"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-outage-assess"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-outage-assess",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-outage-escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-outage-escalate"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-outage-escalate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-outage-contain"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-outage-contain"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-outage-contain",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-outage-restore"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-outage-restore"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-outage-restore",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-crew-deploy"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-crew-deploy"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-crew-deploy",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-crew-release"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-crew-release"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-crew-release",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-workorder-assign"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-workorder-assign"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-workorder-assign",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-workorder-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-workorder-start"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-workorder-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-workorder-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-workorder-complete"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-workorder-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-safetypermit-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-safetypermit-approve"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-safetypermit-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-safetypermit-activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-safetypermit-activate"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-safetypermit-activate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-safetypermit-close"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-safetypermit-close"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-safetypermit-close",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-customerimpact-notify"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-customerimpact-notify"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-customerimpact-notify",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-customerimpact-resolve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-customerimpact-resolve"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-customerimpact-resolve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-restorationplan-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-restorationplan-approve"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-restorationplan-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-restorationplan-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-restorationplan-start"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-restorationplan-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-restorationplan-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-restorationplan-complete"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-restorationplan-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-decision-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-decision-approve"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-decision-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-decision-reject"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-decision-reject"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-decision-reject",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-administrator-run-update-publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-administrator-run-update-publish"
+        }
+      ],
+      "irNodeId": "perm-administrator-run-update-publish",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-user"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-user",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-create-gridregion"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-create-gridregion"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-create-gridregion",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-gridregion"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-gridregion"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-gridregion",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-update-gridregion"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-update-gridregion"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-update-gridregion",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-create-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-create-substation"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-create-substation",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-substation"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-substation",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-update-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-update-substation"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-update-substation",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-create-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-create-outage"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-create-outage",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-outage"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-outage",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-update-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-update-outage"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-update-outage",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-create-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-create-crew"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-create-crew",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-crew"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-crew",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-update-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-update-crew"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-update-crew",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-create-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-create-workorder"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-create-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-workorder"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-update-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-update-workorder"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-update-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 224,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 224
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-create-safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-create-safetypermit"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-create-safetypermit",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-safetypermit"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-safetypermit",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-update-safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-update-safetypermit"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-update-safetypermit",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-create-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-create-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-create-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-update-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-update-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-update-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-create-restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-create-restorationplan"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-create-restorationplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-restorationplan"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-restorationplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-update-restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-update-restorationplan"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-update-restorationplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-create-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-create-decision"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-create-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-decision"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-update-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-update-decision"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-update-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-create-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-create-update"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-create-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-read-update"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-update-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-update-update"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-update-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-gridregion-activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-gridregion-activate"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-gridregion-activate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-gridregion-recover"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-gridregion-recover"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-gridregion-recover",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-substation-isolate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-substation-isolate"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-substation-isolate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-substation-energize"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-substation-energize"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-substation-energize",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-outage-assess"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-outage-assess"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-outage-assess",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-outage-escalate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-outage-escalate"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-outage-escalate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-outage-contain"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-outage-contain"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-outage-contain",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-outage-restore"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-outage-restore"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-outage-restore",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-crew-deploy"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-crew-deploy"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-crew-deploy",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-crew-release"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-crew-release"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-crew-release",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-workorder-assign"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-workorder-assign"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-workorder-assign",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-workorder-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-workorder-start"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-workorder-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-workorder-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-workorder-complete"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-workorder-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-safetypermit-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-safetypermit-approve"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-safetypermit-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-safetypermit-activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-safetypermit-activate"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-safetypermit-activate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-safetypermit-close"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-safetypermit-close"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-safetypermit-close",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-customerimpact-notify"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-customerimpact-notify"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-customerimpact-notify",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-customerimpact-resolve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-customerimpact-resolve"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-customerimpact-resolve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-restorationplan-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-restorationplan-approve"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-restorationplan-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-restorationplan-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-restorationplan-start"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-restorationplan-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-restorationplan-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-restorationplan-complete"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-restorationplan-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-incidentcommander-run-update-publish"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-incidentcommander-run-update-publish"
+        }
+      ],
+      "irNodeId": "perm-incidentcommander-run-update-publish",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-read-user"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-read-user",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-read-gridregion"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-read-gridregion"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-read-gridregion",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-read-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-read-substation"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-read-substation",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-read-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-read-outage"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-read-outage",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-read-decision"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-read-update"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-create-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-create-crew"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-create-crew",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-read-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-read-crew"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-read-crew",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-update-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-update-crew"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-update-crew",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-create-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-create-workorder"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-create-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-read-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-read-workorder"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-read-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-update-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-update-workorder"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-update-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-create-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-create-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-create-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-read-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-read-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-read-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-update-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-update-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-update-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-run-crew-deploy"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-run-crew-deploy"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-run-crew-deploy",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 225,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 225
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-run-crew-release"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-run-crew-release"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-run-crew-release",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-run-workorder-assign"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-run-workorder-assign"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-run-workorder-assign",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-run-workorder-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-run-workorder-start"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-run-workorder-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-run-workorder-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-run-workorder-complete"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-run-workorder-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-run-customerimpact-notify"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-run-customerimpact-notify"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-run-customerimpact-notify",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-dispatcher-run-customerimpact-resolve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-dispatcher-run-customerimpact-resolve"
+        }
+      ],
+      "irNodeId": "perm-dispatcher-run-customerimpact-resolve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-user"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-user"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-user",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-gridregion"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-gridregion"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-gridregion",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-substation"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-substation",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-outage"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-outage",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-crew"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-crew",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-workorder"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-safetypermit"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-safetypermit",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-restorationplan"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-restorationplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-decision"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-read-update"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-create-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-create-workorder"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-create-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-update-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-update-workorder"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-update-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-create-safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-create-safetypermit"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-create-safetypermit",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-update-safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-update-safetypermit"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-update-safetypermit",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-create-restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-create-restorationplan"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-create-restorationplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 226,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 226
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-update-restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-update-restorationplan"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-update-restorationplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-run-workorder-assign"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-run-workorder-assign"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-run-workorder-assign",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-run-workorder-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-run-workorder-start"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-run-workorder-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-run-workorder-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-run-workorder-complete"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-run-workorder-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-run-safetypermit-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-run-safetypermit-approve"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-run-safetypermit-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-run-safetypermit-activate"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-run-safetypermit-activate"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-run-safetypermit-activate",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-run-safetypermit-close"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-run-safetypermit-close"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-run-safetypermit-close",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-run-restorationplan-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-run-restorationplan-approve"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-run-restorationplan-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-run-restorationplan-start"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-run-restorationplan-start"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-run-restorationplan-start",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-fieldlead-run-restorationplan-complete"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-fieldlead-run-restorationplan-complete"
+        }
+      ],
+      "irNodeId": "perm-fieldlead-run-restorationplan-complete",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-gridregion"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-gridregion"
+        }
+      ],
+      "irNodeId": "perm-executive-read-gridregion",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-substation"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-substation"
+        }
+      ],
+      "irNodeId": "perm-executive-read-substation",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-outage"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-outage"
+        }
+      ],
+      "irNodeId": "perm-executive-read-outage",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-crew"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-crew"
+        }
+      ],
+      "irNodeId": "perm-executive-read-crew",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-workorder"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-workorder"
+        }
+      ],
+      "irNodeId": "perm-executive-read-workorder",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-safetypermit"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-safetypermit"
+        }
+      ],
+      "irNodeId": "perm-executive-read-safetypermit",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-customerimpact"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-customerimpact"
+        }
+      ],
+      "irNodeId": "perm-executive-read-customerimpact",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-restorationplan"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-restorationplan"
+        }
+      ],
+      "irNodeId": "perm-executive-read-restorationplan",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-decision"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-decision"
+        }
+      ],
+      "irNodeId": "perm-executive-read-decision",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-read-update"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-read-update"
+        }
+      ],
+      "irNodeId": "perm-executive-read-update",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-run-decision-approve"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-run-decision-approve"
+        }
+      ],
+      "irNodeId": "perm-executive-run-decision-approve",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    },
+    {
+      "artifacts": [
+        {
+          "kind": "runtime",
+          "path": "app.mjs",
+          "symbol": "perm-executive-run-decision-reject"
+        },
+        {
+          "kind": "ui",
+          "path": "app.js",
+          "symbol": "perm-executive-run-decision-reject"
+        }
+      ],
+      "irNodeId": "perm-executive-run-decision-reject",
+      "ruleIds": [
+        "POLICY-EXPANSION-001",
+        "PERMISSION-DECL-001"
+      ],
+      "source": {
+        "endLine": 227,
+        "file": "C:\\Users\\sethirajulu\\intentlang\\examples\\grid-shield.intent",
+        "startLine": 227
+      }
+    }
+  ],
+  "sourceFingerprint": "sha256:ba10368677f090451ab7d686a9d3dc8bbab561fc51e7e785c1a07eb164848a2c"
+}

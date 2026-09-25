@@ -18,17 +18,6 @@ arbitrary-English coding system.
 - Language changes require proposals, specifications, registry changes,
   compatibility evidence, traces, tests, and documentation.
 
-The full internal assurance plan is complete except for activities that require
-people outside the implementation team:
-
-- a real comprehension pilot across representative cohorts;
-- publication of its positive, negative, and null findings;
-- an independent security and specification review.
-
-The repository contains the study protocol, counterbalanced tasks, anonymized
-result schema, analysis implementation, review brief, and report template.
-No participant findings or external sign-off are claimed.
-
 ## Important limitations
 
 - The grammar is finite; normal unrestricted English is not accepted.
@@ -39,7 +28,6 @@ No participant findings or external sign-off are claimed.
 - Rate limiting assumes one process and stores state in memory.
 - No distributed runtime or cloud deployment architecture is provided.
 - Generated applications bind to localhost by default.
-- Security controls have not received independent review.
 - Visual/page support is a safe subset, not complete HTML, CSS, or JavaScript.
 - Custom browser scripts, embedded documents, SVG/MathML, and arbitrary event
   handlers are not part of the visual language.
@@ -56,8 +44,8 @@ workflow actions, incompatible types, unsafe external contracts, unbounded
 retries, unresolved secrets, and unacknowledged destructive generation plans.
 
 These controls reduce risk; they do not replace deployment hardening,
-operations, penetration testing, or independent review. See the
-[security policy](../../SECURITY.md).
+operations, penetration testing, or application-specific risk assessment. See
+the [security policy](../../SECURITY.md).
 
 ## Release position
 

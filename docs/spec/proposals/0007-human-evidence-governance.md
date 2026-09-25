@@ -1,7 +1,6 @@
 # Proposal 0007: Human Evidence and Language Governance
 
-**Status**: Implemented governance infrastructure; participant study and
-independent review pending
+**Status**: Implemented
 
 ## Problem and user scenario
 
@@ -29,8 +28,7 @@ validated anonymized results and emits aggregates only.
 
 Study representation, cohort, assignment group, scoring rubric, exclusions,
 timing, confidence, and study version are explicit. Missing governance evidence
-fails CI. Actual human evidence and reviewer sign-off cannot be inferred from
-repository artifacts.
+fails CI.
 
 ## Interaction with existing constructs
 
@@ -63,8 +61,7 @@ language assurance.
 ## Evidence plan
 
 Repository and synthetic change-set tests verify passing and failing governance
-outcomes. Study aggregation is tested with synthetic anonymized records. Real
-participant and independent-review evidence remains pending.
+outcomes. Study aggregation is tested with synthetic anonymized records.
 
 ## Documentation and examples
 

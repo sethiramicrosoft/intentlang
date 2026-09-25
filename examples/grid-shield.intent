@@ -1,0 +1,228 @@
+application GridShield
+authentication uses User identified by email
+
+role Administrator
+role IncidentCommander
+role Dispatcher
+role FieldLead
+role Executive
+
+a User has a required name as text length between 1 and 120
+a User has a required unique email as text length between 3 and 320
+
+a GridRegion has a required unique code as text length between 2 and 20
+a GridRegion has a required name as text length between 2 and 160
+a GridRegion has a weatherState as text default "clear"
+a GridRegion has a status as text default "normal"
+a GridRegion has a restorationPercent as integer default 100
+
+a Substation has a required unique code as text length between 2 and 20
+a Substation has a required name as text length between 2 and 160
+a Substation has a municipality as text
+a Substation has a customersServed as integer default 0
+a Substation has a loadPercent as integer default 0
+a Substation has a status as text default "operational"
+
+an Outage has a required unique incidentCode as text length between 2 and 30
+an Outage has a required title as text length between 2 and 200
+an Outage has a cause as text
+an Outage has an affectedCustomers as integer default 0
+an Outage has a priority as text default "medium"
+an Outage has a status as text default "detected"
+an Outage has an escalated as boolean default false
+
+a Crew has a required unique callSign as text length between 2 and 30
+a Crew has a required name as text length between 2 and 160
+a Crew has a specialty as text
+a Crew has a members as integer default 1
+a Crew has a status as text default "available"
+
+a WorkOrder has a required unique orderCode as text length between 2 and 30
+a WorkOrder has a required title as text length between 2 and 200
+a WorkOrder has a location as text
+a WorkOrder has a priority as text default "medium"
+a WorkOrder has an estimatedMinutes as integer default 60
+a WorkOrder has a status as text default "queued"
+
+a SafetyPermit has a required unique permitCode as text length between 2 and 30
+a SafetyPermit has a required scope as text length between 2 and 300
+a SafetyPermit has a hazardClass as text default "electrical"
+a SafetyPermit has an isolationPoint as text
+a SafetyPermit has a status as text default "draft"
+
+a CustomerImpact has a required area as text length between 2 and 160
+a CustomerImpact has an affectedCustomers as integer default 0
+a CustomerImpact has a criticalSites as integer default 0
+a CustomerImpact has an estimatedRestoreTime as text
+a CustomerImpact has a status as text default "open"
+
+a RestorationPlan has a required title as text length between 2 and 200
+a RestorationPlan has a sequence as text
+a RestorationPlan has a targetTime as text
+a RestorationPlan has a progress as integer default 0
+a RestorationPlan has a status as text default "draft"
+
+a Decision has a required title as text length between 2 and 200
+a Decision has a context as text
+a Decision has a recommendation as text
+a Decision has a status as text default "pending"
+
+an Update has a required headline as text length between 2 and 200
+an Update has a details as text
+an Update has a audience as text default "operations"
+an Update has a severity as text default "green"
+an Update has a status as text default "draft"
+
+each Substation belongs to a GridRegion as region on delete cascade
+each Substation belongs to a User as owner on delete restrict
+each Outage belongs to a GridRegion as region on delete cascade
+each Outage belongs to a Substation as substation on delete restrict
+each Outage belongs to a User as owner on delete restrict
+each Crew belongs to a GridRegion as region on delete cascade
+each Crew belongs to a User as owner on delete restrict
+each WorkOrder belongs to an Outage as outage on delete cascade
+each WorkOrder belongs to a Crew as crew on delete restrict
+each WorkOrder belongs to a User as owner on delete restrict
+each SafetyPermit belongs to a WorkOrder as workOrder on delete cascade
+each SafetyPermit belongs to a Substation as substation on delete restrict
+each SafetyPermit belongs to a User as owner on delete restrict
+each CustomerImpact belongs to an Outage as outage on delete cascade
+each CustomerImpact belongs to a User as owner on delete restrict
+each RestorationPlan belongs to an Outage as outage on delete cascade
+each RestorationPlan belongs to a Crew as crew on delete restrict
+each RestorationPlan belongs to a User as owner on delete restrict
+each Decision belongs to an Outage as outage on delete cascade
+each Decision belongs to a User as owner on delete restrict
+each Update belongs to a GridRegion as region on delete cascade
+each Update belongs to an Outage as outage on delete cascade
+each Update belongs to a User as owner on delete restrict
+
+state machine GridRegionLifecycle for GridRegion using status
+  transition activate
+    require status is "normal" otherwise "Only a normal region can enter emergency mode"
+    set status to "emergency"
+    set restorationPercent to 0
+  transition recover
+    require status is "emergency" otherwise "Only an emergency region can be recovered"
+    set status to "recovered"
+    set restorationPercent to 100
+
+state machine SubstationLifecycle for Substation using status
+  transition isolate
+    require status is "operational" otherwise "Only an operational substation can be isolated"
+    set status to "isolated"
+    set loadPercent to 0
+  transition energize
+    require status is "isolated" otherwise "Only an isolated substation can be energized"
+    set status to "operational"
+
+state machine OutageLifecycle for Outage using status
+  transition assess
+    require status is "detected" otherwise "Only a detected outage can be assessed"
+    set status to "assessed"
+  transition escalate
+    require escalated is false otherwise "Outage is already escalated"
+    set escalated to true
+    set status to "escalated"
+  transition contain
+    require status is "escalated" otherwise "Only an escalated outage can be contained"
+    set status to "contained"
+  transition restore
+    require status is "contained" otherwise "Only a contained outage can be restored"
+    set escalated to false
+    set status to "restored"
+
+state machine CrewLifecycle for Crew using status
+  transition deploy
+    require status is "available" otherwise "Only an available crew can be deployed"
+    set status to "deployed"
+  transition release
+    require status is "deployed" otherwise "Only a deployed crew can be released"
+    set status to "available"
+
+state machine WorkOrderLifecycle for WorkOrder using status
+  transition assign
+    require status is "queued" otherwise "Only a queued work order can be assigned"
+    set status to "assigned"
+  transition start
+    require status is "assigned" otherwise "Only an assigned work order can be started"
+    set status to "in-progress"
+  transition complete
+    require status is "in-progress" otherwise "Only an active work order can be completed"
+    set status to "complete"
+
+state machine SafetyPermitLifecycle for SafetyPermit using status
+  transition approve
+    require status is "draft" otherwise "Only a draft safety permit can be approved"
+    set status to "approved"
+  transition activate
+    require status is "approved" otherwise "Only an approved safety permit can be activated"
+    set status to "active"
+  transition close
+    require status is "active" otherwise "Only an active safety permit can be closed"
+    set status to "closed"
+
+state machine CustomerImpactLifecycle for CustomerImpact using status
+  transition notify
+    require status is "open" otherwise "Only an open customer impact can be notified"
+    set status to "notified"
+  transition resolve
+    require status is not "resolved" otherwise "Customer impact is already resolved"
+    set status to "resolved"
+
+state machine RestorationPlanLifecycle for RestorationPlan using status
+  transition approve
+    require status is "draft" otherwise "Only a draft restoration plan can be approved"
+    set status to "approved"
+  transition start
+    require status is "approved" otherwise "Only an approved restoration plan can be started"
+    set status to "in-progress"
+  transition complete
+    require status is "in-progress" otherwise "Only an active restoration plan can be completed"
+    set status to "complete"
+    set progress to 100
+
+state machine DecisionLifecycle for Decision using status
+  transition approve
+    require status is "pending" otherwise "Only a pending decision can be approved"
+    set status to "approved"
+  transition reject
+    require status is "pending" otherwise "Only a pending decision can be rejected"
+    set status to "rejected"
+
+state machine UpdateLifecycle for Update using status
+  transition publish
+    require status is "draft" otherwise "Only a draft update can be published"
+    set status to "published"
+
+policy AdministratorAccess
+  allow to provision accounts
+  allow to manage User, GridRegion, Substation, Outage, Crew, WorkOrder, SafetyPermit, CustomerImpact, RestorationPlan, Decision and Update
+  allow to run all actions on GridRegion, Substation, Outage, Crew, WorkOrder, SafetyPermit, CustomerImpact, RestorationPlan, Decision and Update
+
+policy IncidentCommanderAccess
+  allow to read User
+  allow to manage GridRegion, Substation, Outage, Crew, WorkOrder, SafetyPermit, CustomerImpact, RestorationPlan, Decision and Update
+  allow to run all actions on GridRegion, Substation, Outage, Crew, WorkOrder, SafetyPermit, CustomerImpact, RestorationPlan and Update
+
+policy DispatcherAccess
+  allow to read self User
+  allow to read GridRegion, Substation, Outage, Decision and Update
+  allow to manage Crew, WorkOrder and CustomerImpact
+  allow to run all actions on Crew, WorkOrder and CustomerImpact
+
+policy FieldLeadAccess
+  allow to read self User
+  allow to read GridRegion, Substation, Outage, Crew, WorkOrder, SafetyPermit, CustomerImpact, RestorationPlan, Decision and Update
+  allow to create and update own WorkOrder, SafetyPermit and RestorationPlan
+  allow to run all actions on own WorkOrder, SafetyPermit and RestorationPlan
+
+policy ExecutiveAccess
+  allow to read GridRegion, Substation, Outage, Crew, WorkOrder, SafetyPermit, CustomerImpact, RestorationPlan, Decision and Update
+  allow to run all actions on Decision
+
+grant AdministratorAccess to Administrator
+grant IncidentCommanderAccess to IncidentCommander
+grant DispatcherAccess to Dispatcher
+grant FieldLeadAccess to FieldLead
+grant ExecutiveAccess to Executive

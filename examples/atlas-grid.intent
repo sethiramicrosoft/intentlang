@@ -1,0 +1,197 @@
+application AtlasGrid
+authentication uses User identified by email
+
+role Administrator
+role ControlTowerLead
+role SiteManager
+role SupplierPartner
+role Executive
+
+a User has a required name as text length between 1 and 120
+a User has a required unique email as text length between 3 and 320
+
+a Network has a required unique code as text length between 2 and 20
+a Network has a required name as text length between 2 and 160
+a Network has a region as text
+a Network has a status as text default "monitoring"
+a Network has a resilienceScore as integer default 100
+
+a Facility has a required unique code as text length between 2 and 20
+a Facility has a required name as text length between 2 and 160
+a Facility has a country as text
+a Facility has a capacityPercent as integer default 100
+a Facility has a status as text default "operational"
+
+a Supplier has a required unique code as text length between 2 and 20
+a Supplier has a required name as text length between 2 and 160
+a Supplier has a category as text
+a Supplier has a riskTier as text default "standard"
+a Supplier has a status as text default "active"
+
+a Shipment has a required unique trackingCode as text length between 2 and 40
+a Shipment has a required description as text length between 2 and 200
+a Shipment has an origin as text
+a Shipment has a destination as text
+a Shipment has an expectedDate as text
+a Shipment has a status as text default "planned"
+a Shipment has a priority as text default "normal"
+
+an InventoryAlert has a required item as text length between 2 and 160
+an InventoryAlert has a currentDays as integer default 0
+an InventoryAlert has a targetDays as integer default 14
+an InventoryAlert has a severity as text default "medium"
+an InventoryAlert has a status as text default "open"
+
+a Disruption has a required title as text length between 2 and 200
+a Disruption has a required summary as text length between 2 and 500
+a Disruption has an impact as text default "medium"
+a Disruption has a probability as text default "medium"
+a Disruption has a status as text default "detected"
+a Disruption has an escalated as boolean default false
+
+a RecoveryPlan has a required title as text length between 2 and 200
+a RecoveryPlan has a strategy as text
+a RecoveryPlan has a targetDate as text
+a RecoveryPlan has a progress as integer default 0
+a RecoveryPlan has a status as text default "draft"
+
+a Decision has a required title as text length between 2 and 200
+a Decision has a context as text
+a Decision has a recommendation as text
+a Decision has a status as text default "pending"
+
+an Update has a required headline as text length between 2 and 200
+an Update has a details as text
+an Update has a audience as text default "operations"
+an Update has a health as text default "green"
+an Update has a status as text default "draft"
+
+each Facility belongs to a Network as network on delete cascade
+each Facility belongs to a User as owner on delete restrict
+each Supplier belongs to a Network as network on delete cascade
+each Supplier belongs to a User as owner on delete restrict
+each Shipment belongs to a Network as network on delete cascade
+each Shipment belongs to a Supplier as supplier on delete restrict
+each Shipment belongs to a Facility as facility on delete restrict
+each Shipment belongs to a User as owner on delete restrict
+each InventoryAlert belongs to a Network as network on delete cascade
+each InventoryAlert belongs to a Facility as facility on delete cascade
+each InventoryAlert belongs to a User as owner on delete restrict
+each Disruption belongs to a Network as network on delete cascade
+each Disruption belongs to a Facility as facility on delete restrict
+each Disruption belongs to a Supplier as supplier on delete restrict
+each Disruption belongs to a User as owner on delete restrict
+each RecoveryPlan belongs to a Disruption as disruption on delete cascade
+each RecoveryPlan belongs to a User as owner on delete restrict
+each Decision belongs to a Disruption as disruption on delete cascade
+each Decision belongs to a User as owner on delete restrict
+each Update belongs to a Network as network on delete cascade
+each Update belongs to a User as owner on delete restrict
+
+state machine NetworkLifecycle for Network using status
+  transition activate
+    require status is "monitoring" otherwise "Only a monitored network can be activated"
+    set status to "active"
+  transition stabilize
+    require status is "active" otherwise "Only an active network can be stabilized"
+    set status to "stable"
+
+state machine FacilityLifecycle for Facility using status
+  transition restrict
+    require status is "operational" otherwise "Only an operational facility can be restricted"
+    set status to "restricted"
+  transition restore
+    require status is "restricted" otherwise "Only a restricted facility can be restored"
+    set status to "operational"
+    set capacityPercent to 100
+
+state machine ShipmentLifecycle for Shipment using status
+  transition dispatch
+    require status is "planned" otherwise "Only a planned shipment can be dispatched"
+    set status to "in-transit"
+  transition delay
+    require status is not "delivered" otherwise "A delivered shipment cannot be delayed"
+    set status to "delayed"
+  transition deliver
+    require status is not "delivered" otherwise "Shipment is already delivered"
+    set status to "delivered"
+
+state machine InventoryAlertLifecycle for InventoryAlert using status
+  transition acknowledge
+    require status is "open" otherwise "Only an open inventory alert can be acknowledged"
+    set status to "acknowledged"
+  transition resolve
+    require status is not "resolved" otherwise "Inventory alert is already resolved"
+    set status to "resolved"
+
+state machine DisruptionLifecycle for Disruption using status
+  transition escalate
+    require escalated is false otherwise "Disruption is already escalated"
+    set escalated to true
+    set status to "escalated"
+  transition contain
+    require status is "escalated" otherwise "Only an escalated disruption can be contained"
+    set status to "contained"
+  transition close
+    require status is "contained" otherwise "Only a contained disruption can be closed"
+    set escalated to false
+    set status to "closed"
+
+state machine RecoveryPlanLifecycle for RecoveryPlan using status
+  transition approve
+    require status is "draft" otherwise "Only a draft recovery plan can be approved"
+    set status to "approved"
+  transition start
+    require status is "approved" otherwise "Only an approved recovery plan can be started"
+    set status to "in-progress"
+  transition complete
+    require status is "in-progress" otherwise "Only an active recovery plan can be completed"
+    set status to "complete"
+    set progress to 100
+
+state machine DecisionLifecycle for Decision using status
+  transition approve
+    require status is "pending" otherwise "Only a pending decision can be approved"
+    set status to "approved"
+  transition reject
+    require status is "pending" otherwise "Only a pending decision can be rejected"
+    set status to "rejected"
+
+state machine UpdateLifecycle for Update using status
+  transition publish
+    require status is "draft" otherwise "Only a draft update can be published"
+    set status to "published"
+
+policy AdministratorAccess
+  allow to provision accounts
+  allow to manage User, Network, Facility, Supplier, Shipment, InventoryAlert, Disruption, RecoveryPlan, Decision and Update
+  allow to run all actions on Network, Facility, Shipment, InventoryAlert, Disruption, RecoveryPlan, Decision and Update
+
+policy ControlTowerAccess
+  allow to read User
+  allow to manage Network, Facility, Supplier, Shipment, InventoryAlert, Disruption, RecoveryPlan, Decision and Update
+  allow to run all actions on Network, Facility, Shipment, InventoryAlert, Disruption, RecoveryPlan and Update
+
+policy SiteManagerAccess
+  allow to read self User
+  allow to read Network, Supplier and Decision
+  allow to read Facility, Shipment, InventoryAlert, Disruption, RecoveryPlan and Update
+  allow to create and update own Facility, Shipment, InventoryAlert, Disruption, RecoveryPlan and Update
+  allow to run all actions on own Facility, Shipment, InventoryAlert, Disruption, RecoveryPlan and Update
+
+policy SupplierPartnerAccess
+  allow to read self User
+  allow to read Network, Facility, Supplier, InventoryAlert, Disruption, RecoveryPlan, Decision and Update
+  allow to read Shipment
+  allow to create and update own Shipment
+  allow to run all actions on own Shipment
+
+policy ExecutiveAccess
+  allow to read Network, Facility, Supplier, Shipment, InventoryAlert, Disruption, RecoveryPlan, Decision and Update
+  allow to run all actions on Decision
+
+grant AdministratorAccess to Administrator
+grant ControlTowerAccess to ControlTowerLead
+grant SiteManagerAccess to SiteManager
+grant SupplierPartnerAccess to SupplierPartner
+grant ExecutiveAccess to Executive

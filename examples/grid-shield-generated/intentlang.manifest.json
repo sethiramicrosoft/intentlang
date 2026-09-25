@@ -1,0 +1,2399 @@
+{
+  "compilerVersion": "0.8.0-alpha.0",
+  "dependencyFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+  "generatorVersions": {
+    "database": "0.8.0-alpha.0",
+    "runtime": "0.8.0-alpha.0",
+    "ui": "0.8.0-alpha.0"
+  },
+  "ir": {
+    "actions": [
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "emergency"
+          },
+          {
+            "fieldName": "restorationPercent",
+            "value": 0
+          }
+        ],
+        "entityId": "gridregion",
+        "id": "gridregion-activate",
+        "name": "activate",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a normal region can enter emergency mode",
+            "operator": "is",
+            "value": "normal"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "recovered"
+          },
+          {
+            "fieldName": "restorationPercent",
+            "value": 100
+          }
+        ],
+        "entityId": "gridregion",
+        "id": "gridregion-recover",
+        "name": "recover",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an emergency region can be recovered",
+            "operator": "is",
+            "value": "emergency"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "isolated"
+          },
+          {
+            "fieldName": "loadPercent",
+            "value": 0
+          }
+        ],
+        "entityId": "substation",
+        "id": "substation-isolate",
+        "name": "isolate",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an operational substation can be isolated",
+            "operator": "is",
+            "value": "operational"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "operational"
+          }
+        ],
+        "entityId": "substation",
+        "id": "substation-energize",
+        "name": "energize",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an isolated substation can be energized",
+            "operator": "is",
+            "value": "isolated"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "assessed"
+          }
+        ],
+        "entityId": "outage",
+        "id": "outage-assess",
+        "name": "assess",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a detected outage can be assessed",
+            "operator": "is",
+            "value": "detected"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "escalated",
+            "value": true
+          },
+          {
+            "fieldName": "status",
+            "value": "escalated"
+          }
+        ],
+        "entityId": "outage",
+        "id": "outage-escalate",
+        "name": "escalate",
+        "preconditions": [
+          {
+            "fieldName": "escalated",
+            "message": "Outage is already escalated",
+            "operator": "is",
+            "value": false
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "contained"
+          }
+        ],
+        "entityId": "outage",
+        "id": "outage-contain",
+        "name": "contain",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an escalated outage can be contained",
+            "operator": "is",
+            "value": "escalated"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "escalated",
+            "value": false
+          },
+          {
+            "fieldName": "status",
+            "value": "restored"
+          }
+        ],
+        "entityId": "outage",
+        "id": "outage-restore",
+        "name": "restore",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a contained outage can be restored",
+            "operator": "is",
+            "value": "contained"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "deployed"
+          }
+        ],
+        "entityId": "crew",
+        "id": "crew-deploy",
+        "name": "deploy",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an available crew can be deployed",
+            "operator": "is",
+            "value": "available"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "available"
+          }
+        ],
+        "entityId": "crew",
+        "id": "crew-release",
+        "name": "release",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a deployed crew can be released",
+            "operator": "is",
+            "value": "deployed"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "assigned"
+          }
+        ],
+        "entityId": "workorder",
+        "id": "workorder-assign",
+        "name": "assign",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a queued work order can be assigned",
+            "operator": "is",
+            "value": "queued"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "in-progress"
+          }
+        ],
+        "entityId": "workorder",
+        "id": "workorder-start",
+        "name": "start",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an assigned work order can be started",
+            "operator": "is",
+            "value": "assigned"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "complete"
+          }
+        ],
+        "entityId": "workorder",
+        "id": "workorder-complete",
+        "name": "complete",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an active work order can be completed",
+            "operator": "is",
+            "value": "in-progress"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "approved"
+          }
+        ],
+        "entityId": "safetypermit",
+        "id": "safetypermit-approve",
+        "name": "approve",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a draft safety permit can be approved",
+            "operator": "is",
+            "value": "draft"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "active"
+          }
+        ],
+        "entityId": "safetypermit",
+        "id": "safetypermit-activate",
+        "name": "activate",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an approved safety permit can be activated",
+            "operator": "is",
+            "value": "approved"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "closed"
+          }
+        ],
+        "entityId": "safetypermit",
+        "id": "safetypermit-close",
+        "name": "close",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an active safety permit can be closed",
+            "operator": "is",
+            "value": "active"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "notified"
+          }
+        ],
+        "entityId": "customerimpact",
+        "id": "customerimpact-notify",
+        "name": "notify",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an open customer impact can be notified",
+            "operator": "is",
+            "value": "open"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "resolved"
+          }
+        ],
+        "entityId": "customerimpact",
+        "id": "customerimpact-resolve",
+        "name": "resolve",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Customer impact is already resolved",
+            "operator": "is not",
+            "value": "resolved"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "approved"
+          }
+        ],
+        "entityId": "restorationplan",
+        "id": "restorationplan-approve",
+        "name": "approve",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a draft restoration plan can be approved",
+            "operator": "is",
+            "value": "draft"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "in-progress"
+          }
+        ],
+        "entityId": "restorationplan",
+        "id": "restorationplan-start",
+        "name": "start",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an approved restoration plan can be started",
+            "operator": "is",
+            "value": "approved"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "complete"
+          },
+          {
+            "fieldName": "progress",
+            "value": 100
+          }
+        ],
+        "entityId": "restorationplan",
+        "id": "restorationplan-complete",
+        "name": "complete",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an active restoration plan can be completed",
+            "operator": "is",
+            "value": "in-progress"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "approved"
+          }
+        ],
+        "entityId": "decision",
+        "id": "decision-approve",
+        "name": "approve",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a pending decision can be approved",
+            "operator": "is",
+            "value": "pending"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "rejected"
+          }
+        ],
+        "entityId": "decision",
+        "id": "decision-reject",
+        "name": "reject",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a pending decision can be rejected",
+            "operator": "is",
+            "value": "pending"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "published"
+          }
+        ],
+        "entityId": "update",
+        "id": "update-publish",
+        "name": "publish",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a draft update can be published",
+            "operator": "is",
+            "value": "draft"
+          }
+        ]
+      }
+    ],
+    "application": {
+      "id": "gridshield",
+      "name": "GridShield"
+    },
+    "authentication": {
+      "identityEntityId": "user",
+      "identityFieldId": "user-email"
+    },
+    "entities": [
+      {
+        "fields": [
+          {
+            "id": "user-name",
+            "length": {
+              "max": 120,
+              "min": 1
+            },
+            "name": "name",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "user-email",
+            "length": {
+              "max": 320,
+              "min": 3
+            },
+            "name": "email",
+            "required": true,
+            "type": "text",
+            "unique": true
+          }
+        ],
+        "id": "user",
+        "name": "User"
+      },
+      {
+        "fields": [
+          {
+            "id": "gridregion-code",
+            "length": {
+              "max": 20,
+              "min": 2
+            },
+            "name": "code",
+            "required": true,
+            "type": "text",
+            "unique": true
+          },
+          {
+            "id": "gridregion-name",
+            "length": {
+              "max": 160,
+              "min": 2
+            },
+            "name": "name",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "clear",
+            "id": "gridregion-weatherstate",
+            "name": "weatherState",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "normal",
+            "id": "gridregion-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 100,
+            "id": "gridregion-restorationpercent",
+            "name": "restorationPercent",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          }
+        ],
+        "id": "gridregion",
+        "name": "GridRegion"
+      },
+      {
+        "fields": [
+          {
+            "id": "substation-code",
+            "length": {
+              "max": 20,
+              "min": 2
+            },
+            "name": "code",
+            "required": true,
+            "type": "text",
+            "unique": true
+          },
+          {
+            "id": "substation-name",
+            "length": {
+              "max": 160,
+              "min": 2
+            },
+            "name": "name",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "substation-municipality",
+            "name": "municipality",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 0,
+            "id": "substation-customersserved",
+            "name": "customersServed",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": 0,
+            "id": "substation-loadpercent",
+            "name": "loadPercent",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": "operational",
+            "id": "substation-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "substation",
+        "name": "Substation"
+      },
+      {
+        "fields": [
+          {
+            "id": "outage-incidentcode",
+            "length": {
+              "max": 30,
+              "min": 2
+            },
+            "name": "incidentCode",
+            "required": true,
+            "type": "text",
+            "unique": true
+          },
+          {
+            "id": "outage-title",
+            "length": {
+              "max": 200,
+              "min": 2
+            },
+            "name": "title",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "outage-cause",
+            "name": "cause",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 0,
+            "id": "outage-affectedcustomers",
+            "name": "affectedCustomers",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": "medium",
+            "id": "outage-priority",
+            "name": "priority",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "detected",
+            "id": "outage-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": false,
+            "id": "outage-escalated",
+            "name": "escalated",
+            "required": false,
+            "type": "boolean",
+            "unique": false
+          }
+        ],
+        "id": "outage",
+        "name": "Outage"
+      },
+      {
+        "fields": [
+          {
+            "id": "crew-callsign",
+            "length": {
+              "max": 30,
+              "min": 2
+            },
+            "name": "callSign",
+            "required": true,
+            "type": "text",
+            "unique": true
+          },
+          {
+            "id": "crew-name",
+            "length": {
+              "max": 160,
+              "min": 2
+            },
+            "name": "name",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "crew-specialty",
+            "name": "specialty",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 1,
+            "id": "crew-members",
+            "name": "members",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": "available",
+            "id": "crew-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "crew",
+        "name": "Crew"
+      },
+      {
+        "fields": [
+          {
+            "id": "workorder-ordercode",
+            "length": {
+              "max": 30,
+              "min": 2
+            },
+            "name": "orderCode",
+            "required": true,
+            "type": "text",
+            "unique": true
+          },
+          {
+            "id": "workorder-title",
+            "length": {
+              "max": 200,
+              "min": 2
+            },
+            "name": "title",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "workorder-location",
+            "name": "location",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "medium",
+            "id": "workorder-priority",
+            "name": "priority",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 60,
+            "id": "workorder-estimatedminutes",
+            "name": "estimatedMinutes",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": "queued",
+            "id": "workorder-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "workorder",
+        "name": "WorkOrder"
+      },
+      {
+        "fields": [
+          {
+            "id": "safetypermit-permitcode",
+            "length": {
+              "max": 30,
+              "min": 2
+            },
+            "name": "permitCode",
+            "required": true,
+            "type": "text",
+            "unique": true
+          },
+          {
+            "id": "safetypermit-scope",
+            "length": {
+              "max": 300,
+              "min": 2
+            },
+            "name": "scope",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "electrical",
+            "id": "safetypermit-hazardclass",
+            "name": "hazardClass",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "safetypermit-isolationpoint",
+            "name": "isolationPoint",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "draft",
+            "id": "safetypermit-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "safetypermit",
+        "name": "SafetyPermit"
+      },
+      {
+        "fields": [
+          {
+            "id": "customerimpact-area",
+            "length": {
+              "max": 160,
+              "min": 2
+            },
+            "name": "area",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 0,
+            "id": "customerimpact-affectedcustomers",
+            "name": "affectedCustomers",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": 0,
+            "id": "customerimpact-criticalsites",
+            "name": "criticalSites",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "id": "customerimpact-estimatedrestoretime",
+            "name": "estimatedRestoreTime",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "open",
+            "id": "customerimpact-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "customerimpact",
+        "name": "CustomerImpact"
+      },
+      {
+        "fields": [
+          {
+            "id": "restorationplan-title",
+            "length": {
+              "max": 200,
+              "min": 2
+            },
+            "name": "title",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "restorationplan-sequence",
+            "name": "sequence",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "restorationplan-targettime",
+            "name": "targetTime",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 0,
+            "id": "restorationplan-progress",
+            "name": "progress",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": "draft",
+            "id": "restorationplan-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "restorationplan",
+        "name": "RestorationPlan"
+      },
+      {
+        "fields": [
+          {
+            "id": "decision-title",
+            "length": {
+              "max": 200,
+              "min": 2
+            },
+            "name": "title",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "decision-context",
+            "name": "context",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "decision-recommendation",
+            "name": "recommendation",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "pending",
+            "id": "decision-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "decision",
+        "name": "Decision"
+      },
+      {
+        "fields": [
+          {
+            "id": "update-headline",
+            "length": {
+              "max": 200,
+              "min": 2
+            },
+            "name": "headline",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "update-details",
+            "name": "details",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "operations",
+            "id": "update-audience",
+            "name": "audience",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "green",
+            "id": "update-severity",
+            "name": "severity",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "draft",
+            "id": "update-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "update",
+        "name": "Update"
+      }
+    ],
+    "permissions": [
+      {
+        "entityId": "",
+        "id": "perm-administrator-provision",
+        "operation": "provision",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-administrator-create-user",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-administrator-read-user",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-administrator-update-user",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "gridregion",
+        "id": "perm-administrator-create-gridregion",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "gridregion",
+        "id": "perm-administrator-read-gridregion",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "gridregion",
+        "id": "perm-administrator-update-gridregion",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "substation",
+        "id": "perm-administrator-create-substation",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "substation",
+        "id": "perm-administrator-read-substation",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "substation",
+        "id": "perm-administrator-update-substation",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "outage",
+        "id": "perm-administrator-create-outage",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "outage",
+        "id": "perm-administrator-read-outage",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "outage",
+        "id": "perm-administrator-update-outage",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-administrator-create-crew",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-administrator-read-crew",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-administrator-update-crew",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-administrator-create-workorder",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-administrator-read-workorder",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-administrator-update-workorder",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "safetypermit",
+        "id": "perm-administrator-create-safetypermit",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "safetypermit",
+        "id": "perm-administrator-read-safetypermit",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "safetypermit",
+        "id": "perm-administrator-update-safetypermit",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-administrator-create-customerimpact",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-administrator-read-customerimpact",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-administrator-update-customerimpact",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "restorationplan",
+        "id": "perm-administrator-create-restorationplan",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "restorationplan",
+        "id": "perm-administrator-read-restorationplan",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "restorationplan",
+        "id": "perm-administrator-update-restorationplan",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-administrator-create-decision",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-administrator-read-decision",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-administrator-update-decision",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-administrator-create-update",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-administrator-read-update",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-administrator-update-update",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "gridregion-activate",
+        "entityId": "gridregion",
+        "id": "perm-administrator-run-gridregion-activate",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "gridregion-recover",
+        "entityId": "gridregion",
+        "id": "perm-administrator-run-gridregion-recover",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "substation-isolate",
+        "entityId": "substation",
+        "id": "perm-administrator-run-substation-isolate",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "substation-energize",
+        "entityId": "substation",
+        "id": "perm-administrator-run-substation-energize",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "outage-assess",
+        "entityId": "outage",
+        "id": "perm-administrator-run-outage-assess",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "outage-escalate",
+        "entityId": "outage",
+        "id": "perm-administrator-run-outage-escalate",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "outage-contain",
+        "entityId": "outage",
+        "id": "perm-administrator-run-outage-contain",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "outage-restore",
+        "entityId": "outage",
+        "id": "perm-administrator-run-outage-restore",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "crew-deploy",
+        "entityId": "crew",
+        "id": "perm-administrator-run-crew-deploy",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "crew-release",
+        "entityId": "crew",
+        "id": "perm-administrator-run-crew-release",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "workorder-assign",
+        "entityId": "workorder",
+        "id": "perm-administrator-run-workorder-assign",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "workorder-start",
+        "entityId": "workorder",
+        "id": "perm-administrator-run-workorder-start",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "workorder-complete",
+        "entityId": "workorder",
+        "id": "perm-administrator-run-workorder-complete",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "safetypermit-approve",
+        "entityId": "safetypermit",
+        "id": "perm-administrator-run-safetypermit-approve",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "safetypermit-activate",
+        "entityId": "safetypermit",
+        "id": "perm-administrator-run-safetypermit-activate",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "safetypermit-close",
+        "entityId": "safetypermit",
+        "id": "perm-administrator-run-safetypermit-close",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "customerimpact-notify",
+        "entityId": "customerimpact",
+        "id": "perm-administrator-run-customerimpact-notify",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "customerimpact-resolve",
+        "entityId": "customerimpact",
+        "id": "perm-administrator-run-customerimpact-resolve",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "restorationplan-approve",
+        "entityId": "restorationplan",
+        "id": "perm-administrator-run-restorationplan-approve",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "restorationplan-start",
+        "entityId": "restorationplan",
+        "id": "perm-administrator-run-restorationplan-start",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "restorationplan-complete",
+        "entityId": "restorationplan",
+        "id": "perm-administrator-run-restorationplan-complete",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "decision-approve",
+        "entityId": "decision",
+        "id": "perm-administrator-run-decision-approve",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "decision-reject",
+        "entityId": "decision",
+        "id": "perm-administrator-run-decision-reject",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "update-publish",
+        "entityId": "update",
+        "id": "perm-administrator-run-update-publish",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-incidentcommander-read-user",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "gridregion",
+        "id": "perm-incidentcommander-create-gridregion",
+        "operation": "create",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "gridregion",
+        "id": "perm-incidentcommander-read-gridregion",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "gridregion",
+        "id": "perm-incidentcommander-update-gridregion",
+        "operation": "update",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "substation",
+        "id": "perm-incidentcommander-create-substation",
+        "operation": "create",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "substation",
+        "id": "perm-incidentcommander-read-substation",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "substation",
+        "id": "perm-incidentcommander-update-substation",
+        "operation": "update",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "outage",
+        "id": "perm-incidentcommander-create-outage",
+        "operation": "create",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "outage",
+        "id": "perm-incidentcommander-read-outage",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "outage",
+        "id": "perm-incidentcommander-update-outage",
+        "operation": "update",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-incidentcommander-create-crew",
+        "operation": "create",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-incidentcommander-read-crew",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-incidentcommander-update-crew",
+        "operation": "update",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-incidentcommander-create-workorder",
+        "operation": "create",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-incidentcommander-read-workorder",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-incidentcommander-update-workorder",
+        "operation": "update",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "safetypermit",
+        "id": "perm-incidentcommander-create-safetypermit",
+        "operation": "create",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "safetypermit",
+        "id": "perm-incidentcommander-read-safetypermit",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "safetypermit",
+        "id": "perm-incidentcommander-update-safetypermit",
+        "operation": "update",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-incidentcommander-create-customerimpact",
+        "operation": "create",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-incidentcommander-read-customerimpact",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-incidentcommander-update-customerimpact",
+        "operation": "update",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "restorationplan",
+        "id": "perm-incidentcommander-create-restorationplan",
+        "operation": "create",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "restorationplan",
+        "id": "perm-incidentcommander-read-restorationplan",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "restorationplan",
+        "id": "perm-incidentcommander-update-restorationplan",
+        "operation": "update",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-incidentcommander-create-decision",
+        "operation": "create",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-incidentcommander-read-decision",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-incidentcommander-update-decision",
+        "operation": "update",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-incidentcommander-create-update",
+        "operation": "create",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-incidentcommander-read-update",
+        "operation": "read",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-incidentcommander-update-update",
+        "operation": "update",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "gridregion-activate",
+        "entityId": "gridregion",
+        "id": "perm-incidentcommander-run-gridregion-activate",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "gridregion-recover",
+        "entityId": "gridregion",
+        "id": "perm-incidentcommander-run-gridregion-recover",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "substation-isolate",
+        "entityId": "substation",
+        "id": "perm-incidentcommander-run-substation-isolate",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "substation-energize",
+        "entityId": "substation",
+        "id": "perm-incidentcommander-run-substation-energize",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "outage-assess",
+        "entityId": "outage",
+        "id": "perm-incidentcommander-run-outage-assess",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "outage-escalate",
+        "entityId": "outage",
+        "id": "perm-incidentcommander-run-outage-escalate",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "outage-contain",
+        "entityId": "outage",
+        "id": "perm-incidentcommander-run-outage-contain",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "outage-restore",
+        "entityId": "outage",
+        "id": "perm-incidentcommander-run-outage-restore",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "crew-deploy",
+        "entityId": "crew",
+        "id": "perm-incidentcommander-run-crew-deploy",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "crew-release",
+        "entityId": "crew",
+        "id": "perm-incidentcommander-run-crew-release",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "workorder-assign",
+        "entityId": "workorder",
+        "id": "perm-incidentcommander-run-workorder-assign",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "workorder-start",
+        "entityId": "workorder",
+        "id": "perm-incidentcommander-run-workorder-start",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "workorder-complete",
+        "entityId": "workorder",
+        "id": "perm-incidentcommander-run-workorder-complete",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "safetypermit-approve",
+        "entityId": "safetypermit",
+        "id": "perm-incidentcommander-run-safetypermit-approve",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "safetypermit-activate",
+        "entityId": "safetypermit",
+        "id": "perm-incidentcommander-run-safetypermit-activate",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "safetypermit-close",
+        "entityId": "safetypermit",
+        "id": "perm-incidentcommander-run-safetypermit-close",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "customerimpact-notify",
+        "entityId": "customerimpact",
+        "id": "perm-incidentcommander-run-customerimpact-notify",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "customerimpact-resolve",
+        "entityId": "customerimpact",
+        "id": "perm-incidentcommander-run-customerimpact-resolve",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "restorationplan-approve",
+        "entityId": "restorationplan",
+        "id": "perm-incidentcommander-run-restorationplan-approve",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "restorationplan-start",
+        "entityId": "restorationplan",
+        "id": "perm-incidentcommander-run-restorationplan-start",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "restorationplan-complete",
+        "entityId": "restorationplan",
+        "id": "perm-incidentcommander-run-restorationplan-complete",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "actionId": "update-publish",
+        "entityId": "update",
+        "id": "perm-incidentcommander-run-update-publish",
+        "operation": "run",
+        "roleId": "incidentcommander"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-dispatcher-read-user",
+        "operation": "read",
+        "roleId": "dispatcher",
+        "scope": {
+          "kind": "self"
+        }
+      },
+      {
+        "entityId": "gridregion",
+        "id": "perm-dispatcher-read-gridregion",
+        "operation": "read",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "substation",
+        "id": "perm-dispatcher-read-substation",
+        "operation": "read",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "outage",
+        "id": "perm-dispatcher-read-outage",
+        "operation": "read",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-dispatcher-read-decision",
+        "operation": "read",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-dispatcher-read-update",
+        "operation": "read",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-dispatcher-create-crew",
+        "operation": "create",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-dispatcher-read-crew",
+        "operation": "read",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-dispatcher-update-crew",
+        "operation": "update",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-dispatcher-create-workorder",
+        "operation": "create",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-dispatcher-read-workorder",
+        "operation": "read",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-dispatcher-update-workorder",
+        "operation": "update",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-dispatcher-create-customerimpact",
+        "operation": "create",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-dispatcher-read-customerimpact",
+        "operation": "read",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-dispatcher-update-customerimpact",
+        "operation": "update",
+        "roleId": "dispatcher"
+      },
+      {
+        "actionId": "crew-deploy",
+        "entityId": "crew",
+        "id": "perm-dispatcher-run-crew-deploy",
+        "operation": "run",
+        "roleId": "dispatcher"
+      },
+      {
+        "actionId": "crew-release",
+        "entityId": "crew",
+        "id": "perm-dispatcher-run-crew-release",
+        "operation": "run",
+        "roleId": "dispatcher"
+      },
+      {
+        "actionId": "workorder-assign",
+        "entityId": "workorder",
+        "id": "perm-dispatcher-run-workorder-assign",
+        "operation": "run",
+        "roleId": "dispatcher"
+      },
+      {
+        "actionId": "workorder-start",
+        "entityId": "workorder",
+        "id": "perm-dispatcher-run-workorder-start",
+        "operation": "run",
+        "roleId": "dispatcher"
+      },
+      {
+        "actionId": "workorder-complete",
+        "entityId": "workorder",
+        "id": "perm-dispatcher-run-workorder-complete",
+        "operation": "run",
+        "roleId": "dispatcher"
+      },
+      {
+        "actionId": "customerimpact-notify",
+        "entityId": "customerimpact",
+        "id": "perm-dispatcher-run-customerimpact-notify",
+        "operation": "run",
+        "roleId": "dispatcher"
+      },
+      {
+        "actionId": "customerimpact-resolve",
+        "entityId": "customerimpact",
+        "id": "perm-dispatcher-run-customerimpact-resolve",
+        "operation": "run",
+        "roleId": "dispatcher"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-fieldlead-read-user",
+        "operation": "read",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "self"
+        }
+      },
+      {
+        "entityId": "gridregion",
+        "id": "perm-fieldlead-read-gridregion",
+        "operation": "read",
+        "roleId": "fieldlead"
+      },
+      {
+        "entityId": "substation",
+        "id": "perm-fieldlead-read-substation",
+        "operation": "read",
+        "roleId": "fieldlead"
+      },
+      {
+        "entityId": "outage",
+        "id": "perm-fieldlead-read-outage",
+        "operation": "read",
+        "roleId": "fieldlead"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-fieldlead-read-crew",
+        "operation": "read",
+        "roleId": "fieldlead"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-fieldlead-read-workorder",
+        "operation": "read",
+        "roleId": "fieldlead"
+      },
+      {
+        "entityId": "safetypermit",
+        "id": "perm-fieldlead-read-safetypermit",
+        "operation": "read",
+        "roleId": "fieldlead"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-fieldlead-read-customerimpact",
+        "operation": "read",
+        "roleId": "fieldlead"
+      },
+      {
+        "entityId": "restorationplan",
+        "id": "perm-fieldlead-read-restorationplan",
+        "operation": "read",
+        "roleId": "fieldlead"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-fieldlead-read-decision",
+        "operation": "read",
+        "roleId": "fieldlead"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-fieldlead-read-update",
+        "operation": "read",
+        "roleId": "fieldlead"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-fieldlead-create-workorder",
+        "operation": "create",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-fieldlead-update-workorder",
+        "operation": "update",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "workorder-owner"
+        }
+      },
+      {
+        "entityId": "safetypermit",
+        "id": "perm-fieldlead-create-safetypermit",
+        "operation": "create",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "safetypermit",
+        "id": "perm-fieldlead-update-safetypermit",
+        "operation": "update",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "safetypermit-owner"
+        }
+      },
+      {
+        "entityId": "restorationplan",
+        "id": "perm-fieldlead-create-restorationplan",
+        "operation": "create",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "restorationplan",
+        "id": "perm-fieldlead-update-restorationplan",
+        "operation": "update",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "restorationplan-owner"
+        }
+      },
+      {
+        "actionId": "workorder-assign",
+        "entityId": "workorder",
+        "id": "perm-fieldlead-run-workorder-assign",
+        "operation": "run",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "workorder-owner"
+        }
+      },
+      {
+        "actionId": "workorder-start",
+        "entityId": "workorder",
+        "id": "perm-fieldlead-run-workorder-start",
+        "operation": "run",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "workorder-owner"
+        }
+      },
+      {
+        "actionId": "workorder-complete",
+        "entityId": "workorder",
+        "id": "perm-fieldlead-run-workorder-complete",
+        "operation": "run",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "workorder-owner"
+        }
+      },
+      {
+        "actionId": "safetypermit-approve",
+        "entityId": "safetypermit",
+        "id": "perm-fieldlead-run-safetypermit-approve",
+        "operation": "run",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "safetypermit-owner"
+        }
+      },
+      {
+        "actionId": "safetypermit-activate",
+        "entityId": "safetypermit",
+        "id": "perm-fieldlead-run-safetypermit-activate",
+        "operation": "run",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "safetypermit-owner"
+        }
+      },
+      {
+        "actionId": "safetypermit-close",
+        "entityId": "safetypermit",
+        "id": "perm-fieldlead-run-safetypermit-close",
+        "operation": "run",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "safetypermit-owner"
+        }
+      },
+      {
+        "actionId": "restorationplan-approve",
+        "entityId": "restorationplan",
+        "id": "perm-fieldlead-run-restorationplan-approve",
+        "operation": "run",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "restorationplan-owner"
+        }
+      },
+      {
+        "actionId": "restorationplan-start",
+        "entityId": "restorationplan",
+        "id": "perm-fieldlead-run-restorationplan-start",
+        "operation": "run",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "restorationplan-owner"
+        }
+      },
+      {
+        "actionId": "restorationplan-complete",
+        "entityId": "restorationplan",
+        "id": "perm-fieldlead-run-restorationplan-complete",
+        "operation": "run",
+        "roleId": "fieldlead",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "restorationplan-owner"
+        }
+      },
+      {
+        "entityId": "gridregion",
+        "id": "perm-executive-read-gridregion",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "substation",
+        "id": "perm-executive-read-substation",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "outage",
+        "id": "perm-executive-read-outage",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "crew",
+        "id": "perm-executive-read-crew",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "workorder",
+        "id": "perm-executive-read-workorder",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "safetypermit",
+        "id": "perm-executive-read-safetypermit",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "customerimpact",
+        "id": "perm-executive-read-customerimpact",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "restorationplan",
+        "id": "perm-executive-read-restorationplan",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-executive-read-decision",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-executive-read-update",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "actionId": "decision-approve",
+        "entityId": "decision",
+        "id": "perm-executive-run-decision-approve",
+        "operation": "run",
+        "roleId": "executive"
+      },
+      {
+        "actionId": "decision-reject",
+        "entityId": "decision",
+        "id": "perm-executive-run-decision-reject",
+        "operation": "run",
+        "roleId": "executive"
+      }
+    ],
+    "relationships": [
+      {
+        "fromEntityId": "substation",
+        "id": "substation-region",
+        "name": "region",
+        "onDelete": "cascade",
+        "toEntityId": "gridregion"
+      },
+      {
+        "fromEntityId": "substation",
+        "id": "substation-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "outage",
+        "id": "outage-region",
+        "name": "region",
+        "onDelete": "cascade",
+        "toEntityId": "gridregion"
+      },
+      {
+        "fromEntityId": "outage",
+        "id": "outage-substation",
+        "name": "substation",
+        "onDelete": "restrict",
+        "toEntityId": "substation"
+      },
+      {
+        "fromEntityId": "outage",
+        "id": "outage-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "crew",
+        "id": "crew-region",
+        "name": "region",
+        "onDelete": "cascade",
+        "toEntityId": "gridregion"
+      },
+      {
+        "fromEntityId": "crew",
+        "id": "crew-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "workorder",
+        "id": "workorder-outage",
+        "name": "outage",
+        "onDelete": "cascade",
+        "toEntityId": "outage"
+      },
+      {
+        "fromEntityId": "workorder",
+        "id": "workorder-crew",
+        "name": "crew",
+        "onDelete": "restrict",
+        "toEntityId": "crew"
+      },
+      {
+        "fromEntityId": "workorder",
+        "id": "workorder-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "safetypermit",
+        "id": "safetypermit-workorder",
+        "name": "workOrder",
+        "onDelete": "cascade",
+        "toEntityId": "workorder"
+      },
+      {
+        "fromEntityId": "safetypermit",
+        "id": "safetypermit-substation",
+        "name": "substation",
+        "onDelete": "restrict",
+        "toEntityId": "substation"
+      },
+      {
+        "fromEntityId": "safetypermit",
+        "id": "safetypermit-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "customerimpact",
+        "id": "customerimpact-outage",
+        "name": "outage",
+        "onDelete": "cascade",
+        "toEntityId": "outage"
+      },
+      {
+        "fromEntityId": "customerimpact",
+        "id": "customerimpact-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "restorationplan",
+        "id": "restorationplan-outage",
+        "name": "outage",
+        "onDelete": "cascade",
+        "toEntityId": "outage"
+      },
+      {
+        "fromEntityId": "restorationplan",
+        "id": "restorationplan-crew",
+        "name": "crew",
+        "onDelete": "restrict",
+        "toEntityId": "crew"
+      },
+      {
+        "fromEntityId": "restorationplan",
+        "id": "restorationplan-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "decision",
+        "id": "decision-outage",
+        "name": "outage",
+        "onDelete": "cascade",
+        "toEntityId": "outage"
+      },
+      {
+        "fromEntityId": "decision",
+        "id": "decision-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "update",
+        "id": "update-region",
+        "name": "region",
+        "onDelete": "cascade",
+        "toEntityId": "gridregion"
+      },
+      {
+        "fromEntityId": "update",
+        "id": "update-outage",
+        "name": "outage",
+        "onDelete": "cascade",
+        "toEntityId": "outage"
+      },
+      {
+        "fromEntityId": "update",
+        "id": "update-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      }
+    ],
+    "roles": [
+      {
+        "id": "administrator",
+        "name": "Administrator"
+      },
+      {
+        "id": "incidentcommander",
+        "name": "IncidentCommander"
+      },
+      {
+        "id": "dispatcher",
+        "name": "Dispatcher"
+      },
+      {
+        "id": "fieldlead",
+        "name": "FieldLead"
+      },
+      {
+        "id": "executive",
+        "name": "Executive"
+      }
+    ],
+    "schemaVersion": "0.5.0"
+  },
+  "irFingerprint": "sha256:bbb2ea98df6c992be71ffb32d9040cd625acc6f052f524a3a46790b83472baf5",
+  "irVersion": "0.5.0",
+  "languageVersion": "0.8.0-alpha.0",
+  "schemaVersion": "0.5.0",
+  "semanticFingerprint": "sha256:bbb2ea98df6c992be71ffb32d9040cd625acc6f052f524a3a46790b83472baf5",
+  "sourceFingerprint": "sha256:ba10368677f090451ab7d686a9d3dc8bbab561fc51e7e785c1a07eb164848a2c"
+}

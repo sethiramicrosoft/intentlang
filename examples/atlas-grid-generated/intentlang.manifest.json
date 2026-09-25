@@ -1,0 +1,2156 @@
+{
+  "compilerVersion": "0.8.0-alpha.0",
+  "dependencyFingerprint": "sha256:44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+  "generatorVersions": {
+    "database": "0.8.0-alpha.0",
+    "runtime": "0.8.0-alpha.0",
+    "ui": "0.8.0-alpha.0"
+  },
+  "ir": {
+    "actions": [
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "active"
+          }
+        ],
+        "entityId": "network",
+        "id": "network-activate",
+        "name": "activate",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a monitored network can be activated",
+            "operator": "is",
+            "value": "monitoring"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "stable"
+          }
+        ],
+        "entityId": "network",
+        "id": "network-stabilize",
+        "name": "stabilize",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an active network can be stabilized",
+            "operator": "is",
+            "value": "active"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "restricted"
+          }
+        ],
+        "entityId": "facility",
+        "id": "facility-restrict",
+        "name": "restrict",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an operational facility can be restricted",
+            "operator": "is",
+            "value": "operational"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "operational"
+          },
+          {
+            "fieldName": "capacityPercent",
+            "value": 100
+          }
+        ],
+        "entityId": "facility",
+        "id": "facility-restore",
+        "name": "restore",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a restricted facility can be restored",
+            "operator": "is",
+            "value": "restricted"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "in-transit"
+          }
+        ],
+        "entityId": "shipment",
+        "id": "shipment-dispatch",
+        "name": "dispatch",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a planned shipment can be dispatched",
+            "operator": "is",
+            "value": "planned"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "delayed"
+          }
+        ],
+        "entityId": "shipment",
+        "id": "shipment-delay",
+        "name": "delay",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "A delivered shipment cannot be delayed",
+            "operator": "is not",
+            "value": "delivered"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "delivered"
+          }
+        ],
+        "entityId": "shipment",
+        "id": "shipment-deliver",
+        "name": "deliver",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Shipment is already delivered",
+            "operator": "is not",
+            "value": "delivered"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "acknowledged"
+          }
+        ],
+        "entityId": "inventoryalert",
+        "id": "inventoryalert-acknowledge",
+        "name": "acknowledge",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an open inventory alert can be acknowledged",
+            "operator": "is",
+            "value": "open"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "resolved"
+          }
+        ],
+        "entityId": "inventoryalert",
+        "id": "inventoryalert-resolve",
+        "name": "resolve",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Inventory alert is already resolved",
+            "operator": "is not",
+            "value": "resolved"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "escalated",
+            "value": true
+          },
+          {
+            "fieldName": "status",
+            "value": "escalated"
+          }
+        ],
+        "entityId": "disruption",
+        "id": "disruption-escalate",
+        "name": "escalate",
+        "preconditions": [
+          {
+            "fieldName": "escalated",
+            "message": "Disruption is already escalated",
+            "operator": "is",
+            "value": false
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "contained"
+          }
+        ],
+        "entityId": "disruption",
+        "id": "disruption-contain",
+        "name": "contain",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an escalated disruption can be contained",
+            "operator": "is",
+            "value": "escalated"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "escalated",
+            "value": false
+          },
+          {
+            "fieldName": "status",
+            "value": "closed"
+          }
+        ],
+        "entityId": "disruption",
+        "id": "disruption-close",
+        "name": "close",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a contained disruption can be closed",
+            "operator": "is",
+            "value": "contained"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "approved"
+          }
+        ],
+        "entityId": "recoveryplan",
+        "id": "recoveryplan-approve",
+        "name": "approve",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a draft recovery plan can be approved",
+            "operator": "is",
+            "value": "draft"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "in-progress"
+          }
+        ],
+        "entityId": "recoveryplan",
+        "id": "recoveryplan-start",
+        "name": "start",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an approved recovery plan can be started",
+            "operator": "is",
+            "value": "approved"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "complete"
+          },
+          {
+            "fieldName": "progress",
+            "value": 100
+          }
+        ],
+        "entityId": "recoveryplan",
+        "id": "recoveryplan-complete",
+        "name": "complete",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only an active recovery plan can be completed",
+            "operator": "is",
+            "value": "in-progress"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "approved"
+          }
+        ],
+        "entityId": "decision",
+        "id": "decision-approve",
+        "name": "approve",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a pending decision can be approved",
+            "operator": "is",
+            "value": "pending"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "rejected"
+          }
+        ],
+        "entityId": "decision",
+        "id": "decision-reject",
+        "name": "reject",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a pending decision can be rejected",
+            "operator": "is",
+            "value": "pending"
+          }
+        ]
+      },
+      {
+        "assignments": [
+          {
+            "fieldName": "status",
+            "value": "published"
+          }
+        ],
+        "entityId": "update",
+        "id": "update-publish",
+        "name": "publish",
+        "preconditions": [
+          {
+            "fieldName": "status",
+            "message": "Only a draft update can be published",
+            "operator": "is",
+            "value": "draft"
+          }
+        ]
+      }
+    ],
+    "application": {
+      "id": "atlasgrid",
+      "name": "AtlasGrid"
+    },
+    "authentication": {
+      "identityEntityId": "user",
+      "identityFieldId": "user-email"
+    },
+    "entities": [
+      {
+        "fields": [
+          {
+            "id": "user-name",
+            "length": {
+              "max": 120,
+              "min": 1
+            },
+            "name": "name",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "user-email",
+            "length": {
+              "max": 320,
+              "min": 3
+            },
+            "name": "email",
+            "required": true,
+            "type": "text",
+            "unique": true
+          }
+        ],
+        "id": "user",
+        "name": "User"
+      },
+      {
+        "fields": [
+          {
+            "id": "network-code",
+            "length": {
+              "max": 20,
+              "min": 2
+            },
+            "name": "code",
+            "required": true,
+            "type": "text",
+            "unique": true
+          },
+          {
+            "id": "network-name",
+            "length": {
+              "max": 160,
+              "min": 2
+            },
+            "name": "name",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "network-region",
+            "name": "region",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "monitoring",
+            "id": "network-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 100,
+            "id": "network-resiliencescore",
+            "name": "resilienceScore",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          }
+        ],
+        "id": "network",
+        "name": "Network"
+      },
+      {
+        "fields": [
+          {
+            "id": "facility-code",
+            "length": {
+              "max": 20,
+              "min": 2
+            },
+            "name": "code",
+            "required": true,
+            "type": "text",
+            "unique": true
+          },
+          {
+            "id": "facility-name",
+            "length": {
+              "max": 160,
+              "min": 2
+            },
+            "name": "name",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "facility-country",
+            "name": "country",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 100,
+            "id": "facility-capacitypercent",
+            "name": "capacityPercent",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": "operational",
+            "id": "facility-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "facility",
+        "name": "Facility"
+      },
+      {
+        "fields": [
+          {
+            "id": "supplier-code",
+            "length": {
+              "max": 20,
+              "min": 2
+            },
+            "name": "code",
+            "required": true,
+            "type": "text",
+            "unique": true
+          },
+          {
+            "id": "supplier-name",
+            "length": {
+              "max": 160,
+              "min": 2
+            },
+            "name": "name",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "supplier-category",
+            "name": "category",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "standard",
+            "id": "supplier-risktier",
+            "name": "riskTier",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "active",
+            "id": "supplier-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "supplier",
+        "name": "Supplier"
+      },
+      {
+        "fields": [
+          {
+            "id": "shipment-trackingcode",
+            "length": {
+              "max": 40,
+              "min": 2
+            },
+            "name": "trackingCode",
+            "required": true,
+            "type": "text",
+            "unique": true
+          },
+          {
+            "id": "shipment-description",
+            "length": {
+              "max": 200,
+              "min": 2
+            },
+            "name": "description",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "shipment-origin",
+            "name": "origin",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "shipment-destination",
+            "name": "destination",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "shipment-expecteddate",
+            "name": "expectedDate",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "planned",
+            "id": "shipment-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "normal",
+            "id": "shipment-priority",
+            "name": "priority",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "shipment",
+        "name": "Shipment"
+      },
+      {
+        "fields": [
+          {
+            "id": "inventoryalert-item",
+            "length": {
+              "max": 160,
+              "min": 2
+            },
+            "name": "item",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 0,
+            "id": "inventoryalert-currentdays",
+            "name": "currentDays",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": 14,
+            "id": "inventoryalert-targetdays",
+            "name": "targetDays",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": "medium",
+            "id": "inventoryalert-severity",
+            "name": "severity",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "open",
+            "id": "inventoryalert-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "inventoryalert",
+        "name": "InventoryAlert"
+      },
+      {
+        "fields": [
+          {
+            "id": "disruption-title",
+            "length": {
+              "max": 200,
+              "min": 2
+            },
+            "name": "title",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "disruption-summary",
+            "length": {
+              "max": 500,
+              "min": 2
+            },
+            "name": "summary",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "medium",
+            "id": "disruption-impact",
+            "name": "impact",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "medium",
+            "id": "disruption-probability",
+            "name": "probability",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "detected",
+            "id": "disruption-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": false,
+            "id": "disruption-escalated",
+            "name": "escalated",
+            "required": false,
+            "type": "boolean",
+            "unique": false
+          }
+        ],
+        "id": "disruption",
+        "name": "Disruption"
+      },
+      {
+        "fields": [
+          {
+            "id": "recoveryplan-title",
+            "length": {
+              "max": 200,
+              "min": 2
+            },
+            "name": "title",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "recoveryplan-strategy",
+            "name": "strategy",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "recoveryplan-targetdate",
+            "name": "targetDate",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": 0,
+            "id": "recoveryplan-progress",
+            "name": "progress",
+            "required": false,
+            "type": "integer",
+            "unique": false
+          },
+          {
+            "default": "draft",
+            "id": "recoveryplan-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "recoveryplan",
+        "name": "RecoveryPlan"
+      },
+      {
+        "fields": [
+          {
+            "id": "decision-title",
+            "length": {
+              "max": 200,
+              "min": 2
+            },
+            "name": "title",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "decision-context",
+            "name": "context",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "decision-recommendation",
+            "name": "recommendation",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "pending",
+            "id": "decision-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "decision",
+        "name": "Decision"
+      },
+      {
+        "fields": [
+          {
+            "id": "update-headline",
+            "length": {
+              "max": 200,
+              "min": 2
+            },
+            "name": "headline",
+            "required": true,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "id": "update-details",
+            "name": "details",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "operations",
+            "id": "update-audience",
+            "name": "audience",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "green",
+            "id": "update-health",
+            "name": "health",
+            "required": false,
+            "type": "text",
+            "unique": false
+          },
+          {
+            "default": "draft",
+            "id": "update-status",
+            "name": "status",
+            "required": false,
+            "type": "text",
+            "unique": false
+          }
+        ],
+        "id": "update",
+        "name": "Update"
+      }
+    ],
+    "permissions": [
+      {
+        "entityId": "",
+        "id": "perm-administrator-provision",
+        "operation": "provision",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-administrator-create-user",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-administrator-read-user",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-administrator-update-user",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "network",
+        "id": "perm-administrator-create-network",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "network",
+        "id": "perm-administrator-read-network",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "network",
+        "id": "perm-administrator-update-network",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-administrator-create-facility",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-administrator-read-facility",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-administrator-update-facility",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "supplier",
+        "id": "perm-administrator-create-supplier",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "supplier",
+        "id": "perm-administrator-read-supplier",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "supplier",
+        "id": "perm-administrator-update-supplier",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-administrator-create-shipment",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-administrator-read-shipment",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-administrator-update-shipment",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-administrator-create-inventoryalert",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-administrator-read-inventoryalert",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-administrator-update-inventoryalert",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-administrator-create-disruption",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-administrator-read-disruption",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-administrator-update-disruption",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-administrator-create-recoveryplan",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-administrator-read-recoveryplan",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-administrator-update-recoveryplan",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-administrator-create-decision",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-administrator-read-decision",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-administrator-update-decision",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-administrator-create-update",
+        "operation": "create",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-administrator-read-update",
+        "operation": "read",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-administrator-update-update",
+        "operation": "update",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "network-activate",
+        "entityId": "network",
+        "id": "perm-administrator-run-network-activate",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "network-stabilize",
+        "entityId": "network",
+        "id": "perm-administrator-run-network-stabilize",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "facility-restrict",
+        "entityId": "facility",
+        "id": "perm-administrator-run-facility-restrict",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "facility-restore",
+        "entityId": "facility",
+        "id": "perm-administrator-run-facility-restore",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "shipment-dispatch",
+        "entityId": "shipment",
+        "id": "perm-administrator-run-shipment-dispatch",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "shipment-delay",
+        "entityId": "shipment",
+        "id": "perm-administrator-run-shipment-delay",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "shipment-deliver",
+        "entityId": "shipment",
+        "id": "perm-administrator-run-shipment-deliver",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "inventoryalert-acknowledge",
+        "entityId": "inventoryalert",
+        "id": "perm-administrator-run-inventoryalert-acknowledge",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "inventoryalert-resolve",
+        "entityId": "inventoryalert",
+        "id": "perm-administrator-run-inventoryalert-resolve",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "disruption-escalate",
+        "entityId": "disruption",
+        "id": "perm-administrator-run-disruption-escalate",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "disruption-contain",
+        "entityId": "disruption",
+        "id": "perm-administrator-run-disruption-contain",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "disruption-close",
+        "entityId": "disruption",
+        "id": "perm-administrator-run-disruption-close",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "recoveryplan-approve",
+        "entityId": "recoveryplan",
+        "id": "perm-administrator-run-recoveryplan-approve",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "recoveryplan-start",
+        "entityId": "recoveryplan",
+        "id": "perm-administrator-run-recoveryplan-start",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "recoveryplan-complete",
+        "entityId": "recoveryplan",
+        "id": "perm-administrator-run-recoveryplan-complete",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "decision-approve",
+        "entityId": "decision",
+        "id": "perm-administrator-run-decision-approve",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "decision-reject",
+        "entityId": "decision",
+        "id": "perm-administrator-run-decision-reject",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "actionId": "update-publish",
+        "entityId": "update",
+        "id": "perm-administrator-run-update-publish",
+        "operation": "run",
+        "roleId": "administrator"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-controltowerlead-read-user",
+        "operation": "read",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "network",
+        "id": "perm-controltowerlead-create-network",
+        "operation": "create",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "network",
+        "id": "perm-controltowerlead-read-network",
+        "operation": "read",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "network",
+        "id": "perm-controltowerlead-update-network",
+        "operation": "update",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-controltowerlead-create-facility",
+        "operation": "create",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-controltowerlead-read-facility",
+        "operation": "read",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-controltowerlead-update-facility",
+        "operation": "update",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "supplier",
+        "id": "perm-controltowerlead-create-supplier",
+        "operation": "create",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "supplier",
+        "id": "perm-controltowerlead-read-supplier",
+        "operation": "read",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "supplier",
+        "id": "perm-controltowerlead-update-supplier",
+        "operation": "update",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-controltowerlead-create-shipment",
+        "operation": "create",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-controltowerlead-read-shipment",
+        "operation": "read",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-controltowerlead-update-shipment",
+        "operation": "update",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-controltowerlead-create-inventoryalert",
+        "operation": "create",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-controltowerlead-read-inventoryalert",
+        "operation": "read",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-controltowerlead-update-inventoryalert",
+        "operation": "update",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-controltowerlead-create-disruption",
+        "operation": "create",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-controltowerlead-read-disruption",
+        "operation": "read",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-controltowerlead-update-disruption",
+        "operation": "update",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-controltowerlead-create-recoveryplan",
+        "operation": "create",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-controltowerlead-read-recoveryplan",
+        "operation": "read",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-controltowerlead-update-recoveryplan",
+        "operation": "update",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-controltowerlead-create-decision",
+        "operation": "create",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-controltowerlead-read-decision",
+        "operation": "read",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-controltowerlead-update-decision",
+        "operation": "update",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-controltowerlead-create-update",
+        "operation": "create",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-controltowerlead-read-update",
+        "operation": "read",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-controltowerlead-update-update",
+        "operation": "update",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "network-activate",
+        "entityId": "network",
+        "id": "perm-controltowerlead-run-network-activate",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "network-stabilize",
+        "entityId": "network",
+        "id": "perm-controltowerlead-run-network-stabilize",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "facility-restrict",
+        "entityId": "facility",
+        "id": "perm-controltowerlead-run-facility-restrict",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "facility-restore",
+        "entityId": "facility",
+        "id": "perm-controltowerlead-run-facility-restore",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "shipment-dispatch",
+        "entityId": "shipment",
+        "id": "perm-controltowerlead-run-shipment-dispatch",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "shipment-delay",
+        "entityId": "shipment",
+        "id": "perm-controltowerlead-run-shipment-delay",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "shipment-deliver",
+        "entityId": "shipment",
+        "id": "perm-controltowerlead-run-shipment-deliver",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "inventoryalert-acknowledge",
+        "entityId": "inventoryalert",
+        "id": "perm-controltowerlead-run-inventoryalert-acknowledge",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "inventoryalert-resolve",
+        "entityId": "inventoryalert",
+        "id": "perm-controltowerlead-run-inventoryalert-resolve",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "disruption-escalate",
+        "entityId": "disruption",
+        "id": "perm-controltowerlead-run-disruption-escalate",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "disruption-contain",
+        "entityId": "disruption",
+        "id": "perm-controltowerlead-run-disruption-contain",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "disruption-close",
+        "entityId": "disruption",
+        "id": "perm-controltowerlead-run-disruption-close",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "recoveryplan-approve",
+        "entityId": "recoveryplan",
+        "id": "perm-controltowerlead-run-recoveryplan-approve",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "recoveryplan-start",
+        "entityId": "recoveryplan",
+        "id": "perm-controltowerlead-run-recoveryplan-start",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "recoveryplan-complete",
+        "entityId": "recoveryplan",
+        "id": "perm-controltowerlead-run-recoveryplan-complete",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "actionId": "update-publish",
+        "entityId": "update",
+        "id": "perm-controltowerlead-run-update-publish",
+        "operation": "run",
+        "roleId": "controltowerlead"
+      },
+      {
+        "entityId": "user",
+        "id": "perm-sitemanager-read-user",
+        "operation": "read",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "self"
+        }
+      },
+      {
+        "entityId": "network",
+        "id": "perm-sitemanager-read-network",
+        "operation": "read",
+        "roleId": "sitemanager"
+      },
+      {
+        "entityId": "supplier",
+        "id": "perm-sitemanager-read-supplier",
+        "operation": "read",
+        "roleId": "sitemanager"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-sitemanager-read-decision",
+        "operation": "read",
+        "roleId": "sitemanager"
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-sitemanager-read-facility",
+        "operation": "read",
+        "roleId": "sitemanager"
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-sitemanager-read-shipment",
+        "operation": "read",
+        "roleId": "sitemanager"
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-sitemanager-read-inventoryalert",
+        "operation": "read",
+        "roleId": "sitemanager"
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-sitemanager-read-disruption",
+        "operation": "read",
+        "roleId": "sitemanager"
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-sitemanager-read-recoveryplan",
+        "operation": "read",
+        "roleId": "sitemanager"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-sitemanager-read-update",
+        "operation": "read",
+        "roleId": "sitemanager"
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-sitemanager-create-facility",
+        "operation": "create",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-sitemanager-update-facility",
+        "operation": "update",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "facility-owner"
+        }
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-sitemanager-create-shipment",
+        "operation": "create",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-sitemanager-update-shipment",
+        "operation": "update",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "shipment-owner"
+        }
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-sitemanager-create-inventoryalert",
+        "operation": "create",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-sitemanager-update-inventoryalert",
+        "operation": "update",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "inventoryalert-owner"
+        }
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-sitemanager-create-disruption",
+        "operation": "create",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-sitemanager-update-disruption",
+        "operation": "update",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "disruption-owner"
+        }
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-sitemanager-create-recoveryplan",
+        "operation": "create",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-sitemanager-update-recoveryplan",
+        "operation": "update",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "recoveryplan-owner"
+        }
+      },
+      {
+        "entityId": "update",
+        "id": "perm-sitemanager-create-update",
+        "operation": "create",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "update",
+        "id": "perm-sitemanager-update-update",
+        "operation": "update",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "update-owner"
+        }
+      },
+      {
+        "actionId": "facility-restrict",
+        "entityId": "facility",
+        "id": "perm-sitemanager-run-facility-restrict",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "facility-owner"
+        }
+      },
+      {
+        "actionId": "facility-restore",
+        "entityId": "facility",
+        "id": "perm-sitemanager-run-facility-restore",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "facility-owner"
+        }
+      },
+      {
+        "actionId": "shipment-dispatch",
+        "entityId": "shipment",
+        "id": "perm-sitemanager-run-shipment-dispatch",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "shipment-owner"
+        }
+      },
+      {
+        "actionId": "shipment-delay",
+        "entityId": "shipment",
+        "id": "perm-sitemanager-run-shipment-delay",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "shipment-owner"
+        }
+      },
+      {
+        "actionId": "shipment-deliver",
+        "entityId": "shipment",
+        "id": "perm-sitemanager-run-shipment-deliver",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "shipment-owner"
+        }
+      },
+      {
+        "actionId": "inventoryalert-acknowledge",
+        "entityId": "inventoryalert",
+        "id": "perm-sitemanager-run-inventoryalert-acknowledge",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "inventoryalert-owner"
+        }
+      },
+      {
+        "actionId": "inventoryalert-resolve",
+        "entityId": "inventoryalert",
+        "id": "perm-sitemanager-run-inventoryalert-resolve",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "inventoryalert-owner"
+        }
+      },
+      {
+        "actionId": "disruption-escalate",
+        "entityId": "disruption",
+        "id": "perm-sitemanager-run-disruption-escalate",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "disruption-owner"
+        }
+      },
+      {
+        "actionId": "disruption-contain",
+        "entityId": "disruption",
+        "id": "perm-sitemanager-run-disruption-contain",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "disruption-owner"
+        }
+      },
+      {
+        "actionId": "disruption-close",
+        "entityId": "disruption",
+        "id": "perm-sitemanager-run-disruption-close",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "disruption-owner"
+        }
+      },
+      {
+        "actionId": "recoveryplan-approve",
+        "entityId": "recoveryplan",
+        "id": "perm-sitemanager-run-recoveryplan-approve",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "recoveryplan-owner"
+        }
+      },
+      {
+        "actionId": "recoveryplan-start",
+        "entityId": "recoveryplan",
+        "id": "perm-sitemanager-run-recoveryplan-start",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "recoveryplan-owner"
+        }
+      },
+      {
+        "actionId": "recoveryplan-complete",
+        "entityId": "recoveryplan",
+        "id": "perm-sitemanager-run-recoveryplan-complete",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "recoveryplan-owner"
+        }
+      },
+      {
+        "actionId": "update-publish",
+        "entityId": "update",
+        "id": "perm-sitemanager-run-update-publish",
+        "operation": "run",
+        "roleId": "sitemanager",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "update-owner"
+        }
+      },
+      {
+        "entityId": "user",
+        "id": "perm-supplierpartner-read-user",
+        "operation": "read",
+        "roleId": "supplierpartner",
+        "scope": {
+          "kind": "self"
+        }
+      },
+      {
+        "entityId": "network",
+        "id": "perm-supplierpartner-read-network",
+        "operation": "read",
+        "roleId": "supplierpartner"
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-supplierpartner-read-facility",
+        "operation": "read",
+        "roleId": "supplierpartner"
+      },
+      {
+        "entityId": "supplier",
+        "id": "perm-supplierpartner-read-supplier",
+        "operation": "read",
+        "roleId": "supplierpartner"
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-supplierpartner-read-inventoryalert",
+        "operation": "read",
+        "roleId": "supplierpartner"
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-supplierpartner-read-disruption",
+        "operation": "read",
+        "roleId": "supplierpartner"
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-supplierpartner-read-recoveryplan",
+        "operation": "read",
+        "roleId": "supplierpartner"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-supplierpartner-read-decision",
+        "operation": "read",
+        "roleId": "supplierpartner"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-supplierpartner-read-update",
+        "operation": "read",
+        "roleId": "supplierpartner"
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-supplierpartner-read-shipment",
+        "operation": "read",
+        "roleId": "supplierpartner"
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-supplierpartner-create-shipment",
+        "operation": "create",
+        "roleId": "supplierpartner",
+        "scope": {
+          "kind": "force-owner"
+        }
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-supplierpartner-update-shipment",
+        "operation": "update",
+        "roleId": "supplierpartner",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "shipment-owner"
+        }
+      },
+      {
+        "actionId": "shipment-dispatch",
+        "entityId": "shipment",
+        "id": "perm-supplierpartner-run-shipment-dispatch",
+        "operation": "run",
+        "roleId": "supplierpartner",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "shipment-owner"
+        }
+      },
+      {
+        "actionId": "shipment-delay",
+        "entityId": "shipment",
+        "id": "perm-supplierpartner-run-shipment-delay",
+        "operation": "run",
+        "roleId": "supplierpartner",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "shipment-owner"
+        }
+      },
+      {
+        "actionId": "shipment-deliver",
+        "entityId": "shipment",
+        "id": "perm-supplierpartner-run-shipment-deliver",
+        "operation": "run",
+        "roleId": "supplierpartner",
+        "scope": {
+          "kind": "owner",
+          "relationshipId": "shipment-owner"
+        }
+      },
+      {
+        "entityId": "network",
+        "id": "perm-executive-read-network",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "facility",
+        "id": "perm-executive-read-facility",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "supplier",
+        "id": "perm-executive-read-supplier",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "shipment",
+        "id": "perm-executive-read-shipment",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "inventoryalert",
+        "id": "perm-executive-read-inventoryalert",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "disruption",
+        "id": "perm-executive-read-disruption",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "recoveryplan",
+        "id": "perm-executive-read-recoveryplan",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "decision",
+        "id": "perm-executive-read-decision",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "entityId": "update",
+        "id": "perm-executive-read-update",
+        "operation": "read",
+        "roleId": "executive"
+      },
+      {
+        "actionId": "decision-approve",
+        "entityId": "decision",
+        "id": "perm-executive-run-decision-approve",
+        "operation": "run",
+        "roleId": "executive"
+      },
+      {
+        "actionId": "decision-reject",
+        "entityId": "decision",
+        "id": "perm-executive-run-decision-reject",
+        "operation": "run",
+        "roleId": "executive"
+      }
+    ],
+    "relationships": [
+      {
+        "fromEntityId": "facility",
+        "id": "facility-network",
+        "name": "network",
+        "onDelete": "cascade",
+        "toEntityId": "network"
+      },
+      {
+        "fromEntityId": "facility",
+        "id": "facility-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "supplier",
+        "id": "supplier-network",
+        "name": "network",
+        "onDelete": "cascade",
+        "toEntityId": "network"
+      },
+      {
+        "fromEntityId": "supplier",
+        "id": "supplier-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "shipment",
+        "id": "shipment-network",
+        "name": "network",
+        "onDelete": "cascade",
+        "toEntityId": "network"
+      },
+      {
+        "fromEntityId": "shipment",
+        "id": "shipment-supplier",
+        "name": "supplier",
+        "onDelete": "restrict",
+        "toEntityId": "supplier"
+      },
+      {
+        "fromEntityId": "shipment",
+        "id": "shipment-facility",
+        "name": "facility",
+        "onDelete": "restrict",
+        "toEntityId": "facility"
+      },
+      {
+        "fromEntityId": "shipment",
+        "id": "shipment-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "inventoryalert",
+        "id": "inventoryalert-network",
+        "name": "network",
+        "onDelete": "cascade",
+        "toEntityId": "network"
+      },
+      {
+        "fromEntityId": "inventoryalert",
+        "id": "inventoryalert-facility",
+        "name": "facility",
+        "onDelete": "cascade",
+        "toEntityId": "facility"
+      },
+      {
+        "fromEntityId": "inventoryalert",
+        "id": "inventoryalert-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "disruption",
+        "id": "disruption-network",
+        "name": "network",
+        "onDelete": "cascade",
+        "toEntityId": "network"
+      },
+      {
+        "fromEntityId": "disruption",
+        "id": "disruption-facility",
+        "name": "facility",
+        "onDelete": "restrict",
+        "toEntityId": "facility"
+      },
+      {
+        "fromEntityId": "disruption",
+        "id": "disruption-supplier",
+        "name": "supplier",
+        "onDelete": "restrict",
+        "toEntityId": "supplier"
+      },
+      {
+        "fromEntityId": "disruption",
+        "id": "disruption-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "recoveryplan",
+        "id": "recoveryplan-disruption",
+        "name": "disruption",
+        "onDelete": "cascade",
+        "toEntityId": "disruption"
+      },
+      {
+        "fromEntityId": "recoveryplan",
+        "id": "recoveryplan-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "decision",
+        "id": "decision-disruption",
+        "name": "disruption",
+        "onDelete": "cascade",
+        "toEntityId": "disruption"
+      },
+      {
+        "fromEntityId": "decision",
+        "id": "decision-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      },
+      {
+        "fromEntityId": "update",
+        "id": "update-network",
+        "name": "network",
+        "onDelete": "cascade",
+        "toEntityId": "network"
+      },
+      {
+        "fromEntityId": "update",
+        "id": "update-owner",
+        "name": "owner",
+        "onDelete": "restrict",
+        "toEntityId": "user"
+      }
+    ],
+    "roles": [
+      {
+        "id": "administrator",
+        "name": "Administrator"
+      },
+      {
+        "id": "controltowerlead",
+        "name": "ControlTowerLead"
+      },
+      {
+        "id": "sitemanager",
+        "name": "SiteManager"
+      },
+      {
+        "id": "supplierpartner",
+        "name": "SupplierPartner"
+      },
+      {
+        "id": "executive",
+        "name": "Executive"
+      }
+    ],
+    "schemaVersion": "0.5.0"
+  },
+  "irFingerprint": "sha256:e07889b30ce5a5ca0cd8d10ccfe1d4688dc597cef0dfffa75393fb3364369ed8",
+  "irVersion": "0.5.0",
+  "languageVersion": "0.8.0-alpha.0",
+  "schemaVersion": "0.5.0",
+  "semanticFingerprint": "sha256:e07889b30ce5a5ca0cd8d10ccfe1d4688dc597cef0dfffa75393fb3364369ed8",
+  "sourceFingerprint": "sha256:dade602ad109a71cd209d8c438b55672385e25245ffa87abe2131d77776e5eed"
+}

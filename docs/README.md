@@ -21,6 +21,8 @@ index for tutorials, references, case studies, and normative language material.
 ## Case studies
 
 - [LaunchOps Mission Control](launch-ops-full-stack.md)
+- [Atlas Grid supply-chain control tower](atlas-grid-full-stack.md)
+- [GridShield utility restoration command](grid-shield-full-stack.md)
 - [Issue Tracker full-stack walkthrough](issue-tracker-full-stack.md)
 - [Issue Tracker technical reference](issue-tracker-technical-reference.md)
 
@@ -46,10 +48,7 @@ compatibility, traceability, and assurance requirements.
 - [Independent tooling](spec/independent-tooling.md)
 - [Language governance](spec/language-governance.md)
 
-## Governance and research
+## Governance
 
 - [Language change checklist](governance/language-change-checklist.md)
 - [Release checklist](governance/release-checklist.md)
-- [Independent review brief](governance/independent-review-brief.md)
-- [Comprehension study protocol](research/comprehension-study-protocol.md)
-- [Current study status](../studies/comprehension/STATUS.md)

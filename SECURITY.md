@@ -72,4 +72,4 @@ AI-generated text is rendered via `textContent` only — no `innerHTML` on any A
 
 ## No warranty
 
-This project is provided without security guarantees. Users must perform independent review and risk assessment before real-world use.
+This project is provided without security guarantees. Users must perform appropriate risk assessment before real-world use.

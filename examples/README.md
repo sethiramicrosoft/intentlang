@@ -195,6 +195,50 @@ The example prints audit metadata for each boundary. It records secret reference
 names and escape-hatch source fingerprints, never secret values or raw custom
 code.
 
+## Atlas Grid
+
+A global supply-chain resilience control tower for facilities, suppliers,
+shipments, inventory alerts, disruptions, recovery plans, executive decisions,
+and operational communications.
+
+![Atlas Grid disruption command view with an escalated regional supply event](atlas-grid-disruption.png)
+
+**[IntentLang source](atlas-grid.intent)** ·
+**[Generated application](atlas-grid-generated/)** ·
+**[Full case study](../docs/atlas-grid-full-stack.md)**
+
+Atlas Grid compiles to 10 entities, 49 fields, 21 relationships, 18 guarded
+workflow actions, 5 roles, and 155 explicit permissions. Its checked walkthrough
+activates a regional response, delays a critical shipment, acknowledges a
+four-day inventory alert, starts a dual-route recovery plan, lets a Supplier
+Partner dispatch emergency stock, and captures an Executive approval.
+
+![Atlas Grid supplier-operated emergency shipment](atlas-grid-supplier.png)
+
+![Atlas Grid responsive mobile command view](atlas-grid-mobile.png)
+
+## GridShield
+
+An electric-utility outage restoration command system for grid regions,
+substations, outages, crews, work orders, safety permits, customer impacts,
+restoration plans, decisions, and public updates.
+
+![GridShield outage command view during a severe-weather restoration](grid-shield-outage.png)
+
+**[IntentLang source](grid-shield.intent)** ·
+**[Generated application](grid-shield-generated/)** ·
+**[Full case study](../docs/grid-shield-full-stack.md)**
+
+GridShield compiles to 11 entities, 55 fields, 23 relationships, 24 guarded
+workflow actions, 5 roles, and 171 explicit permissions. Its browser scenario
+coordinates a 42,800-customer outage, substation isolation, crew deployment,
+an active high-voltage safety permit, staged restoration, owner-scoped field
+work, and executive authorization for a mobile transformer.
+
+![GridShield active safety permit](grid-shield-safety.png)
+
+![GridShield responsive mobile regional command view](grid-shield-mobile.png)
+
 ## Focus Board
 
 A small task board that combines both IntentLang pipelines in one app: a

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AtlasGrid</title>
+<script>(() => {
+    const param = new URLSearchParams(window.location.search).get("scoutTheme");
+    const theme =
+      param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", theme);
+  })();</script>
+<script>(function(){var t=localStorage.getItem('theme');if(t==='dark'&&!new URLSearchParams(window.location.search).get('scoutTheme')){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<link rel="stylesheet" href="/styles.css">
+<script nonce="__INTENTLANG_NONCE__">window.__INTENTLANG_SCRIPT_HASHES__={"scout":"sha256-WvI/8458JiRfrlEicAv3wbmp2Cxb2fpzogYsrs7NC1s=","theme":"sha256-bgEY38FTnlgFOaKK67Gezkcopsz2Glx6h7wrpBIAym8="};window.APP_SCHEMA={"name":"AtlasGrid","authEnabled":true,"roles":[{"id":"administrator","name":"Administrator"},{"id":"controltowerlead","name":"ControlTowerLead"},{"id":"sitemanager","name":"SiteManager"},{"id":"supplierpartner","name":"SupplierPartner"},{"id":"executive","name":"Executive"}],"entities":[{"id":"user","name":"User","path":"/users","fields":[{"id":"user-name","name":"name","type":"text","required":true,"unique":false,"length":{"min":1,"max":120}},{"id":"user-email","name":"email","type":"text","required":true,"unique":true,"length":{"min":3,"max":320}}],"relationships":[],"forceOwnerRoleIds":[],"actions":[]},{"id":"network","name":"Network","path":"/networks","fields":[{"id":"network-code","name":"code","type":"text","required":true,"unique":true,"length":{"min":2,"max":20}},{"id":"network-name","name":"name","type":"text","required":true,"unique":false,"length":{"min":2,"max":160}},{"id":"network-region","name":"region","type":"text","required":false,"unique":false},{"id":"network-status","name":"status","type":"text","required":false,"unique":false,"default":"monitoring"},{"id":"network-resiliencescore","name":"resilienceScore","type":"integer","required":false,"unique":false,"default":100}],"relationships":[],"forceOwnerRoleIds":[],"actions":[{"id":"network-activate","name":"activate","effects":["status → active"],"preconditionMessages":["Only a monitored network can be activated"]},{"id":"network-stabilize","name":"stabilize","effects":["status → stable"],"preconditionMessages":["Only an active network can be stabilized"]}]},{"id":"facility","name":"Facility","path":"/facilitys","fields":[{"id":"facility-code","name":"code","type":"text","required":true,"unique":true,"length":{"min":2,"max":20}},{"id":"facility-name","name":"name","type":"text","required":true,"unique":false,"length":{"min":2,"max":160}},{"id":"facility-country","name":"country","type":"text","required":false,"unique":false},{"id":"facility-capacitypercent","name":"capacityPercent","type":"integer","required":false,"unique":false,"default":100},{"id":"facility-status","name":"status","type":"text","required":false,"unique":false,"default":"operational"}],"relationships":[{"id":"facility-network","name":"network","column":"network_id","targetEntityId":"network","targetName":"Network","targetPath":"/networks"},{"id":"facility-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":["sitemanager"],"actions":[{"id":"facility-restrict","name":"restrict","effects":["status → restricted"],"preconditionMessages":["Only an operational facility can be restricted"]},{"id":"facility-restore","name":"restore","effects":["status → operational","capacityPercent → 100"],"preconditionMessages":["Only a restricted facility can be restored"]}]},{"id":"supplier","name":"Supplier","path":"/suppliers","fields":[{"id":"supplier-code","name":"code","type":"text","required":true,"unique":true,"length":{"min":2,"max":20}},{"id":"supplier-name","name":"name","type":"text","required":true,"unique":false,"length":{"min":2,"max":160}},{"id":"supplier-category","name":"category","type":"text","required":false,"unique":false},{"id":"supplier-risktier","name":"riskTier","type":"text","required":false,"unique":false,"default":"standard"},{"id":"supplier-status","name":"status","type":"text","required":false,"unique":false,"default":"active"}],"relationships":[{"id":"supplier-network","name":"network","column":"network_id","targetEntityId":"network","targetName":"Network","targetPath":"/networks"},{"id":"supplier-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":[],"actions":[]},{"id":"shipment","name":"Shipment","path":"/shipments","fields":[{"id":"shipment-trackingcode","name":"trackingCode","type":"text","required":true,"unique":true,"length":{"min":2,"max":40}},{"id":"shipment-description","name":"description","type":"text","required":true,"unique":false,"length":{"min":2,"max":200}},{"id":"shipment-origin","name":"origin","type":"text","required":false,"unique":false},{"id":"shipment-destination","name":"destination","type":"text","required":false,"unique":false},{"id":"shipment-expecteddate","name":"expectedDate","type":"text","required":false,"unique":false},{"id":"shipment-status","name":"status","type":"text","required":false,"unique":false,"default":"planned"},{"id":"shipment-priority","name":"priority","type":"text","required":false,"unique":false,"default":"normal"}],"relationships":[{"id":"shipment-network","name":"network","column":"network_id","targetEntityId":"network","targetName":"Network","targetPath":"/networks"},{"id":"shipment-supplier","name":"supplier","column":"supplier_id","targetEntityId":"supplier","targetName":"Supplier","targetPath":"/suppliers"},{"id":"shipment-facility","name":"facility","column":"facility_id","targetEntityId":"facility","targetName":"Facility","targetPath":"/facilitys"},{"id":"shipment-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":["sitemanager","supplierpartner"],"actions":[{"id":"shipment-dispatch","name":"dispatch","effects":["status → in-transit"],"preconditionMessages":["Only a planned shipment can be dispatched"]},{"id":"shipment-delay","name":"delay","effects":["status → delayed"],"preconditionMessages":["A delivered shipment cannot be delayed"]},{"id":"shipment-deliver","name":"deliver","effects":["status → delivered"],"preconditionMessages":["Shipment is already delivered"]}]},{"id":"inventoryalert","name":"InventoryAlert","path":"/inventoryalerts","fields":[{"id":"inventoryalert-item","name":"item","type":"text","required":true,"unique":false,"length":{"min":2,"max":160}},{"id":"inventoryalert-currentdays","name":"currentDays","type":"integer","required":false,"unique":false,"default":0},{"id":"inventoryalert-targetdays","name":"targetDays","type":"integer","required":false,"unique":false,"default":14},{"id":"inventoryalert-severity","name":"severity","type":"text","required":false,"unique":false,"default":"medium"},{"id":"inventoryalert-status","name":"status","type":"text","required":false,"unique":false,"default":"open"}],"relationships":[{"id":"inventoryalert-network","name":"network","column":"network_id","targetEntityId":"network","targetName":"Network","targetPath":"/networks"},{"id":"inventoryalert-facility","name":"facility","column":"facility_id","targetEntityId":"facility","targetName":"Facility","targetPath":"/facilitys"},{"id":"inventoryalert-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":["sitemanager"],"actions":[{"id":"inventoryalert-acknowledge","name":"acknowledge","effects":["status → acknowledged"],"preconditionMessages":["Only an open inventory alert can be acknowledged"]},{"id":"inventoryalert-resolve","name":"resolve","effects":["status → resolved"],"preconditionMessages":["Inventory alert is already resolved"]}]},{"id":"disruption","name":"Disruption","path":"/disruptions","fields":[{"id":"disruption-title","name":"title","type":"text","required":true,"unique":false,"length":{"min":2,"max":200}},{"id":"disruption-summary","name":"summary","type":"text","required":true,"unique":false,"length":{"min":2,"max":500}},{"id":"disruption-impact","name":"impact","type":"text","required":false,"unique":false,"default":"medium"},{"id":"disruption-probability","name":"probability","type":"text","required":false,"unique":false,"default":"medium"},{"id":"disruption-status","name":"status","type":"text","required":false,"unique":false,"default":"detected"},{"id":"disruption-escalated","name":"escalated","type":"boolean","required":false,"unique":false,"default":false}],"relationships":[{"id":"disruption-network","name":"network","column":"network_id","targetEntityId":"network","targetName":"Network","targetPath":"/networks"},{"id":"disruption-facility","name":"facility","column":"facility_id","targetEntityId":"facility","targetName":"Facility","targetPath":"/facilitys"},{"id":"disruption-supplier","name":"supplier","column":"supplier_id","targetEntityId":"supplier","targetName":"Supplier","targetPath":"/suppliers"},{"id":"disruption-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":["sitemanager"],"actions":[{"id":"disruption-escalate","name":"escalate","effects":["escalated → true","status → escalated"],"preconditionMessages":["Disruption is already escalated"]},{"id":"disruption-contain","name":"contain","effects":["status → contained"],"preconditionMessages":["Only an escalated disruption can be contained"]},{"id":"disruption-close","name":"close","effects":["escalated → false","status → closed"],"preconditionMessages":["Only a contained disruption can be closed"]}]},{"id":"recoveryplan","name":"RecoveryPlan","path":"/recoveryplans","fields":[{"id":"recoveryplan-title","name":"title","type":"text","required":true,"unique":false,"length":{"min":2,"max":200}},{"id":"recoveryplan-strategy","name":"strategy","type":"text","required":false,"unique":false},{"id":"recoveryplan-targetdate","name":"targetDate","type":"text","required":false,"unique":false},{"id":"recoveryplan-progress","name":"progress","type":"integer","required":false,"unique":false,"default":0},{"id":"recoveryplan-status","name":"status","type":"text","required":false,"unique":false,"default":"draft"}],"relationships":[{"id":"recoveryplan-disruption","name":"disruption","column":"disruption_id","targetEntityId":"disruption","targetName":"Disruption","targetPath":"/disruptions"},{"id":"recoveryplan-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":["sitemanager"],"actions":[{"id":"recoveryplan-approve","name":"approve","effects":["status → approved"],"preconditionMessages":["Only a draft recovery plan can be approved"]},{"id":"recoveryplan-start","name":"start","effects":["status → in-progress"],"preconditionMessages":["Only an approved recovery plan can be started"]},{"id":"recoveryplan-complete","name":"complete","effects":["status → complete","progress → 100"],"preconditionMessages":["Only an active recovery plan can be completed"]}]},{"id":"decision","name":"Decision","path":"/decisions","fields":[{"id":"decision-title","name":"title","type":"text","required":true,"unique":false,"length":{"min":2,"max":200}},{"id":"decision-context","name":"context","type":"text","required":false,"unique":false},{"id":"decision-recommendation","name":"recommendation","type":"text","required":false,"unique":false},{"id":"decision-status","name":"status","type":"text","required":false,"unique":false,"default":"pending"}],"relationships":[{"id":"decision-disruption","name":"disruption","column":"disruption_id","targetEntityId":"disruption","targetName":"Disruption","targetPath":"/disruptions"},{"id":"decision-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":[],"actions":[{"id":"decision-approve","name":"approve","effects":["status → approved"],"preconditionMessages":["Only a pending decision can be approved"]},{"id":"decision-reject","name":"reject","effects":["status → rejected"],"preconditionMessages":["Only a pending decision can be rejected"]}]},{"id":"update","name":"Update","path":"/updates","fields":[{"id":"update-headline","name":"headline","type":"text","required":true,"unique":false,"length":{"min":2,"max":200}},{"id":"update-details","name":"details","type":"text","required":false,"unique":false},{"id":"update-audience","name":"audience","type":"text","required":false,"unique":false,"default":"operations"},{"id":"update-health","name":"health","type":"text","required":false,"unique":false,"default":"green"},{"id":"update-status","name":"status","type":"text","required":false,"unique":false,"default":"draft"}],"relationships":[{"id":"update-network","name":"network","column":"network_id","targetEntityId":"network","targetName":"Network","targetPath":"/networks"},{"id":"update-owner","name":"owner","column":"owner_id","targetEntityId":"user","targetName":"User","targetPath":"/users"}],"forceOwnerRoleIds":["sitemanager"],"actions":[{"id":"update-publish","name":"publish","effects":["status → published"],"preconditionMessages":["Only a draft update can be published"]}]}]};</script>
+</head>
+<body>
+<div class="page">
+  <header class="card row app-header">
+    <h1>AtlasGrid</h1>
+    <button id="theme-toggle" class="btn-secondary" type="button" aria-label="Switch to dark mode">🌙</button>
+    <div id="auth-identity-bar" class="identity hidden">
+      <div id="auth-identity"></div>
+      <div class="muted" id="auth-role"></div>
+    </div>
+    <button id="auth-logout" class="btn-secondary hidden" type="button">Log out</button>
+  </header>
+  <section id="auth-login-card" class="card ">
+    <h2>Sign in</h2>
+    <form id="auth-login-form" class="auth-login-form">
+      <div class="field"><label for="auth-login-email">Email</label><input id="auth-login-email" type="email" autocomplete="username" required></div>
+      <div class="field"><label for="auth-login-password">Password</label><input id="auth-login-password" type="password" autocomplete="current-password" required></div>
+      <button id="auth-login-submit" class="btn" type="submit">Sign in</button>
+      <div id="auth-login-error" class="status" aria-live="assertive"></div>
+    </form>
+  </section>
+  <main id="app-root" class="hidden">
+    <section id="provision-card" class="card hidden" aria-labelledby="provision-heading">
+      <h2 id="provision-heading">Provision account</h2>
+      <form id="provision-form" class="provision-form">
+        <div class="field"><label for="provision-name">Name</label><input id="provision-name" autocomplete="off" required></div>
+        <div class="field"><label for="provision-email">Email</label><input id="provision-email" type="email" autocomplete="off" required></div>
+        <div class="field"><label for="provision-password">Temporary password</label><input id="provision-password" type="password" autocomplete="new-password" minlength="12" required></div>
+        <div class="field"><label for="provision-role">Role</label><select id="provision-role" required></select></div>
+        <div class="form-actions"><button id="provision-submit" class="btn" type="submit">Provision</button></div>
+      </form>
+      <div id="provision-error" class="status" aria-live="polite"></div>
+    </section>
+    <section class="card" aria-labelledby="entity-heading">
+      <nav id="entity-nav" class="row" aria-label="Entities"></nav>
+      <div class="row">
+        <h2 id="entity-heading">Records</h2>
+        <button id="entity-create" class="btn" type="button">New record</button>
+      </div>
+      <div id="page-status" class="status" aria-live="polite"></div>
+      <div id="entity-table"></div>
+    </section>
+  </main>
+</div>
+<dialog id="entity-dialog" aria-labelledby="entity-dialog-title">
+  <div class="dialog-body">
+    <h2 id="entity-dialog-title">Record</h2>
+    <form id="entity-form" class="dialog-form">
+      <div id="entity-fields"></div>
+      <div id="entity-error" class="status" aria-live="assertive"></div>
+      <div class="dialog-actions">
+        <button id="entity-reload" class="btn-secondary hidden" type="button">Reload</button>
+        <button id="entity-cancel" class="btn-secondary" type="button">Cancel</button>
+        <button id="entity-submit" class="btn" type="submit">Save</button>
+      </div>
+    </form>
+  </div>
+</dialog>
+<dialog id="action-dialog" aria-labelledby="action-dialog-title" aria-describedby="action-target">
+  <div class="dialog-body">
+    <h2 id="action-dialog-title">Confirm action</h2>
+    <p id="action-target"></p>
+    <p>Declared effects:</p>
+    <ul id="action-effects" class="effects"></ul>
+    <div id="action-error" class="status" aria-live="assertive"></div>
+    <div class="dialog-actions">
+      <button id="action-reload" class="btn-secondary hidden" type="button">Reload</button>
+      <button id="action-cancel" class="btn-secondary" type="button">Cancel</button>
+      <button id="action-confirm" class="btn" type="button">Confirm</button>
+    </div>
+  </div>
+</dialog>
+<script src="/app.js"></script>
+</body>
+</html>

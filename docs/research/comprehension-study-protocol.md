@@ -1,8 +1,5 @@
 # IntentLang Comprehension Study Protocol
 
-**Status**: Ready for ethics and participant review; no participant data has
-been collected.
-
 ## Research question
 
 Can representative readers interpret and safely modify IntentLang programs more
